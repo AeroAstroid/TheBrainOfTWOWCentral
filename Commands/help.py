@@ -1,4 +1,3 @@
-import asyncio, discord
 from Config._const import PREFIX
 
 HELP = "Displays a screen containing every command you can use and information on it"
@@ -8,7 +7,6 @@ REQ = ["COMMANDS"]
 
 async def MAIN(message, args, level, perms, COMMANDS):
 	com = list(COMMANDS.keys())
-	desc = list(COMMANDS.values())
 
 	help_m = "\n> ```This is The Brain of TWOW Central!\n> Here are all the commands you can use.```\n"
 

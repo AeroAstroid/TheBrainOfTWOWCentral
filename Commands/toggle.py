@@ -1,5 +1,3 @@
-import asyncio, discord
-
 HELP = "Can toggle access to a channel on or off"
 PERMS = 2
 ALIASES = []

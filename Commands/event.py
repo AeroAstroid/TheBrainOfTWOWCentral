@@ -1,5 +1,3 @@
-import asyncio, discord
-
 HELP = "Starts/ends an event or other bot behavior that spans more than one message"
 PERMS = 2
 ALIASES = []
@@ -11,7 +9,7 @@ async def MAIN(message, args, level, perms, BRAIN, EVENTS):
 		return
 	
 	if args[1].lower() == "list":
-		event_list = [f'```markdown\n{x}\n{"="*len(x)}```' for x in EVENTS.keys()]
+		event_list = [f'`{x}` - **{"ON" if EVENTS[x].RUNNING else "OFF"}**' for x in EVENTS.keys()]
 		await message.channel.send(f"Here is a list of bot events:\n\n{''.join(event_list)}")
 		return
 	

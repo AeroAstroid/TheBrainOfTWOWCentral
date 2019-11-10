@@ -1,4 +1,4 @@
-import time, discord, re, asyncio
+import time, discord, re
 from Config._functions import grammar_list
 
 class EVENT:

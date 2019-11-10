@@ -1,4 +1,4 @@
-import time, asyncio, discord
+import time
 
 HELP = "Displays the amount of time since the bot was last booted up"
 PERMS = 0
