@@ -10,17 +10,18 @@ from Events._events import *
 PARAMS = {} # This holds parameters that can be called to be used in commands
 
 async def event_task():
-	global EVENTS
 	await BRAIN.wait_until_ready()
 	TWOW_CENTRAL = discord.utils.get(BRAIN.guilds, id=TWOW_CENTRAL_ID)
+	await asyncio.sleep(2)
+	
 	while not BRAIN.is_closed():
 		loop_start = time.time()
-		for event in EVENTS.keys():
-			if not EVENTS[event].RUNNING:
+		for event in PARAMS["EVENTS"].keys():
+			if not PARAMS["EVENTS"][event].RUNNING:
 				continue
-			status = await EVENTS[event].on_two_second(TWOW_CENTRAL)
+			status = await PARAMS["EVENTS"][event].on_two_second(TWOW_CENTRAL)
 			if not status:
-				EVENTS[event].end()
+				PARAMS["EVENTS"][event].end()
 				continue
 		await asyncio.sleep(loop_start + 2 - time.time())
 
@@ -58,7 +59,7 @@ async def on_ready():
 		events = file.read().splitlines()
 		try:
 			for z in events:
-				EVENTS[z.upper()].start(PARAMS["TWOW_CENTRAL"])
+				PARAMS["EVENTS"][z.upper()].start(PARAMS["TWOW_CENTRAL"])
 				print(f"Automatically started {z.upper()}")
 		except Exception:
 			pass
@@ -71,11 +72,11 @@ async def on_ready():
 		# Ignore bot messages
 		if message.author == BRAIN.user: return
 
-		for event in EVENTS.keys():
-			if not EVENTS[event].RUNNING:
+		for event in PARAMS["EVENTS"].keys():
+			if not PARAMS["EVENTS"][event].RUNNING:
 				break
 			
-			await EVENTS[event].on_message(message)
+			await PARAMS["EVENTS"][event].on_message(message)
 
 		# Not bother with non-commands from here on
 		if not message.content.startswith(PREFIX): return
@@ -133,10 +134,10 @@ async def on_ready():
 			os.execl(sys.executable, 'python', __file__, str(message.channel.id), str(time.time()))
 
 		if state[0] == 1: # The event command returns a [1] flag, signaling to toggle the event
-			if EVENTS[state[1]].RUNNING:
-				EVENTS[state[1]].end()
+			if PARAMS["EVENTS"][state[1]].RUNNING:
+				PARAMS["EVENTS"][state[1]].end()
 			else:
-				EVENTS[state[1]].start(PARAMS["TWOW_CENTRAL"])
+				PARAMS["EVENTS"][state[1]].start(PARAMS["TWOW_CENTRAL"])
 
 BRAIN.loop.create_task(event_task())
 BRAIN.run(TOKEN)
