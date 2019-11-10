@@ -24,7 +24,7 @@ class EVENT:
 		self.RUNNING = True
 		self.START = time.time()
 
-		self.param["FINAL_5"] = False # When there's <5 players, Rule 1 won't ever be halved (intentional)
+		self.param["FINAL_5"] = False # If event starts with <5 players, Rule 1 won't ever be halved (intentional)
 		self.param["ROLE"] = discord.utils.get(TWOW_CENTRAL.roles, name="Participating")
 		self.param["MESSAGES"] = discord.utils.get(TWOW_CENTRAL.channels, name="events")
 		self.param["LOGGING"] = discord.utils.get(TWOW_CENTRAL.channels, name="tournament-time")
