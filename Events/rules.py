@@ -19,6 +19,7 @@ class EVENT:
 	def __init__(self):
 		self.LOADED = True
 
+
 	# Executes when activated
 	def start(self, TWOW_CENTRAL): # Set the parameters
 		self.RUNNING = True
