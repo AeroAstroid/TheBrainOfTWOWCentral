@@ -41,6 +41,8 @@ async def on_ready():
 	PARAMS["MEMBER"] = discord.utils.get(PARAMS["TWOW_CENTRAL"].roles, id=MEMBER_ID)
 	PARAMS["PUBLIC_CHANNELS"] = PUBLIC_CHANNELS
 
+	PARAMS["LOGS"] = discord.utils.get(PARAMS["TWOW_CENTRAL"].channels, id=LOG_CHANNEL)
+
 	# By default, restart command restarts the script with extra sys arguments
 	# This tells the bot to report the time it took to restart in the same channel the restart command was used
 	if len(sys.argv) > 1:
@@ -66,6 +68,7 @@ async def on_ready():
 
 	# Notify that the bot is ready
 	print(f"\nLogged in at {PARAMS['LOGIN_TIME']} ({PARAMS['LOGIN']})\n")
+	await PARAMS["LOGS"].send(f"> Logged in at {PARAMS['LOGIN_TIME']} ({PARAMS['LOGIN']})")
 
 	@BRAIN.event
 	async def on_message(message):

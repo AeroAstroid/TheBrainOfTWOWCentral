@@ -3,9 +3,9 @@ import discord
 HELP = "Can toggle access to a channel on or off"
 PERMS = 2
 ALIASES = []
-REQ = ["TWOW_CENTRAL", "BRAIN", "PUBLIC_CHANNELS"]
+REQ = ["TWOW_CENTRAL", "BRAIN", "PUBLIC_CHANNELS", "LOGS"]
 
-async def MAIN(message, args, level, perms, TWOW_CENTRAL, BRAIN, PUBLIC_CHANNELS):
+async def MAIN(message, args, level, perms, TWOW_CENTRAL, BRAIN, PUBLIC_CHANNELS, LOGS):
 	if level == 1:
 		await message.channel.send("Include channels to toggle!")
 		return
@@ -86,17 +86,25 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, BRAIN, PUBLIC_CHANNELS
 		return
 
 	lines = ["**The toggle command has been executed.**\n\n"]
+	log_lines = [""]
 
 	for act in actions:
 		await act[0].set_permissions(
 			TWOW_CENTRAL.default_role, send_messages=act[1], add_reactions=act[1])
 
 		add = f"**{act[0].mention} has been toggled {'ON' if act[1] is None else 'OFF'}.**\n"
+		add_log = f"> {act[0].mention} has been toggled **{'ON' if act[1] is None else 'OFF'}**."
 
 		if len(lines[-1] + add) > 1950:
 			lines.append("")
 		lines[-1] += add
 
+		if len(log_lines[-1] + add_log) > 1950:
+			log_lines.append("")
+		log_lines[-1] += add_log
+
 	for z in lines:
 		await message.channel.send(z)
+	for z in log_lines:
+		await LOGS.send(z)
 	return
