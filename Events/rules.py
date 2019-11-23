@@ -57,8 +57,11 @@ class EVENT:
 			broken.append("2")
 
 		# Rule 3. Do not send any messages that start and end with the same character.
-		if message[0] == message[-1]:
-			broken.append("3")
+		try:
+			if message[0] == message[-1]:
+				broken.append("3")
+		except:
+			pass
 
 		# Rule 4. Do not use the letter X.
 		if "x" in message.lower():
@@ -81,6 +84,11 @@ class EVENT:
 		if len(message) % 8 == 0:
 			broken.append("8")
 		
+		# Rule 9. Do not use any words that have less than three characters.
+		lengths = [len(x) for x in message.split(" ")]
+		if min(lengths) < 3:
+			broken.append("9")
+		
 		return broken
 	
 
@@ -89,8 +97,9 @@ class EVENT:
 		if message.author.id not in self.param["PLAYER_IDS"] or message.channel != self.param["MESSAGES"]:
 			return # Filters for messages that are valid for the event
 
+		# Resets the contestant's message timer (Rule 1)
 		pl_index = self.param["PLAYER_IDS"].index(message.author.id)
-		self.param["PLAYER_INFO"][pl_index][2] = time.time() # Resets the contestant's message timer (Rule 1)
+		self.param["PLAYER_INFO"][pl_index][2] = time.time()
 
 		# Runs rule_check to find any broken rules
 		broken = self.rule_check(message.content, self.param["PLAYER_INFO"][pl_index][1])
@@ -106,7 +115,7 @@ class EVENT:
 
 		else:
 			# Add message to the player's message history (Rule 2)
-			self.param["PLAYER_INFO"][player_list_index][1].append(message.content)
+			self.param["PLAYER_INFO"][pl_index][1].append(message.content)
 	
 
 	# Function that runs every two seconds
@@ -126,14 +135,14 @@ class EVENT:
 				self.param["PLAYER_INFO"][pl_index][0] = 0
 				self.param["PLAYER_IDS"][pl_index] = 0
 			
-				# If the final 5 has been reached
-				if len([p for p in self.param["PLAYER_IDS"] if p != 0]) == 5:
-					self.param["FINAL_5"] = True
+		# If the final 5 has been reached
+		if len([p for p in self.param["PLAYER_IDS"] if p != 0]) <= 5 and not self.param["FINAL_5"]:
+			self.param["FINAL_5"] = True
 
-					for p in self.param["PLAYER_INFO"]:
-						p[2] = time.time
-					
-					await self.param["LOGGING"].send("**Five players remain.** The threshold for Rule 1 is now halved.")
+			for p in self.param["PLAYER_INFO"]:
+				p[2] = time.time
+			
+			await self.param["LOGGING"].send("**Five players remain.** The threshold for Rule 1 is now halved.")
 		
 		# Remove eliminated players from the lists
 		self.param["PLAYER_IDS"] = [p for p in self.param["PLAYER_IDS"] if p != 0]

@@ -28,7 +28,7 @@ class EVENT:
 	def start(self, TWOW_CENTRAL):
 		self.TWOW_CENTRAL = TWOW_CENTRAL
 		self.MEMBER = discord.utils.get(TWOW_CENTRAL.roles, id=MEMBER_ID)
-		self.MUTED = discord.utils.get(TWOW_CENTRAL.roles, name="Muted")
+		self.MUTED = discord.utils.get(TWOW_CENTRAL.roles, name="Mute")
 		self.LOGS = discord.utils.get(TWOW_CENTRAL.channels, name="logs")
 		self.RUNNING = True
 		self.START = time.time()
