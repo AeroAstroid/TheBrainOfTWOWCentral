@@ -28,5 +28,13 @@ LINKS = {
 	"TMMT": {
 		"MAIN": "<https://docs.google.com/spreadsheets/d/1TKY_2N9ig0UswaQZQSGtEZ-j1p4Qk8Qd1MszCAmrAQc>",
 		"INFO": "The **Too Many MiniTWOWs Sheet**, by `Alleywr`."
+	},
+	"VOTER": {
+		"MAIN": "https://cdn.discordapp.com/attachments/525753144009949184/547926839239376916/Voter.exe",
+		"INFO": "The **Voter Program**, by `96 LB`."
+	},
+	"VOTERMAC": {
+		"MAIN": "<https://drive.google.com/open?id=1s0R49YnGI1Js1OThKY11Kxnr61J2l_eI>",
+		"INFO": "The **Voter Program (Mac Version)**, by `Robby`."
 	}
 }
