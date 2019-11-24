@@ -95,8 +95,8 @@ class EVENT:
 		
 		# Rule 10. Do not send any words that have ten or more letters.
 		lengths = [len(x) for x in message.split(" ")]
-        if max(lengths) >= 10:
-            broken.append("10")
+		if max(lengths) >= 10:
+			broken.append("10")
 		
 		return broken
 	
