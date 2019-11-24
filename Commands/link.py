@@ -1,4 +1,4 @@
-from Config._const import PREFIX, LINKS
+from Config._links import LINKS
 
 HELP = "Provides useful links to community-related projects or servers"
 PERMS = 0
@@ -11,8 +11,7 @@ async def MAIN(message, args, level, perms):
 		return
 	
 	if args[1].lower() == "list":
-		keys = [x + "\n" for x in LINKS.keys()]
-		await message.channel.send(f"Here's a list of link commands available:\n\n{''.join(keys)}")
+		await message.channel.send(f"Here's a list of link commands available:\n\n{grammar_list(LINKS.keys())}")
 		return
 
 	if args[1].upper() not in LINKS.keys():

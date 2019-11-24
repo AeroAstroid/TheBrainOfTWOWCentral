@@ -32,16 +32,3 @@ BOT_CHANNELS = (
 )
 
 LOG_CHANNEL = 587038853315952666 #logs
-
-LINKS = {
-	"GLICKO": {
-		"MAIN": "<https://docs.google.com/spreadsheets/d/1adKck5yL7ybYQ9VCsScL0yDmCuZsSY5w4UgNgZAeesM>",
-		"INFO": """**The TWOW Glicko Sheet**, by `awepi`, `AnEpik`, `biscuitmistress`, `ChristianPanda`,
-		 `Epsilon`, `Lpcarver`, `Purplegaze`, `thenamesh`, and `vanished`.""".replace("\t", "").replace("\n", "")
-	},
-	"TTT": {
-		"MAIN": "<https://docs.google.com/spreadsheets/d/1cKXsXkAR_vHp72j-JOswzaYiYjLpQ0ADSz4GSmexlcI>",
-		"INFO": """The **MiniTWOW Top Three Tracker Sheet**, by `8th`, `Purplegaze`, `thenamesh`, `Alleywr`,
-		 and `ChristianPanda.`""".replace("\t", "").replace("\n", "")
-	}
-}
