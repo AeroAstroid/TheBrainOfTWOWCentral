@@ -11,6 +11,7 @@ async def MAIN(message, args, level, perms):
 	limit = 1
 	after = None
 	user = None
+	silent = False
 
 	for arg in args:
 		try:
@@ -33,9 +34,18 @@ async def MAIN(message, args, level, perms):
 		except Exception:
 			await message.channel.send("Invalid user ID!")
 			return
+		
+		if arg.lower() == "silent":
+			silent = True
+	
+	if not silent:
+		limit += 1
 	
 	def check(msg):
 		status = True
+
+		if not silent and message.id == msg.id:
+			return False
 
 		if after is not None:
 			status = status and msg.id >= after
@@ -47,5 +57,7 @@ async def MAIN(message, args, level, perms):
 	
 	deleted = await message.channel.purge(limit=limit, check=check)
 
-	await message.channel.send(f"Searched {limit} message{'' if limit == 1 else 's'}, deleted {len(deleted)}.")
+	if not silent:
+		limit -= 1
+		await message.channel.send(f"Searched {limit} message{'' if limit == 1 else 's'}, deleted {len(deleted)}.")
 	return
