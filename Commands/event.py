@@ -10,7 +10,7 @@ async def MAIN(message, args, level, perms, BRAIN, EVENTS):
 	
 	if args[1].lower() == "list":
 		event_list = [f'`{x}` - **{"ON" if EVENTS[x].RUNNING else "OFF"}**' for x in EVENTS.keys()]
-		await message.channel.send(f"Here is a list of bot events:\n\n{''.join(event_list)}")
+		await message.channel.send(f"Here is a list of bot events:\n\n{'\n'.join(event_list)}")
 		return
 	
 	if args[1].upper() not in EVENTS.keys():
