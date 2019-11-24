@@ -38,8 +38,7 @@ async def MAIN(message, args, level, perms):
 		if arg.lower() == "silent":
 			silent = True
 	
-	if not silent:
-		limit += 1
+	limit += 1
 	
 	def check(msg):
 		status = True
