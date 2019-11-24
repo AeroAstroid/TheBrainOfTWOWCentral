@@ -19,5 +19,5 @@ async def MAIN(message, args, level, perms):
 		return
 	
 	requested = args[1].upper()
-	await message.channel.send(f"{LINKS[requested]["INFO"]}\n\n**Link :** {LINKS[requested]["MAIN"]}")
+	await message.channel.send(f"{LINKS[requested]['INFO']}\n\n**Link :** {LINKS[requested]['MAIN']}")
 	return
