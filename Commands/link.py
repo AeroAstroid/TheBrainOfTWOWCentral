@@ -12,7 +12,7 @@ async def MAIN(message, args, level, perms):
 		return
 	
 	if args[1].lower() == "list":
-		await message.channel.send(f"Here's a list of link commands available:\n\n{grammar_list(LINKS.keys())}")
+		await message.channel.send(f"Here's a list of link commands available:\n\n{grammar_list(list(LINKS.keys()))}")
 		return
 
 	if args[1].upper() not in LINKS.keys():
