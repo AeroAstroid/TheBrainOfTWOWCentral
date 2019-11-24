@@ -45,7 +45,7 @@ async def MAIN(message, args, level, perms):
 		
 		return status
 	
-	deleted = await channel.purge(limit=limit, check=check)
+	deleted = await message.channel.purge(limit=limit, check=check)
 
 	await message.channel.send(f"Searched {limit} message{'' if limit == 1 else 's'}, deleted {len(deleted)}.")
 	return
