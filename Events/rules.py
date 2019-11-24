@@ -49,45 +49,54 @@ class EVENT:
 
 
 	# [Event-specific] Function that checks for each rule
-	def rule_check(self, message, context):
+	def rule_check(self, msg, context):
+		message = msg.content
 		broken = []
 
-		# Rule 2. Do not send the same message twice throughout the entirety of the event.
-		if message in context:
+		# Rule 2. Do not send any messages that contain exactly two words.
+		if len(message.split(" ")) == 2:
 			broken.append("2")
+		
+		# Rule 3. Do not send any words containing three or more of the same letter.
+		words = [list(x.lower()) for x in message.split(" ")]
+		breaking = False
+		for word in words:
+			for char in word:
+				if word.count(char) >= 3:
+					broken.append("3")
+					breaking = True
+					break
 
-		# Rule 3. Do not send any messages that start and end with the same character.
-		try:
-			if message[0] == message[-1]:
-				broken.append("3")
-		except:
-			pass
+			if breaking: break
 
-		# Rule 4. Do not use the letter X.
-		if "x" in message.lower():
+		# Rule 4. Do not send more than 10 words. This is TWOW, you imbecile.
+		if len(message.split(" ")) > 10:
 			broken.append("4")
 
-		# Rule 5. Do not send any messages containing four characters or less.
-		if len(message) <= 4:
+		# Rule 5. Do not send any embeds, images or files.
+		if len(msg.attachments) > 0:
 			broken.append("5")
 
-		# Rule 6. Do not use any digits.
-		if re.search('[0-9]', message) is not None:
+		# Rule 6. Do not use the letter R.
+		if "r" in message.lower():
 			broken.append("6")
-
-		# Rule 7. Do not use any words that have exactly seven characters.
-		lengths = [len(x) for x in message.split(" ")]
-		if 7 in lengths:
+		
+		# Rule 7. Do not send the same message twice throughout the entirety of the event.
+		if message in context:
 			broken.append("7")
 
-		# Rule 8. Do not send any messages where the character count is a multiple of 8.
-		if len(message) % 8 == 0:
+		# Rule 8. Do not send any messages that end in a vowel.
+		if message.lower()[-1] in list("aeiouy"):
 			broken.append("8")
 		
-		# Rule 9. Do not use any words that have less than three characters.
-		lengths = [len(x) for x in message.split(" ")]
-		if min(lengths) < 3:
+		# Rule 9. Do not send any messages that have a character count in the 40s.
+		if 39 < len(message) < 50:
 			broken.append("9")
+		
+		# Rule 10. Do not send any words that have ten or more letters.
+		lengths = [len(x) for x in message.split(" ")]
+        if max(lengths) >= 10:
+            broken.append("10")
 		
 		return broken
 	
@@ -102,13 +111,19 @@ class EVENT:
 		self.param["PLAYER_INFO"][pl_index][2] = time.time()
 
 		# Runs rule_check to find any broken rules
-		broken = self.rule_check(message.content, self.param["PLAYER_INFO"][pl_index][1])
+		broken = self.rule_check(message, self.param["PLAYER_INFO"][pl_index][1])
 
 		if len(broken) > 0:
 			# Remove role, announce elimination, mark player as eliminated
+
+			emojis = ("1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟")
+			
 			await message.author.remove_roles(self.param["ROLE"])
 			await self.param["LOGGING"].send(f"""<@{message.author.id}> has been eliminated for breaking
 			Rule{'s' if len(broken) != 1 else ''} {grammar_list(broken)}.""".replace("\t", "").replace("\n", " "))
+
+			for rule in broken:
+				await message.add_reaction(emojis[int(rule) - 1])
 
 			self.param["PLAYER_INFO"][pl_index][0] = 0
 			self.param["PLAYER_IDS"][pl_index] = 0
@@ -124,8 +139,8 @@ class EVENT:
 			pl_index = self.param["PLAYER_INFO"].index(player_info)
 
 			# The two different cases of Rule 1
-			if self.param["FINAL_5"]: t = 120
-			else: t = 240
+			if self.param["FINAL_5"]: t = 72
+			else: t = 180
 
 			if time.time() - player_info[2] > t: # If the player went too long without sending messages...
 				# Remove role, announce elimination, mark player as eliminated
@@ -142,7 +157,7 @@ class EVENT:
 			for p in self.param["PLAYER_INFO"]:
 				p[2] = time.time
 			
-			await self.param["LOGGING"].send("**Five players remain.** The threshold for Rule 1 is now halved.")
+			await self.param["LOGGING"].send("**Five players remain.** The threshold for Rule 1 is now multiplied by 0.4.")
 		
 		# Remove eliminated players from the lists
 		self.param["PLAYER_IDS"] = [p for p in self.param["PLAYER_IDS"] if p != 0]
