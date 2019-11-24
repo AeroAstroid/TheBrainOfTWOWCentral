@@ -155,7 +155,7 @@ class EVENT:
 			self.param["FINAL_5"] = True
 
 			for p in self.param["PLAYER_INFO"]:
-				p[2] = time.time
+				p[2] = time.time()
 			
 			await self.param["LOGGING"].send("**Five players remain.** The threshold for Rule 1 is now multiplied by 0.4.")
 		
