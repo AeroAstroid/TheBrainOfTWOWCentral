@@ -81,8 +81,9 @@ class EVENT:
 		if "r" in message.lower():
 			broken.append("6")
 		
-		# Rule 7. Do not send the same message twice throughout the entirety of the event.
-		if message in context:
+		# Rule 7. No message of yours can have the same amount of characters as any of your previous messages.
+		lengths = [len(x) for x in context]
+		if len(message) in lengths:
 			broken.append("7")
 
 		# Rule 8. Do not send any messages that end in a vowel.
