@@ -1,4 +1,5 @@
 from Config._links import LINKS
+from Config._functions import grammar_list
 
 HELP = "Provides useful links to community-related projects or servers"
 PERMS = 0
