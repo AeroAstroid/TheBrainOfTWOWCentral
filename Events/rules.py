@@ -74,7 +74,7 @@ class EVENT:
 			broken.append("4")
 
 		# Rule 5. Do not send any embeds, images or files.
-		if len(msg.attachments) > 0:
+		if msg.attachments > 0:
 			broken.append("5")
 
 		# Rule 6. Do not use the letter R.
