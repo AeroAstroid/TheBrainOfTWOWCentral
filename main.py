@@ -73,7 +73,7 @@ async def on_ready():
 
 	# Notify that the bot is ready
 	print(f"\nLogged in at {PARAMS['LOGIN_TIME']} ({PARAMS['LOGIN']})\n")
-	#await PARAMS["LOGS"].send(f"> Logged in at {PARAMS['LOGIN_TIME']} ({PARAMS['LOGIN']})")
+	await PARAMS["LOGS"].send(f"> Logged in at {PARAMS['LOGIN_TIME']} ({PARAMS['LOGIN']})")
 
 	@BRAIN.event
 	async def on_message(message):
@@ -150,9 +150,9 @@ async def on_ready():
 				else:
 					PARAMS["EVENTS"][state[1]].start(PARAMS["TWOW_CENTRAL"])
 
-		except Exception as error:
+		except Exception:
 			traceback.print_exc()
-			
+
 			try:
 				await PARAMS["LOGS"].send(f"**Error occured!**```python\n{traceback.format_exc()}```")
 			except:
