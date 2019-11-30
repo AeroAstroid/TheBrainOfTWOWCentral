@@ -1,6 +1,6 @@
 # This script gathers all the code required to run events and/or actions spanning more than one message
 
-import importlib, os
+import importlib, os, traceback
 
 EVENTS = {}
 
@@ -14,5 +14,6 @@ for event_file in file_list:
 	
 	except Exception as e: # Report events that failed to load, and the error received
 		print(f"[ERROR] Event {event_file.upper()} failed to load ({e})")
+		traceback.print_exc()
 
 print(f"\nEvents loaded up! Current events:\n\t{', '.join(EVENTS.keys())}\n")

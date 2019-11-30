@@ -1,6 +1,6 @@
 # This script gathers all the commands into the lookup dict for the main script
 
-import importlib, os
+import importlib, os, traceback
 
 COMMANDS = {}
 
@@ -21,6 +21,7 @@ for command_file in file_list:
 
 	except Exception as e: # Report commands that failed to load, and the error received
 		print(f"[ERROR] Command {command_file.upper()} failed to load ({e})")
+		traceback.print_exc()
 
 # Report all the commands that successfully loaded
 print(f"\nCommands loaded up! Current commands:\n\t{', '.join(COMMANDS.keys())}\n")
