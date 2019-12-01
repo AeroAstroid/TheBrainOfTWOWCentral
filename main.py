@@ -95,13 +95,10 @@ async def on_ready():
 			
 			# Not bother with non-commands from here on
 			if not message.content.startswith(PREFIX): return
-
-			if perms == 0: # Non-member commands are ignored
-				return
 			
-			if perms == 1 and (not isinstance(message.channel, discord.DMChannel)
+			if perms < 2 and (not isinstance(message.channel, discord.DMChannel)
 			and message.channel.id not in BOT_CHANNELS):
-				return # Ignore commands from regular members that are not in bot channels
+				return # Ignore commands from non-staff that are not in bot channels
 
 			print(f"""[COMMAND] {message.author.name} - {message.author.id} - 
 			{'DMs' if isinstance(message.channel, discord.DMChannel) else message.guild.name} - 

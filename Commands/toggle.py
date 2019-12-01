@@ -1,8 +1,18 @@
 import discord
+from Config._const import PREFIX
 
-HELP = "Can toggle access to a channel on or off"
+HELP = {
+	"MAIN": "Toggles speaking at a public channel",
+	"FORMAT": "('on'/'off') [channels] ('confirm')",
+	"CHANNEL": 2,
+	"USAGE": f"""Using `{PREFIX}toggle [channels]` will prompt a confirmation message to toggle all channels included. 
+	By default, it'll switch locked channels to unlocked and vice-versa. Including `('on'/'off')` before `[channels]` 
+	specifies to unlock all channels or lock all channels. Including `('confirm')` anywhere in the command bypasses 
+	the confirmation message and triggers the toggling action instantly.""".replace("\n", "").replace("\t", "")
+}
+
 PERMS = 2
-ALIASES = []
+ALIASES = ["LOCK"]
 REQ = ["TWOW_CENTRAL", "BRAIN", "PUBLIC_CHANNELS", "LOGS"]
 
 async def MAIN(message, args, level, perms, TWOW_CENTRAL, BRAIN, PUBLIC_CHANNELS, LOGS):
@@ -66,24 +76,27 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, BRAIN, PUBLIC_CHANNELS
 					lines.append("")
 				lines[-1] += add
 	
-	for z in lines:
-		await message.channel.send(z)
+	if 'confirm' not in [x.lower() for x in args]:
+		for z in lines:
+			await message.channel.send(z)
 
 	if len(actions) == 0:
 		await message.channel.send("There's no action to be taken. The toggle command has been cancelled.")
 		return
+	
+	if 'confirm' not in [x.lower() for x in args]:
 
-	await message.channel.send("""**To confirm these actions, send `confirm` in this channel.
-	Send anything else to cancel the command.**""".replace('\t', ''))
+		await message.channel.send("""**To confirm these actions, send `confirm` in this channel.
+		Send anything else to cancel the command.**""".replace('\t', ''))
 
-	def check(m):
-		return m.author == message.author and m.channel == message.channel
+		def check(m):
+			return m.author == message.author and m.channel == message.channel
 
-	msg = await BRAIN.wait_for('message', check=check)
+		msg = await BRAIN.wait_for('message', check=check)
 
-	if msg.content.lower() != "confirm":
-		await message.channel.send("Toggle command cancelled.")
-		return
+		if msg.content.lower() != "confirm":
+			await message.channel.send("Toggle command cancelled.")
+			return
 
 	lines = ["**The toggle command has been executed.**\n\n"]
 	log_lines = [""]

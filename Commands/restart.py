@@ -1,6 +1,15 @@
-HELP = "Restarts the bot, updating its code"
+from Config._const import PREFIX
+
+HELP = {
+	"MAIN": "Restarts the bot. If it's running locally, updates the code automatically",
+	"FORMAT": "",
+	"CHANNEL": 2,
+	"USAGE": f"""Using `{PREFIX}restart` will trigger a bot restart. 
+	It'll report the time it took to restart once it's back up.""".replace("\n", "").replace("\t", "")
+}
+
 PERMS = 2
-ALIASES = []
+ALIASES = ["R"]
 REQ = []
 
 async def MAIN(message, args, level, perms):

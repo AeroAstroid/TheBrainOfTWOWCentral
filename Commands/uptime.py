@@ -1,6 +1,14 @@
 import time
+from Config._const import PREFIX
 
-HELP = "Displays the amount of time since the bot was last booted up"
+HELP = {
+	"MAIN": "Displays how long the bot has been up for",
+	"FORMAT": "",
+	"CHANNEL": 1,
+	"USAGE": f"""Using `{PREFIX}uptime` simply returns the amount of time since 
+	the bot last restarted.""".replace("\n", "").replace("\t", "")
+}
+
 PERMS = 0
 ALIASES = ["UP"]
 REQ = ["LOGIN"]

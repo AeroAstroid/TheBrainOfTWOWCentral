@@ -1,6 +1,17 @@
 from Config._functions import grammar_list
+from Config._const import PREFIX
 
-HELP = "Starts, ends or edits an event or other bot behavior that spans more than one message"
+HELP = {
+	"MAIN": "Used to manage events or other bot actions",
+	"FORMAT": "['list' / event] (subcommand) ('confirm')",
+	"CHANNEL": 2,
+	"USAGE": f"""Using `{PREFIX}event ['list']` lists all available events, and whether they're on or off. 
+	Specifying one of those events as `[event]` lets you toggle on/off that specific event, with a confirmation 
+	message. Including `('confirm')` bypasses the confirmation message. You can use the subcommand 
+	`{PREFIX}event [event] edit` to change parameters of an event that's currently running.
+	""".replace("\n", "").replace("\t", "")
+}
+
 PERMS = 2
 ALIASES = []
 REQ = ["BRAIN", "EVENTS"]

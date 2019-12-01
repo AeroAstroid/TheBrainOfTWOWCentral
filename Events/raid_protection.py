@@ -76,9 +76,12 @@ class EVENT:
 			cause = "pinging too many people"
 		
 		if cause != "": # Mute the member
-			if self.MUTED not in self.TWOW_CENTRAL.get_member(message.author.id).roles:
-				await self.TWOW_CENTRAL.get_member(message.author.id).add_roles(self.MUTED)
-				await self.LOGS.send(f"**Muted <@{message.author.id}> for {cause}.**")
+			try:
+				if self.MUTED not in self.TWOW_CENTRAL.get_member(message.author.id).roles:
+					await self.TWOW_CENTRAL.get_member(message.author.id).add_roles(self.MUTED)
+					await self.LOGS.send(f"**Muted <@{message.author.id}> for {cause}.**")
+			except AttributeError:
+				pass
 
 		# Only the last 15 messages matter. This is because the maximum time the rules care about is 45 seconds
 		# and any message rate above 1 per 3 seconds during more than 30 seconds will have already been muted
