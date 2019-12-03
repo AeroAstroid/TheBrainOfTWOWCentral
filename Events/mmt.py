@@ -196,7 +196,7 @@ class EVENT:
 
 					if self.info["RESPONSES"][ind] == "":
 						dnp_list.append(player)
-						self.info["PLAYERS"][ind] = 0
+						self.info["PLAYERS"][ind] = ""
 				
 				self.info["PLAYERS"] = [x for x in self.info["PLAYERS"] if x != ""]
 				self.info["RESPONSES"] = [x for x in self.info["RESPONSES"] if x != ""]
@@ -209,7 +209,7 @@ class EVENT:
 
 				if len(dnp_list) > 0:
 					initial += f"""The following people did not respond: {grammar_list(dnp_list)}. We are down 
-					to {players} player{'s' if players != 1 else ''}""".replace("\n", "").replace("\t", "")
+					to {players} player{'s' if players != 1 else ''}.""".replace("\n", "").replace("\t", "")
 				else:
 					initial += "Everyone responded."
 				
@@ -356,6 +356,7 @@ class EVENT:
 				self.info["GAME"]["PERIOD"] = 2
 				self.info["GAME"]["PERIOD_START"] = time.time()
 				self.info["GAME"]["PROMPT"] = ""
+				self.info["RESPONSES"] = [""] * len(self.info["PLAYERS"])
 				return
 
 			return
