@@ -1,6 +1,7 @@
 from Config._functions import grammar_list, word_count
-from Config._const import GAME_CHANNEL, PREFIX, ALPHABET
+from Config._const import GAME_CHANNEL, PREFIX, ALPHABET, BRAIN
 import discord, time
+import numpy as np
 
 HELP = {
 	"MAIN": "Allows for playing and hosting MiniMiniTWOWs",
@@ -24,20 +25,152 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 		return
 	
 	mmt = EVENT["MMT"]
-	
-	if args[1].lower() == "queue":
+
+	if args[1].lower() == "end":
 		if not mmt.RUNNING:
-			mmt.start(TWOW_CENTRAL)
-		
-		if message.author.id in mmt.info["HOST_QUEUE"]:
-			mmt.info["HOST_QUEUE"] = [x for x in mmt.info["HOST_QUEUE"] if x != message.author.id]
-			await mmt.MMT_C.send(f"🎩 <@{message.author.id}> has been removed from queue.")
+			await message.channel.send("There's no MiniMiniTWOW running right now!")
 			return
 		
-		mmt.info["HOST_QUEUE"].append(message.author.id)
-		await message.channel.send(
-		f"🎩 <@{message.author.id}> has been added to queue at position **{len(mmt.info['HOST_QUEUE'])}**.")
+		if mmt.info["GAME"]["PERIOD"] == 1:
+			await message.channel.send("You can only end a MiniMiniTWOW that has already started!")
+			return
+		
+		if message.author.id == mmt.info["GAME"]["HOST"]:
+			await message.channel.send("**The current MiniMiniTWOW has been ended by the host! The queue moves on.**")
+			mmt.force_skip()
+			return
+		
+		if perms == 2:
+			await message.channel.send("**The current MiniMiniTWOW has been ended by staff! The queue moves on.**")
+			mmt.force_skip()
+			return
+		
+		spect = len(mmt.info["SPECTATORS"])
+		necessary = np.ceil(spect**(4/5) + 0.8)
+
+		nec_seg = ""
+		if necessary <= spect:
+			nec_seg = f"/{necessary}"
+		
+		if message.author.id in mmt.info["GAME"]["ENDVOTES"]:
+			mmt.info["GAME"]["ENDVOTES"] = [x for x in mmt.info["GAME"]["ENDVOTES"] if x != message.author.id]
+			votes = len(mmt.info["GAME"]["ENDVOTES"])
+			await message.channel.send(f"""🚪 {message.author.mention} removes their vote to end the MiniMiniTWOW. 
+			There are now **{votes}{nec_seg}** votes.""")
+			return
+		
+		mmt.info["GAME"]["ENDVOTES"].append(message.author.id)
+		votes = len(mmt.info["GAME"]["ENDVOTES"])
+		await message.channel.send(f"""🚪 **{message.author.mention} voted to end the MiniMiniTWOW!** 
+		There are now **{votes}{nec_seg}** votes.""")
+
+		if votes >= necessary:
+			await message.channel.send("""**The current MiniMiniTWOW has been ended 
+			by public vote! The queue moves on.**""".replace("\n", "").replace("\t", ""))
+			mmt.force_skip()
+		
 		return
+		
+
+	if args[1].lower() == "transfer":
+		if not mmt.RUNNING:
+			await message.channel.send("There's no MiniMiniTWOW running right now!")
+			return
+		
+		if mmt.info["GAME"]["PERIOD"] == 0:
+			await message.channel.send("Host transfers can only occur with MiniMiniTWOWs that have been created.")
+			return
+		
+		if mmt.info["GAME"]["HOST"] != message.author.id:
+			await message.channel.send("Only the host can transfer the MiniMiniTWOW to someone else!")
+			return
+		
+		if level == 2:
+			await message.channel.send("Choose a user to transfer it to!")
+			return
+
+		mention = args[2]
+
+		try:
+			user_id = int(mention[2:-1])
+		except:
+			await message.channel.send("Invalid user! Ping the user you want to transfer the MiniMiniTWOW to!")
+			return
+		
+		person = TWOW_CENTRAL.get_member(user_id)
+
+		if person is None:
+			await message.channel.send("Invalid user! Ping the user you want to transfer the MiniMiniTWOW to!")
+			return
+		
+		await message.channel.send(f"""Are you sure you want to transfer the MiniMiniTWOW to **{person.name}**? Send 
+		`confirm` to transfer.""".replace("\n", "").replace("\t", ""))
+		
+		msg = await BRAIN.wait_for('message', check=lambda m: (m.author == message.author and m.channel == message.channel))
+
+		if msg.content.lower() != "confirm":
+			await message.channel.send("Transfer command cancelled.")
+			return
+		
+		msg_send = f"Successfully transfered host position to **{person.name}**!"
+
+		mmt.info["GAME"]["HOST"] = user_id
+
+		if mmt.info["GAME"]["PERIOD"] == 1 and mmt.info["GAME"]["PERIOD_START"] != 0:
+			mmt.info["GAME"]["PERIOD_START"] = time.time()
+			msg_send += f""" The timer to start the MiniMiniTWOW is reset. {mention} has {mmt.param["S_DEADLINE"]} 
+			seconds to start it with `tc/mmt start`.""".replace("\n", "").replace("\t", "")
+		
+		if mmt.info["GAME"]["PERIOD"] == 2:
+			mmt.info["GAME"]["PERIOD_START"] = time.time()
+			msg_send += f""" The timer to set the prompt is reset. {mention} has {mmt.param["P_DEADLINE"]} 
+			seconds to decide on the prompt with `tc/mmt prompt`.""".replace("\n", "").replace("\t", "")
+
+		await message.channel.send(msg_send)
+		return
+
+	if args[1].lower() == "queue":
+		if level == 2:
+			if not mmt.RUNNING:
+				mmt.start(TWOW_CENTRAL)
+			
+			if message.author.id in mmt.info["HOST_QUEUE"]:
+				mmt.info["HOST_QUEUE"] = [x for x in mmt.info["HOST_QUEUE"] if x != message.author.id]
+				await mmt.MMT_C.send(f"🎩 <@{message.author.id}> has been removed from queue.")
+				return
+			
+			mmt.info["HOST_QUEUE"].append(message.author.id)
+			await message.channel.send(
+			f"🎩 <@{message.author.id}> has been added to queue at position **{len(mmt.info['HOST_QUEUE'])}**.")
+			return
+		
+		if args[2].lower() == "list":
+			if not mmt.RUNNING:
+				await message.channel.send("The queue is empty!")
+				return
+		
+			if len(mmt.info["HOST_QUEUE"]) == 0:
+				await message.channel.send("The queue is empty!")
+				return
+			
+			init = ["**This is the current MiniMiniTWOW hosting queue:**\n\n"]
+
+			for person in mmt.info["HOST_QUEUE"]:
+				member = TWOW_CENTRAL.get_member(person)
+
+				if member is None:
+					member = f"`{person}`"
+				else:
+					member = member.name
+				
+				line = f"🎩 [{mmt.info['HOST_QUEUE'].index(person) + 1}] - **{member}**"
+				if len(init[-1] + line) > 1950:
+					line.append("")
+				init[-1] += line
+			
+			for z in init:
+				await message.channel.send(z)
+			return
 	
 	if args[1].lower() == "create":
 		if not mmt.RUNNING:
@@ -46,11 +179,11 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 			return
 		
 		if mmt.info["GAME"]["PERIOD"] != 0:
-			await mmt.MMT_C.send("There's already a MiniMiniTWOW running!")
+			await message.channel.send("There's already a MiniMiniTWOW running!")
 			return
 		
 		if message.author.id != mmt.info["GAME"]["HOST"]:
-			await mmt.MMT_C.send("You can only create a MiniMiniTWOW if you're up on the queue!")
+			await message.channel.send("You can only create a MiniMiniTWOW if you're up on the queue!")
 			return
 		
 		mmt.info["GAME"]["PERIOD"] = 1
@@ -137,25 +270,25 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 	
 	if args[1].lower() == "prompt":
 		if not mmt.RUNNING:
-			await mmt.MMT_C.send("There's no MiniMiniTWOW running right now!")
+			await message.channel.send("There's no MiniMiniTWOW running right now!")
 			return
 		
 		if mmt.info["GAME"]["PERIOD"] != 2:
-			await mmt.MMT_C.send("You can only set a prompt inbetween rounds!")
+			await message.channel.send("You can only set a prompt inbetween rounds!")
 			return
 		
 		if message.author.id != mmt.info["GAME"]["HOST"]:
-			await mmt.MMT_C.send("Only the host can set a prompt!")
+			await message.channel.send("Only the host can set a prompt!")
 			return
 		
 		if level == 2:
-			await mmt.MMT_C.send("You need to include a prompt!")
+			await message.channel.send("You need to include a prompt!")
 			return
 		
 		prompt = " ".join(args[2:]).replace("`", "").replace("\t", "").replace("\n", "")
 
 		if len(prompt) > 200:
-			await mmt.MMT_C.send("That prompt is too long! It must be 200 characters at most.")
+			await message.channel.send("That prompt is too long! It must be 200 characters at most.")
 			return
 		
 		mmt.info["GAME"]["PERIOD"] = 3
@@ -221,6 +354,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 		
 		if message.author.id not in mmt.info["VOTES"]["ID"]:
 			await message.channel.send("You can only vote if you received a voting screen!")
+			return
 		
 		if mmt.info["GAME"]["PERIOD"] != 4:
 			await message.channel.send("You can only vote during a voting period!")

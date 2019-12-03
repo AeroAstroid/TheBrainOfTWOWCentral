@@ -29,14 +29,14 @@ class EVENT:
 			"PROMPT": "",
 			"HOST": 0,
 			"PERIOD_START": 0,
-			"END_VOTES": 0,
+			"END_VOTES": [],
 		}
 	}
 
 	param = { # Define all the parameters necessary
 		"ELIM_RATE": 0.2,
 		"R_DEADLINE": 180,
-		"V_DEADLINE": 120,
+		"V_DEADLINE": 150,
 		"Q_DEADLINE": 60,
 		"S_DEADLINE": 180,
 		"P_DEADLINE": 120
@@ -73,7 +73,7 @@ class EVENT:
 				"PROMPT": "",
 				"HOST": 0,
 				"PERIOD_START": 0,
-				"END_VOTES": 0,
+				"END_VOTES": [],
 			}
 		}
 		self.RUNNING = False
@@ -94,7 +94,7 @@ class EVENT:
 			"PROMPT": "",
 			"HOST": 0,
 			"PERIOD_START": 0,
-			"END_VOTES": 0,
+			"END_VOTES": [],
 		}
 
 
@@ -227,6 +227,10 @@ class EVENT:
 				
 				self.info["GAME"]["PERIOD"] = 4
 
+				self.info["VOTES"]["ID"] = []
+				self.info["VOTES"]["RESP"] = []
+				self.info["VOTES"]["VOTE"] = []
+
 				for spec in self.info["SPECTATORS"]:
 					screen = random.sample(self.info["RESPONSES"], min(8, len(self.info["RESPONSES"])))
 
@@ -237,8 +241,8 @@ class EVENT:
 					message = f"""🗳️ **Round {self.info["GAME"]["ROUND"]} Voting**
 					```{self.info["GAME"]["PROMPT"]}```
 					Cast your vote on the entries below by using `{PREFIX}mmt vote` followed by the letters 
-					of each response ordered from best to worst in your opinion. You have 2 minutes to vote!
-					""".replace("\n", "").replace("\t", "")
+					of each response ordered from best to worst in your opinion. You have {self.param["V_DEADLINE"]} 
+					seconds to vote!""".replace("\n", "").replace("\t", "")
 
 					screen = "\n".join([
 						f"""`({ALPHABET[screen.index(resp)]})` {resp} `({word_count(resp)} 

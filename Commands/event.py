@@ -1,5 +1,5 @@
 from Config._functions import grammar_list
-from Config._const import PREFIX
+from Config._const import PREFIX, BRAIN
 
 HELP = {
 	"MAIN": "Used to manage events or other bot actions",
@@ -14,9 +14,9 @@ HELP = {
 
 PERMS = 2
 ALIASES = []
-REQ = ["BRAIN", "EVENTS"]
+REQ = ["EVENTS"]
 
-async def MAIN(message, args, level, perms, BRAIN, EVENTS):
+async def MAIN(message, args, level, perms, EVENTS):
 	if level == 1:
 		await message.channel.send("Include events to call!")
 		return
@@ -86,10 +86,7 @@ async def MAIN(message, args, level, perms, BRAIN, EVENTS):
 		await message.channel.send(f"""To confirm that you want to **{action} {event}**, send `confirm` in this channel.
 		Send anything else to cancel the command.""".replace('\t', ''))
 
-		def check(m):
-			return m.author == message.author and m.channel == message.channel
-
-		msg = await BRAIN.wait_for('message', check=check)
+		msg = await BRAIN.wait_for('message', check=lambda m: (m.author == message.author and m.channel == message.channel))
 
 		if msg.content.lower() != "confirm":
 			await message.channel.send("Event command cancelled.")
