@@ -2,10 +2,8 @@ import time, discord
 from Config._const import MEMBER_ID
 
 class EVENT:
-	NAME = __file__.split("/")[-1].split(".")[0]
 	LOADED = False
 	RUNNING = False
-	START = 0
 
 	MEMBER = 0
 	MUTED = 0
@@ -32,13 +30,11 @@ class EVENT:
 		self.MUTED = discord.utils.get(TWOW_CENTRAL.roles, name="Mute")
 		self.LOGS = discord.utils.get(TWOW_CENTRAL.channels, name="logs")
 		self.RUNNING = True
-		self.START = time.time()
 	
 
 	# Executes when deactivated
 	def end(self):
 		self.RUNNING = False
-		self.START = 0
 	
 
 	# Function that runs on every message

@@ -1,4 +1,4 @@
-import discord, time, asyncio, os, sys
+import discord, time, asyncio, os, sys, traceback
 from datetime import datetime, timedelta
 
 from Config._const import *
@@ -22,7 +22,7 @@ async def event_task():
 				continue
 			try:
 				status = await PARAMS["EVENTS"][event].on_two_second(TWOW_CENTRAL)
-				if not status:
+				if not status and status is not None:
 					PARAMS["EVENTS"][event].end()
 					continue
 			except AttributeError:
@@ -91,7 +91,10 @@ async def on_ready():
 				if not PARAMS["EVENTS"][event].RUNNING:
 					break
 				
-				await PARAMS["EVENTS"][event].on_message(message, perms)
+				try:
+					await PARAMS["EVENTS"][event].on_message(message, perms)
+				except:
+					pass
 			
 			# Not bother with non-commands from here on
 			if not message.content.startswith(PREFIX): return
@@ -146,6 +149,9 @@ async def on_ready():
 					PARAMS["EVENTS"][state[1]].end()
 				else:
 					PARAMS["EVENTS"][state[1]].start(PARAMS["TWOW_CENTRAL"])
+			
+			if state[0] == 2: # The mmt command returns a [2] flag, triggering all updates to the event class
+				PARAMS["EVENTS"][state[1]] = state[2]
 
 		except Exception:
 			traceback.print_exc()

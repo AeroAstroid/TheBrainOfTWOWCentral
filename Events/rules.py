@@ -2,10 +2,8 @@ import time, discord, re
 from Config._functions import grammar_list
 
 class EVENT:
-	NAME = __file__.split("/")[-1].split(".")[0]
 	LOADED = False
 	RUNNING = False
-	START = 0
 
 	param = { # Define all the parameters necessary
 		"FINAL_5": False,
@@ -24,7 +22,6 @@ class EVENT:
 	# Executes when activated
 	def start(self, TWOW_CENTRAL): # Set the parameters
 		self.RUNNING = True
-		self.START = time.time()
 
 		self.param["FINAL_5"] = False # If event starts with <5 players, Rule 1 won't ever be halved (intentional)
 		self.param["ROLE"] = discord.utils.get(TWOW_CENTRAL.roles, name="Participating")
@@ -46,7 +43,6 @@ class EVENT:
 			"PLAYER_INFO": []
 		}
 		self.RUNNING = False
-		self.START = 0
 
 
 	# [Event-specific] Function that checks for each rule
