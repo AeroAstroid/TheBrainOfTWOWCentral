@@ -301,11 +301,14 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 		Our contestants have {mmt.param["R_DEADLINE"]} seconds to respond to it.""".replace("\n", "").replace("\t", ""))
 
 		for player in mmt.info["PLAYERS"]:
-			await TWOW_CENTRAL.get_member(player).send(f"""
-			📝 **Round {mmt.info["GAME"]["ROUND"]} Responding** has started! The prompt is:
-			```{prompt}```
-			You must respond in {mmt.param["R_DEADLINE"]} seconds using `{PREFIX}mmt respond`!
-			""".replace("\n", "").replace("\t", ""))
+			try:
+				await TWOW_CENTRAL.get_member(player).send(f"""
+				📝 **Round {mmt.info["GAME"]["ROUND"]} Responding** has started! The prompt is:
+				```{prompt}```
+				You must respond in {mmt.param["R_DEADLINE"]} seconds using `{PREFIX}mmt respond`!
+				""".replace("\n", "").replace("\t", ""))
+			except Exception:
+				pass
 		return
 	
 	if args[1].lower() == "respond":
