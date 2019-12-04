@@ -28,7 +28,7 @@ async def MAIN(message, args, level, perms):
 				cursor.execute("SELECT * FROM information_schema.tables WHERE table_schema = 'public'")
 				table_list = [f'**{x[0].upper()}**' for x in cursor.fetchall()]
 
-				await message.channel.send(f"Here's a list of Brain Database's tables: {grammar_list(tables)}")
+				await message.channel.send(f"Here's a list of Brain Database's tables: {grammar_list(table_list)}")
 				return
 			
 			if args[2].lower() == "add":
