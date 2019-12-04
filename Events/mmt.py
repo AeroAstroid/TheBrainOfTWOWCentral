@@ -283,11 +283,13 @@ class EVENT:
 
 				for vote in range(len(self.info["VOTES"]["VOTE"])):
 					scores = self.info["VOTES"]["VOTE"][vote].split(" ")
+					responses = self.info["VOTES"]["RESP"][vote]
+
 					if len(scores) < 2:
 						continue
 
 					for s in range(len(scores)):
-						resp = self.info["VOTES"]["RESP"][vote][s]
+						resp = responses[s]
 						score = float(scores[s])
 						ind = self.info["RESPONSES"].index(resp)
 
