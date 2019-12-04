@@ -1,4 +1,5 @@
 discord.py==1.2.5
 numpy==1.15.0
 Pillow==5.2.0
+psycopg2==2.8.4
 scipy==1.1.0
