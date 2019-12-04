@@ -151,7 +151,7 @@ class EVENT:
 		if self.info["GAME"]["PERIOD"] == 2: # The host has to pick a prompt for the MiniMiniTWOW
 			remain = time.time() - self.info["GAME"]["PERIOD_START"]
 
-			if remain < 2:
+			if remain < 1.85:
 				self.info["GAME"]["ROUND"] += 1
 				await self.MMT_C.send(f"""📰 <@{self.info["GAME"]["HOST"]}> has {self.param["P_DEADLINE"]} seconds 
 				to decide on the Round {self.info["GAME"]["ROUND"]} Prompt by using `{PREFIX}mmt prompt`.
