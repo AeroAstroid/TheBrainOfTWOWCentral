@@ -19,7 +19,7 @@ async def MAIN(message, args, level, perms):
 		await message.channel.send("Include a subcommand!")
 		return
 	
-	with psycopg2.connect(host=DB_LINK) as db:
+	with psycopg2.connect(DB_LINK, sslmode='require') as db:
 		cursor = db.cursor()
 
 		if args[1].lower() == "table":
