@@ -1,4 +1,4 @@
-from Config._functions import grammar_list, word_count
+from Config._functions import grammar_list, word_count, formatting_fix
 from Config._const import GAME_CHANNEL, PREFIX, ALPHABET, BRAIN
 import discord, time
 import numpy as np
@@ -329,7 +329,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 			await message.channel.send("You need to include a response!")
 			return
 
-		response = " ".join(args[2:]).replace("`", "").replace("\t", "").replace("\n", "")
+		response = formatting_fix(" ".join(args[2:]).replace("`", "").replace("\t", "").replace("\n", ""))
 
 		if len(response) > 120:
 			await message.channel.send("Your response is too long! It must be 120 characters at most.")
