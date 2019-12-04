@@ -18,14 +18,14 @@ async def MAIN(message, args, level, perms):
 	if level == 1:
 		await message.channel.send("Include a subcommand!")
 		return
-    
-    with psycopg2.connect(host=DB_LINK) as db:
-        cursor = db.cursor()
+	
+	with psycopg2.connect(host=DB_LINK) as db:
+		cursor = db.cursor()
 
 		if args[1].lower() == "table":
 
 			if level == 2:
-        		cursor.execute("SELECT * FROM information_schema.tables WHERE table_schema = 'public'")
+				cursor.execute("SELECT * FROM information_schema.tables WHERE table_schema = 'public'")
 				table_list = [f'**{x[0].upper()}**' for x in cursor.fetchall()]
 
 				await message.channel.send(f"Here's a list of Brain Database's tables: {grammar_list(tables)}")
