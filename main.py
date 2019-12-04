@@ -19,21 +19,23 @@ async def event_task():
 
 		for event in PARAMS["EVENTS"].keys():
 			if not PARAMS["EVENTS"][event].RUNNING:
-				continue
+				continue # We only care about events that are currently running
+
 			try:
 				status = await PARAMS["EVENTS"][event].on_two_second(TWOW_CENTRAL)
-				if not status and status is not None:
+				if status is False: # "return False"
 					PARAMS["EVENTS"][event].end()
 					continue
 			except AttributeError:
 				continue
 
+		# This results in more accurate intervals than using asyncio.sleep(2)
 		await asyncio.sleep(loop_start + 2 - time.time())
 
 
 @BRAIN.event
 async def on_ready():
-	# Define parameters that could be used in commands
+	# Define parameters that could be used in commands in the PARAMS dict
 	PARAMS["LOGIN"] = time.time()
 	PARAMS["LOGIN_TIME"] = datetime.utcnow()
 	PARAMS["BRAIN"] = BRAIN
@@ -68,6 +70,7 @@ async def on_ready():
 			for z in events:
 				PARAMS["EVENTS"][z.upper()].start(PARAMS["TWOW_CENTRAL"])
 				print(f"Automatically started {z.upper()}")
+
 		except Exception:
 			pass
 
@@ -153,13 +156,13 @@ async def on_ready():
 			if state[0] == 2: # The mmt command returns a [2] flag, triggering all updates to the event class
 				PARAMS["EVENTS"][state[1]] = state[2]
 
-		except Exception:
-			traceback.print_exc()
+		except Exception: # Detect errors when commands are used
+			traceback.print_exc() # Print the error
 
 			try:
 				await PARAMS["LOGS"].send(f"**Error occured!**```python\n{traceback.format_exc()}```")
 			except:
 				pass
 
-BRAIN.loop.create_task(event_task())
+BRAIN.loop.create_task(event_task()) # This is an event handler for the time-based functions of various events
 BRAIN.run(TOKEN)

@@ -13,7 +13,7 @@ for command_file in file_list:
 		
 		COMMANDS[command_file.upper()] = { # These variable names are standardized on each script file
 			"MAIN": info.MAIN, # The function to call to run the command
-			"HELP": info.HELP, # The tc/help description of the command
+			"HELP": info.HELP, # The tc/help info for the command
 			"PERMS": info.PERMS, # The permission required to run the command
 			"ALIASES": info.ALIASES, # The aliases you can use to run the command instead
 			"REQ": info.REQ # The required parameters for this command, supplied through the PARAMS dict

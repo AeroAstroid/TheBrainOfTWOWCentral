@@ -4,7 +4,8 @@ from Config._const import PREFIX, BRAIN
 HELP = {
 	"MAIN": "Used to manage events or other bot actions",
 	"FORMAT": "['list' / event] (subcommand) ('confirm')",
-	"CHANNEL": 2,
+	"CHANNEL": 2, # Usable by staff in any channel
+	
 	"USAGE": f"""Using `{PREFIX}event ['list']` lists all available events, and whether they're on or off. 
 	Specifying one of those events as `[event]` lets you toggle on/off that specific event, with a confirmation 
 	message. Including `('confirm')` bypasses the confirmation message. You can use the subcommand 
@@ -12,7 +13,7 @@ HELP = {
 	""".replace("\n", "").replace("\t", "")
 }
 
-PERMS = 2
+PERMS = 2 # Staff
 ALIASES = []
 REQ = ["EVENTS"]
 
@@ -21,52 +22,60 @@ async def MAIN(message, args, level, perms, EVENTS):
 		await message.channel.send("Include events to call!")
 		return
 	
-	if args[1].lower() == "list":
+	if args[1].lower() == "list": # List the events from the dict
 		event_list = [f'`{x}` - **{"ON" if EVENTS[x].RUNNING else "OFF"}**\n' for x in EVENTS.keys()]
 		await message.channel.send(f"Here is a list of bot events:\n\n{''.join(event_list)}")
 		return
 	
-	if args[1].upper() not in EVENTS.keys():
+	if args[1].upper() not in EVENTS.keys(): # Event doesn't exist
 		await message.channel.send("Invalid event.")
 		return
 
 	event = args[1].upper()
 
-	if level != 2:
+	if level != 2: # If it's not just `tc/event [event_name]`, check for subcommands
 		if args[2].lower() == "edit":
 			if not EVENTS[event].RUNNING:
 				await message.channel.send("You can only change an event that's currently running.")
 				return
 			
-			parsing_index = 0
-			config_dict = {}
-			no_value = []
+			parsing_index = 0 # Helps detect keywords and the brackets' boundaries
+			config_dict = {} # Stores the values to be changed
+			no_value = [] # Stores keywords that the user didn't provide values for, so they can be specified later
 
-			while True:
+			while True: # Advances through the entire message until break is activated
+
 				found = message.content[parsing_index + 1:].find("[")
-				if found == -1:
+				if found == -1: # If you can't find [ anymore, parsing is over
 					break
 
-				parsing_index += found + 2
-				reach_index = parsing_index + message.content[parsing_index + 1:].find("]") + 1
+				parsing_index += found + 2 # Brings parsing_index to the index of the character after [
 
+				reach_index = parsing_index + message.content[parsing_index + 1:].find("]") + 1
+				# Brings reach_index to the next ]
+
+				# Contents of the brackets
 				config_args = message.content[parsing_index:reach_index].split(" ")
 
 				if len(config_args) == 0:
-					continue
+					continue # If it's just [], then there's nothing to do here
 
-				key = config_args[0]
-				if len(config_args) == 1:
+				key = config_args[0] # By default, the first word in the brackets is the parameter key
+
+				if len(config_args) == 1: # If it's the *only* word, then no value was specified
 					no_value.append(key)
 					continue
-				elif len(config_args) == 2:
+
+				elif len(config_args) == 2: # If it's two words, the value is a string of the second word
 					value = config_args[1]
-				else:
+
+				else: # If it's more than two words, the value is a list of all words past the first one
 					value = config_args[1:]
 				
+				# Update the config_dict with the new value
 				config_dict[key] = value
 			
-			if len(config_dict.keys()) == 0:
+			if len(config_dict.keys()) == 0: # If no 
 				await message.channel.send("Include parameters you want to edit!")
 				return
 			
