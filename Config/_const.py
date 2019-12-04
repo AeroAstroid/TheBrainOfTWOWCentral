@@ -1,6 +1,7 @@
 import discord, os
 
 TOKEN = os.getenv("BRAIN_TOKEN")
+DB_LINK = os.getenv("BRAIN_DB")
 
 BRAIN = discord.Client()
 
