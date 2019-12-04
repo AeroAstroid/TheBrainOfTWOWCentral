@@ -184,11 +184,14 @@ class EVENT:
 					ind = self.info["PLAYERS"].index(player)
 
 					if self.info["RESPONSES"][ind] == "":
-						await self.TWOW_CENTRAL.get_member(player).send(
-						f"""📝 <@{player}>, you have 1 minute to submit to the current prompt!
-						```{self.info["GAME"]["PROMPT"]}```
-						If you don't respond, you'll be eliminated!""".replace("\n", "").replace("\t", ""))
-			
+						try:
+							await self.TWOW_CENTRAL.get_member(player).send(
+							f"""📝 <@{player}>, you have 1 minute to submit to the current prompt!
+							```{self.info["GAME"]["PROMPT"]}```
+							If you don't respond, you'll be eliminated!""".replace("\n", "").replace("\t", ""))
+						except Exception:
+							pass
+				
 			if remain >= self.param["R_DEADLINE"]:
 				dnp_list = []
 				for player in self.info["PLAYERS"]:
@@ -252,7 +255,10 @@ class EVENT:
 
 					message += "\n" + screen
 					
-					await self.TWOW_CENTRAL.get_member(spec).send(message)
+					try:
+						await self.TWOW_CENTRAL.get_member(spec).send(message)
+					except Exception:
+						pass
 				
 				self.info["GAME"]["PERIOD_START"] = time.time()
 
@@ -283,11 +289,13 @@ class EVENT:
 
 				for vote in range(len(self.info["VOTES"]["VOTE"])):
 					scores = self.info["VOTES"]["VOTE"][vote].split(" ")
+					responses = self.info["VOTES"]["RESP"][vote]
+
 					if len(scores) < 2:
 						continue
 
 					for s in range(len(scores)):
-						resp = self.info["VOTES"]["RESP"][vote][s]
+						resp = responses[s]
 						score = float(scores[s])
 						ind = self.info["RESPONSES"].index(resp)
 

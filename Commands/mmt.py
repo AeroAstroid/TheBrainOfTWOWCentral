@@ -1,4 +1,4 @@
-from Config._functions import grammar_list, word_count
+from Config._functions import grammar_list, word_count, formatting_fix
 from Config._const import GAME_CHANNEL, PREFIX, ALPHABET, BRAIN
 import discord, time
 import numpy as np
@@ -301,11 +301,14 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 		Our contestants have {mmt.param["R_DEADLINE"]} seconds to respond to it.""".replace("\n", "").replace("\t", ""))
 
 		for player in mmt.info["PLAYERS"]:
-			await TWOW_CENTRAL.get_member(player).send(f"""
-			📝 **Round {mmt.info["GAME"]["ROUND"]} Responding** has started! The prompt is:
-			```{prompt}```
-			You must respond in {mmt.param["R_DEADLINE"]} seconds using `{PREFIX}mmt respond`!
-			""".replace("\n", "").replace("\t", ""))
+			try:
+				await TWOW_CENTRAL.get_member(player).send(f"""
+				📝 **Round {mmt.info["GAME"]["ROUND"]} Responding** has started! The prompt is:
+				```{prompt}```
+				You must respond in {mmt.param["R_DEADLINE"]} seconds using `{PREFIX}mmt respond`!
+				""".replace("\n", "").replace("\t", ""))
+			except Exception:
+				pass
 		return
 	
 	if args[1].lower() == "respond":
@@ -329,7 +332,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 			await message.channel.send("You need to include a response!")
 			return
 
-		response = " ".join(args[2:]).replace("`", "").replace("\t", "").replace("\n", "")
+		response = formatting_fix(" ".join(args[2:]).replace("`", "").replace("\t", "").replace("\n", ""))
 
 		if len(response) > 120:
 			await message.channel.send("Your response is too long! It must be 120 characters at most.")

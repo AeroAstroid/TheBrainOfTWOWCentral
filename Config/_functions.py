@@ -34,3 +34,13 @@ def elim_prize(count):
 	
 	numbers.append(np.floor(np.sqrt(count) * np.log(count) / 3.75))
 	return numbers
+
+# formatting_fix : Fixes weirdly formatted lines that might cause formatting problems
+def formatting_fix(line):
+	format_types = ["||", "~~", "__", "***", "**", "*", "_"]
+
+	for r in format_types:
+		if line.count(r) % 2 == 1:
+			line = line.replace(r, "")
+	
+	return line

