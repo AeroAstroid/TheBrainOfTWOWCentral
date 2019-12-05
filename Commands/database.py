@@ -58,11 +58,9 @@ async def MAIN(message, args, level, perms):
 
 					# DOESN'T WORK FOR SOME REASON
 					for z in range(len(columns[0])):
-						cursor.execute(sql.SQL(""" ALTER TABLE {table_name} ADD {column} {datatype}""").format(
+						cursor.execute(sql.SQL(""" ALTER TABLE {table_name} ADD %s %s""").format(
 							table_name = sql.Identifier(full_name),
-							column = sql.Literal(columns[0][z]),
-							datatype = sql.Literal(columns[1][z])
-						))
+						), [columns[0][z], columns[1][z]])
 				except Exception as e:
 					traceback.print_exc()
 					await message.channel.send("Table creation failed! Make sure your name and columns are right.")
