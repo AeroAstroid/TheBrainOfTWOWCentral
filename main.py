@@ -1,4 +1,4 @@
-import discord, time, asyncio, os, sys, traceback
+import discord, time, asyncio, os, sys, traceback, importlib
 from datetime import datetime, timedelta
 
 from Config._const import *
@@ -118,10 +118,10 @@ async def on_ready():
 			level = len(args)
 
 			# If the command is not found, it checks if it's just an alias of any actual command
-			if command not in COMMANDS.keys():
+			if command not in PARAMS["COMMANDS"].keys():
 				alias = None
-				for possible_alias in COMMANDS.keys(): # Check each command's aliases for a match
-					if command in COMMANDS[possible_alias]['ALIASES']:
+				for possible_alias in PARAMS["COMMANDS"].keys(): # Check each command's aliases for a match
+					if command in PARAMS["COMMANDS"][possible_alias]['ALIASES']:
 						alias = possible_alias
 						break
 
@@ -131,15 +131,15 @@ async def on_ready():
 				else: # If it is an alias, specify the original command name
 					command = alias
 
-			if perms < COMMANDS[command]["PERMS"]: # Check if the permissions line up
+			if perms < PARAMS["COMMANDS"][command]["PERMS"]: # Check if the permissions line up
 				await message.channel.send("❌ You don't have permission to run this command!")
 				return
 
 			# List all the required parameters for the command's function. These are specified in each command's script
-			requisites = [PARAMS[name] for name in COMMANDS[command]["REQ"]]
+			requisites = [PARAMS[name] for name in PARAMS["COMMANDS"][command]["REQ"]]
 
 			# Run the command's main function, also specified in the command's script
-			state = await COMMANDS[command]["MAIN"](message, args, level, perms, *requisites)
+			state = await PARAMS["COMMANDS"][command]["MAIN"](message, args, level, perms, *requisites)
 
 			if state is None: # Most commands return this
 				return
@@ -155,6 +155,20 @@ async def on_ready():
 			
 			if state[0] == 2: # The mmt command returns a [2] flag, triggering all updates to the event class
 				PARAMS["EVENTS"][state[1]] = state[2]
+			
+			if state[0] == 3: # The reimport command returns a [3] flag, signaling to reimport commands
+				global_vars = {}
+				exec(open("Commands/_commands.py").read(), global_vars)
+				PARAMS["COMMANDS"] = global_vars["COMMANDS"]
+
+				for cfile in global_vars["file_list"]:
+					cvars = {}
+					exec(open(f"Commands/{cfile}.py", encoding='utf-8').read(), cvars)
+					PARAMS["COMMANDS"][cfile.upper()]["MAIN"] = cvars["MAIN"]
+				
+				await message.channel.send(f"Reimported command files in {round(time.time() - state[1], 2)} seconds.")
+			
+			return
 
 		except Exception: # Detect errors when commands are used
 			traceback.print_exc() # Print the error

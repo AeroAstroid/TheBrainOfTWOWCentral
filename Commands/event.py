@@ -75,31 +75,35 @@ async def MAIN(message, args, level, perms, EVENTS):
 				# Update the config_dict with the new value
 				config_dict[key] = value
 			
-			if len(config_dict.keys()) == 0: # If no 
+			if len(config_dict.keys()) == 0: # If no parameters were found
 				await message.channel.send("Include parameters you want to edit!")
 				return
 			
-			if len(no_value) > 0:
+			if len(no_value) > 0: # If there are parameters whose value weren't specified
 				await message.channel.send(f"Include the new value for {grammar_list(no_value)}!")
 				return
 			
 			await EVENTS[event].edit_event(message, config_dict)
-			return
+			return # If everything went alright, edit the event parameters
 	
+	# If the command is purely `tc/event [event_name]`, it interprets as to toggle the event
 	if EVENTS[event].RUNNING:
 		action = "END"
 	else:
 		action = "START"
 
+	# Confirmation can be bypassed by including `confirm` as an argument in the command
 	if "confirm" not in [x.lower() for x in args]:
 		await message.channel.send(f"""To confirm that you want to **{action} {event}**, send `confirm` in this channel.
 		Send anything else to cancel the command.""".replace('\t', ''))
 
+		# The check lambda waits for a message from the same user and in the same channel
 		msg = await BRAIN.wait_for('message', check=lambda m: (m.author == message.author and m.channel == message.channel))
 
-		if msg.content.lower() != "confirm":
+		if msg.content.lower() != "confirm": # If that message isn't confirm, cancel
 			await message.channel.send("Event command cancelled.")
 			return
 
+	# Trigger the action. This is done automatically if `confirm` is included
 	await message.channel.send(f"{event} will now {action.lower()}.")
-	return [1, event]
+	return [1, event] # Flag to main.py to toggle an event

@@ -11,17 +11,18 @@ HELP = {
 	with [brackets] are mandatory. Those marked with (parentheses) are optional.""".replace("\n", "").replace("\t", "")
 }
 
-PERMS = 0
+PERMS = 0 # Everyone
 ALIASES = ["H"]
 REQ = ["COMMANDS"]
 
 async def MAIN(message, args, level, perms, COMMANDS):
+	# Embed color is constant
 	embed = discord.Embed(color=0x31D8B1)
 	com = list(COMMANDS.keys())
 
-	def perms(com):
-		return COMMANDS[com]["PERMS"]
-	com = sorted(com, key=perms)
+	# Lambda returns the permissions, so it's sorted with lower permissions first (so that staff commands are
+	# displayed last)
+	com = sorted(com, key = lambda x: COMMANDS[x]["PERMS"])
 
 	if level == 1:
 		embed.title = "The Brain of TWOW Central"
