@@ -50,22 +50,27 @@ async def MAIN(message, args, level, perms):
 					return
 
 				full_name = f"public.{name}"
-				columns = [x.split("-") for x in args[4:]]
+				columns = [x.lower().split("-") for x in args[4:]]
 
 				try:
 					cursor.execute(sql.SQL(""" CREATE TABLE {table_name} () """).format(
 						table_name = sql.Identifier(full_name)))
 
-					# DOESN'T WORK FOR SOME REASON
-					for z in range(len(columns[0])):
-						cursor.execute(sql.SQL(""" ALTER TABLE {table_name} ADD %s %s""").format(
+					for z in range(len(columns)):
+						datatype = columns[z][1]
+
+						if datatype not in ["text", "integer", "real"]:
+							raise TypeError
+
+						cursor.execute(sql.SQL(""" ALTER TABLE {table_name} ADD {column} """ + datatype).format(
 							table_name = sql.Identifier(full_name),
-						), [columns[0][z], columns[1][z]])
-				except Exception as e:
-					traceback.print_exc()
+							column = sql.Identifier(columns[z][0])
+						))
+				except Exception:
 					await message.channel.send("Table creation failed! Make sure your name and columns are right.")
 					return
 				
+				columns = [" ".join(x) for x in columns]
 				await message.channel.send(f"Table {name} created with columns {', '.join(columns)}")
 				return
 
@@ -91,3 +96,106 @@ async def MAIN(message, args, level, perms):
 				
 				await message.channel.send(f"Successfully deleted table {name}.")
 				return
+			
+			if args[2].lower() == "layout":
+
+				if level == 3:
+					await message.channel.send("Include the table you want to see the layout of!")
+					return
+				
+				cursor.execute(""" SELECT tablename FROM pg_tables WHERE schemaname = 'public' """)
+				all_tables = [x[0].split(".")[1] for x in cursor.fetchall()]
+				name = args[3].upper()
+
+				if name not in all_tables:
+					await message.channel.send("There's no table with that name!")
+					return
+				
+				full_name = f"public.{name}"
+
+				cursor.execute(sql.SQL(""" SELECT column_name, data_type FROM information_schema.columns 
+				WHERE table_name = {table_name}""").format(
+					table_name = sql.Literal(full_name)
+				))
+				columns = cursor.fetchall()
+
+				formatted = "\n> ".join([f"**{r}**" for r in [" - ".join(c) for c in columns]])
+
+				await message.channel.send(
+					f"Here are the colums and datatypes from the table **{name}**.\n> {formatted}")
+				return
+			
+			if args[2].lower() == "entries":
+
+				if level == 3:
+					await message.channel.send("Include the table you want to see the layout of!")
+					return
+				
+				cursor.execute(""" SELECT tablename FROM pg_tables WHERE schemaname = 'public' """)
+				all_tables = [x[0].split(".")[1] for x in cursor.fetchall()]
+				name = args[3].upper()
+
+				if name not in all_tables:
+					await message.channel.send("There's no table with that name!")
+					return
+				
+				full_name = f"public.{name}"
+				
+				get_entries = False
+
+				if level == 4:
+					limit = 10
+					get_entries = True
+
+				elif args[4].lower() == "all":
+					limit = 99999
+					get_entries = True
+
+				elif args[4].lower() not in ["add", "remove", "edit"]:
+					try:
+						limit = int(args[4])
+					except:
+						limit = 10
+					get_entries = True
+				
+				if get_entries:
+					cursor.execute(sql.SQL(""" SELECT * FROM {table_name} LIMIT {limit}""").format(
+						table_name = sql.Identifier(full_name),
+						limit = sql.Literal(limit)
+					))
+					entries = cursor.fetchall()
+
+					formatted = "\n".join(["\t".join(e) for e in entries])
+
+					reported_limit = 'all' if limit >= 99999 else limit
+					plural = 'ies' if limit != 1 else 'y'
+
+					to_send = f"Here are {reported_limit} entr{plural} of **{name}**.\n{formatted}"
+
+					if len(to_send) > 1950:
+						to_send = to_send[:1947] + "..."
+					await message.channel.send(to_send)
+					return
+				
+				if args[4].lower() == "add":
+					arguments = " ".join(args[5:]).split(" // ")
+
+					for data in range(len(arguments)):
+						if is_whole(arguments[data]):
+							arguments[data] = int(arguments[data])
+						if is_float(arguments[data]):
+							arguments[data] = float(arguments[data])
+
+					try:
+						cursor.execute(sql.SQL(""" INSERT INTO {table_name} VALUES """ 
+							+ ", ".join(["%s"] * len(arguments))
+						).format(
+							table_name = sql.Identifier(full_name)
+						), arguments)
+					except Exception:
+						await message.channel.send(
+							"Failed to add entry! Make sure the columns and data types are right.")
+						return
+					
+					await message.channel.send(f"Successfully added entry to table {name}!")
+					return

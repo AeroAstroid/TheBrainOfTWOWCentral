@@ -52,9 +52,21 @@ async def MAIN(message, args, level, perms, COMMANDS):
 	elif args[1].upper() not in com:
 		await message.channel.send("Invalid command to get help for!")
 		return
+
+	c = args[1].upper()
 	
-	else:
-		c = args[1].upper()
+	channel_list = [
+		"Can be used in DMs, bot or game channels",
+		"Can be used in DMs and bot channels",
+		"Can be used by staff in any channel",
+		"Where it's used depends on the subcommand",
+		"Can be used in DMs and game channels",
+		"Can only be used in game channels",
+		"Can only be used in DMs"
+	]
+	perms = COMMANDS[c]['PERMS']
+	
+	if level == 2:
 		embed.title = f"{PREFIX}{c.lower()}"
 		embed.description = COMMANDS[c]["HELP"]["MAIN"]
 
@@ -66,17 +78,26 @@ async def MAIN(message, args, level, perms, COMMANDS):
 		embed.add_field(name=f"**{PREFIX}{c.lower()} {COMMANDS[c]['HELP']['FORMAT']}**",
 		value=COMMANDS[c]["HELP"]["USAGE"] + "\n\u200b", inline=False)
 
-		channel_list = [
-			"Can be used in DMs, bot or game channels",
-			"Can be used in DMs and bot channels",
-			"Can be used by staff in any channel",
-			"Where it's used depends on the subcommand"
-		]
-		perms = COMMANDS[c]['PERMS']
-
 		embed.add_field(name="Conditions",
 		value = f"""Requires {'staff' if perms == 2 else ('member' if perms == 1 else 'no')} permissions
 		{channel_list[COMMANDS[c]['HELP']['CHANNEL']]}""".replace("\t", ""), inline=False)
+	
+	else:
+		sc = args[2].upper()
+
+		if sc not in COMMANDS[c]["HELP"].keys():
+			await message.channel.send(f"Invalid `{c.lower()}` subcommand to get help for!")
+			return
+		
+		embed.title = f"{PREFIX}{c.lower()} {sc.lower()}"
+		embed.description = COMMANDS[c]["HELP"][sc]["MAIN"] + "\n\u200b"
+
+		embed.add_field(name=f"**{PREFIX}{c.lower()} {sc.lower()} {COMMANDS[c]['HELP'][sc]['FORMAT']}**",
+		value=COMMANDS[c]["HELP"][sc]["USAGE"] + "\n\u200b", inline=False)
+
+		embed.add_field(name="Conditions",
+		value = f"""Requires {'staff' if perms == 2 else ('member' if perms == 1 else 'no')} permissions
+		{channel_list[COMMANDS[c]['HELP'][sc]['CHANNEL']]}""".replace("\t", ""), inline=False)
 
 	await message.channel.send(embed=embed)
 	return

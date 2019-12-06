@@ -44,3 +44,27 @@ def formatting_fix(line):
 			line = line.replace(r, "")
 	
 	return line
+
+# is_whole : Detects integers
+def is_whole(s):
+	try:
+		es = int(s)
+		es2 = float(s)
+		if es == es2:
+			return True
+		else:
+			return False
+	except:
+		return False
+
+# is_float : Detect numbers that have decimal components
+def is_float(s):
+	try:
+		es = int(s)
+		es2 = float(s)
+		if es2 - es != 0:
+			return True
+		else:
+			return False
+	except:
+		return False
