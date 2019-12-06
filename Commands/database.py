@@ -44,12 +44,13 @@ async def MAIN(message, args, level, perms):
 					return
 				
 				name = args[3].upper()
+				db_table = args[3].lower()
 
 				if len(name) > 40:
 					await message.channel.send("That table name is too long! 40 characters maximum.")
 					return
 
-				full_name = f"public.{name}"
+				full_name = f"public.{db_table}"
 				columns = [x.lower().split("-") for x in args[4:]]
 
 				try:
@@ -71,7 +72,7 @@ async def MAIN(message, args, level, perms):
 					return
 				
 				columns = [" ".join(x) for x in columns]
-				await message.channel.send(f"Table {name} created with columns {', '.join(columns)}")
+				await message.channel.send(f"Table **{name}** created with columns {', '.join(columns)}")
 				return
 
 			if args[2].lower() == "remove":
@@ -83,18 +84,19 @@ async def MAIN(message, args, level, perms):
 				cursor.execute(""" SELECT tablename FROM pg_tables WHERE schemaname = 'public' """)
 				all_tables = [x[0].split(".")[1] for x in cursor.fetchall()]
 				name = args[3].upper()
+				db_table = args[3].lower()
 
-				if name not in all_tables:
+				if db_table not in all_tables:
 					await message.channel.send("There's no table with that name!")
 					return
 
-				full_name = f"public.{name}"
+				full_name = f"public.{db_table}"
 				
 				cursor.execute(sql.SQL(""" DROP TABLE IF EXISTS {table_name}""").format(
 					table_name = sql.Identifier(full_name)
 				))
 				
-				await message.channel.send(f"Successfully deleted table {name}.")
+				await message.channel.send(f"Successfully deleted table **{name}**.")
 				return
 			
 			if args[2].lower() == "layout":
@@ -106,12 +108,13 @@ async def MAIN(message, args, level, perms):
 				cursor.execute(""" SELECT tablename FROM pg_tables WHERE schemaname = 'public' """)
 				all_tables = [x[0].split(".")[1] for x in cursor.fetchall()]
 				name = args[3].upper()
+				db_table = args[3].lower()
 
-				if name not in all_tables:
+				if db_table not in all_tables:
 					await message.channel.send("There's no table with that name!")
 					return
 				
-				full_name = f"public.{name}"
+				full_name = f"public.{db_table}"
 
 				cursor.execute(sql.SQL(""" SELECT column_name, data_type FROM information_schema.columns 
 				WHERE table_name = {table_name}""").format(
@@ -134,12 +137,13 @@ async def MAIN(message, args, level, perms):
 				cursor.execute(""" SELECT tablename FROM pg_tables WHERE schemaname = 'public' """)
 				all_tables = [x[0].split(".")[1] for x in cursor.fetchall()]
 				name = args[3].upper()
+				db_table = args[3].lower()
 
-				if name not in all_tables:
+				if db_table not in all_tables:
 					await message.channel.send("There's no table with that name!")
 					return
 				
-				full_name = f"public.{name}"
+				full_name = f"public.{db_table}"
 				
 				get_entries = False
 
@@ -165,12 +169,12 @@ async def MAIN(message, args, level, perms):
 					))
 					entries = cursor.fetchall()
 
-					formatted = "\n".join(["\t".join(e) for e in entries])
+					formatted = "\n> ".join(["\t".join([str(h) for h in e]) for e in entries])
 
 					reported_limit = 'all' if limit >= 99999 else limit
 					plural = 'ies' if limit != 1 else 'y'
 
-					to_send = f"Here are {reported_limit} entr{plural} of **{name}**.\n{formatted}"
+					to_send = f"Here are {reported_limit} entr{plural} of **{name}**.\n> {formatted}"
 
 					if len(to_send) > 1950:
 						to_send = to_send[:1947] + "..."
@@ -187,15 +191,51 @@ async def MAIN(message, args, level, perms):
 							arguments[data] = float(arguments[data])
 
 					try:
-						cursor.execute(sql.SQL(""" INSERT INTO {table_name} VALUES """ 
-							+ ", ".join(["%s"] * len(arguments))
+						cursor.execute(sql.SQL(""" INSERT INTO {table_name} VALUES (""" 
+							+ ", ".join(["%s"] * len(arguments)) + ")"
 						).format(
 							table_name = sql.Identifier(full_name)
 						), arguments)
-					except Exception:
+					except Exception as e:
+						print(e)
 						await message.channel.send(
 							"Failed to add entry! Make sure the columns and data types are right.")
 						return
 					
-					await message.channel.send(f"Successfully added entry to table {name}!")
+					await message.channel.send(f"Successfully added entry to table **{name}**!")
+					return
+				
+				if args[4].lower() == "remove":
+
+					if level == 5:
+						cursor.execute(sql.SQL(""" DELETE from {table_name} """).format(
+							table_name = sql.Identifier(full_name)
+						))
+						await message.channel.send(f"Successfully cleared all entries from table **{name}**!")
+						return
+					
+					arguments = " ".join(args[5:]).split(" // ")
+
+					cursor.execute(sql.SQL(""" SELECT column_name FROM information_schema.columns 
+					WHERE table_name = {table_name}""").format(
+						table_name = sql.Literal(full_name),
+					))
+
+					columns = cursor.fetchall()
+
+					if (arguments[0].lower(),) not in columns:
+						await message.channel.send(f"`{args[5].lower()}` is not a valid column for **{name}**!")
+						return
+					
+					if len(arguments) == 1:
+						await message.channel.send(f"Add a key to search the `{args[5].lower()}` column by!")
+						return
+					
+					cursor.execute(sql.SQL(""" DELETE FROM {table_name} WHERE {column} = {value} """).format(
+						table_name = sql.Identifier(full_name),
+						column = sql.Identifier(arguments[0].lower()),
+						value = sql.Literal(arguments[1])
+					))
+
+					await message.channel.send(f"Successfully deleted entries from table **{name}**!")
 					return

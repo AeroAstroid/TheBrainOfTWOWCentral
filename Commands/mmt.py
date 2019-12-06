@@ -1,6 +1,7 @@
-from Config._functions import grammar_list, elim_prize, word_count
-from Config._const import GAME_CHANNEL, PREFIX, ALPHABET, BRAIN
-import discord, time
+from Config._functions import grammar_list, elim_prize, word_count, formatting_fix, is_whole
+from Config._const import GAME_CHANNEL, PREFIX, ALPHABET, BRAIN, DB_LINK
+import discord, time, psycopg2
+from psycopg2 import sql
 import numpy as np
 
 HELP = {
@@ -107,13 +108,131 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 	
 	mmt = EVENT["MMT"]
 
+	if args[1].lower() == "stats":
+		original_ranking = False
+
+		if level == 2:
+			await message.channel.send("Include the type of stat you want to see!")
+			return
+		
+		
+		with psycopg2.connect(DB_LINK, sslmode='require') as db:
+			db.set_session(autocommit = True)
+			cursor = db.cursor()
+
+			cursor.execute(""" SELECT id, ranks FROM "public.mmtstats" """)
+			data = cursor.fetchall()
+
+			if data is None:
+				await message.channel.send("There's no data yet!")
+				return
+
+			leaderboard = []
+		
+			if args[2].lower() == "points":
+				for person in data:
+					try:
+						member = TWOW_CENTRAL.get_member(int(person[0])).name
+						if member is None:
+							member = person[0]
+					except Exception:
+						member = person[0]
+					
+					ranks = [x.split(" ") for x in person[1].split("\t")]
+					score = 0
+					rounds = 0
+
+					for twow in ranks:
+						for p_round in twow:
+							numbers = p_round.split("/")
+							score += int(numbers[1]) - int(numbers[0])
+							rounds += 1
+					
+					leaderboard.append([member, score, rounds])
+			
+			elif args[2].lower() == "nr":
+				for person in data:
+					try:
+						member = TWOW_CENTRAL.get_member(int(person[0])).name
+						if member is None:
+							member = person[0]
+					except Exception:
+						member = person[0]
+					
+					ranks = [x.split(" ") for x in person[1].split("\t")]
+					total = 0
+					rounds = 0
+
+					for twow in ranks:
+						for p_round in twow:
+							numbers = p_round.split("/")
+							total += (int(numbers[1]) - int(numbers[0]))/(int(numbers[1]) - 1)
+							rounds += 1
+					
+					average = "{:.2%}".format(total / rounds)
+					total = "{:.2%}".format(total)
+					
+					leaderboard.append([member, total, average])
+			
+			else:
+				return
+
+			player_count = len(leaderboard)
+
+			if args[2].lower() == "points":
+				leaderboard = sorted(leaderboard, key=lambda c: c[2])
+				leaderboard = sorted(leaderboard, reverse=True, key=lambda c: c[1])
+			if args[2].lower() == "nr":
+				leaderboard = sorted(leaderboard, reverse=True, key=lambda c: float(c[1][:-1]))
+
+			for line in range(len(leaderboard)):
+				leaderboard[line] = [line+1] + leaderboard[line]
+
+			if level == 3:
+				leaderboard = leaderboard[:10]
+				page = 1
+			
+			elif not is_whole(args[3]):
+				leaderboard = leaderboard[:10]
+				page = 1
+			
+			elif (int(args[3]) - 1) * 10 >= len(leaderboard):
+				await message.channel.send(f"There is no page {args[3]} of MMT stats!")
+				return
+			
+			else:
+				lower = (int(args[3]) - 1) * 10
+				upper = int(args[3]) * 10
+				leaderboard = leaderboard[lower:upper]
+				page = args[3]
+
+			if args[2].lower() == "points":
+				final_message = f"```diff\n--- ⭐ MiniMiniTWOW Point Leaderboard Page {page} ⭐ ---\n\n"
+				final_message +=  " Rank |  Name                              |  Pts.  |  Rounds\n"
+				spacing = 6
+			if args[2].lower() == "nr":
+				final_message = f"```diff\n--- ⭐ MiniMiniTWOW Normalized Rank Leaderboard Page {page} ⭐ ---\n\n"
+				final_message +=  " Rank |  Name                              |  Total   |  Average\n"
+				spacing = 8
+
+			for line in leaderboard:
+				symbol = "+" if line[0] == 1 else "-"
+				spaced_rank = f"{line[0]}{' ' * (4 - len(str(line[0])))}"
+				spaced_name = f"{line[1]}{' '*(34 - len(str(line[1])))}"
+				spaced_points = f"{line[2]}{' '*(spacing - len(str(line[2])))}"
+				formatted = f"{symbol} {spaced_rank}|  {spaced_name}|  {spaced_points}|  {line[3]}\n"
+
+				final_message += formatted
+			
+			final_message += "```"
+
+			await message.channel.send(final_message)
+			return
+
+
 	if args[1].lower() == "end":
 		if not mmt.RUNNING:
 			await message.channel.send("There's no MiniMiniTWOW running right now!")
-			return
-		
-		if mmt.info["GAME"]["PERIOD"] == 1:
-			await message.channel.send("You can only end a MiniMiniTWOW that has already started!")
 			return
 		
 		if message.author.id == mmt.info["GAME"]["HOST"]:
@@ -126,6 +245,10 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 			mmt.force_skip()
 			return
 		
+		if mmt.info["GAME"]["PERIOD"] == 1:
+			await message.channel.send("You can only end a MiniMiniTWOW that has already started!")
+			return
+		
 		spect = len(mmt.info["SPECTATORS"])
 		necessary = np.ceil(spect**(4/5) + 0.8)
 
@@ -133,15 +256,15 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 		if necessary <= spect:
 			nec_seg = f"/{necessary}"
 		
-		if message.author.id in mmt.info["GAME"]["ENDVOTES"]:
-			mmt.info["GAME"]["ENDVOTES"] = [x for x in mmt.info["GAME"]["ENDVOTES"] if x != message.author.id]
-			votes = len(mmt.info["GAME"]["ENDVOTES"])
+		if message.author.id in mmt.info["GAME"]["END_VOTES"]:
+			mmt.info["GAME"]["END_VOTES"] = [x for x in mmt.info["GAME"]["END_VOTES"] if x != message.author.id]
+			votes = len(mmt.info["GAME"]["END_VOTES"])
 			await message.channel.send(f"""🚪 {message.author.mention} removes their vote to end the MiniMiniTWOW. 
 			There are now **{votes}{nec_seg}** votes.""")
 			return
 		
-		mmt.info["GAME"]["ENDVOTES"].append(message.author.id)
-		votes = len(mmt.info["GAME"]["ENDVOTES"])
+		mmt.info["GAME"]["END_VOTES"].append(message.author.id)
+		votes = len(mmt.info["GAME"]["END_VOTES"])
 		await message.channel.send(f"""🚪 **{message.author.mention} voted to end the MiniMiniTWOW!** 
 		There are now **{votes}{nec_seg}** votes.""")
 
@@ -244,7 +367,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 				else:
 					member = member.name
 				
-				line = f"🎩 [{mmt.info['HOST_QUEUE'].index(person) + 1}] - **{member}**"
+				line = f"🎩 [{mmt.info['HOST_QUEUE'].index(person) + 1}] - **{member}**\n"
 				if len(init[-1] + line) > 1950:
 					line.append("")
 				init[-1] += line
@@ -341,6 +464,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 			await message.channel.send("You need at least two contestants to start a MiniMiniTWOW!")
 			return
 		
+		mmt.info["GAME"]["ROUND"] = 1
 		mmt.info["GAME"]["PERIOD"] = 2
 		mmt.info["GAME"]["PERIOD_START"] = time.time()
 

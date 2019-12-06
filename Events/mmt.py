@@ -1,7 +1,8 @@
-import time, discord, random, statistics
+import time, discord, random, statistics, psycopg2
+from psycopg2 import sql
 import numpy as np
 from Config._functions import grammar_list, word_count, elim_prize
-from Config._const import GAME_CHANNEL, PREFIX, ALPHABET, BRAIN
+from Config._const import GAME_CHANNEL, PREFIX, ALPHABET, BRAIN, DB_LINK
 
 class EVENT:
 	LOADED = False
@@ -151,8 +152,7 @@ class EVENT:
 		if self.info["GAME"]["PERIOD"] == 2: # The host has to pick a prompt for the MiniMiniTWOW
 			remain = time.time() - self.info["GAME"]["PERIOD_START"]
 
-			if remain < 1.85:
-				self.info["GAME"]["ROUND"] += 1
+			if remain < 1.95:
 				await self.MMT_C.send(f"""📰 <@{self.info["GAME"]["HOST"]}> has {self.param["P_DEADLINE"]} seconds 
 				to decide on the Round {self.info["GAME"]["ROUND"]} Prompt by using `{PREFIX}mmt prompt`.
 				""".replace("\n", "").replace("\t", ""))
@@ -219,8 +219,26 @@ class EVENT:
 				await self.MMT_C.send(initial)
 				
 				if players == 1:
-					await self.MMT_C.send(f"""🏆 <@{self.info["PLAYERS"][0]}> wins the MiniMiniTWOW!""")
+					winner = self.info["PLAYERS"][0]
+					await self.MMT_C.send(f"""🏆 <@{winner}> wins the MiniMiniTWOW!""")
 					self.force_skip()
+
+					with psycopg2.connect(DB_LINK, sslmode='require') as db:
+						db.set_session(autocommit = True)
+						cursor = db.cursor()
+
+						cursor.execute(sql.SQL(""" SELECT id FROM "public.mmtstats" WHERE id = {winner_id}""").format(
+							winner_id = sql.Literal(str(winner))
+						))
+						found = cursor.fetchone()
+
+						if found is None:
+							cursor.execute(sql.SQL(""" INSERT INTO "public.mmtstats" VALUES (%s, %s, %s)"""),
+							(winner, "", 1))
+							return
+						
+						cursor.execute(sql.SQL(""" UPDATE "public.mmtstats" SET wins = wins + 1 WHERE id = %s"""),
+						(winner,))
 					return
 				
 				if players == 0:
@@ -323,8 +341,12 @@ class EVENT:
 
 				elim_pings = []
 				elim_players = []
+				player_ranks = [""] * len(self.info["PLAYERS"])
 
 				for r in range(len(leaderboard)):
+					player = int(leaderboard[r][0][2:-1])
+					player_ranks[self.info["PLAYERS"].index(player)] = f"{r+1}/{len(leaderboard)}"
+
 					if leaderboard[r][2] != "N/A":
 						leaderboard[r][2] = "{:.2%}".format(leaderboard[r][2])
 					if leaderboard[r][3] != "N/A":
@@ -358,14 +380,55 @@ class EVENT:
 				await self.MMT_C.send(f"""❌ {grammar_list(elim_pings)} ha{'s' if len(elim_pings) == 1 else 've'} 
 				been eliminated.""".replace("\n", "").replace("\t", ""))
 
+				with psycopg2.connect(DB_LINK, sslmode='require') as db:
+					db.set_session(autocommit = True)
+					cursor = db.cursor()
+
+					for p in range(len(self.info["PLAYERS"])):
+						player = self.info["PLAYERS"][p]
+						rank_str = player_ranks[p]
+
+						cursor.execute(
+							sql.SQL(""" SELECT id, ranks FROM "public.mmtstats" WHERE id = {player_id}""").format(
+							player_id = sql.Literal(str(player))
+						))
+						found = cursor.fetchone()
+
+						if found is None:
+							cursor.execute(sql.SQL(""" INSERT INTO "public.mmtstats" VALUES (%s, %s, %s)"""),
+							(player, rank_str, 0))
+						
+						else:
+							current_rank = found[1]
+
+							if self.info["GAME"]["ROUND"] == 1:
+								current_rank += "\t"
+							else:
+								current_rank += " "
+							
+							current_rank += rank_str
+
+							cursor.execute(sql.SQL(
+								""" UPDATE "public.mmtstats" SET ranks = {rank_hist} WHERE ID = {player}""").format(
+									rank_hist = sql.Literal(current_rank),
+									player = sql.Literal(str(player))
+							))
+
 				self.info["PLAYERS"] = [x for x in self.info["PLAYERS"] if x not in elim_players]
 
 				if len(self.info["PLAYERS"]) == 1:
-					await self.MMT_C.send(f"🏆 <@{self.info['PLAYERS'][0]}> wins the MiniMiniTWOW!")
+					winner = self.info['PLAYERS'][0]
+					await self.MMT_C.send(f"🏆 <@{winner}> wins the MiniMiniTWOW!")
 					self.force_skip()
+
+					cursor.execute(
+						sql.SQL(""" UPDATE "public.mmtstats" SET wins = wins + 1 WHERE id = {winner_id}""").format(
+						winner_id = sql.Literal(str(winner))
+					))
 					return
 				
 				self.info["GAME"]["PERIOD"] = 2
+				self.info["GAME"]["ROUND"] += 1
 				self.info["GAME"]["PERIOD_START"] = time.time()
 				self.info["GAME"]["PROMPT"] = ""
 				self.info["RESPONSES"] = [""] * len(self.info["PLAYERS"])

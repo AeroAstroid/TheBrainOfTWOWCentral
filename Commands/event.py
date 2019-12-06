@@ -1,4 +1,4 @@
-from Config._functions import grammar_list
+from Config._functions import grammar_list, is_whole, is_float
 from Config._const import PREFIX, BRAIN
 
 HELP = {
@@ -67,7 +67,12 @@ async def MAIN(message, args, level, perms, EVENTS):
 					continue
 
 				elif len(config_args) == 2: # If it's two words, the value is a string of the second word
-					value = config_args[1]
+					if is_whole(config_args[1]):
+						value = int(config_args[1])
+					elif is_float(config_args[1]):
+						value = float(config_args[1])
+					else:
+						value = config_args[1]
 
 				else: # If it's more than two words, the value is a list of all words past the first one
 					value = config_args[1:]

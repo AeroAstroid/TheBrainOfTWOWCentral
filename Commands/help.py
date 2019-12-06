@@ -48,6 +48,9 @@ async def MAIN(message, args, level, perms, COMMANDS):
 			values += "\n\u200b"
 
 			embed.add_field(name=f"**{PREFIX}{c.lower()}**", value=values)
+		
+		await message.channel.send(embed=embed)
+		return
 	
 	elif args[1].upper() not in com:
 		await message.channel.send("Invalid command to get help for!")
