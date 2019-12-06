@@ -1,4 +1,4 @@
-from Config._functions import grammar_list
+from Config._functions import grammar_list, is_whole, is_float
 from Config._const import PREFIX, BRAIN, DB_LINK
 import psycopg2, traceback
 from psycopg2 import sql

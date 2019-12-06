@@ -1,4 +1,4 @@
-from Config._functions import *
+from Config._functions import grammar_list, elim_prize, word_count
 from Config._const import GAME_CHANNEL, PREFIX, ALPHABET, BRAIN
 import discord, time
 import numpy as np
