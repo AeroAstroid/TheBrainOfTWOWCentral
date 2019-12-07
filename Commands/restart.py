@@ -8,7 +8,7 @@ HELP = {
 	It'll report the time it took to restart once it's back up.""".replace("\n", "").replace("\t", "")
 }
 
-PERMS = 2
+PERMS = 2 # Staff
 ALIASES = ["R"]
 REQ = []
 

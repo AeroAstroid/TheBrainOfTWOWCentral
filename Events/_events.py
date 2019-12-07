@@ -4,6 +4,7 @@ import importlib, os, traceback
 
 EVENTS = {}
 
+# Detect all the event files in the folder
 file_list = [x[:-3] for x in os.listdir("Events") if x.endswith(".py") and not x.startswith("_")]
 
 for event_file in file_list:

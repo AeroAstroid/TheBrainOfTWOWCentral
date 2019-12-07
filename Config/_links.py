@@ -1,4 +1,4 @@
-LINKS = {
+LINKS = { # Every single link for the `tc/link` command is here.
 	"GLICKO": {
 		"MAIN": "<https://docs.google.com/spreadsheets/d/1adKck5yL7ybYQ9VCsScL0yDmCuZsSY5w4UgNgZAeesM>",
 		"INFO": """The **TWOW Glicko Sheet**, by `awepi`, `AnEpik`, `biscuitmistress`, `ChristianPanda`,

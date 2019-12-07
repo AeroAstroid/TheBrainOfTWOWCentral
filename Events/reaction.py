@@ -36,9 +36,9 @@ class EVENT:
 			return # Only messages that are in the channel
 
 		for emoji in self.param["EMOJIS"]:
-			try:
+			try: # Add the reactions
 				await message.add_reaction(emoji)
-			except Exception:
+			except Exception: # If a reaction is invalid, skip it
 				continue
 	
 

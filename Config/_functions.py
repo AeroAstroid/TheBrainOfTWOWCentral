@@ -24,13 +24,13 @@ def word_count(response):
 	return words
 
 # elim_prize : Returns how many contestants should prize and be eliminated (based on Dark's formulas)
-def elim_prize(count):
+def elim_prize(count, elim_rate=0.2):
 	numbers = []
 
 	if count == 2:
 		numbers.append(1)
 	else:
-		numbers.append(round(count / 5))
+		numbers.append(round(count * elim_rate))
 	
 	numbers.append(np.floor(np.sqrt(count) * np.log(count) / 3.75))
 	return numbers

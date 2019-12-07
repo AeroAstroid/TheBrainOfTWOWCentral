@@ -113,9 +113,9 @@ async def on_ready():
 
 			print(f"\t{message.content}\n")
 
-			args = message.content[len(PREFIX):].split(" ")
-			command = args[0].upper()
-			level = len(args)
+			args = message.content[len(PREFIX):].split(" ") # The arguments passed in the command
+			command = args[0].upper() # The top-level command used
+			level = len(args) # The number of arguments used in the command
 
 			# If the command is not found, it checks if it's just an alias of any actual command
 			if command not in PARAMS["COMMANDS"].keys():

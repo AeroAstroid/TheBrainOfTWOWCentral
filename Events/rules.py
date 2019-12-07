@@ -5,6 +5,8 @@ class EVENT:
 	LOADED = False
 	RUNNING = False
 
+	EVENT_ROLE = 498254150044352514 # Event participant role
+
 	param = { # Define all the parameters necessary
 		"FINAL_5": False,
 		"MESSAGES": 0,
@@ -23,12 +25,13 @@ class EVENT:
 	def start(self, TWOW_CENTRAL): # Set the parameters
 		self.RUNNING = True
 
-		self.param["FINAL_5"] = False # If event starts with <5 players, Rule 1 won't ever be halved (intentional)
-		self.param["ROLE"] = discord.utils.get(TWOW_CENTRAL.roles, name="Participating")
-		self.param["MESSAGES"] = discord.utils.get(TWOW_CENTRAL.channels, name="events")
-		self.param["LOGGING"] = discord.utils.get(TWOW_CENTRAL.channels, name="event-time")
+		self.param["FINAL_5"] = False
+		self.param["ROLE"] = discord.utils.get(TWOW_CENTRAL.roles, id=self.EVENT_ROLE)
+		self.param["MESSAGES"] = discord.utils.get(TWOW_CENTRAL.channels, name="events") # Take messages from here
+		self.param["LOGGING"] = discord.utils.get(TWOW_CENTRAL.channels, name="event-time") # Log eliminations here
 
-		self.param["PLAYER_IDS"] = [x.id for x in self.param["ROLE"].members]
+		self.param["PLAYER_IDS"] = [x.id for x in self.param["ROLE"].members] # Set the players as the people with role
+		# Set [id, history, last_message] parameters for the message history and timer rules
 		self.param["PLAYER_INFO"] = [[x, [], time.time()] for x in self.param["PLAYER_IDS"]]
 
 	

@@ -10,19 +10,21 @@ HELP = {
 	parameter will grant you that link, and information on it.""".replace("\n", "").replace("\t", "")
 }
 
-PERMS = 1
+PERMS = 1 # Member
 ALIASES = ["L"]
 REQ = []
 
 async def MAIN(message, args, level, perms):
-	if level == 1:
+	# Note: this takes data from Config/_links.py, which is where I store all link info
+
+	if level == 1: # If it's just `tc/l`, provide a list of the links available
 		await message.channel.send(f"Here's a list of link commands available:\n\n{grammar_list(list(LINKS.keys()))}")
 		return
 
-	if args[1].upper() not in LINKS.keys():
+	if args[1].upper() not in LINKS.keys(): # The link does not exist
 		await message.channel.send("That link cannot be found.")
 		return
 	
-	requested = args[1].upper()
+	requested = args[1].upper() # Provide the link and info on it
 	await message.channel.send(f"{LINKS[requested]['INFO']}\n\n**Link :** {LINKS[requested]['MAIN']}")
 	return

@@ -4,7 +4,7 @@ from Config._const import PREFIX, BRAIN
 HELP = {
 	"MAIN": "Used to manage events or other bot actions",
 	"FORMAT": "['list' / event] (subcommand) ('confirm')",
-	"CHANNEL": 2, # Usable by staff in any channel
+	"CHANNEL": 2,
 	
 	"USAGE": f"""Using `{PREFIX}event ['list']` lists all available events, and whether they're on or off. 
 	Specifying one of those events as `[event]` lets you toggle on/off that specific event, with a confirmation 

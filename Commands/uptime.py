@@ -9,18 +9,20 @@ HELP = {
 	the bot last restarted.""".replace("\n", "").replace("\t", "")
 }
 
-PERMS = 0
+PERMS = 0 # Non-member
 ALIASES = ["UP"]
 REQ = ["LOGIN"]
 
 async def MAIN(message, args, level, perms, LOGIN):
+	# 1000 * seconds = milliseconds
 	delta = 1000 * (time.time() - LOGIN)
+
 	abs_delta = [
-		int(delta),
-		int(delta / 1000),
-		int(delta / (1000 * 60)),
-		int(delta / (1000 * 60 * 60)),
-		int(delta / (1000 * 60 * 60 * 24))]
+		int(delta), # Milliseconds
+		int(delta / 1000), # Seconds
+		int(delta / (1000 * 60)), # Minutes
+		int(delta / (1000 * 60 * 60)), # Hours
+		int(delta / (1000 * 60 * 60 * 24))] # Days
 
 	ml = abs_delta[0] % 1000
 	sc = abs_delta[1] % 60

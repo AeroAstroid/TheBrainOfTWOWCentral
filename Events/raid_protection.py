@@ -5,10 +5,16 @@ class EVENT:
 	LOADED = False
 	RUNNING = False
 
-	MEMBER = 0
-	MUTED = 0
-	LOGS = 0
-	TWOW_CENTRAL = 0
+	MEMBER = 0 # Member role
+	MUTED = 0 # Muted role
+	LOGS = 0 #logs channel
+	TWOW_CENTRAL = 0 # Server
+
+	# Note: These are the rules that will get you muted by the raid protection system
+	# 1. You cannot ping 5 or more people in 45 or less seconds.
+	# 2. You cannot send 5 or more messages in 10 or less seconds.
+	# 3. You cannot send 10 or more messages in 30 or less seconds.
+	# Breaking any of these as a non-member gets you muted.
 
 	param = { # Define all the parameters necessary 
 		"PING_LIMIT": 5,
@@ -48,7 +54,7 @@ class EVENT:
 		
 		self.param["INFO"][message.author.id][0].append(time.time())
 	
-		# Get total number of people pinged - including in role pings
+		# Get total number of people pinged -- including in role pings
 		mentioned = message.raw_mentions
 		role_mentioned = []
 		for role in message.role_mentions:
@@ -76,7 +82,7 @@ class EVENT:
 				if self.MUTED not in self.TWOW_CENTRAL.get_member(message.author.id).roles:
 					await self.TWOW_CENTRAL.get_member(message.author.id).add_roles(self.MUTED)
 					await self.LOGS.send(f"**Muted <@{message.author.id}> for {cause}.**")
-			except AttributeError:
+			except AttributeError: # This happens when a webhook breaks the rules. Ignore that
 				pass
 
 		# Only the last 15 messages matter. This is because the maximum time the rules care about is 45 seconds

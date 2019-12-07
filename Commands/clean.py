@@ -3,7 +3,7 @@ from Config._const import PREFIX
 HELP = {
 	"MAIN": "Deletes past messages under certain conditions",
 	"FORMAT": "[limit:] (after:) (user:) ('silent')",
-	"CHANNEL": 2, # Usable by staff in any channel
+	"CHANNEL": 2,
 
 	"USAGE": f"""Using `{PREFIX}clean [limit:]` cleans the number of messages specified in `[limit:]` in the channel 
 	the command was used in. The parameters `(after:)` and `(user:)` can be used to specify a limit of when to stop 
