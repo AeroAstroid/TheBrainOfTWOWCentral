@@ -217,6 +217,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 				leaderboard = sorted(leaderboard, reverse=True, key=lambda c: float(c[1][:-1]))
 			if args[2].lower() in ["wins", "roundwins"]:
 				leaderboard = sorted(leaderboard, reverse=True, key=lambda c: c[1])
+				leaderboard = [x for x in leaderboard if x[1] != 0]
 
 			for line in range(len(leaderboard)):
 				leaderboard[line] = [line+1] + leaderboard[line]
@@ -230,7 +231,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 				page = 1
 			
 			elif (int(args[3]) - 1) * 10 >= len(leaderboard):
-				await message.channel.send(f"There is no page {args[3]} of MMT stats!")
+				await message.channel.send(f"There is no page {args[3]} of this stat!")
 				return
 			
 			else:
