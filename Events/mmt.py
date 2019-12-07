@@ -336,6 +336,9 @@ class EVENT:
 					scores = self.info["VOTES"]["VOTE"][vote].split(" ") # Separate the scores
 					responses = self.info["VOTES"]["RESP"][vote] # And the responses those scores correspond to
 
+					if len(scores) < 2: # Detects placeholder vote strings (spectators that didn't vote)
+						continue # Skips the vote
+
 					for s in range(len(scores)): # For each score...
 						resp = responses[s] # Identify the response
 						score = float(scores[s]) # Convert score to float
