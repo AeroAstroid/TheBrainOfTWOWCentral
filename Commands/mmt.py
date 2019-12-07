@@ -102,7 +102,6 @@ HELP = {
 		""".replace("\n", "").replace("\t", "")
 	},
 }
-}
 
 PERMS = 0 # Non-member
 ALIASES = []
