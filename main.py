@@ -9,7 +9,7 @@ from Events._events import *
 
 PARAMS = {} # This holds parameters that can be called to be used in commands
 
-async def event_task():
+async def event_task(): # This is an event handler for the time-based functions of various events
 	await BRAIN.wait_until_ready()
 	TWOW_CENTRAL = discord.utils.get(BRAIN.guilds, id=TWOW_CENTRAL_ID)
 	await asyncio.sleep(2)

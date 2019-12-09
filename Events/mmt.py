@@ -234,8 +234,6 @@ class EVENT:
 				if players == 1: # If only one person remains, they win
 					winner = self.info["PLAYERS"][0]
 					await self.MMT_C.send(f"""🏆 <@{winner}> wins the MiniMiniTWOW!""")
-					self.force_skip()
-
 					# Update database, increment their win count
 					with psycopg2.connect(DB_LINK, sslmode='require') as db:
 						db.set_session(autocommit = True)
@@ -250,11 +248,11 @@ class EVENT:
 						if found is None: # If they're not in the mmtstats table, add them
 							cursor.execute(sql.SQL(""" INSERT INTO "public.mmtstats" VALUES (%s, %s, %s)"""),
 							(winner, "", 1))
-							return
+						else: # Increment their win count in mmtstats
+							cursor.execute(sql.SQL(""" UPDATE "public.mmtstats" SET wins = wins + 1 WHERE id = %s"""),
+							(winner,))
 						
-						# Increment their win count in mmtstats
-						cursor.execute(sql.SQL(""" UPDATE "public.mmtstats" SET wins = wins + 1 WHERE id = %s"""),
-						(winner,))
+					self.force_skip()
 					return
 				
 				if players == 0: # If everyone DNRd
@@ -462,10 +460,14 @@ class EVENT:
 					self.force_skip() # Skip the host since the game ended
 
 					# Increment the player's win count
-					cursor.execute(
-						sql.SQL(""" UPDATE "public.mmtstats" SET wins = wins + 1 WHERE id = {winner_id}""").format(
-						winner_id = sql.Literal(str(winner))
-					))
+					with psycopg2.connect(DB_LINK, sslmode='require') as db:
+						db.set_session(autocommit = True)
+						cursor = db.cursor()
+
+						cursor.execute(
+							sql.SQL(""" UPDATE "public.mmtstats" SET wins = wins + 1 WHERE id = {winner_id}""").format(
+							winner_id = sql.Literal(str(winner))
+						))
 					return
 				
 				# Turn the period into prompt decision, incremenet the round, and prepare prompt and response variables
