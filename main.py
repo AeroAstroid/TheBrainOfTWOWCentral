@@ -1,11 +1,16 @@
 import discord, time, asyncio, os, sys, traceback, importlib
 from datetime import datetime, timedelta
 
-from Config._const import *
 from Config._functions import *
 
 from Commands._commands import *
 from Events._events import *
+
+if "debug" in sys.argv: # Run bot with all the debug constants
+	from Config._debug_const import *
+else: # Run bot normally
+	from Config._const import *
+
 
 PARAMS = {} # This holds parameters that can be called to be used in commands
 
@@ -67,7 +72,7 @@ async def on_ready():
 
 	# By default, restart command restarts the script with extra sys arguments
 	# This tells the bot to report the time it took to restart in the same channel the restart command was used
-	if len(sys.argv) > 1:
+	if len(sys.argv) > 2:
 		try:
 			id_to_send = int(sys.argv[1])
 			restart_time = float(sys.argv[2])
