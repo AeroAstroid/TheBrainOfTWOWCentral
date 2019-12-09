@@ -9,7 +9,7 @@ BRAIN = discord.Client() # The bot object
 
 CURRENT_DAY = datetime.utcnow().day # For event handler purposes
 
-PREFIX = "dc/" # Command prefix
+PREFIX = "tc/" # Command prefix
 
 STAFF_ID = 653673640357003297 # Staff role
 TWOW_CENTRAL_ID = 653673010821201920 # Server

@@ -165,7 +165,10 @@ async def on_ready():
 				return
 
 			if state[0] == 0: # The restart command returns a [0] flag, signaling that the bot should be restarted
-				os.execl(sys.executable, 'python', __file__, str(message.channel.id), str(time.time()))
+				extra_args = []
+				if "debug" in sys.argv:
+					extra_args = ["debug"] # If the bot is being run with debug, restart it with debug too
+				os.execl(sys.executable, 'python', __file__, str(message.channel.id), str(time.time()), *extra_args)
 
 			if state[0] == 1: # The event command returns a [1] flag, signaling to toggle the event
 				if PARAMS["EVENTS"][state[1]].RUNNING:

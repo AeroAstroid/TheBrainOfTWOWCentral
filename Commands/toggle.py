@@ -80,28 +80,10 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, BRAIN, PUBLIC_CHANNELS
 				if len(lines[-1] + add) > 1950:
 					lines.append("")
 				lines[-1] += add
-	
-	# If confirmation is bypassed there's no use in posting the list of actions beforehand
-	if 'confirm' not in [x.lower() for x in args]:
-		for z in lines:
-			await message.channel.send(z)
 
 	if len(actions) == 0: # If no actual changes are to be made, nothing will happen
 		await message.channel.send("There's no action to be taken. The toggle command has been cancelled.")
 		return
-	
-	if 'confirm' not in [x.lower() for x in args]: # If confirmation is not bypassed
-
-		await message.channel.send("""**To confirm these actions, send `confirm` in this channel.
-		Send anything else to cancel the command.**""".replace('\t', ''))
-
-		# Check for the next message that's from the same user and in the same channel
-		msg = await BRAIN.wait_for(
-			'message', check=lambda m: (m.author == message.author and m.channel == message.channel))
-
-		if msg.content.lower() != "confirm": # If it's not `confirm`, cancel command
-			await message.channel.send("Toggle command cancelled.")
-			return
 
 	# Once again, in case it ends up over the character limit
 	lines = ["**The toggle command has been executed.**\n\n"]
