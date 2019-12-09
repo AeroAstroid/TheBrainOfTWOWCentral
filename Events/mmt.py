@@ -270,7 +270,14 @@ class EVENT:
 
 				for spec in self.info["SPECTATORS"]:
 					# Generate a random list of all or 8 of the responses as the screen
-					screen = random.sample(self.info["RESPONSES"], min(8, len(self.info["RESPONSES"])))
+					if spec not in self.info["PLAYERS"]:
+						screen = random.sample(self.info["RESPONSES"], min(8, len(self.info["RESPONSES"])))
+					else: # If the voter is alive, the screen must contain the voter's response
+						ind = self.info["PLAYERS"].index(spec)
+						player_response = self.info["RESPONSES"][ind] # This is the response that the voter submitted
+						other_responses = [resp for resp in self.info["RESPONSES"] if resp != player_response]
+						screen = [player_response] + random.sample(other_responses, min(7, len(other_responses)))
+						random.shuffle(screen) # So that the player's response isn't always A
 
 					# Add the voter and the screen to the vote arrays
 					self.info["VOTES"]["ID"].append(spec)
