@@ -10,12 +10,18 @@ from Events._events import *
 PARAMS = {} # This holds parameters that can be called to be used in commands
 
 async def event_task(): # This is an event handler for the time-based functions of various events
+	global PARAMS
 	await BRAIN.wait_until_ready()
 	TWOW_CENTRAL = discord.utils.get(BRAIN.guilds, id=TWOW_CENTRAL_ID)
 	await asyncio.sleep(2)
-	
+
 	while not BRAIN.is_closed():
 		loop_start = time.time()
+
+		day_function = False # Detect if the day just changed
+		if datetime.utcnow().day != PARAMS["DAY"]:
+			day_function = True
+			PARAMS["DAY"] = datetime.utcnow().day
 
 		for event in PARAMS["EVENTS"].keys():
 			if not PARAMS["EVENTS"][event].RUNNING:
@@ -27,7 +33,14 @@ async def event_task(): # This is an event handler for the time-based functions 
 					PARAMS["EVENTS"][event].end()
 					continue
 			except AttributeError:
-				continue
+				pass
+			
+			# If the day just changed, run the day function
+			if day_function:
+				try:
+					await PARAMS["EVENTS"][event].on_one_day(TWOW_CENTRAL, PARAMS["DAY"])
+				except AttributeError:
+					pass
 
 		# This results in more accurate intervals than using asyncio.sleep(2)
 		await asyncio.sleep(loop_start + 2 - time.time())
@@ -39,6 +52,8 @@ async def on_ready():
 	PARAMS["LOGIN"] = time.time()
 	PARAMS["LOGIN_TIME"] = datetime.utcnow()
 	PARAMS["BRAIN"] = BRAIN
+	
+	PARAMS["DAY"] = CURRENT_DAY
 
 	PARAMS["COMMANDS"] = COMMANDS
 	PARAMS["EVENTS"] = EVENTS

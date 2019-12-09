@@ -1,10 +1,13 @@
 import discord, os
+from datetime import datetime
 
 # These are both secret, so I keep them as environment variables
 TOKEN = os.getenv("BRAIN_TOKEN") # Bot's token
 DB_LINK = os.getenv("BRAIN_DB") # Postgres DB link
 
 BRAIN = discord.Client() # The bot object
+
+CURRENT_DAY = datetime.utcnow().day # For event handler purposes
 
 PREFIX = "tc/" # Command prefix
 

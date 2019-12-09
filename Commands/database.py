@@ -2,10 +2,11 @@ from Config._functions import grammar_list, is_whole, is_float
 from Config._const import PREFIX, BRAIN, DB_LINK
 import psycopg2, traceback
 from psycopg2 import sql
+from calendar import monthrange
 
 HELP = {
 	"MAIN": "Used to manage the Brain Postgres database",
-	"FORMAT": "wip",
+	"FORMAT": "[subcommand]",
 	"CHANNEL": 2,
 	"USAGE": f"""wip
 	""".replace("\n", "").replace("\t", "")
@@ -26,9 +27,11 @@ async def MAIN(message, args, level, perms):
 		db.set_session(autocommit = True) # This commits to the database automatically - again, sparing the db.commit()
 		cursor = db.cursor()
 
-		# Right now, this is the only args[1] argument available for this command. I might just remove it altogether
-		# but I'm unsure right now
 		if args[1].lower() == "table":
+
+			if perms < 2: # Direct database viewing is staff-only
+				await message.channel.send("You don't have permission to run this subcommand.")
+				return
 
 			if level == 2:
 				# If it's just `tc/db table`, list the tables. This SQL statement grabs all tables from the 'public'
@@ -290,3 +293,70 @@ async def MAIN(message, args, level, perms):
 
 					await message.channel.send(f"Successfully deleted entries from table **{name}**!")
 					return
+
+	
+		if args[1].lower() == "register": # Register yourself for database events like the birthday event
+
+			if level == 2: # If it's just `tc/register`
+				await message.channel.send("Choose an event to register yourself on!")
+				return
+
+			if args[2].lower() == "birthday":
+
+				if level == 3:
+					await message.channel.send("Include your birthday in `DD/MM` to register!")
+					return
+				
+				cursor.execute(sql.SQL(""" SELECT id FROM "public.birthday" WHERE id = {person}""").format(
+					person = sql.Literal(str(message.author.id))
+				)) # Check if the person is in the birthday database or not
+				found = cursor.fetchone()
+
+				if found is not None: # If they are, don't bother (you can't edit it)
+					await message.channel.send("You have already registered your birthday!")
+					return
+				
+				birthday = args[3].split("/")
+
+				if len(birthday) != 2: # If it's not `n/n`
+					await message.channel.send("Invalid birthday! Make sure it's in the `DD/MM` format!")
+					return
+				
+				if not is_whole(birthday[0]) or not is_whole(birthday[1]): # If day and month aren't numbers
+					await message.channel.send("Invalid birthday! Make sure the day and year are both numbers!")
+					return
+				
+				# Transform into integers for these next two checks
+				birthday[0] = int(birthday[0])
+				birthday[1] = int(birthday[1])
+				
+				if not 1 <= birthday[1] <= 12: # If month is invalid
+					await message.channel.send("Invalid month! Make sure it's between 1 and 12.")
+					return
+				
+				if not 1 <= birthday[0] <= monthrange(2020, birthday[1])[1]: # monthrange checks days in the month
+					await message.channel.send( # 2020 months because it's a leap year, and 29/02 should be available
+					f"Invalid day! Make sure it's between 1 and {monthrange(2020, birthday[1])[1]} for that month.")
+					return
+				
+				birthday = "/".join([str(x) for x in birthday]) # Join the list again for the next few lines
+				
+				# This confirmation message cannot be bypassed
+				await message.channel.send(f"""Are you sure you want to record your birthday as {birthday}? 
+				**You cannot edit it once recorded.** Send `confirm` in this channel to confirm.""".replace("\t", ""))
+
+				# Wait for a message by the same author in the same channel
+				msg = await BRAIN.wait_for('message', 
+				check=(lambda m: m.channel == message.channel and m.author == message.author))
+
+				if msg.content.lower() != "confirm": # If it's not `confirm`, cancel command
+					await message.channel.send("Birthday registering cancelled.")
+					return
+				
+				# If confirmation passed, record the birthday
+				cursor.execute(sql.SQL(""" INSERT INTO "public.birthday" VALUES (%s, %s)"""),
+				[message.author.id, birthday])
+
+				await message.channel.send(f"Successfully recorded your birthday as **{birthday}**!")
+				return
+				
