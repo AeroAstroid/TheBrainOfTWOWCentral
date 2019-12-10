@@ -11,7 +11,7 @@ HELP = {
 	"USAGE": f"""Using `{PREFIX}bigredbutton` will give you information on the current Big Red Button, such as its 
 	chance of exploding and serial number. Using `{PREFIX}bigredbutton press` will press the button. If it doesn't 
 	explode, you gain points equal to its chance of exploding. If it explodes, the button breaks and cannot be pressed 
-	for 10 minutes, and you're incapacitated and cannot press any buttons for 6 hours. Once a button's pressed, a new 
+	for 5 minutes, and you're incapacitated and cannot press any buttons for 6 hours. Once a button's pressed, a new 
 	one is generated with a new serial number and chance of exploding. If the last digit of your user ID appears in 
 	the serial number, the chances of the button exploding when you press it are multiplied by 0.67. If the first 
 	letter of your username appears in the serial number, the chances of the button exploding when you press it are 
@@ -20,9 +20,9 @@ HELP = {
 
 PERMS = 1 # Member
 ALIASES = ["BUTTON"]
-REQ = []
+REQ = ["TWOW_CENTRAL"]
 
-async def MAIN(message, args, level, perms):
+async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 
 	if isinstance(message.channel, discord.DMChannel):
 		await message.channel.send("This command cannot be used in DMs!")
@@ -54,10 +54,10 @@ async def MAIN(message, args, level, perms):
 					return
 				
 				if button_info[1].startswith("1-"):
-					left = int((pressing_time + 600) - time.time())
+					left = int((pressing_time + 300) - time.time())
 					mn = int(left / 60)
 					sc = left % 60
-					await message.channel.send(f"The new button is being reconstructed. {mn}min {left}s remain!")
+					await message.channel.send(f"The new button is being reconstructed. {mn}min {sc}s remain!")
 					return
 
 			else:
@@ -71,6 +71,64 @@ async def MAIN(message, args, level, perms):
 				It has a **{exploding_chance}%** chance of exploding. The serial number is `{serial_number}`.
 				Use `tc/bigredbutton press` to press this button!""".replace("\t", ""))
 
+			return
+	
+	if args[1].lower() == "top":
+		with psycopg2.connect(DB_LINK, sslmode="require") as db:
+			db.set_session(autocommit = True)
+			cursor = db.cursor()
+
+			cursor.execute(sql.SQL(""" SELECT points FROM "public.bigredbutton" LIMIT 1 """))
+			points = [x.split("-") for x in cursor.fetchone()[0].split(" ")]
+			
+			for x in points:
+				x[0] = int(x[0])
+				x[1] = int(x[1])
+			
+			points = sorted(points, reverse=True, key=lambda x: x[1])
+
+			# args[2] is the page number.
+			if level == 2: # If it's not specified, assume it's the first page
+				points = points[:10]
+				page = 1
+			
+			elif not is_whole(args[3]): # If it's not a valid integer, assume it's first page also
+				points = points[:10]
+				page = 1
+			
+			elif (int(args[2]) - 1) * 10 >= len(points): # Detect if the page number is too big
+				await message.channel.send(f"There is no page {args[2]} on Big Red Button!")
+				return
+			
+			else: # This means the user specified a valid page number
+				lower = (int(args[2]) - 1) * 10
+				upper = int(args[2]) * 10
+				points = points[lower:upper]
+				page = args[2]
+			
+			beginning = f"```diff\n---⭐ Big Red Button Points Leaderboard Page {page} ⭐---\n"
+			beginning += "\n Rank |  Name                    |  Points\n"
+
+			for person in points:
+				r = points.index(person) + 1
+				if r == 1:
+					line = f"+ {r}{' ' * (4 - len(str(r)))}|  "
+				else:
+					line = f"- {r}{' ' * (4 - len(str(r)))}|  "
+				
+				try:
+					member = TWOW_CENTRAL.get_member(int(person[0])).name
+				except:
+					member = str(person[0])
+
+				line += f"{member[:20]}{' ' * (22 - len(member[:20]))}|  "
+				line += str(person[1]) + "\n"
+			
+				beginning += line
+			
+			beginning += "```"
+			
+			await message.channel.send(beginning)
 			return
 
 	if args[1].lower() == "press":
@@ -90,10 +148,10 @@ async def MAIN(message, args, level, perms):
 					return
 				
 				if button_info[1].startswith("1-"):
-					left = int((pressing_time + 600) - time.time())
+					left = int((pressing_time + 300) - time.time())
 					mn = int(left / 60)
 					sc = left % 60
-					await message.channel.send(f"The new button is being reconstructed. {mn}min {left}s remain!")
+					await message.channel.send(f"The new button is being reconstructed. {mn}min {sc}s remain!")
 					return
 
 			button_number = button_info[0]
@@ -185,9 +243,9 @@ async def MAIN(message, args, level, perms):
 
 				<@{message.author.id}> been incapacitated. Their point total is now **{half_points}**.
 				They cannot press any more buttons for 6 hours.
-				The button is broken. It'll take **10 minutes** to rebuild it.""".replace("\t", ""))
+				The button is broken. It'll take **5 minutes** to rebuild it.""".replace("\t", ""))
 
-				await asyncio.sleep(600)
+				await asyncio.sleep(300)
 			
 			else:
 				points = button_info[3].split(" ")
