@@ -79,12 +79,14 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			cursor = db.cursor()
 
 			cursor.execute(sql.SQL(""" SELECT points FROM "public.bigredbutton" LIMIT 1 """))
-			points = [x.split("-") for x in cursor.fetchone()[0].split(" ")]
+			unformatted_points = [x.split("-") for x in cursor.fetchone()[0].split(" ")]
+			points = []
 			
-			for x in points:
+			for x in unformatted_points:
 				try:
 					x[0] = int(x[0])
 					x[1] = int(x[1])
+					points.append(x)
 				except ValueError:
 					continue
 			
