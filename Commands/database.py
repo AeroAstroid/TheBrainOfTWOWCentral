@@ -353,11 +353,13 @@ async def MAIN(message, args, level, perms):
 					f"Invalid day! Make sure it's between 1 and {monthrange(2020, birthday[1])[1]} for that month.")
 					return
 				
+				months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+				birthday_format = months[birthday[1]-1] + " " + str(birthday[0])
 				birthday = "/".join([str(x) for x in birthday]) # Join the list again for the next few lines
 				timezone_f = "+" if timezone > 0 else "" + str(timezone)
 
 				# This confirmation message cannot be bypassed
-				await message.channel.send(f"""Are you sure you want to record your birthday as {birthday} and your 
+				await message.channel.send(f"""Are you sure you want to record your birthday as {birthday_format} and your 
 				timezone as UTC {timezone_f}? **You cannot edit these once recorded.** Send `confirm` in this channel 
 				to confirm. """.replace("\n", "").replace("\t", ""))
 				
