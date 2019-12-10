@@ -1,4 +1,6 @@
 import numpy as np
+import random, string
+from Config._const import ALPHABET
 
 # grammar_list : Simple function to properly list many strings
 def grammar_list(listed):
@@ -68,3 +70,13 @@ def is_float(s):
 			return False
 	except:
 		return False
+
+# key_generator : Generates a random alphanumeric string with variable length
+def key_generator(n):
+	return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(n))
+
+# strip_alpha : Strip a string to only alphabet characters
+def strip_alpha(string, spaces=False):
+	if spaces:
+		return ''.join([x for x in list(string) if x.upper() in ALPHABET[:26] or x == " "])
+	return ''.join([x for x in list(string) if x.upper() in ALPHABET[:26]])
