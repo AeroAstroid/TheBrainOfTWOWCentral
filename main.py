@@ -23,10 +23,10 @@ async def event_task(): # This is an event handler for the time-based functions 
 	while not BRAIN.is_closed():
 		loop_start = time.time()
 
-		day_function = False # Detect if the day just changed
-		if datetime.utcnow().day != PARAMS["DAY"]:
-			day_function = True
-			PARAMS["DAY"] = datetime.utcnow().day
+		hour_function = False # Detect if the hour just changed
+		if datetime.utcnow().hour != PARAMS["HOUR"]:
+			hour_function = True
+			PARAMS["HOUR"] = datetime.utcnow().hour
 
 		for event in PARAMS["EVENTS"].keys():
 			if not PARAMS["EVENTS"][event].RUNNING:
@@ -40,10 +40,10 @@ async def event_task(): # This is an event handler for the time-based functions 
 			except AttributeError:
 				pass
 			
-			# If the day just changed, run the day function
-			if day_function:
+			# If the hour just changed, run the hour function
+			if hour_function:
 				try:
-					await PARAMS["EVENTS"][event].on_one_day(TWOW_CENTRAL, PARAMS["DAY"])
+					await PARAMS["EVENTS"][event].on_one_hour(TWOW_CENTRAL)
 				except AttributeError:
 					pass
 
@@ -58,7 +58,7 @@ async def on_ready():
 	PARAMS["LOGIN_TIME"] = datetime.utcnow()
 	PARAMS["BRAIN"] = BRAIN
 	
-	PARAMS["DAY"] = CURRENT_DAY
+	PARAMS["HOUR"] = CURRENT_HOUR
 
 	PARAMS["COMMANDS"] = COMMANDS
 	PARAMS["EVENTS"] = EVENTS

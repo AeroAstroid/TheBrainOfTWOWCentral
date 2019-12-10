@@ -7,7 +7,7 @@ DB_LINK = os.getenv("BRAIN_DB") # Postgres DB link
 
 BRAIN = discord.Client() # The bot object
 
-CURRENT_DAY = datetime.utcnow().day # For event handler purposes
+CURRENT_HOUR = datetime.utcnow().hour # For event handler purposes
 
 PREFIX = "tc/" # Command prefix
 
@@ -28,6 +28,8 @@ BOT_CHANNELS = (
 
 GAME_CHANNEL = 653673194171006996 #game-room
 LOG_CHANNEL = 653673395954647095 #logs
+
+BIRTHDAY_ROLE = 653771648616366103
 
 # For MMT purposes
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"

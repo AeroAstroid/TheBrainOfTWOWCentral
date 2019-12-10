@@ -318,6 +318,20 @@ async def MAIN(message, args, level, perms):
 				
 				birthday = args[3].split("/")
 
+				if level == 4:
+					timezone = 0
+
+				elif not is_whole(args[4]):
+					await message.channel.send("Invalid timezone! Make sure it's a whole number from -12 to 14!")
+					return
+				
+				elif not -12 <= int(args[4]) <= 14:
+					await message.channel.send("Invalid timezone! Make sure it's a whole number from -12 to 14!")
+					return
+				
+				else:
+					timezone = int(args[4])
+
 				if len(birthday) != 2: # If it's not `n/n`
 					await message.channel.send("Invalid birthday! Make sure it's in the `DD/MM` format!")
 					return
@@ -340,11 +354,13 @@ async def MAIN(message, args, level, perms):
 					return
 				
 				birthday = "/".join([str(x) for x in birthday]) # Join the list again for the next few lines
-				
-				# This confirmation message cannot be bypassed
-				await message.channel.send(f"""Are you sure you want to record your birthday as {birthday}? 
-				**You cannot edit it once recorded.** Send `confirm` in this channel to confirm.""".replace("\t", ""))
+				timezone_f = "+" if timezone > 0 else "" + str(timezone)
 
+				# This confirmation message cannot be bypassed
+				await message.channel.send(f"""Are you sure you want to record your birthday as {birthday} and your 
+				timezone as UTC {timezone_f}? **You cannot edit these once recorded.** Send `confirm` in this channel 
+				to confirm. """.replace("\n", "").replace("\t", ""))
+				
 				# Wait for a message by the same author in the same channel
 				msg = await BRAIN.wait_for('message', 
 				check=(lambda m: m.channel == message.channel and m.author == message.author))
@@ -354,9 +370,9 @@ async def MAIN(message, args, level, perms):
 					return
 				
 				# If confirmation passed, record the birthday
-				cursor.execute(sql.SQL(""" INSERT INTO "public.birthday" VALUES (%s, %s)"""),
-				[message.author.id, birthday])
+				cursor.execute(sql.SQL(""" INSERT INTO "public.birthday" VALUES (%s, %s, %s)"""),
+				[message.author.id, birthday, timezone])
 
-				await message.channel.send(f"Successfully recorded your birthday as **{birthday}**!")
+				await message.channel.send(f"Successfully recorded your birthday as **{birthday} UTC {timezone_f}**!")
 				return
 				
