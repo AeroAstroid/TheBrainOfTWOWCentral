@@ -7,12 +7,12 @@ from calendar import monthrange
 HELP = {
 	"MAIN": "Used to manage the Brain Postgres database",
 	"FORMAT": "[subcommand]",
-	"CHANNEL": 2,
+	"CHANNEL": 0,
 	"USAGE": f"""wip
 	""".replace("\n", "").replace("\t", "")
 }
 
-PERMS = 2 # Staff
+PERMS = 1 # Member
 ALIASES = ["DB"]
 REQ = []
 
