@@ -66,6 +66,7 @@ async def on_ready():
 	PARAMS["TWOW_CENTRAL"] = discord.utils.get(BRAIN.guilds, id=TWOW_CENTRAL_ID)
 	PARAMS["STAFF"] = discord.utils.get(PARAMS["TWOW_CENTRAL"].roles, id=STAFF_ID)
 	PARAMS["MEMBER"] = discord.utils.get(PARAMS["TWOW_CENTRAL"].roles, id=MEMBER_ID)
+	PARAMS["BOT_ROLE"] = discord.utils.get(PARAMS["TWOW_CENTRAL"].roles, id=BOT_ROLE)
 	PARAMS["PUBLIC_CHANNELS"] = PUBLIC_CHANNELS
 
 	PARAMS["LOGS"] = discord.utils.get(PARAMS["TWOW_CENTRAL"].channels, id=LOG_CHANNEL)
