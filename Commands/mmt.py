@@ -157,6 +157,8 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 
 					for twow in ranks: # For each season...
 						for p_round in twow: # For each placement in a round...
+							if p_round.strip() == "":
+								continue
 							numbers = p_round.split("/") # Get a list of [rank, contestantcount]
 							# Points adds the amount of people you beat each round
 							score += int(numbers[1]) - int(numbers[0])
@@ -189,6 +191,9 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 
 					for twow in ranks:
 						for p_round in twow:
+							if p_round.strip() == "":
+								continue
+								
 							numbers = p_round.split("/")
 							if int(numbers[0]) == 1: # Count up for each `1` placement
 								wins += 1
@@ -210,6 +215,9 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 
 					for twow in ranks:
 						for p_round in twow:
+							if p_round.strip() == "":
+								continue
+
 							numbers = p_round.split("/")
 							# Add this round's NR to the total
 							total += (int(numbers[1]) - int(numbers[0])) / (int(numbers[1]) - 1)
@@ -264,8 +272,8 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 				spacing = 6
 			if args[2].lower() == "nr":
 				final_message = f"```diff\n--- ⭐ MiniMiniTWOW Normalized Rank Leaderboard Page {page} ⭐ ---\n\n"
-				final_message +=  " Rank |  Name                              |  Total   |  Average\n"
-				spacing = 8
+				final_message +=  " Rank |  Name                              |   Total   |  Average\n"
+				spacing = 9
 			if args[2].lower() == "wins":
 				final_message = f"```diff\n--- ⭐ MiniMiniTWOW Wins Leaderboard Page {page} ⭐ ---\n\n"
 				final_message +=  " Rank |  Name                              |  Wins\n"
