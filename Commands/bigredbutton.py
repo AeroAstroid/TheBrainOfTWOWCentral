@@ -72,6 +72,18 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 				Use `tc/bigredbutton press` to press this button!""".replace("\t", ""))
 
 			return
+		
+	if args[1].lower() == "forcegenerate" and perms == 2:
+		with psycopg2.connect(DB_LINK, sslmode="require") as db:
+			db.set_session(autocommit = True)
+			cursor = db.cursor()
+			serial_number = key_generator(random.randrange(8, 15))
+			exploding_chance = random.randrange(15, 50)
+
+			cursor.execute(
+			sql.SQL(""" UPDATE "public.bigredbutton" SET button = button + 1, info = {n_info} """).format(
+					n_info = sql.Literal(f"{serial_number} {exploding_chance}"),
+			))
 	
 	if args[1].lower() == "top":
 		with psycopg2.connect(DB_LINK, sslmode="require") as db:
@@ -81,7 +93,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			cursor.execute(sql.SQL(""" SELECT points FROM "public.bigredbutton" LIMIT 1 """))
 			unformatted_points = [x.split("-") for x in cursor.fetchone()[0].split(" ")]
 			points = []
-			
+
 			for x in unformatted_points:
 				try:
 					x[0] = int(x[0])
