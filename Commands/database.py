@@ -356,7 +356,7 @@ async def MAIN(message, args, level, perms):
 				months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 				birthday_format = months[birthday[1]-1] + " " + str(birthday[0])
 				birthday = "/".join([str(x) for x in birthday]) # Join the list again for the next few lines
-				timezone_f = "+" if timezone > 0 else "" + str(timezone)
+				timezone_f = ("+" if timezone > 0 else "") + str(timezone)
 
 				# This confirmation message cannot be bypassed
 				await message.channel.send(f"""Are you sure you want to record your birthday as {birthday_format} and your 
