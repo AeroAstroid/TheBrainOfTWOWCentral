@@ -47,7 +47,7 @@ class EVENT:
 			))
 			found = cursor.fetchall()
 
-			if found is None:
+			if len(found) == 0:
 				return
 			
 			birthday_mentions = grammar_list([f"<@{x[0]}>" for x in found])
