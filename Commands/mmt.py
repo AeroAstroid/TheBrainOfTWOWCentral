@@ -193,7 +193,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 						for p_round in twow:
 							if p_round.strip() == "":
 								continue
-								
+
 							numbers = p_round.split("/")
 							if int(numbers[0]) == 1: # Count up for each `1` placement
 								wins += 1
@@ -267,27 +267,27 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 
 			# Headers for each stat
 			if args[2].lower() == "points":
-				final_message = f"```diff\n--- ⭐ MiniMiniTWOW Point Leaderboard Page {page} ⭐ ---\n\n"
-				final_message +=  " Rank |  Name                              |  Pts.  |  Rounds\n"
+				final_message = f"```diff\n---⭐ MiniMiniTWOW Point Leaderboard Page {page} ⭐---\n\n"
+				final_message +=  " Rank |  Name                    |  Pts.  |  Rounds\n"
 				spacing = 6
 			if args[2].lower() == "nr":
-				final_message = f"```diff\n--- ⭐ MiniMiniTWOW Normalized Rank Leaderboard Page {page} ⭐ ---\n\n"
-				final_message +=  " Rank |  Name                              |   Total   |  Average\n"
+				final_message = f"```diff\n---⭐ MiniMiniTWOW Normalized Rank Leaderboard Page {page} ⭐---\n\n"
+				final_message +=  " Rank |  Name                    |   Total   |  Average\n"
 				spacing = 9
 			if args[2].lower() == "wins":
-				final_message = f"```diff\n--- ⭐ MiniMiniTWOW Wins Leaderboard Page {page} ⭐ ---\n\n"
-				final_message +=  " Rank |  Name                              |  Wins\n"
+				final_message = f"```diff\n---⭐ MiniMiniTWOW Wins Leaderboard Page {page} ⭐---\n\n"
+				final_message +=  " Rank |  Name                    |  Wins\n"
 				spacing = 4
 			if args[2].lower() == "roundwins":
-				final_message = f"```diff\n--- ⭐ MiniMiniTWOW Round Wins Leaderboard Page {page} ⭐ ---\n\n"
-				final_message +=  " Rank |  Name                              |  Round Wins\n"
+				final_message = f"```diff\n---⭐ MiniMiniTWOW Round Wins Leaderboard Page {page} ⭐---\n\n"
+				final_message +=  " Rank |  Name                    |  Round Wins\n"
 				spacing = 5
 
 			# Composition of each line of the leaderboard
 			for line in leaderboard:
 				symbol = "+" if line[0] == 1 else "-"
 				spaced_rank = f"{line[0]}{' ' * (4 - len(str(line[0])))}"
-				spaced_name = f"{line[1]}{' '*(34 - len(str(line[1])))}"
+				spaced_name = f"{line[1][:23]}{' '*(24 - len(str(line[1])))}"
 				spaced_points = f"{line[2]}{' '*(spacing - len(str(line[2])))}"
 				try: # Some stats will have two number columns...
 					formatted = f"{symbol} {spaced_rank}|  {spaced_name}|  {spaced_points}|  {line[3]}\n"
