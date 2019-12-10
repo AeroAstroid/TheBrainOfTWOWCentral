@@ -82,11 +82,11 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			points = [x.split("-") for x in cursor.fetchone()[0].split(" ")]
 			
 			for x in points:
-				if x.strip() == "":
+				try:
+					x[0] = int(x[0])
+					x[1] = int(x[1])
+				except ValueError:
 					continue
-					
-				x[0] = int(x[0])
-				x[1] = int(x[1])
 			
 			points = sorted(points, reverse=True, key=lambda x: x[1])
 
