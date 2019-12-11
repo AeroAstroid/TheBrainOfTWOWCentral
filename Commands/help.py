@@ -73,7 +73,7 @@ async def MAIN(message, args, level, perms, COMMANDS):
 		c = alias_list[c]
 	
 	if c not in com:
-		await message.channel.send("Invalid command to get help for!")
+		await message.channel.send("Invalid command to get help for! this is a test " + c)
 		return
 	
 	# I might remake this part later because it feels too hardcodey. Corresponds to ["HELP"]["CHANNEL"] of each command
