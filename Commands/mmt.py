@@ -223,6 +223,9 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 							total += (int(numbers[1]) - int(numbers[0])) / (int(numbers[1]) - 1)
 							rounds += 1
 					
+					if rounds == 0:
+						continue
+					
 					# Format those as percentage strings
 					average = "{:.2%}".format(total / rounds)
 					total = "{:.2%}".format(total)
