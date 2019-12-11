@@ -224,7 +224,7 @@ async def MAIN(message, args, level, perms):
 					if len(to_send[0]) > 1950:
 						to_send[0] = to_send[0][:1947] + "..."
 						to_send.append(to_send[0][1947:3900])
-						
+
 					for z in to_send:
 						await message.channel.send(z)
 					return
@@ -259,7 +259,22 @@ async def MAIN(message, args, level, perms):
 				
 				if args[4].lower() == "remove":
 
-					if level == 5: # Specifying no arguments will delete the entire table's contents
+					if level == 5:
+						await message.channel.send("Include a search column!")
+						return
+
+					if level == 6 and args[5].lower() == "all": # Delete all entries in the table
+						await message.channel.send(f"""Are you sure you want to delete all entries in **{name}**? 
+						Send `confirm` to transfer.""".replace("\n", "").replace("\t", ""))
+						
+						# Check for the next message by the same person in the same channel
+						msg = await BRAIN.wait_for('message', 
+						check=lambda m: (m.author == message.author and m.channel == message.channel))
+
+						if msg.content.lower() != "confirm": # If it's not `confirm`, cancel the command
+							await message.channel.send("Database command cancelled.")
+							return
+
 						cursor.execute(sql.SQL(""" DELETE from {table_name} """).format(
 							table_name = sql.Identifier(full_name)
 						))
