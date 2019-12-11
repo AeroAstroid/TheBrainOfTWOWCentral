@@ -222,8 +222,8 @@ async def MAIN(message, args, level, perms):
 					# Limit messages to 1950 characters at most. Cut them off if bigger. Getting any closer to 2000
 					# can cause errors regardless for some reason, so I try to avoid it
 					if len(to_send[0]) > 1950:
+						to_send.append(f"> {to_send[0][1947:3900]}")
 						to_send[0] = to_send[0][:1947] + "..."
-						to_send.append(to_send[0][1947:3900])
 
 					for z in to_send:
 						await message.channel.send(z)
