@@ -86,7 +86,7 @@ class EVENT:
 				for member in found:
 					await TWOW_CENTRAL.get_member(int(member[0])).add_roles(self.BIRTHDAY_ROLE)
 
-				f_tz = "+" if tz[0] > 0 else "" + str(tz[0])
+				f_tz = ("+" if tz[0] > 0 else "") + str(tz[0])
 		
 				birthday_mentions = grammar_list([f"<@{x[0]}>" for x in found])
 
