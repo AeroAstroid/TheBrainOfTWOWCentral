@@ -258,7 +258,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 				await message.channel.send(
 				f"""<:bigredbutton:654042578617892893> ***The #{button_number} Big Red Button blew up!***
 
-				<@{message.author.id}> been incapacitated. Their point total is now **{half_points}**.
+				<@{message.author.id}> has been incapacitated. Their point total is now **{half_points}**.
 				They cannot press any more buttons for 6 hours.
 				The button is broken. It'll take **5 minutes** to rebuild it.""".replace("\t", ""))
 
