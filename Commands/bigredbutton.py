@@ -124,7 +124,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 				page = args[2]
 			
 			beginning = f"```diff\n---⭐ Big Red Button Points Leaderboard Page {page} ⭐---\n"
-			beginning += "\n Rank |  Name                    |  Points\n"
+			beginning += "\n Rank |  Name                  |  Points\n"
 
 			for person in points:
 				r = points.index(person) + 1
