@@ -284,7 +284,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			if str(message.author.id)[-1] in serial_number:
 				new_chance *= 0.67 # If last digit of ID is in serial...
 			if (strip_alpha(message.author.name)[0].upper() in serial_number
-			or strip_alpha(message.author.name) == "":
+			or strip_alpha(message.author.name) == ""):
 				new_chance *= 2 # If first letter of username is in serial...
 			
 			seed = random.uniform(0, 100) # Has to be above the explosion chance otherwise it explodes
