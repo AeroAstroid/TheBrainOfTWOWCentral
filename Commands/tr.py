@@ -126,7 +126,7 @@ async def MAIN(message, args, level, perms):
 
 	width_note = ""
 	if height >= 10:
-		width_note = "\n*(tr_ width not to scale)*"
+		width_note = "*(tr_ width not to scale)*"
 
 	prefix = ""
 	if height > 1000:
