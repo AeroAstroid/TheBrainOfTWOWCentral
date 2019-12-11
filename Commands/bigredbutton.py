@@ -27,6 +27,14 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 	if isinstance(message.channel, discord.DMChannel):
 		await message.channel.send("This command cannot be used in DMs!")
 		return
+	
+	if message.author.id == 382925349144494080:
+		await message.channel.send("Nice one, Bazboomer.")
+		return
+	
+	if message.author.id == 155149108183695360:
+		await message.channel.send("Act your age, Dynosaur.")
+		return
 
 	if level == 1:
 		with psycopg2.connect(DB_LINK, sslmode="require") as db:
@@ -257,7 +265,6 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 
 				await message.channel.send(
 				f"""<:bigredbutton:654042578617892893> ***The #{button_number} Big Red Button blew up!***
-				({round(seed, 2)} <= {new_chance})
 
 				<@{message.author.id}> been incapacitated. Their point total is now **{half_points}**.
 				They cannot press any more buttons for 6 hours.
@@ -290,7 +297,6 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 
 				await message.channel.send(f"""
 				<:bigredbutton:654042578617892893> The #{button_number} Big Red Button did nothing.
-				({round(seed, 2)} <= {new_chance})
 
 				<@{message.author.id}> gained {exploding_chance} points. Another button arrives in **15 seconds**.
 				""".replace("\t", ""))
