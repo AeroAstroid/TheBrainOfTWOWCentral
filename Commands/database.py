@@ -217,13 +217,16 @@ async def MAIN(message, args, level, perms):
 					reported_limit = 'all' if limit >= 99999 else limit
 					plural = 'ies' if limit != 1 else 'y'
 
-					to_send = f"Here are {reported_limit} entr{plural} of **{name}**.\n> {formatted}"
+					to_send = [f"Here are {reported_limit} entr{plural} of **{name}**.\n> {formatted}"]
 
 					# Limit messages to 1950 characters at most. Cut them off if bigger. Getting any closer to 2000
 					# can cause errors regardless for some reason, so I try to avoid it
-					if len(to_send) > 1950:
-						to_send = to_send[:1947] + "..."
-					await message.channel.send(to_send)
+					if len(to_send[0]) > 1950:
+						to_send[0] = to_send[0][:1947] + "..."
+						to_send.append(to_send[0][1947:3900])
+						
+					for z in to_send:
+						await message.channel.send(z)
 					return
 				
 				if args[4].lower() == "add":
