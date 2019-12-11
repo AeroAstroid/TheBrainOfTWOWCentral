@@ -1,6 +1,6 @@
 from Config._const import PREFIX
 import numpy as np
-import os, discord, random
+import os, discord, random, asyncio
 from PIL import Image, ImageDraw
 from Config._functions import grammar_list
 
@@ -17,9 +17,19 @@ ALIASES = ["TR_"]
 REQ = []
 
 async def MAIN(message, args, level, perms):
-	pixel_count = np.random.normal(1440, 30000)
-	while pixel_count < 250:
-		pixel_count = np.random.normal(1440, 30000)
+	if level != 1:
+		if args[1].lower() == "queue" and perms == 2:
+			await message.channel.send(open("Config/_tr_gen.txt", "r").read())
+			return
+	
+	tr_gen = open("Config/_tr_gen.txt", "r").read()
+	tr_gen += f" {message.id}"
+	open("Config/_tr_gen.txt", "w").write(tr_gen.strip())
+
+	while not open("Config/_tr_gen.txt", "r").read().startswith(str(message.id)):
+		await asyncio.sleep(1)
+
+	pixel_count = 250 * np.power(2.5, np.random.pareto(1))
 
 	image_pixels = 551 + 115 + pixel_count
 	height = (0.2 / 860) * image_pixels
@@ -50,9 +60,9 @@ async def MAIN(message, args, level, perms):
 	w = 1440 * ratio
 	h = int(image_pixels * ratio)
 
-	center_w = min(300, 300 / np.sqrt(height))
+	center_w = max(min(300, 300 / np.sqrt(height)), 70)
 
-	to_post = Image.new("RGBA", (1600, 600), (50, 185, 255, 60))
+	to_post = Image.open("Images/tr_ background.png").convert("RGBA")
 	to_post.paste(tr_base, (int(center_w - w/2), 580 - h), mask=tr_base)
 
 	scale_objects = {
@@ -117,8 +127,14 @@ async def MAIN(message, args, level, perms):
 	width_note = ""
 	if height >= 10:
 		width_note = "\n*(tr_ width not to scale)*"
-	await message.channel.send(f"**Your generated tr_ is {round(height, 4)}m tall!**{width_note}\n\n{to_scale}",
-	file=discord.File("Images/generated tr_.png"))
+
+	await message.channel.send(f"""**<@{message.author.id}>, your generated tr_ is {round(height, 4)}m tall!**
+	{width_note}
+	{to_scale}""".replace("\t", ""), file=discord.File("Images/generated tr_.png"))
 
 	os.remove("Images/generated tr_.png")
+
+	tr_gen = open("Config/_tr_gen.txt", "r").read().split(" ")
+	tr_gen.remove(str(message.id))
+	open("Config/_tr_gen.txt", "w").write(" ".join(tr_gen).strip())
 	return
