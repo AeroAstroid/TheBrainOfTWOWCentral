@@ -22,7 +22,7 @@ async def MAIN(message, args, level, perms, COMMANDS):
 	
 	alias_list = {}
 	for c in com:
-		for a in c['ALIASES']:
+		for a in COMMANDS[c]['ALIASES']:
 			alias_list[a] = c
 
 	# Lambda returns the permissions, so it's sorted with lower permissions first (so that staff commands are
@@ -73,7 +73,7 @@ async def MAIN(message, args, level, perms, COMMANDS):
 		c = alias_list[c]
 	
 	if c not in com:
-		await message.channel.send("Invalid command to get help for! this is a test " + c)
+		await message.channel.send("Invalid command to get help for!")
 		return
 	
 	# I might remake this part later because it feels too hardcodey. Corresponds to ["HELP"]["CHANNEL"] of each command
