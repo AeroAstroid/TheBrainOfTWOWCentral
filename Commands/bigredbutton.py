@@ -1,5 +1,5 @@
 from Config._const import PREFIX, DB_LINK
-from Config._functions import key_generator, strip_alpha
+from Config._functions import key_generator, strip_alpha, is_whole
 import psycopg2, random, time, asyncio, discord
 import numpy as np
 from psycopg2 import sql
@@ -39,7 +39,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			if button_info is None:
 				button_number = 1
 				serial_number = key_generator(random.randrange(8, 15))
-				exploding_chance = random.randrange(15, 50)
+				exploding_chance = random.randrange(15, 51)
 
 				cursor.execute(sql.SQL(""" INSERT INTO "public.bigredbutton" VALUES (1, {serial}, '', '') """).format(
 					serial = sql.Literal(f"{serial_number} {exploding_chance}")
@@ -78,7 +78,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			db.set_session(autocommit = True)
 			cursor = db.cursor()
 			serial_number = key_generator(random.randrange(8, 15))
-			exploding_chance = random.randrange(15, 50)
+			exploding_chance = random.randrange(15, 51)
 
 			cursor.execute(
 			sql.SQL(""" UPDATE "public.bigredbutton" SET button = button + 1, info = {n_info} """).format(
@@ -227,7 +227,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			await message.channel.send(f"**{message.author.name}** presses the button, and...")
 			await asyncio.sleep(3)
 
-			if seed <= exploding_chance:
+			if seed <= new_chance:
 				n_button_info = f"1-{int(time.time())}"
 				new_inc = f" {message.author.id}-{n_button_info[2:]}"
 				points = button_info[3].split(" ")
@@ -257,6 +257,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 
 				await message.channel.send(
 				f"""<:bigredbutton:654042578617892893> ***The #{button_number} Big Red Button blew up!***
+				({round(seed, 2)} <= {new_chance})
 
 				<@{message.author.id}> been incapacitated. Their point total is now **{half_points}**.
 				They cannot press any more buttons for 6 hours.
@@ -289,6 +290,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 
 				await message.channel.send(f"""
 				<:bigredbutton:654042578617892893> The #{button_number} Big Red Button did nothing.
+				({round(seed, 2)} <= {new_chance})
 
 				<@{message.author.id}> gained {exploding_chance} points. Another button arrives in **15 seconds**.
 				""".replace("\t", ""))
@@ -296,7 +298,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 				await asyncio.sleep(15)
 
 			serial_number = key_generator(random.randrange(8, 15))
-			exploding_chance = random.randrange(15, 50)
+			exploding_chance = random.randrange(15, 51)
 
 			cursor.execute(
 			sql.SQL(""" UPDATE "public.bigredbutton" SET button = button + 1, info = {n_info} """).format(
