@@ -29,7 +29,7 @@ async def MAIN(message, args, level, perms):
 	while not open("Config/_tr_gen.txt", "r").read().startswith(str(message.id)):
 		await asyncio.sleep(1)
 
-	pixel_count = 250 * np.power(2.5, np.random.pareto(1))
+	pixel_count = 125 * np.power(10, np.power(np.e, random.uniform(0, 2.5)) - 1)
 
 	image_pixels = 551 + 115 + pixel_count
 	height = (0.2 / 860) * image_pixels
@@ -128,7 +128,12 @@ async def MAIN(message, args, level, perms):
 	if height >= 10:
 		width_note = "\n*(tr_ width not to scale)*"
 
-	await message.channel.send(f"""**<@{message.author.id}>, your generated tr_ is {round(height, 4)}m tall!**
+	prefix = ""
+	if height > 1000:
+		height = height / 1000
+		prefix = "k"
+	await message.channel.send(
+	f"""**<@{message.author.id}>, your generated tr_ is {round(height, 4)}{prefix}m tall!**
 	{width_note}
 	{to_scale}""".replace("\t", ""), file=discord.File("Images/generated tr_.png"))
 
