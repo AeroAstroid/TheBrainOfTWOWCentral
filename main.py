@@ -126,6 +126,14 @@ async def on_ready():
 			if perms < 2 and (not isinstance(message.channel, discord.DMChannel)
 			and message.channel.id not in BOT_CHANNELS):
 				return # Ignore commands from non-staff that are not in bot channels
+			
+			if message.author.id == 382925349144494080:
+				await message.channel.send("Nice one, Bazboomer.")
+				return
+			
+			if message.author.id == 155149108183695360:
+				await message.channel.send("Act your age, Dynosaur.")
+				return
 
 			print(f"""[COMMAND] {message.author.name} - {message.author.id} - 
 			{'DMs' if isinstance(message.channel, discord.DMChannel) else message.guild.name} - 

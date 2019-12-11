@@ -27,14 +27,6 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 	if isinstance(message.channel, discord.DMChannel):
 		await message.channel.send("This command cannot be used in DMs!")
 		return
-	
-	if message.author.id == 382925349144494080:
-		await message.channel.send("Nice one, Bazboomer.")
-		return
-	
-	if message.author.id == 155149108183695360:
-		await message.channel.send("Act your age, Dynosaur.")
-		return
 
 	if level == 1:
 		with psycopg2.connect(DB_LINK, sslmode="require") as db:
