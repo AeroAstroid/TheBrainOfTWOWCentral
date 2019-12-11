@@ -15,11 +15,12 @@ REQ = ["BOT_ROLE", "TWOW_CENTRAL"]
 async def MAIN(message, args, level, perms, BOT_ROLE, TWOW_CENTRAL):
 	person = TWOW_CENTRAL.get_member(message.author.id)
 
-	if BOT_ROLE in person.roles:
-		await person.remove_roles(BOT_ROLE)
+	if BOT_ROLE in person.roles: # If they already have the role...
+		await person.remove_roles(BOT_ROLE) # remove it.
 		await message.channel.send(f"<@{message.author.id}>, you no longer have `Interested in the Bot`.")
 		return
 	
-	await person.add_roles(BOT_ROLE)
+	# If they don't have the role yet...
+	await person.add_roles(BOT_ROLE) # add it.
 	await message.channel.send(f"**<@{message.author.id}>, you now have `Interested in the Bot`!**")
 	return

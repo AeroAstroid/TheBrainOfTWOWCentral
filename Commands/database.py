@@ -191,7 +191,7 @@ async def MAIN(message, args, level, perms):
 					limit = 99999
 					get_entries = True
 
-				elif args[4].lower() not in ["add", "remove"]:
+				elif args[4].lower() not in ["add", "remove", "edit"]:
 					# If it's not a further subcommand, interpret it as a number
 					try:
 						limit = int(args[4])
@@ -292,6 +292,70 @@ async def MAIN(message, args, level, perms):
 					))
 
 					await message.channel.send(f"Successfully deleted entries from table **{name}**!")
+					return
+				
+				if args[4].lower() == "edit":
+
+					if level < 12: # Requires at least 7 extra args: `search_column // search_key -> upd_column // upd_key`
+						await message.channel.send("Make sure to include searching columns and columns to update!")
+						return
+					
+					# Split arguments into searching and updating
+					searching_arguments = " ".join(args[5:]).split(" -> ")[0].split(" // ")
+					updating_arguments = " ".join(args[5:]).split(" -> ")[1].split(" // ")
+
+					if len(searching_arguments) % 2 == 1:
+						await message.channel.send("Include a value for every search column!")
+						return
+					
+					if len(updating_arguments) % 2 == 1:
+						await message.channel.send("Include a value for every updating column!")
+						return
+					
+					cursor.execute(sql.SQL(""" SELECT column_name FROM information_schema.columns 
+					WHERE table_name = {table_name}""").format(
+						table_name = sql.Literal(full_name),
+					))
+
+					columns = cursor.fetchall()
+					
+					for column in range(int(len(searching_arguments) / 2)):
+						if (searching_arguments[column*2],) not in columns:
+							await message.channel.send(f"There's no column named {searching_arguments[column*2]}!")
+							return
+					for column in range(int(len(updating_arguments) / 2)):
+						if (updating_arguments[column*2],) not in columns:
+							await message.channel.send(f"There's no column named {updating_arguments[column*2]}!")
+							return
+					
+					update_list = [updating_arguments[x] for x in range(len(updating_arguments)) if x % 2 == 0]
+					search_list = [searching_arguments[x] for x in range(len(searching_arguments)) if x % 2 == 0]
+
+					value_list = [updating_arguments[x] for x in range(len(updating_arguments)) if x % 2 == 1]
+					value_list += [searching_arguments[x] for x in range(len(searching_arguments)) if x % 2 == 1]
+
+					initial_SQL = """ UPDATE {} SET """
+					column_statements = ["{} = %s"] * len(update_list)
+					initial_SQL += ", ".join(column_statements) + " WHERE "
+					column_statements = ["{} = %s"] * len(search_list)
+					initial_SQL += " AND ".join(column_statements)
+
+					for x in range(len(update_list)):
+						update_list[x] = sql.Identifier(update_list[x])
+
+					for x in range(len(search_list)):
+						search_list[x] = sql.Identifier(search_list[x])
+					
+					try:
+						# e.g. """ UPDATE {} SET {} = %s, {} = %s WHERE {} = %s AND {} = %s """
+						cursor.execute(sql.SQL(initial_SQL).format(
+							sql.Identifier(full_name), *update_list, *search_list
+						), value_list)
+					except Exception:
+						await message.channel.send("Failed to edit entry! Make sure your syntax is right.")
+						return
+					
+					await message.channel.send(f"Successfully edited entries in **{name}**!")
 					return
 
 	
