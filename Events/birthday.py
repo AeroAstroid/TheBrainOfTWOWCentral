@@ -102,7 +102,7 @@ class EVENT:
 		
 				birthday_mentions = grammar_list([f"<@{x[0]}>" for x in found])
 
-				#await self.CHANNEL.send(f"🎉 It's now **{tz[1]} UTC {f_tz}**! Happy birthday to {birthday_mentions}! 🎉")
+				await self.CHANNEL.send(f"🎉 It's now **{tz[1]} UTC {f_tz}**! Happy birthday to {birthday_mentions}! 🎉")
 		return
 
 	# Change a parameter of the event

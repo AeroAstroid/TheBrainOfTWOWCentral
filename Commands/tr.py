@@ -54,16 +54,16 @@ async def MAIN(message, args, level, perms):
 	
 	tr_base.paste(face, (0, face_position), mask=face)
 
-	ratio = 500 / image_pixels
+	ratio = 250 / image_pixels
 	
 	tr_base = tr_base.resize((int(1440 * ratio), int(image_pixels * ratio)), Image.ANTIALIAS)
 	w = 1440 * ratio
 	h = int(image_pixels * ratio)
 
-	center_w = max(min(300, 300 / np.sqrt(height)), 70)
+	center_w = max(min(150, 150 / np.sqrt(height)), 35)
 
 	to_post = Image.open("Images/tr_ background.png").convert("RGBA")
-	to_post.paste(tr_base, (int(center_w - w/2), 580 - h), mask=tr_base)
+	to_post.paste(tr_base, (int(center_w - w/2), 290 - h), mask=tr_base)
 
 	scale_objects = {
 		"Tesla Cybertruck": 1.9,
@@ -100,7 +100,7 @@ async def MAIN(message, args, level, perms):
 
 	current_w = center_w * 1.65
 
-	pixels_per_height = 500 / height
+	pixels_per_height = 250 / height
 
 	references = []
 	for scale in scale_objects.keys():
@@ -117,7 +117,7 @@ async def MAIN(message, args, level, perms):
 		possible_ref = []
 
 		for ref in references:
-			if ref[2] + current_w <= 1580:
+			if ref[2] + current_w <= 790:
 				possible_ref.append(ref)
 		
 		if len(possible_ref) == 0:
@@ -125,8 +125,8 @@ async def MAIN(message, args, level, perms):
 
 		ref = random.choice(possible_ref)
 
-		to_post.paste(ref[1], (int(current_w), 580 - ref[3]), mask=ref[1])
-		current_w += ref[2] + 70
+		to_post.paste(ref[1], (int(current_w), 290 - ref[3]), mask=ref[1])
+		current_w += ref[2] + 35
 
 		prefix = ""
 		if scale_objects[ref[0]] > 1000:
