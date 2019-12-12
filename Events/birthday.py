@@ -85,12 +85,15 @@ class EVENT:
 				
 				for member in found:
 					if self.BIRTHDAY_ROLE in TWOW_CENTRAL.get_member(int(member[0])).roles:
+						print(member[0])
 						found[found.index(member)] = 0
 						continue
 
 					await TWOW_CENTRAL.get_member(int(member[0])).add_roles(self.BIRTHDAY_ROLE)
 
+				print(found)
 				found = [x for x in found if x != 0]
+				print(found)
 
 				if len(found) == 0:
 					return
@@ -99,7 +102,7 @@ class EVENT:
 		
 				birthday_mentions = grammar_list([f"<@{x[0]}>" for x in found])
 
-				await self.CHANNEL.send(f"🎉 It's now **{tz[1]} UTC {f_tz}**! Happy birthday to {birthday_mentions}! 🎉")
+				#await self.CHANNEL.send(f"🎉 It's now **{tz[1]} UTC {f_tz}**! Happy birthday to {birthday_mentions}! 🎉")
 		return
 
 	# Change a parameter of the event
