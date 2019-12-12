@@ -95,7 +95,8 @@ async def MAIN(message, args, level, perms):
 		"Mount Everest": 8848,
 		"Hiroshima Mushroom Cloud": 18288,
 		"Shimizu Mega-City Pyramid": 2000,
-		"Kármán Line": 100000
+		"Kármán Line": 100000,
+		"Birthday Cake": 0.11
 	}
 
 	current_w = center_w * 1.65
