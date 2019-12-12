@@ -81,7 +81,17 @@ async def MAIN(message, args, level, perms):
 		"Medium Dog House": 0.65,
 		"Hedgehog": 0.12,
 		"Pine Tree": 15,
-		"All Diary of a Wimpy Kid Books Stacked on Top of Each Other": 0.27
+		"All Diary of a Wimpy Kid Books Stacked on Top of Each Other": 0.27,
+		"Brazil": 4292000,
+		"Earth": 12742000,
+		"Empire State Building": 441,
+		"Neutron Star": 10000,
+		"The Three Pyramids of Giza Stacked on Top of Each Other": 348.1,
+		"Giratina Origin Form": 6.9,
+		"Eiffel Tower": 324,
+		"Christ the Redeemer": 38,
+		"Jupiter": 139822000,
+		"Saturn's Rings": 357864000
 	}
 
 	current_w = center_w * 1.65
@@ -114,7 +124,12 @@ async def MAIN(message, args, level, perms):
 		to_post.paste(ref[1], (int(current_w), 580 - ref[3]), mask=ref[1])
 		current_w += ref[2] + 70
 
-		to_scale.append(f"**`{ref[0]}`** ({scale_objects[ref[0]]}m tall)")
+		prefix = ""
+		if scale_objects[ref[0]] > 1000:
+			scale_objects[ref[0]] = scale_objects[ref[0]] / 1000
+			prefix = "k"
+		
+		to_scale.append(f"**`{ref[0]}`** ({scale_objects[ref[0]]}{prefix}m tall)")
 		references.remove(ref)
 
 	if len(to_scale) != 0:

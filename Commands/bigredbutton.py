@@ -153,7 +153,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			beginning += "\n Rank |  Name                  |  Points\n"
 
 			for person in points:
-				r = points.index(person) + 1 + page * 10
+				r = points.index(person) + 1 + (page - 1) * 10
 				if r == 1: # + if the person is first
 					line = f"+ {r}{' ' * (4 - len(str(r)))}|  "
 				else: # - otherwise
