@@ -91,7 +91,11 @@ async def MAIN(message, args, level, perms):
 		"Eiffel Tower": 324,
 		"Christ the Redeemer": 38,
 		"Jupiter": 139822000,
-		"Saturn's Rings": 357864000
+		"Saturn's Rings": 357864000,
+		"Mount Everest": 8848,
+		"Hiroshima Mushroom Cloud": 18288,
+		"Shimizu Mega-City Pyramid": 2000,
+		"Kármán Line": 100000
 	}
 
 	current_w = center_w * 1.65
