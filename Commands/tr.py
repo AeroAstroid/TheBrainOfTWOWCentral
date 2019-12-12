@@ -31,12 +31,12 @@ async def MAIN(message, args, level, perms):
 
 	pixel_count = 250 * np.power(10, np.power(np.e, random.uniform(0, 2.5)) - 1)
 
-	image_pixels = 551 + 115 + pixel_count
+	image_pixels = 490 + 115 + pixel_count
 	height = (0.2 / 860) * image_pixels
 
 	if height > 10:
 		image_pixels = 10 / (0.2 / 860)
-		pixel_count = image_pixels - 115 - 551
+		pixel_count = image_pixels - 115 - 490
 
 	top = Image.open("Images/tr_ top.png").convert("RGBA")
 	face = Image.open("Images/tr_ face.png").convert("RGBA")
@@ -47,10 +47,10 @@ async def MAIN(message, args, level, perms):
 	tr_base.paste(top, (0, 0))
 	grad = grad.resize((1440, int(pixel_count)))
 	tr_base.paste(grad, (0, 115))
-	tr_base.paste(bottom, (0, int(image_pixels)-670), mask=bottom)
+	tr_base.paste(bottom, (0, int(image_pixels)-609), mask=bottom)
 
 	face_position = min(309, 
-		int(image_pixels/2) - 343)
+		int(image_pixels/2) - 312)
 	
 	tr_base.paste(face, (0, face_position), mask=face)
 
@@ -96,7 +96,8 @@ async def MAIN(message, args, level, perms):
 		"Hiroshima Mushroom Cloud": 18288,
 		"Shimizu Mega-City Pyramid": 2000,
 		"Kármán Line": 100000,
-		"Birthday Cake": 0.11
+		"Birthday Cake": 0.11,
+		"Regular Book": 0.3043
 	}
 
 	current_w = center_w * 1.65
