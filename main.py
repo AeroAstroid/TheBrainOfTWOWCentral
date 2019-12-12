@@ -53,6 +53,8 @@ async def event_task(): # This is an event handler for the time-based functions 
 
 @BRAIN.event
 async def on_ready():
+	open("Config/_tr_gen.txt", "w").write()
+	
 	# Define parameters that could be used in commands in the PARAMS dict
 	PARAMS["LOGIN"] = time.time()
 	PARAMS["LOGIN_TIME"] = datetime.utcnow()
