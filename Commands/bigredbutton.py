@@ -146,7 +146,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 				lower = (int(args[2]) - 1) * 10
 				upper = int(args[2]) * 10
 				points = points[lower:upper]
-				page = args[2]
+				page = int(args[2])
 			
 			# Top of the message
 			beginning = f"```diff\n---⭐ Big Red Button Points Leaderboard Page {page} ⭐---\n"
