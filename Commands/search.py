@@ -3,7 +3,7 @@ import discord
 
 HELP = {
 	"MAIN": "Searches between two message IDs",
-	"FORMAT": "[channel:] (before:) (after:) (limit:)",
+	"FORMAT": "[channel:] (before:) (after:) (limit:) (content:)",
 	"CHANNEL": 2,
 	"USAGE": f"""Using `{PREFIX}search` will trigger a search command using bot message history. 
 	You can specify different options for searching `(before:)` an ID, `(after:)` an ID, searching only though a 
@@ -73,6 +73,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 	after = None
 	before = None
 	limit = 100000
+	content = None
 
 	for param in args[1:]:
 		if param.lower().startswith("after:"):
@@ -97,18 +98,37 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			except ValueError:
 				await message.channel.send(f"Invalid message ID for `limit:` parameter!")
 				return
-	
-	message_count = 0
+		
+		if param.lower().startswith("content:"):
+			end_index = msg[msg.find("content:") + 8:].find("]")
+			if end_index == -1:
+				await message.channel.send("You forgot to close the square brackets!")
+				return
+
+			end_index += msg.find("content:") + 8
+
+			content = msg[msg.find("content:") + 9:end_index]
+
 	recorded_count = 0
 	counter = await message.channel.send(f"Searching... Found 0 messages so far.")
+	messages = []
 
 	for chnl in channels:
 		async for msg_history in chnl.history(limit=limit, before=before, after=after):
-			message_count += 1
+			if content is None or msg_history.content.lower().find(content) > -1:
+				messages.append(msg_history)
 
-			if message_count - recorded_count >= 1000:
+			if len(messages) - recorded_count >= 1000:
 				recorded_count += 1000
 				await counter.edit(content=f"Searching... Found {recorded_count} messages so far.")
 	
-	await counter.edit(content=f"**Finished searching.** Found {message_count} messages fitting the criteria.")
+	messages = [x for x in sorted(messages, key=lambda x: x.id) if (x.id != message.id and x.id != counter.id)]
+	message_count = len(messages)
+	oldest = messages[0]
+	newest = messages[-1]
+
+	await counter.edit(content=f"""**Finished searching.** Found {message_count} messages fitting the criteria.
+	Oldest message: https://discordapp.com/channels/{oldest.guild.id}/{oldest.channel.id}/{oldest.id}
+	Newest message: https://discordapp.com/channels/{newest.guild.id}/{newest.channel.id}/{newest.id}
+	""".replace("\t", ""))
 	return
