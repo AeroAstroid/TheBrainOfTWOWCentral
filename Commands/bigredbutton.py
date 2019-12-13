@@ -106,7 +106,8 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			else: # If there's a button and that's it
 				button_number = button_info[0] # Report the button number...
 				serial_number = button_info[1].split(" ")[0] # Its serial...
-				exploding_chance = button_info[1].split(" ")[1] # And its explosion chance
+				exploding_chance = button_info[1].split(" ")[1] # ...Its explosion chance
+				inspector = button_info[1].split(" ")[2] # And its inspector
 			
 			# [*] Report the current button
 			await message.channel.send(
