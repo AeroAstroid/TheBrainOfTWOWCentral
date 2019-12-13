@@ -1,5 +1,5 @@
 from Config._const import PREFIX, DB_LINK
-from Config._functions import key_generator, strip_alpha, is_whole
+from Config._functions import key_generator, strip_alpha, is_whole, number_key
 import psycopg2, random, time, asyncio, discord
 import numpy as np
 from psycopg2 import sql
