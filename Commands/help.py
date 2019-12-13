@@ -130,6 +130,12 @@ async def MAIN(message, args, level, perms, COMMANDS):
 		embed.add_field(name=f"**{PREFIX}{c.lower()} {sc.lower()} {COMMANDS[c]['HELP'][sc]['FORMAT']}**",
 		value=COMMANDS[c]["HELP"][sc]["USAGE"] + "\n\u200b", inline=False)
 
+		try: # This part is different. Some commands have USAGE strings longer than the maximum allowed of 1024 chars
+			# So I split them up into two strings and add the second one (only if it exists, that is.)
+			embed.add_field(name="\u200b", value=COMMANDS[c]["HELP"][sc]["USAGE2"] + "\n\u200b", inline=False)
+		except:
+			pass
+
 		embed.add_field(name="Conditions",
 		value = f"""Requires {'staff' if perms == 2 else ('member' if perms == 1 else 'no')} permissions
 		{channel_list[COMMANDS[c]['HELP'][sc]['CHANNEL']]}""".replace("\t", ""), inline=False)
