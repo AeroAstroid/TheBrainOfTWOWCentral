@@ -9,13 +9,19 @@ HELP = {
 	"FORMAT": "('press'/'top')",
 	"CHANNEL": 4,
 	"USAGE": f"""Using `{PREFIX}bigredbutton` will give you information on the current Big Red Button, such as its 
-	chance of exploding and serial number. Using `{PREFIX}bigredbutton press` will press the button. If it doesn't 
-	explode, you gain points equal to its chance of exploding. If it explodes, the button breaks and cannot be pressed 
-	for 5 minutes, and you're incapacitated and cannot press any buttons for 6 hours. Once a button's pressed, a new 
-	one is generated with a new serial number and chance of exploding. If the last digit of your user ID appears in 
-	the serial number, the chances of the button exploding when you press it are multiplied by 0.67. If the first 
-	letter of your username appears in the serial number, the chances of the button exploding when you press it are 
-	multiplied by 2.""".replace("\n", "").replace("\t", "")
+	chance of exploding, serial number and inspector code. Using `{PREFIX}bigredbutton press` will press the button. 
+	If it doesn't explode, you gain points equal to its chance of exploding. If it explodes, the button breaks and 
+	cannot be pressed for 5 minutes, and you're incapacitated, lose points, and cannot press any buttons for 6 hours. 
+	Once a button's pressed, a new one is generated with a new serial number and chance of exploding. If the last 
+	digit of your user ID appears in the serial number, the chances of the button exploding when you press it are 
+	multiplied by 0.67. If the first letter of your username appears in the serial number, the chances of the button 
+	exploding when you press it are multiplied by 2. Upon explosion, you lose half of your points. If the factory 
+	inspector's code shares two digits with your discriminator, the button's explosion only takes away a quarter of 
+	your points. If it shares all three digits with your discriminator, it only takes away one tenth of your points 
+	upon exploding. Shared digits can only be paired once; an inspector code of 770 and a discriminator of 7316 only 
+	counts as one shared digit (because the first 7 pairs with the 7 in the discriminator, but the other 7 has no 
+	other 7 to pair with. This is so discriminators or inspector codes with repeating digits don't provide any 
+	advantage or disadvantage.)""".replace("\n", "").replace("\t", "")
 }
 
 PERMS = 1 # Member
@@ -41,9 +47,10 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 				button_number = 1 # It'd be the first ever button
 				serial_number = key_generator(random.randrange(8, 15)) # Generate serial
 				exploding_chance = random.randrange(15, 51) # 15 to 50% chance of exploding
+				inspector = number_key(3) # Factory inspector code
 
 				cursor.execute(sql.SQL(""" INSERT INTO "public.bigredbutton" VALUES (1, {serial}, '', '') """).format(
-					serial = sql.Literal(f"{serial_number} {exploding_chance}")
+					serial = sql.Literal(f"{serial_number} {exploding_chance} {inspector}")
 				)) # Insert the new button info
 				# Now there is a button, so skip to [*]
 
@@ -65,10 +72,11 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 						button_number = button_info[0] + 1 # Increment button number
 						serial_number = key_generator(random.randrange(8, 15)) # Generate serial
 						exploding_chance = random.randrange(15, 51) # 15 to 50% chance of exploding
+						inspector = number_key(3) # Factory inspector code
 
 						cursor.execute(
 						sql.SQL(""" UPDATE "public.bigredbutton" SET button = button + 1, info = {n_info} """).format(
-								n_info = sql.Literal(f"{serial_number} {exploding_chance}"),
+								n_info = sql.Literal(f"{serial_number} {exploding_chance} {inspector}"),
 						)) # Update with the new button
 
 					else: # If it's not negative, and the timer hasn't ended, report the amount of time remaining
@@ -82,10 +90,11 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 						button_number = button_info[0] + 1
 						serial_number = key_generator(random.randrange(8, 15))
 						exploding_chance = random.randrange(15, 51)
+						inspector = number_key(3)
 
 						cursor.execute(
 						sql.SQL(""" UPDATE "public.bigredbutton" SET button = button + 1, info = {n_info} """).format(
-								n_info = sql.Literal(f"{serial_number} {exploding_chance}"),
+								n_info = sql.Literal(f"{serial_number} {exploding_chance} {inspector}"),
 						)) # Update with new button
 
 					else: # Report the actual timer if it hasn't ended yet
@@ -104,6 +113,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 				f"""<:bigredbutton:654042578617892893> This is **Big Red Button #{button_number}**
 				
 				It has a **{exploding_chance}%** chance of exploding. The serial number is `{serial_number}`.
+				It was inspected and approved by Factory Inspector #{inspector}.
 				Use `tc/bigredbutton press` to press this button!""".replace("\t", ""))
 
 			return
@@ -193,15 +203,16 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 						button_number = button_info[0] + 1
 						serial_number = key_generator(random.randrange(8, 15))
 						exploding_chance = random.randrange(15, 51)
+						inspector = number_key(3)
 
 						cursor.execute(
 						sql.SQL(""" UPDATE "public.bigredbutton" SET button = button + 1, info = {n_info} """).format(
-								n_info = sql.Literal(f"{serial_number} {exploding_chance}"),
+								n_info = sql.Literal(f"{serial_number} {exploding_chance} {inspector}"),
 						))
 
-						await message.channel.send(f"""Big Red Button #{button_number} has arrived, now with a 
-						{exploding_chance}% chance to explode and a serial number of `{serial_number}`!
-						""".replace("\n", "").replace("\t", ""))
+						await message.channel.send(f"""Big Red Button #{button_number} has arrived from inspection 
+						by Factory Inspector #{inspector}, now with a {exploding_chance}% chance to explode and a 
+						serial number of `{serial_number}`!""".replace("\n", "").replace("\t", ""))
 						return
 
 					else:
@@ -215,15 +226,16 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 						button_number = button_info[0] + 1
 						serial_number = key_generator(random.randrange(8, 15))
 						exploding_chance = random.randrange(15, 51)
+						inspector = number_key(3)
 
 						cursor.execute(
 						sql.SQL(""" UPDATE "public.bigredbutton" SET button = button + 1, info = {n_info} """).format(
-								n_info = sql.Literal(f"{serial_number} {exploding_chance}"),
+								n_info = sql.Literal(f"{serial_number} {exploding_chance} {inspector}"),
 						))
 
-						await message.channel.send(f"""Big Red Button #{button_number} has arrived, now with a 
-						{exploding_chance}% chance to explode and a serial number of `{serial_number}`!
-						""".replace("\n", "").replace("\t", ""))
+						await message.channel.send(f"""Big Red Button #{button_number} has arrived from inspection 
+						by Factory Inspector #{inspector}, now with a {exploding_chance}% chance to explode and a 
+						serial number of `{serial_number}`!""".replace("\n", "").replace("\t", ""))
 						return
 
 					else:
@@ -282,6 +294,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			# Gather serial_number and exploding_chance for calculations
 			serial_number = button_info[1].split(" ")[0]
 			exploding_chance = int(button_info[1].split(" ")[1])
+			inspector = button_info[1].split(" ")[2]
 			
 			new_chance = exploding_chance # Clean slate variable
 			if str(message.author.id)[-1] in serial_number:
@@ -289,6 +302,20 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			
 			if strip_alpha(message.author.name)[0].upper() in serial_number:
 				new_chance *= 2 # If first letter of username is in serial...
+			
+			point_retention = 0.5
+			share_count = 0
+			disc = list(str(message.author.discriminator))
+			for x in range(len(list(inspector))):
+				if inspector[x] in disc:
+					share_count += 1
+					disc.remove(inspector[x])
+					inspector[x] = "-"
+
+			if share_count == 2:
+				point_retention = 0.75
+			if share_count == 3:
+				point_retention = 0.9
 			
 			seed = random.uniform(0, 100) # Has to be above the explosion chance otherwise it explodes
 
@@ -306,7 +333,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 				for player in points:
 					if player.split("-")[0] == str(message.author.id):
 						ind = points.index(player)
-						new_points = int(int(player.split("-")[1]) / 2)
+						new_points = int(int(player.split("-")[1]) * point_retention)
 						points[ind] = f"{message.author.id}-{new_points}"
 				
 				if ind == -1: # If ind is still -1, then the player wasn't found in the points list so create a new
@@ -367,14 +394,15 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			# Generate new serial_number and exploding_chance
 			serial_number = key_generator(random.randrange(8, 15))
 			exploding_chance = random.randrange(15, 51)
+			inspector = number_key(3)
 
 			cursor.execute(
 			sql.SQL(""" UPDATE "public.bigredbutton" SET button = button + 1, info = {n_info} """).format(
-					n_info = sql.Literal(f"{serial_number} {exploding_chance}"),
+					n_info = sql.Literal(f"{serial_number} {exploding_chance} {inspector}"),
 			)) # Update table with the new button
 
 			# Announce the new button
-			await message.channel.send(f"""Big Red Button #{button_number+1} has arrived, now with a 
-			{exploding_chance}% chance to explode and a serial number of `{serial_number}`!
-			""".replace("\n", "").replace("\t", ""))
+			await message.channel.send(f"""Big Red Button #{button_number+1} has arrived from inspection 
+			by Factory Inspector #{inspector}, now with a {exploding_chance}% chance to explode and a 
+			serial number of `{serial_number}`!""".replace("\n", "").replace("\t", ""))
 			return

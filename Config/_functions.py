@@ -75,6 +75,10 @@ def is_float(s):
 def key_generator(n):
 	return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(n))
 
+# number_key : Generates a random numeric string with variable length
+def number_key(n):
+	return ''.join(random.SystemRandom().choice(string.digits) for _ in range(n))
+
 # strip_alpha : Strip a string to only alphabet characters
 def strip_alpha(string, spaces=False):
 	if spaces:
