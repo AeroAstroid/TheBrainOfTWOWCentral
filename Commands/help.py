@@ -106,6 +106,12 @@ async def MAIN(message, args, level, perms, COMMANDS):
 		embed.add_field(name=f"**{PREFIX}{c.lower()} {COMMANDS[c]['HELP']['FORMAT']}**",
 		value=COMMANDS[c]["HELP"]["USAGE"] + "\n\u200b", inline=False)
 
+		try: # Some commands have USAGE strings longer than the maximum allowed of 1024 characters and can't fit
+			# So I split them up into two strings and add the second one (only if it exists, that is.)
+			embed.add_field(name="\u200b", value=COMMANDS[c]["HELP"]["USAGE2"] + "\n\u200b", inline=False)
+		except:
+			pass
+
 		# Conditions are usage permissions followed by channel permissions (as denoted in channel_list)
 		embed.add_field(name="Conditions",
 		value = f"""Requires {'staff' if perms == 2 else ('member' if perms == 1 else 'no')} permissions
@@ -130,8 +136,7 @@ async def MAIN(message, args, level, perms, COMMANDS):
 		embed.add_field(name=f"**{PREFIX}{c.lower()} {sc.lower()} {COMMANDS[c]['HELP'][sc]['FORMAT']}**",
 		value=COMMANDS[c]["HELP"][sc]["USAGE"] + "\n\u200b", inline=False)
 
-		try: # This part is different. Some commands have USAGE strings longer than the maximum allowed of 1024 chars
-			# So I split them up into two strings and add the second one (only if it exists, that is.)
+		try:
 			embed.add_field(name="\u200b", value=COMMANDS[c]["HELP"][sc]["USAGE2"] + "\n\u200b", inline=False)
 		except:
 			pass
