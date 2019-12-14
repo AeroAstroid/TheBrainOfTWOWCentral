@@ -2,7 +2,7 @@ from Config._const import PREFIX, DB_LINK, BRAIN
 from Config._functions import is_whole, is_float
 from Config._db import Database
 from Config._words import WORDS
-import random
+import random, time
 
 HELP = {
 	"MAIN": "Test your typing speed",
