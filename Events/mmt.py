@@ -245,7 +245,8 @@ class EVENT:
 					if len(found) == 0: # If they're not in the mmtstats table, add them
 						self.db.add_entry("mmtstats", entry=[winner, "", 1])
 					else: # Increment their win count in mmtstats
-						self.db.edit_entry("mmtstats", entry={"wins": "wins + 1"}, conditions={"id": str(winner)})
+						wins = self.db.get_entries("mmtstats", columns=["wins"], conditions={"id": str(winner)})[0][0]
+						self.db.edit_entry("mmtstats", entry={"wins": wins + 1}, conditions={"id": str(winner)})
 						
 					self.force_skip()
 					return
@@ -448,8 +449,9 @@ class EVENT:
 					await self.MMT_C.send(f"🏆 <@{winner}> wins the MiniMiniTWOW!")
 					self.force_skip() # Skip the host since the game ended
 
+					wins = self.db.get_entries("mmtstats", columns=["wins"], conditions={"id": str(winner)})[0][0] + 1
 					# Increment the player's win count
-					self.db.edit_entry("mmtstats", entry={"wins": "wins + 1"}, conditions={"id": str(winner)})
+					self.db.edit_entry("mmtstats", entry={"wins": wins}, conditions={"id": str(winner)})
 					return
 				
 				# Turn the period into prompt decision, incremenet the round, and prepare prompt and response variables

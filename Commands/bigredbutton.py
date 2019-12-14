@@ -76,7 +76,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 					inspector = number_key(3) # Factory inspector code
 
 					n_info = f"{serial_number} {exploding_chance} {inspector}"
-					db.edit_entry("bigredbutton", entry={"button": "button + 1", "info": n_info})
+					db.edit_entry("bigredbutton", entry={"button": button_number, "info": n_info})
 					# Update with the new button
 
 				else: # If it's not negative, and the timer hasn't ended, report the amount of time remaining
@@ -93,7 +93,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 					inspector = number_key(3)
 
 					n_info = f"{serial_number} {exploding_chance} {inspector}"
-					db.edit_entry("bigredbutton", entry={"button": "button + 1", "info": n_info})
+					db.edit_entry("bigredbutton", entry={"button": button_number, "info": n_info})
 					# Update with new button
 
 				else: # Report the actual timer if it hasn't ended yet
@@ -200,7 +200,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 					inspector = number_key(3)
 
 					n_info = f"{serial_number} {exploding_chance} {inspector}"
-					db.edit_entry("bigredbutton", entry={"button": "button + 1", "info": n_info})
+					db.edit_entry("bigredbutton", entry={"button": button_number, "info": n_info})
 
 					await message.channel.send(f"""Big Red Button #{button_number} has arrived from inspection 
 					by Factory Inspector #{inspector}, now with a {exploding_chance}% chance to explode and a 
@@ -221,7 +221,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 					inspector = number_key(3)
 
 					n_info = f"{serial_number} {exploding_chance} {inspector}"
-					db.edit_entry("bigredbutton", entry={"button": "button + 1", "info": n_info})
+					db.edit_entry("bigredbutton", entry={"button": button_number, "info": n_info})
 
 					await message.channel.send(f"""Big Red Button #{button_number} has arrived from inspection 
 					by Factory Inspector #{inspector}, now with a {exploding_chance}% chance to explode and a 
@@ -374,12 +374,13 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			await asyncio.sleep(15) # Fifteen seconds until the button is back
 
 		# Generate new serial_number and exploding_chance
+		button_number += 1
 		serial_number = key_generator(random.randrange(8, 15))
 		exploding_chance = random.randrange(15, 51)
 		inspector = number_key(3)
 
 		n_info = f"{serial_number} {exploding_chance} {inspector}"
-		db.edit_entry("bigredbutton", entry={"button": "button + 1", "info": n_info})
+		db.edit_entry("bigredbutton", entry={"button": button_number, "info": n_info})
 		# Update table with the new button
 
 		# Announce the new button
