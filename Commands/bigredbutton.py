@@ -121,7 +121,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 
 	if args[1].lower() == "top": # Points leaderboard
 
-		unformatted_points = db.get_entries("bigredbutton", columns=["points"])
+		unformatted_points = db.get_entries("bigredbutton", columns=["points"])[0]
 		unformatted_points = [x.split("-") for x in unformatted_points[0].split(" ")]
 		# unformatted_points might include empty strings from how the points value is formatted
 		points = [] # This variable will be the clean version
