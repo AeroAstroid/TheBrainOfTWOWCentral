@@ -2,8 +2,7 @@ import discord
 from Config._functions import grammar_list
 from Config._const import DB_LINK, BIRTHDAY_ROLE
 from datetime import datetime, timedelta
-import psycopg2
-from psycopg2 import sql
+from Config._db import Database
 
 class EVENT:
 	LOADED = False
@@ -11,6 +10,8 @@ class EVENT:
 
 	CHANNEL = ""
 	BIRTHDAY_ROLE = ""
+
+	db = Database()
 
 	param = { # Define all the parameters necessary
 		"CHANNEL": "general"
@@ -42,67 +43,54 @@ class EVENT:
 
 		self.CHANNEL = discord.utils.get(TWOW_CENTRAL.channels, name=self.param["CHANNEL"])
 
-		with psycopg2.connect(DB_LINK, sslmode='require') as db:
-			db.set_session(autocommit = True)
-			cursor = db.cursor()
+		day_change_tz = []
+		for timezone in range(-12, 15): # For each timezone
+			if (hour + timezone) % 24 == 0: # If the day just changed in this timezone
+				tz_info = [timezone] # Timezone is the first element of the list
 
-			day_change_tz = []
-			for timezone in range(-12, 15):
-				if (hour + timezone) % 24 == 0:
-					tz_info = [timezone]
+				tz_time = current_time + timedelta(hours=timezone)
+				tz_info.append(f"{tz_time.day}/{tz_time.month}")
+				tz_info.append(tz_time) # The day is the second element of the list
+			
+				day_change_tz.append(tz_info)
 
-					tz_time = current_time + timedelta(hours=timezone)
-					tz_info.append(f"{tz_time.day}/{tz_time.month}")
-					tz_info.append(tz_time)
-				
-					day_change_tz.append(tz_info)
+		for tz in day_change_tz:
+			l_d = tz[2] + timedelta(days=-1) # Get the last day in the timezone that just switched days
+			l_d = f"{l_d.day}/{l_d.month}"
 
-			for tz in day_change_tz:
-				l_d = tz[2] + timedelta(days=-1)
-				l_d = f"{l_d.day}/{l_d.month}"
+			# Find members whose birthdays just ended in that timezone
+			found = self.db.get_entries("birthday", columns=["id"], conditions={"birthday": l_d, "timezone": tz[0]})
+			for member in found: # Remove their birthday role
+				await TWOW_CENTRAL.get_member(int(member[0])).remove_roles(self.BIRTHDAY_ROLE)
 
-				cursor.execute(
-				sql.SQL(""" SELECT id FROM "public.birthday" WHERE birthday = {last_day} AND timezone = {timezone}
-				""").format(
-					last_day = sql.Literal(l_d),
-					timezone = sql.Literal(tz[0])
-				))
-				found = cursor.fetchall()
+			# Now, search for members whose birthday just started
+			found = self.db.get_entries("birthday", columns=["id"], conditions={"birthday": tz[1], "timezone": tz[0]})
 
-				for member in found:
-					await TWOW_CENTRAL.get_member(int(member[0])).remove_roles(self.BIRTHDAY_ROLE)
+			if len(found) == 0: # If there are none, return
+				return
+			
+			# If there are members, cycle through each of them.
+			for member in found:
+				if self.BIRTHDAY_ROLE in TWOW_CENTRAL.get_member(int(member[0])).roles:
+					found[found.index(member)] = 0 # If they already have the birthday role, they're being counted
+					continue # again, and this is a mistake. Change their id in found to 0 and continue
 
-				cursor.execute(
-				sql.SQL(""" SELECT id FROM "public.birthday" WHERE birthday = {birthday} AND timezone = {timezone}
-				""").format(
-					birthday = sql.Literal(tz[1]),
-					timezone = sql.Literal(tz[0])
-				))
-				found = cursor.fetchall()
+				# If they don't have the birthday role, give it to them
+				await TWOW_CENTRAL.get_member(int(member[0])).add_roles(self.BIRTHDAY_ROLE)
 
-				if len(found) == 0:
-					return
-				
-				for member in found:
-					if self.BIRTHDAY_ROLE in TWOW_CENTRAL.get_member(int(member[0])).roles:
-						print(member[0])
-						found[found.index(member)] = 0
-						continue
+			found = [x for x in found if x != 0] # Remove those who already had their birthday counted to avoid
+			# birthday ping repeats.
 
-					await TWOW_CENTRAL.get_member(int(member[0])).add_roles(self.BIRTHDAY_ROLE)
+			if len(found) == 0:
+				return # If nobody's birthday is supposed to be announced now, return
+			
+			# Specify the timezone the bot is covering in this message
+			f_tz = ("+" if tz[0] > 0 else "") + str(tz[0])
 
-				print(found)
-				found = [x for x in found if x != 0]
-				print(found)
+			# Prepare pings for everyone having their birthday
+			birthday_mentions = grammar_list([f"<@{x[0]}>" for x in found])
 
-				if len(found) == 0:
-					return
-				
-				f_tz = ("+" if tz[0] > 0 else "") + str(tz[0])
-		
-				birthday_mentions = grammar_list([f"<@{x[0]}>" for x in found])
-
-				await self.CHANNEL.send(f"🎉 It's now **{tz[1]} UTC {f_tz}**! Happy birthday to {birthday_mentions}! 🎉")
+			await self.CHANNEL.send(f"🎉 It's now **{tz[1]} UTC {f_tz}**! Happy birthday to {birthday_mentions}! 🎉")
 		return
 
 	# Change a parameter of the event

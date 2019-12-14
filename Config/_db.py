@@ -45,7 +45,7 @@ class Database:
 	# Gets entries from a table. You can specify the limit - if not, it's 10. You can specify the columns to get - if
 	# not, returns all of them. You can specify the conditions on which to gather them - if not, gathers all of them.
 	# Example: db.get_entries("birthday", limit=50, columns=["date"], conditions={"timezone": 0})
-	def get_entries(self, table, limit=10, columns=[], conditions={}):
+	def get_entries(self, table, limit=None, columns=[], conditions={}):
 		if table not in self.get_tables():
 			raise NameError(f"The table {table} is not in the database.")
 		
@@ -127,8 +127,8 @@ class Database:
 			return
 
 	
-	# Adds an entry to the table. Example: db.add_entry("birthday", entry=["184768535107469314", "12/12", -3])
-	def add_entry(self, table, entry=[]):
+	# Adds an entry to the table. Example: db.add_entry("birthday", ["184768535107469314", "12/12", -3])
+	def add_entry(self, table, entry):
 		if table not in self.get_tables():
 			raise NameError(f"The table {table} is not in the database.")
 		

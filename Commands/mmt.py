@@ -1,8 +1,8 @@
 from Config._functions import grammar_list, elim_prize, word_count, formatting_fix, is_whole
 from Config._const import GAME_CHANNEL, PREFIX, ALPHABET, BRAIN, DB_LINK
-import discord, time, psycopg2
-from psycopg2 import sql
+import discord, time
 import numpy as np
+from Config._db import Database
 
 # I'm kind of iffy on keeping this extremely long HELP dict here, but I feel like moving it down below the function
 # won't look good either, so for now I'm keeping it here
@@ -124,185 +124,181 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 		if level == 2:
 			await message.channel.send("Include the type of stat you want to see!")
 			return
-		
-		# I've explained this with statement in the `tc/database` file
-		with psycopg2.connect(DB_LINK, sslmode='require') as db:
-			db.set_session(autocommit = True)
-			cursor = db.cursor()
 
-			# public.mmtstats contains ids, placements in each round, and MMT wins from everyone who's participated
-			# in any MMT rounds so far
-			cursor.execute(""" SELECT * FROM "public.mmtstats" """)
-			data = cursor.fetchall()
+		db = Database()
 
-			if data is None: # Just in case it gets reset one day
-				await message.channel.send("There's no data yet!")
-				return
+		# public.mmtstats contains ids, placements in each round, and MMT wins from everyone who's participated
+		# in any MMT rounds so far
+		data = db.get_entries("mmtstats")
 
-			leaderboard = []
-		
-			if args[2].lower() == "points":
-				for person in data: # `person` is a table entry, (id, placements, wins)
-					try: # Try to find that person's username through TWOW Central
-						member = TWOW_CENTRAL.get_member(int(person[0])).name
-						if member is None:
-							member = person[0]
-					except Exception: # If you can't find them, just use the ID instead
-						member = person[0]
-					
-					# MMT seasons are joined with tabs and MMT rounds are joined with spaces in the database
-					ranks = [x.split(" ") for x in person[1].split("\t")]
-					score = 0
-					rounds = 0
-
-					for twow in ranks: # For each season...
-						for p_round in twow: # For each placement in a round...
-							if p_round.strip() == "":
-								continue
-							numbers = p_round.split("/") # Get a list of [rank, contestantcount]
-							# Points adds the amount of people you beat each round
-							score += int(numbers[1]) - int(numbers[0])
-							rounds += 1 # Keep track of the round count too
-					
-					leaderboard.append([member, score, rounds])
-			
-			elif args[2].lower() == "wins":
-				for person in data:
-					try:
-						member = TWOW_CENTRAL.get_member(int(person[0])).name
-						if member is None:
-							member = person[0]
-					except Exception:
-						member = person[0]
-					
-					leaderboard.append([member, person[2]]) # person[2] is MMT season wins, so that's all we need
-			
-			elif args[2].lower() == "roundwins":
-				for person in data:
-					try:
-						member = TWOW_CENTRAL.get_member(int(person[0])).name
-						if member is None:
-							member = person[0]
-					except Exception:
-						member = person[0]
-					
-					ranks = [x.split(" ") for x in person[1].split("\t")]
-					wins = 0
-
-					for twow in ranks:
-						for p_round in twow:
-							if p_round.strip() == "":
-								continue
-
-							numbers = p_round.split("/")
-							if int(numbers[0]) == 1: # Count up for each `1` placement
-								wins += 1
-					
-					leaderboard.append([member, wins]) # wins is the total number of round wins
-			
-			elif args[2].lower() == "nr":
-				for person in data:
-					try:
-						member = TWOW_CENTRAL.get_member(int(person[0])).name
-						if member is None:
-							member = person[0]
-					except Exception:
-						member = person[0]
-					
-					ranks = [x.split(" ") for x in person[1].split("\t")]
-					total = 0
-					rounds = 0
-
-					for twow in ranks:
-						for p_round in twow:
-							if p_round.strip() == "":
-								continue
-
-							numbers = p_round.split("/")
-							# Add this round's NR to the total
-							total += (int(numbers[1]) - int(numbers[0])) / (int(numbers[1]) - 1)
-							rounds += 1
-					
-					if rounds == 0:
-						continue
-					
-					# Format those as percentage strings
-					average = "{:.2%}".format(total / rounds)
-					total = "{:.2%}".format(total)
-					
-					leaderboard.append([member, total, average])
-			
-			else:
-				return
-
-			player_count = len(leaderboard)
-
-			if args[2].lower() == "points": # Sort by points descending, then rounds ascending
-				leaderboard = sorted(leaderboard, key=lambda c: c[2])
-				leaderboard = sorted(leaderboard, reverse=True, key=lambda c: c[1])
-			if args[2].lower() == "nr": # Sort by total NR -- remove the percentage and convert to float first
-				leaderboard = sorted(leaderboard, reverse=True, key=lambda c: float(c[1][:-1]))
-			if args[2].lower() in ["wins", "roundwins"]: # Just sort by wins ascending. Remove people who have none
-				leaderboard = sorted(leaderboard, reverse=True, key=lambda c: c[1])
-				leaderboard = [x for x in leaderboard if x[1] != 0]
-
-			for line in range(len(leaderboard)): # Add the rank to each line of the leaderboard
-				leaderboard[line] = [line+1] + leaderboard[line]
-
-			# args[3] is the page number.
-			if level == 3: # If it's not specified, assume it's the first page
-				leaderboard = leaderboard[:10]
-				page = 1
-			
-			elif not is_whole(args[3]): # If it's not a valid integer, assume it's first page also
-				leaderboard = leaderboard[:10]
-				page = 1
-			
-			elif (int(args[3]) - 1) * 10 >= len(leaderboard): # Detect if the page number is too big
-				await message.channel.send(f"There is no page {args[3]} of this stat!")
-				return
-			
-			else: # This means the user specified a valid page number
-				lower = (int(args[3]) - 1) * 10
-				upper = int(args[3]) * 10
-				leaderboard = leaderboard[lower:upper]
-				page = args[3]
-
-			# Headers for each stat
-			if args[2].lower() == "points":
-				final_message = f"```diff\n---⭐ MiniMiniTWOW Point Leaderboard Page {page} ⭐---\n\n"
-				final_message +=  " Rank |  Name                    |  Pts.  |  Rounds\n"
-				spacing = 6
-			if args[2].lower() == "nr":
-				final_message = f"```diff\n---⭐ MiniMiniTWOW Normalized Rank Leaderboard Page {page} ⭐---\n\n"
-				final_message +=  " Rank |  Name                    |   Total   |  Average\n"
-				spacing = 9
-			if args[2].lower() == "wins":
-				final_message = f"```diff\n---⭐ MiniMiniTWOW Wins Leaderboard Page {page} ⭐---\n\n"
-				final_message +=  " Rank |  Name                    |  Wins\n"
-				spacing = 4
-			if args[2].lower() == "roundwins":
-				final_message = f"```diff\n---⭐ MiniMiniTWOW Round Wins Leaderboard Page {page} ⭐---\n\n"
-				final_message +=  " Rank |  Name                    |  Round Wins\n"
-				spacing = 5
-
-			# Composition of each line of the leaderboard
-			for line in leaderboard:
-				symbol = "+" if line[0] == 1 else "-"
-				spaced_rank = f"{line[0]}{' ' * (4 - len(str(line[0])))}"
-				spaced_name = f"{line[1][:23]}{' '*(24 - len(str(line[1])))}"
-				spaced_points = f"{line[2]}{' '*(spacing - len(str(line[2])))}"
-				try: # Some stats will have two number columns...
-					formatted = f"{symbol} {spaced_rank}|  {spaced_name}|  {spaced_points}|  {line[3]}\n"
-				except: # ...but others will have one. This try except block detects each one.
-					formatted = f"{symbol} {spaced_rank}|  {spaced_name}|  {spaced_points}\n"
-
-				final_message += formatted # Add the line to the message
-			
-			final_message += "```" # Close off the code block
-
-			await message.channel.send(final_message)
+		if len(data) == 0: # Just in case it gets reset one day
+			await message.channel.send("There's no data yet!")
 			return
+
+		leaderboard = []
+	
+		if args[2].lower() == "points":
+			for person in data: # `person` is a table entry, (id, placements, wins)
+				try: # Try to find that person's username through TWOW Central
+					member = TWOW_CENTRAL.get_member(int(person[0])).name
+					if member is None:
+						member = person[0]
+				except Exception: # If you can't find them, just use the ID instead
+					member = person[0]
+				
+				# MMT seasons are joined with tabs and MMT rounds are joined with spaces in the database
+				ranks = [x.split(" ") for x in person[1].split("\t")]
+				score = 0
+				rounds = 0
+
+				for twow in ranks: # For each season...
+					for p_round in twow: # For each placement in a round...
+						if p_round.strip() == "":
+							continue
+						numbers = p_round.split("/") # Get a list of [rank, contestantcount]
+						# Points adds the amount of people you beat each round
+						score += int(numbers[1]) - int(numbers[0])
+						rounds += 1 # Keep track of the round count too
+				
+				leaderboard.append([member, score, rounds])
+		
+		elif args[2].lower() == "wins":
+			for person in data:
+				try:
+					member = TWOW_CENTRAL.get_member(int(person[0])).name
+					if member is None:
+						member = person[0]
+				except Exception:
+					member = person[0]
+				
+				leaderboard.append([member, person[2]]) # person[2] is MMT season wins, so that's all we need
+		
+		elif args[2].lower() == "roundwins":
+			for person in data:
+				try:
+					member = TWOW_CENTRAL.get_member(int(person[0])).name
+					if member is None:
+						member = person[0]
+				except Exception:
+					member = person[0]
+				
+				ranks = [x.split(" ") for x in person[1].split("\t")]
+				wins = 0
+
+				for twow in ranks:
+					for p_round in twow:
+						if p_round.strip() == "":
+							continue
+
+						numbers = p_round.split("/")
+						if int(numbers[0]) == 1: # Count up for each `1` placement
+							wins += 1
+				
+				leaderboard.append([member, wins]) # wins is the total number of round wins
+		
+		elif args[2].lower() == "nr":
+			for person in data:
+				try:
+					member = TWOW_CENTRAL.get_member(int(person[0])).name
+					if member is None:
+						member = person[0]
+				except Exception:
+					member = person[0]
+				
+				ranks = [x.split(" ") for x in person[1].split("\t")]
+				total = 0
+				rounds = 0
+
+				for twow in ranks:
+					for p_round in twow:
+						if p_round.strip() == "":
+							continue
+
+						numbers = p_round.split("/")
+						# Add this round's NR to the total
+						total += (int(numbers[1]) - int(numbers[0])) / (int(numbers[1]) - 1)
+						rounds += 1
+				
+				if rounds == 0:
+					continue
+				
+				# Format those as percentage strings
+				average = "{:.2%}".format(total / rounds)
+				total = "{:.2%}".format(total)
+				
+				leaderboard.append([member, total, average])
+		
+		else:
+			return
+
+		player_count = len(leaderboard)
+
+		if args[2].lower() == "points": # Sort by points descending, then rounds ascending
+			leaderboard = sorted(leaderboard, key=lambda c: c[2])
+			leaderboard = sorted(leaderboard, reverse=True, key=lambda c: c[1])
+		if args[2].lower() == "nr": # Sort by total NR -- remove the percentage and convert to float first
+			leaderboard = sorted(leaderboard, reverse=True, key=lambda c: float(c[1][:-1]))
+		if args[2].lower() in ["wins", "roundwins"]: # Just sort by wins ascending. Remove people who have none
+			leaderboard = sorted(leaderboard, reverse=True, key=lambda c: c[1])
+			leaderboard = [x for x in leaderboard if x[1] != 0]
+
+		for line in range(len(leaderboard)): # Add the rank to each line of the leaderboard
+			leaderboard[line] = [line+1] + leaderboard[line]
+
+		# args[3] is the page number.
+		if level == 3: # If it's not specified, assume it's the first page
+			leaderboard = leaderboard[:10]
+			page = 1
+		
+		elif not is_whole(args[3]): # If it's not a valid integer, assume it's first page also
+			leaderboard = leaderboard[:10]
+			page = 1
+		
+		elif (int(args[3]) - 1) * 10 >= len(leaderboard): # Detect if the page number is too big
+			await message.channel.send(f"There is no page {args[3]} of this stat!")
+			return
+		
+		else: # This means the user specified a valid page number
+			lower = (int(args[3]) - 1) * 10
+			upper = int(args[3]) * 10
+			leaderboard = leaderboard[lower:upper]
+			page = args[3]
+
+		# Headers for each stat
+		if args[2].lower() == "points":
+			final_message = f"```diff\n---⭐ MiniMiniTWOW Point Leaderboard Page {page} ⭐---\n\n"
+			final_message +=  " Rank |  Name                    |  Pts.  |  Rounds\n"
+			spacing = 6
+		if args[2].lower() == "nr":
+			final_message = f"```diff\n---⭐ MiniMiniTWOW Normalized Rank Leaderboard Page {page} ⭐---\n\n"
+			final_message +=  " Rank |  Name                    |   Total   |  Average\n"
+			spacing = 9
+		if args[2].lower() == "wins":
+			final_message = f"```diff\n---⭐ MiniMiniTWOW Wins Leaderboard Page {page} ⭐---\n\n"
+			final_message +=  " Rank |  Name                    |  Wins\n"
+			spacing = 4
+		if args[2].lower() == "roundwins":
+			final_message = f"```diff\n---⭐ MiniMiniTWOW Round Wins Leaderboard Page {page} ⭐---\n\n"
+			final_message +=  " Rank |  Name                    |  Round Wins\n"
+			spacing = 5
+
+		# Composition of each line of the leaderboard
+		for line in leaderboard:
+			symbol = "+" if line[0] == 1 else "-"
+			spaced_rank = f"{line[0]}{' ' * (4 - len(str(line[0])))}"
+			spaced_name = f"{line[1][:23]}{' '*(24 - len(str(line[1])))}"
+			spaced_points = f"{line[2]}{' '*(spacing - len(str(line[2])))}"
+			try: # Some stats will have two number columns...
+				formatted = f"{symbol} {spaced_rank}|  {spaced_name}|  {spaced_points}|  {line[3]}\n"
+			except: # ...but others will have one. This try except block detects each one.
+				formatted = f"{symbol} {spaced_rank}|  {spaced_name}|  {spaced_points}\n"
+
+			final_message += formatted # Add the line to the message
+		
+		final_message += "```" # Close off the code block
+
+		await message.channel.send(final_message)
+		return
 
 
 	if args[1].lower() == "end":
@@ -418,6 +414,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 		await message.channel.send(msg_send)
 		return
 
+
 	if args[1].lower() == "queue":
 		if level == 2: # If it's just `tc/mmt queue`
 			if not mmt.RUNNING: # The event is counted as off if there's nobody in queue. To check the queue, it needs
@@ -463,6 +460,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 				await message.channel.send(z)
 			return
 	
+
 	if args[1].lower() == "create":
 		if not mmt.RUNNING: # If the event isn't running
 			await message.channel.send(
@@ -485,6 +483,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 		f"🎩 <@{message.author.id}> has created a MiniMiniTWOW! Use `{PREFIX}mmt join` to join it!")
 		return
 	
+
 	if args[1].lower() == "spectate":
 		if not mmt.RUNNING: # If the event isn't running
 			await message.channel.send("There's no MiniMiniTWOW running right now!")
@@ -505,6 +504,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 		for future rounds.""".replace("\n", "").replace("\t", ""))
 		return
 	
+
 	if args[1].lower() == "join":
 		if not mmt.RUNNING: # If the event is not running
 			await message.channel.send("There's no MiniMiniTWOW running right now!")
@@ -538,6 +538,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 			mmt.info["GAME"]["PERIOD_START"] = time.time()
 		return
 	
+
 	if args[1].lower() == "start":
 		if not mmt.RUNNING: # If the event isn't running
 			await message.channel.send("There's no MiniMiniTWOW running right now!")
@@ -565,6 +566,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 		
 		return
 	
+
 	if args[1].lower() == "prompt":
 		if not mmt.RUNNING: # If the event isn't running
 			await message.channel.send("There's no MiniMiniTWOW running right now!")
@@ -610,6 +612,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 				pass
 		return
 	
+
 	if args[1].lower() == "respond":
 		if not isinstance(message.channel, discord.DMChannel): # If not in DMs
 			await mmt.MMT_C.send("This command can only be used in DMs!")
@@ -654,6 +657,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
 		await message.channel.send(f"""Your {'new ' if new else ''}response to the prompt has been recorded as:
 		```{response}```> **Word count:** {word_count(response)}""".replace("\n", "").replace("\t", ""))
 		return
+	
 	
 	if args[1].lower() == "vote":
 		if not isinstance(message.channel, discord.DMChannel): # If not in DMs

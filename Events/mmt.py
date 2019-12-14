@@ -1,8 +1,8 @@
-import time, discord, random, statistics, psycopg2
-from psycopg2 import sql
+import time, discord, random, statistics
 import numpy as np
 from Config._functions import grammar_list, word_count, elim_prize
 from Config._const import GAME_CHANNEL, PREFIX, ALPHABET, BRAIN, DB_LINK
+from Config._db import Database
 
 class EVENT:
 	LOADED = False
@@ -10,6 +10,8 @@ class EVENT:
 
 	TWOW_CENTRAL = 0 # Server variable
 	MMT_C = "" # The game channel
+
+	db = Database()
 
 	info = {
 		"HOST_QUEUE": [],
@@ -234,23 +236,16 @@ class EVENT:
 				if players == 1: # If only one person remains, they win
 					winner = self.info["PLAYERS"][0]
 					await self.MMT_C.send(f"""🏆 <@{winner}> wins the MiniMiniTWOW!""")
+
 					# Update database, increment their win count
-					with psycopg2.connect(DB_LINK, sslmode='require') as db:
-						db.set_session(autocommit = True)
-						cursor = db.cursor()
 
-						# Search for them in the mmtstats table
-						cursor.execute(sql.SQL(""" SELECT id FROM "public.mmtstats" WHERE id = {winner_id}""").format(
-							winner_id = sql.Literal(str(winner))
-						))
-						found = cursor.fetchone()
+					# Search for them in the mmtstats table
+					found = self.db.get_entries("mmtstats", columns=["id"], conditions={"id": str(winner)})
 
-						if found is None: # If they're not in the mmtstats table, add them
-							cursor.execute(sql.SQL(""" INSERT INTO "public.mmtstats" VALUES (%s, %s, %s)"""),
-							(winner, "", 1))
-						else: # Increment their win count in mmtstats
-							cursor.execute(sql.SQL(""" UPDATE "public.mmtstats" SET wins = wins + 1 WHERE id = %s"""),
-							(winner,))
+					if len(found) == 0: # If they're not in the mmtstats table, add them
+						self.db.add_entry("mmtstats", entry=[winner, "", 1])
+					else: # Increment their win count in mmtstats
+						self.db.edit_entry("mmtstats", entry={"wins": "wins + 1"}, conditions={"id": str(winner)})
 						
 					self.force_skip()
 					return
@@ -423,40 +418,27 @@ class EVENT:
 				been eliminated.""".replace("\n", "").replace("\t", ""))
 
 				# Add each person's rankings to the database
-				with psycopg2.connect(DB_LINK, sslmode='require') as db:
-					db.set_session(autocommit = True)
-					cursor = db.cursor()
+				for p in range(len(self.info["PLAYERS"])):
+					player = self.info["PLAYERS"][p] # `player` is an ID
+					rank_str = player_ranks[p] # Their rank this round
 
-					for p in range(len(self.info["PLAYERS"])):
-						player = self.info["PLAYERS"][p] # `player` is an ID
-						rank_str = player_ranks[p] # Their rank this round
+					# Search for the player in mmtstats
+					found = self.db.get_entries("mmtstats", columns=["id", "ranks"], conditions={"id": str(player)})
 
-						# Search for the player in mmtstats
-						cursor.execute(
-							sql.SQL(""" SELECT id, ranks FROM "public.mmtstats" WHERE id = {player_id}""").format(
-							player_id = sql.Literal(str(player))
-						))
-						found = cursor.fetchone()
-
-						if found is None: # If they're not in mmtstats, add them with the new rank value
-							cursor.execute(sql.SQL(""" INSERT INTO "public.mmtstats" VALUES (%s, %s, %s)"""),
-							(player, rank_str, 0))
-						
+					if len(found) == 0: # If they're not in mmtstats, add them with the new rank value
+						self.db.add_entry("mmtstats", entry=[player, rank_str, 0])
+					
+					else:
+						# Add the new rank to their rank history
+						current_rank = found[1]
+						if self.info["GAME"]["ROUND"] == 1:
+							current_rank += "\t"
 						else:
-							# Add the new rank to their rank history
-							current_rank = found[1]
-							if self.info["GAME"]["ROUND"] == 1:
-								current_rank += "\t"
-							else:
-								current_rank += " "
-							current_rank += rank_str
+							current_rank += " "
+						current_rank += rank_str
 
-							# Update mmtstats with the new rank history
-							cursor.execute(sql.SQL(
-								""" UPDATE "public.mmtstats" SET ranks = {rank_hist} WHERE ID = {player}""").format(
-									rank_hist = sql.Literal(current_rank),
-									player = sql.Literal(str(player))
-							))
+						# Update mmtstats with the new rank history
+						self.db.edit_entry("mmtstats", entry={"ranks": current_rank}, conditions={"id": str(player)})
 
 				# Remove players that were eliminated
 				self.info["PLAYERS"] = [x for x in self.info["PLAYERS"] if x not in elim_players]
@@ -467,14 +449,7 @@ class EVENT:
 					self.force_skip() # Skip the host since the game ended
 
 					# Increment the player's win count
-					with psycopg2.connect(DB_LINK, sslmode='require') as db:
-						db.set_session(autocommit = True)
-						cursor = db.cursor()
-
-						cursor.execute(
-							sql.SQL(""" UPDATE "public.mmtstats" SET wins = wins + 1 WHERE id = {winner_id}""").format(
-							winner_id = sql.Literal(str(winner))
-						))
+					self.db.edit_entry("mmtstats", entry={"wins": "wins + 1"}, conditions={"id": str(winner)})
 					return
 				
 				# Turn the period into prompt decision, incremenet the round, and prepare prompt and response variables

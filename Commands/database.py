@@ -1,7 +1,6 @@
 from Config._functions import grammar_list, is_whole, is_float
 from Config._const import PREFIX, BRAIN
-import psycopg2, traceback
-from psycopg2 import sql
+import traceback
 from calendar import monthrange
 
 from Config._db import Database
@@ -200,8 +199,8 @@ async def MAIN(message, args, level, perms):
 			
 			if args[4].lower() == "edit":
 
-				if level < 12: # Requires at least 7 extra args: `search_column // search_key -> upd_column // upd_key`
-					await message.channel.send("Make sure to include searching columns and columns to update!")
+				if level < 8: # Requires at least 3 extra args: `upd_column // upd_key`
+					await message.channel.send("Make sure to include the columns to update!")
 					return
 				
 				if len(" ".join(args[5:]).split(" -> ")) == 2: # Split arguments into searching and updating
