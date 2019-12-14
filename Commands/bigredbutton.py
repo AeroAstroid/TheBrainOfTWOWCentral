@@ -39,9 +39,12 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 
 	if level == 1: # `tc/button` will check the current button
 
-		# "public.bigredbutton" always has a single entry unless there has never been a button. If len(button_info)
-		# is 0, that's the case
-		button_info = db.get_entries("bigredbutton", columns=["button", "info"])
+		try:
+			# "public.bigredbutton" always has a single entry unless there has never been a button. If len(button_info)
+			# is 0, that's the case, and this will throw an error caught by the try except block.
+			button_info = db.get_entries("bigredbutton", columns=["button", "info"])[0]
+		except IndexError:
+			button_info = db.get_entries("bigredbutton", columns=["button", "info"])
 
 		if len(button_info) == 0: # If there is no button, create one
 			button_number = 1 # It'd be the first ever button
@@ -181,7 +184,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 
 	if args[1].lower() == "press": # Press the button!
 
-		button_info = db.get_entries("bigredbutton")
+		button_info = db.get_entries("bigredbutton")[0]
 
 		# This segment is almost an exact repeat of [#] up above
 		if len(button_info[1].split(" ")) == 1 and button_info[1] != "PRESSED":
