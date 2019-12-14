@@ -31,5 +31,5 @@ async def MAIN(message, args, level, perms):
 	for i in range(len(totype)):
 		spaced_text += totype[i]
 		spaced_text += "​"
-	await message.channel.send(f"<@{message.author.id}>: Type these {len(split(totype, ' '))} words:\n\n{spaced_text}")
+	await message.channel.send(f"<@{message.author.id}>: Type these {len(totype.split(' '))} words:\n\n{spaced_text}")
 	return
