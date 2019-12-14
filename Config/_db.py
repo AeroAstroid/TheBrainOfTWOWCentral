@@ -77,7 +77,7 @@ class Database:
 
 				cursor.execute(sql.SQL(sql_query).format(
 					sql.Identifier(full_name)
-				), conditions.values())
+				), list(conditions.values()))
 			
 			output = cursor.fetchall()
 			return output
