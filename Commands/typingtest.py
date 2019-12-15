@@ -76,6 +76,6 @@ async def MAIN(message, args, level, perms):
 			Time: {duration}^nWPM: **{round(wpm, 2)}**{record_message}^n
 			""".replace("\n", "").replace("\t", "").replace("^n", "\n"))
 		return
-	if args[1].lower() = "top":
+	if args[1].lower() == "top":
 		await message.channel.send(db.get_entries("typingtest", columns=["best"])[0])
 	return
