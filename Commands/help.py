@@ -42,12 +42,12 @@ async def MAIN(message, args, level, perms, COMMANDS):
 		perm = 0 # This variable serves to check for boundaries between commands of different permission requirements
 
 		for c in com:
-			if COMMANDS[c]['HELP']['HIDE'] != 1:
+			if 'HIDE' in COMMANDS[c]['HELP'].keys():
 				# If the last command wasn't a staff command but this one is, add a non-inline field as a separator
 				# This has the effect of creating a vertical space separation between non-staff and staff commands
 				if perm != 2 and COMMANDS[c]['PERMS'] == 2:
 					embed.add_field(name="\u200b", value="\u200b", inline=False)
-				print(c, COMMANDS[c]['HELP']['HIDE'])
+
 				# This variable is the "last command's permissions" one that gets checked above to determine separations
 				perm = COMMANDS[c]['PERMS']
 				# 2 = Staff; 1 = Member; 0 = Non-Member
