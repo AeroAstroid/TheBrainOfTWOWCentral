@@ -39,7 +39,8 @@ async def MAIN(message, args, level, perms):
 	typed_words = msg.content.lower().split(' ')
 	target_words = totype.split(' ')
 	success = 0
-	duration = msg.created_at.timestamp() - db.get_entries("typingtest", limit=50, columns=["start"], conditions={"id": message.author.id})
+	duration = msg.created_at.timestamp() - db.get_entries("typingtest", limit=50, columns=["start"],
+							       conditions={"id": str(message.author.id)})
 	for word in typed_words:
 		if word in target_words:
 			success += 1
