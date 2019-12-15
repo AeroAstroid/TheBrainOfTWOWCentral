@@ -46,7 +46,7 @@ async def MAIN(message, args, level, perms):
 			success += 1
 			for i in range(target_words.index(word)+1):
 				target_words.pop(0)
-	if success[message.author.id] < 10:
+	if success < 10:
 		await message.channel.send("Typing test cancelled.")
 		return
 	else:
