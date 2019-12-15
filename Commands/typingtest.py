@@ -49,7 +49,7 @@ async def MAIN(message, args, level, perms):
 			for i in range(target_words.index(word)+1):
 				target_words.pop(0)
 	chars += -1
-	wpm = chars/duration/12
+	wpm = chars/len(totype) * chars/duration*12
 	if success < 10:
 		await message.channel.send("Typing test cancelled.")
 		return
