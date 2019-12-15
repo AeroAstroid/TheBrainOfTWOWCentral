@@ -39,19 +39,28 @@ async def MAIN(message, args, level, perms):
 	typed_words = msg.content.lower().split(' ')
 	target_words = totype.split(' ')
 	success = 0
-	duration = msg.created_at.timestamp() - float(db.get_entries("typingtest", limit=50, columns=["start"], 
-								     conditions={"id": str(message.author.id)})[0][0])
+	chars = 0
+	duration = round(msg.created_at.timestamp() - float(db.get_entries("typingtest", limit=50, columns=["start"], 
+								     conditions={"id": str(message.author.id)})[0][0]), 3)
 	for word in typed_words:
 		if word in target_words:
 			success += 1
+			chars += len(word) + 1
 			for i in range(target_words.index(word)+1):
 				target_words.pop(0)
+	chars += -1
+	wpm = chars/duration/12
 	if success < 10:
 		await message.channel.send("Typing test cancelled.")
 		return
 	else:
+		player_best = float(db.get_entries("typingtest", limit=50, columns=["best"],
+						   conditions={"id" : str(message.author.id)})[0][0])
+		if wpm > player_best:
+			record_message = f"^nThat's a new personal best, beating your old best of {player_best} WPM!"
+			db.edit_entry("typingtest", entry={"best" : str(wpm)}, conditions={"id" : str(message.author.id)})
 		await message.channel.send(f"""<@{message.author.id}> Typing test finished!^n^n
 		Words typed correctly: {success} out of {len(totype.split(' '))} ({round(100*(success/len(totype.split(' '))), 1)}%)^n
-		Time: {duration}
+		Time: {duration}^nWPM: **{round(wpm, 2)}**
 		""".replace("\n", "").replace("\t", "").replace("^n", "\n"))
 	return
