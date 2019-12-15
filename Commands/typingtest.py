@@ -25,16 +25,25 @@ zws = "​"
 async def MAIN(message, args, level, perms):
 	totype = " ".join(random.sample(WORDS, random.randrange(45, 61, 1)))
 	if len(db.get_entries("typingtest", conditions={"id" : str(message.author.id)})) == 0:
-		db.add_entry("typingtest", [str(message.author.id), totype, str(time.time()), "0"])
+		db.add_entry("typingtest", [str(message.author.id), totype, str(message.created_at.timestamp()), "0"])
 	else:
-		db.edit_entry("typingtest", entry={"totype" : totype, "start" : str(time.time())},
+		db.edit_entry("typingtest", entry={"totype" : totype, "start" : str(message.created_at.timestamp())},
 			      conditions={"id" : str(message.author.id)})
 	spaced_text = ""
 	for i in range(len(totype)):
 		spaced_text += totype[i]
-		spaced_text += "​"
+		if totype[i] == " ":
+			spaced_text += zws
 	await message.channel.send(f"<@{message.author.id}>: Type these {len(totype.split(' '))} words:\n\n{spaced_text}")
-	msg = await BRAIN.wait_for('message', 
-			check=(lambda m: m.channel == message.channel and m.author == message.author))
-	print(msg)
+	msg = await BRAIN.wait_for('message', check=(lambda m: m.channel == message.channel and m.author == message.author))
+	typed_words = msg.content.lower().split(' ')
+	target_words = totype.split(' ')
+	success = 0
+	for word in typed_words:
+		if word in target_words:
+			success += 1
+			target_words.remove(word)
+	print(success)
+	print(msg.created_at.timestamp())
+		
 	return
