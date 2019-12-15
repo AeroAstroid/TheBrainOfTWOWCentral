@@ -27,10 +27,14 @@ async def MAIN(message, args, level, perms):
 	if len(db.get_entries("typingtest", conditions={"id" : str(message.author.id)})) == 0:
 		db.add_entry("typingtest", [str(message.author.id), totype, str(time.time()), "0"])
 	else:
-		db.edit_entry("typingtest", entry={"totype" : totype, "start" : str(time.time())}, conditions={"id" : str(message.author.id)})
+		db.edit_entry("typingtest", entry={"totype" : totype, "start" : str(time.time())},
+			      conditions={"id" : str(message.author.id)})
 	spaced_text = ""
 	for i in range(len(totype)):
 		spaced_text += totype[i]
 		spaced_text += "​"
 	await message.channel.send(f"<@{message.author.id}>: Type these {len(totype.split(' '))} words:\n\n{spaced_text}")
+	msg = await BRAIN.wait_for('message', 
+			check=(lambda m: m.channel == message.channel and m.author == message.author))
+	print(msg)
 	return
