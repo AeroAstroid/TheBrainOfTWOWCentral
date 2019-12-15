@@ -42,26 +42,27 @@ async def MAIN(message, args, level, perms, COMMANDS):
 		perm = 0 # This variable serves to check for boundaries between commands of different permission requirements
 
 		for c in com:
-			# If the last command wasn't a staff command but this one is, add a non-inline field as a separator
-			# This has the effect of creating a vertical space separation between non-staff and staff commands
-			if perm != 2 and COMMANDS[c]['PERMS'] == 2:
-				embed.add_field(name="\u200b", value="\u200b", inline=False)
+			if COMMANDS[c]['HELP']['HIDE'] != 1:
+				# If the last command wasn't a staff command but this one is, add a non-inline field as a separator
+				# This has the effect of creating a vertical space separation between non-staff and staff commands
+				if perm != 2 and COMMANDS[c]['PERMS'] == 2:
+					embed.add_field(name="\u200b", value="\u200b", inline=False)
 
-			# This variable is the "last command's permissions" one that gets checked above to determine separations
-			perm = COMMANDS[c]['PERMS']
-			# 2 = Staff; 1 = Member; 0 = Non-Member
-			values = '**{Staff}\n**' if perm == 2 else ('{Member}\n' if perm == 1 else '{Non-Member}\n')
+				# This variable is the "last command's permissions" one that gets checked above to determine separations
+				perm = COMMANDS[c]['PERMS']
+				# 2 = Staff; 1 = Member; 0 = Non-Member
+				values = '**{Staff}\n**' if perm == 2 else ('{Member}\n' if perm == 1 else '{Non-Member}\n')
 
-			# Add aliases, if any
-			command_alias_list = [f"{PREFIX}{command.lower()}" for command in COMMANDS[c]['ALIASES']]
-			values += "\n".join(command_alias_list)
+				# Add aliases, if any
+				command_alias_list = [f"{PREFIX}{command.lower()}" for command in COMMANDS[c]['ALIASES']]
+				values += "\n".join(command_alias_list)
 
-			# Adding a newline and zero-width space creates a sort of vertical buffer between each line of
-			# embed fields, making it less cluttered
-			values += "\n\u200b"
+				# Adding a newline and zero-width space creates a sort of vertical buffer between each line of
+				# embed fields, making it less cluttered
+				values += "\n\u200b"
 
-			# Add the command's field finally
-			embed.add_field(name=f"**{PREFIX}{c.lower()}**", value=values)
+				# Add the command's field finally
+				embed.add_field(name=f"**{PREFIX}{c.lower()}**", value=values)
 		
 		await message.channel.send(embed=embed)
 		return
