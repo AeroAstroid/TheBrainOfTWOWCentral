@@ -42,7 +42,7 @@ async def MAIN(message, args, level, perms, COMMANDS):
 		perm = 0 # This variable serves to check for boundaries between commands of different permission requirements
 
 		for c in com:
-			if 'HIDE' in COMMANDS[c]['HELP'].keys():
+			if 'HIDE' not in COMMANDS[c]['HELP'].keys():
 				# If the last command wasn't a staff command but this one is, add a non-inline field as a separator
 				# This has the effect of creating a vertical space separation between non-staff and staff commands
 				if perm != 2 and COMMANDS[c]['PERMS'] == 2:
