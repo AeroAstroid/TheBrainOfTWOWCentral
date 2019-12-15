@@ -384,7 +384,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 		# Update table with the new button
 
 		# Announce the new button
-		await message.channel.send(f"""Big Red Button #{button_number+1} has arrived from inspection 
+		await message.channel.send(f"""Big Red Button #{button_number} has arrived from inspection 
 		by Factory Inspector #{inspector}, now with a {exploding_chance}% chance to explode and a 
 		serial number of `{serial_number}`!""".replace("\n", "").replace("\t", ""))
 		return
