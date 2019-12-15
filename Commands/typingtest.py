@@ -57,10 +57,10 @@ async def MAIN(message, args, level, perms):
 		player_best = float(db.get_entries("typingtest", limit=50, columns=["best"],
 						   conditions={"id" : str(message.author.id)})[0][0])
 		if wpm > player_best:
-			record_message = f"^nThat's a new personal best, beating your old best of {player_best} WPM!"
+			record_message = f"^n^nThat's a new personal best, beating your old best of {player_best} WPM!"
 			db.edit_entry("typingtest", entry={"best" : str(wpm)}, conditions={"id" : str(message.author.id)})
 		await message.channel.send(f"""<@{message.author.id}> Typing test finished!^n^n
 		Words typed correctly: {success} out of {len(totype.split(' '))} ({round(100*(success/len(totype.split(' '))), 1)}%)^n
-		Time: {duration}^nWPM: **{round(wpm, 2)}**
+		Time: {duration}^nWPM: **{round(wpm, 2)}{record_message}**
 		""".replace("\n", "").replace("\t", "").replace("^n", "\n"))
 	return
