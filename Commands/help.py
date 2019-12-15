@@ -47,7 +47,7 @@ async def MAIN(message, args, level, perms, COMMANDS):
 				# This has the effect of creating a vertical space separation between non-staff and staff commands
 				if perm != 2 and COMMANDS[c]['PERMS'] == 2:
 					embed.add_field(name="\u200b", value="\u200b", inline=False)
-
+				print(c, COMMANDS[c]['HELP']['HIDE'])
 				# This variable is the "last command's permissions" one that gets checked above to determine separations
 				perm = COMMANDS[c]['PERMS']
 				# 2 = Staff; 1 = Member; 0 = Non-Member
