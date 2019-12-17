@@ -136,6 +136,9 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 		
 		points = sorted(points, reverse=True, key=lambda x: x[1]) # Sort the leaderboard
 
+		player_info = [x for x in points if x[0] == message.author.id][0]
+		player_ind = points.index(player_info)
+
 		# args[2] is the page number.
 		if level == 2: # If it's not specified, assume it's the first page
 			points = points[:10]
@@ -176,6 +179,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 		
 			beginning += line # Add this line to the final message
 		
+		beginning += f"\nYour rank is {player_ind+1}, with {player_info[1]} points."
 		beginning += "```" # Close off code block
 		
 		await message.channel.send(beginning)
