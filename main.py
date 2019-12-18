@@ -37,7 +37,8 @@ async def event_task(): # This is an event handler for the time-based functions 
 				if status is False: # "return False"
 					PARAMS["EVENTS"][event].end()
 					continue
-			except AttributeError:
+			except AttributeError as e:
+				print(e, event)
 				pass
 			
 			# If the hour just changed, run the hour function
