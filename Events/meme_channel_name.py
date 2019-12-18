@@ -1,5 +1,5 @@
 import discord
-from Config._debug_const import MEMES
+from Config._const import MEMES
 
 class EVENT:
 	LOADED = False
