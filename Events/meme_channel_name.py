@@ -8,7 +8,7 @@ class EVENT:
 	CHANNEL = ""
 
 	param = {
-		"CYCLE": "éêèëĕẽ"
+		"CYCLE": "éêèëĕẽēė"
 	}
 
 	# Executes when loaded
@@ -27,7 +27,7 @@ class EVENT:
 		self.RUNNING = False
 	
 	# Function that runs every hour
-	async def on_two_second(self, TWOW_CENTRAL):
+	async def on_one_hour(self, TWOW_CENTRAL):
 		current_diacritic = self.CHANNEL.name[3]
 		new_index = (self.param["CYCLE"].find(current_diacritic) + 1) % 6
 		await self.CHANNEL.edit(name=f"mem{self.param['CYCLE'][new_index]}s")
