@@ -1,5 +1,5 @@
 import discord
-from Config._const import MEMES
+from Config._debug_const import MEMES
 
 class EVENT:
 	LOADED = False
@@ -10,6 +10,7 @@ class EVENT:
 	param = {
 		"CYCLE": "éêèëĕẽ"
 	}
+
 	# Executes when loaded
 	def __init__(self):
 		self.LOADED = True
@@ -17,7 +18,7 @@ class EVENT:
 
 	# Executes when activated
 	def start(self, TWOW_CENTRAL): # Set the parameters
-		self.CHANNEL = discord.utils.get(TWOW_CENTRAL.roles, id=MEMES)
+		self.CHANNEL = discord.utils.get(TWOW_CENTRAL.channels, id=MEMES)
 		self.RUNNING = True
 
 	
@@ -26,7 +27,7 @@ class EVENT:
 		self.RUNNING = False
 	
 	# Function that runs every hour
-	async def on_one_hour(self, TWOW_CENTRAL):
+	async def on_two_second(self, TWOW_CENTRAL):
 		current_diacritic = self.CHANNEL.name[3]
 		new_index = (self.param["CYCLE"].find(current_diacritic) + 1) % 6
 		await self.CHANNEL.edit(name=f"mem{self.param['CYCLE'][new_index]}s")
