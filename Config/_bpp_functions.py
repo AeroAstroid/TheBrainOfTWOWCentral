@@ -217,6 +217,7 @@ def operation_check(block):
 	matching_ops = [] # List of operations that match
 
 	for possible_op in FUNCTIONS.keys(): # Check through each operation
+		letter_expect = False
 		op_regex = possible_op # Prepare a variable to serve as the regex for whether or not the code matches 
 		# this operation
 
@@ -224,6 +225,9 @@ def operation_check(block):
 			alph = ALPHABET.lower()[param]
 			types = FUNCTIONS[possible_op]["TYPES"][alph] # Find out what type is expected for that parameter
 
+			if "STRING" in types or "BOOLEAN" in types or "ARRAY STRING" in types or "ARRAY BOOLEAN" in types:
+				letter_expect = True
+			
 			dot_exp = r"([^\^!-&\*-\/<-@_]{1,})"
 			if possible_op == "out{?}":
 				dot_exp = r"([^\^]{1,})"
@@ -247,7 +251,8 @@ def operation_check(block):
 		match = re.search(op_regex, block) # Try to match this operation (the previously generated regex) with the code
 
 		if match: # If it's a match, append it to the matching operations array
-			matching_ops.append([possible_op, match])
+			matching_ops.append([possible_op, match, letter_expect])
+
 
 	if len(matching_ops) == 0: # If no operations match the code, return it unchanged
 		return [False, block, False]
@@ -255,7 +260,8 @@ def operation_check(block):
 	letter_operations = [x for x in matching_ops if strip_alpha(x[0]) != ""] # Operations that don't use letters are
 
 	if len(letter_operations) == 0 and strip_alpha(block) != "":
-		return [False, block, False]
+		if True not in [x[2] for x in matching_ops]:
+			return [False, block, False]
 		
 	if len(letter_operations) == 0 and len(matching_ops) != 0: # all either math operations or other operations that
 	# can be used with eachother. If this statement is composed entirely of them, then we can treat it differently
@@ -432,7 +438,7 @@ def operation_check(block):
 	matching_ops = sorted(matching_ops, reverse=True, key=(lambda m: m[1].span()[1] - m[1].span()[0]))
 
 	# Assume it's the one with the longest span. This prevents subsets of operations being counted instead of the
-	operation, match = matching_ops[0] # actual operation specified. Define the operation and the match object
+	operation, match, lt = matching_ops[0] # actual operation specified. Define the operation and the match object
 
 	if operation == "out{?}": # If the operation is out{}, leave a flag for it. It'll be handled in parenthesis_parser
 		return ["out", f"({match.group(1)})", False]
