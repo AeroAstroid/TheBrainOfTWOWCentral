@@ -208,7 +208,7 @@ async def MAIN(message, args, level, perms):
 		return
 
 	try:
-		await message.channel.send(OUTPUT.replace("<@", "<\@"))
+		await message.channel.send(OUTPUT.replace("<@", "<\@")[:1950])
 	except discord.errors.HTTPException:
 		pass
 	
