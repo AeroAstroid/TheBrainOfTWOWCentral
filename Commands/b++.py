@@ -196,7 +196,7 @@ async def MAIN(message, args, level, perms):
 				c_line.replace("\t\t", "==")
 
 				sides[0] = parenthesis_parser(sides[0].strip(), VARIABLES, OUTPUT)[0]
-				sides[1] = parenthesis_parser(sides[1], VARIABLES, OUTPUT)[0]
+				sides[1] = parenthesis_parser(sides[1].strip(), VARIABLES, OUTPUT)[0]
 
 				VARIABLES[sides[0]] = sides[1]
 				continue
@@ -204,7 +204,7 @@ async def MAIN(message, args, level, perms):
 			line_info, OUTPUT = parenthesis_parser(c_line.strip(), VARIABLES, OUTPUT)
 		
 	except Exception as e:
-		await message.channel.send(f'{type(e).__name__} in line `{c_line}`:\n\t{e}`')
+		await message.channel.send(f'{type(e).__name__} in line `{c_line}`:\n\t{e}')
 		return
 
 	try:

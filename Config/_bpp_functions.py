@@ -6,7 +6,7 @@ import numpy as np
 FUNCTIONS = {
 
 	# Basic operations
-	"out{_}": {
+	"out{?}": {
 		"TYPES": {
 			"a": []
 		}
@@ -14,7 +14,7 @@ FUNCTIONS = {
 
 
 	# Mathematical
-	"_\+_": {
+	"?\+?": {
 		"MAIN": (lambda a, b: a + b),
 		"TYPES": {
 			"a": ["NUMBER"],
@@ -23,7 +23,7 @@ FUNCTIONS = {
 		"PRIORITY": 1
 	},
 
-	"_-_": {
+	"?-?": {
 		"MAIN": (lambda a, b: a - b),
 		"TYPES": {
 			"a": ["NUMBER"],
@@ -32,7 +32,7 @@ FUNCTIONS = {
 		"PRIORITY": 1
 	},
 
-	"_\*_": {
+	"?\*?": {
 		"MAIN": (lambda a, b: a * b),
 		"TYPES": {
 			"a": ["NUMBER"],
@@ -41,7 +41,7 @@ FUNCTIONS = {
 		"PRIORITY": 2
 	},
 
-	"_/_": {
+	"?/?": {
 		"MAIN": (lambda a, b: a / b),
 		"TYPES": {
 			"a": ["NUMBER"],
@@ -50,7 +50,7 @@ FUNCTIONS = {
 		"PRIORITY": 2
 	},
 
-	"_\^_": {
+	"?\^?": {
 		"MAIN": (lambda a, b: a ** b),
 		"TYPES": {
 			"a": ["NUMBER"],
@@ -59,28 +59,28 @@ FUNCTIONS = {
 		"PRIORITY": 3
 	},
 
-	"avg_": {
+	"avg?": {
 		"MAIN": (lambda a: np.mean(a)),
 		"TYPES": {
 			"a": ["ARRAY NUMBER"]
 		}
 	},
 
-	"stdev_": {
+	"stdev?": {
 		"MAIN": (lambda a: statistics.stdev(a)),
 		"TYPES": {
 			"a": ["ARRAY NUMBER"]
 		}
 	},
 
-	"stdevp_": {
-		"MAIN": (lambda a: np.stdev(a)),
+	"stdevp?": {
+		"MAIN": (lambda a: np.std(a)),
 		"TYPES": {
 			"a": ["ARRAY NUMBER"]
 		}
 	},
 
-	"randint_to_": {
+	"randint?to?": {
 		"MAIN": (lambda a, b: random.randrange(a, b+1)),
 		"TYPES": {
 			"a": ["INTEGER"],
@@ -88,7 +88,7 @@ FUNCTIONS = {
 		}
 	},
 
-	"rand_to_": {
+	"rand?to?": {
 		"MAIN": (lambda a, b: random.uniform(a, b)),
 		"TYPES": {
 			"a": ["NUMBER"],
@@ -98,7 +98,7 @@ FUNCTIONS = {
 
 
 	# STRING and ARRAY manipulation
-	"_\[_\]": {
+	"?index?": {
 		"MAIN": (lambda a, b: a[b-1] if b >= 0 else a[b]),
 		"TYPES": {
 			"a": ["ARRAY", "STRING"],
@@ -107,7 +107,7 @@ FUNCTIONS = {
 		"PRIORITY": 4
 	},
 
-	"_&_": {
+	"?&?": {
 		"MAIN": (lambda a, b: a + b),
 		"TYPES": {
 			"a": ["ARRAY", "STRING"],
@@ -116,7 +116,7 @@ FUNCTIONS = {
 		"PRIORITY": 4
 	},
 
-	"_rept_": {
+	"?rept?": {
 		"MAIN": (lambda a, b: a * b),
 		"TYPES": {
 			"a": ["ARRAY", "STRING"],
@@ -124,7 +124,7 @@ FUNCTIONS = {
 		}
 	},
 
-	"_choose_": {
+	"?choose?": {
 		"MAIN": (lambda a, b: random.sample(a, b)),
 		"TYPES": {
 			"a": ["ARRAY"],
@@ -132,14 +132,14 @@ FUNCTIONS = {
 		}
 	},
 
-	"sort_": {
+	"sort?": {
 		"MAIN": (lambda a: sorted(a)),
 		"TYPES": {
 			"a": ["ARRAY NUMBER", "ARRAY STRING", "ARRAY BOOLEAN"]
 		}
 	},
 
-	"desort_": {
+	"desort?": {
 		"MAIN": (lambda a: sorted(a, reverse=True)),
 		"TYPES": {
 			"a": ["ARRAY NUMBER", "ARRAY STRING", "ARRAY BOOLEAN"]
@@ -148,7 +148,7 @@ FUNCTIONS = {
 
 
 	# Conditional
-	"_==_": {
+	"?==?": {
 		"MAIN": (lambda a, b: a == b),
 		"TYPES": {
 			"a": [],
@@ -157,7 +157,7 @@ FUNCTIONS = {
 		"PRIORITY": 0
 	},
 
-	"_>_": {
+	"?>?": {
 		"MAIN": (lambda a, b: a > b),
 		"TYPES": {
 			"a": [],
@@ -166,7 +166,7 @@ FUNCTIONS = {
 		"PRIORITY": 0
 	},
 
-	"_<_": {
+	"?<?": {
 		"MAIN": (lambda a, b: a < b),
 		"TYPES": {
 			"a": [],
@@ -175,7 +175,7 @@ FUNCTIONS = {
 		"PRIORITY": 0
 	},
 
-	"_>=_": {
+	"?>=?": {
 		"MAIN": (lambda a, b: a >= b),
 		"TYPES": {
 			"a": [],
@@ -184,7 +184,7 @@ FUNCTIONS = {
 		"PRIORITY": 0
 	},
 
-	"_<=_": {
+	"?<=?": {
 		"MAIN": (lambda a, b: a <= b),
 		"TYPES": {
 			"a": [],
@@ -193,7 +193,7 @@ FUNCTIONS = {
 		"PRIORITY": 0
 	},
 
-	"_!=_": {
+	"?!=?": {
 		"MAIN": (lambda a, b: a != b),
 		"TYPES": {
 			"a": [],
@@ -202,7 +202,7 @@ FUNCTIONS = {
 		"PRIORITY": 0
 	},
 
-	"!_": {
+	"!?": {
 		"MAIN": (lambda a: not a),
 		"TYPES": {
 			"a": ["BOOLEAN"]
@@ -220,31 +220,35 @@ def operation_check(block):
 		op_regex = possible_op # Prepare a variable to serve as the regex for whether or not the code matches 
 		# this operation
 
-		for param in range(possible_op.count("_")): # Each _ is a parameter of the function
+		for param in range(possible_op.count("?")): # Each ? is a parameter of the function
 			alph = ALPHABET.lower()[param]
 			types = FUNCTIONS[possible_op]["TYPES"][alph] # Find out what type is expected for that parameter
 
-			dot_exp = r"([^\\]{1,})"
-			if len(strip_alpha(possible_op)) == 0:
-				dot_exp = r"([^\^\\!-\/<-@\[\]]{1,})"
+			dot_exp = r"([^\^\\!-'\*-\/<-@_]{1,})"
+			if possible_op == "out{?}":
+				dot_exp = r"([^\^\\]{1,})"
+			elif types == ["NUMBER"] or types == ["INTEGER"] or types == ["ARRAY NUMBER"]:
+				dot_exp = r"([^\\A-z]{1,})"
+			'''if len(strip_alpha(possible_op)) == 0:
+				dot_exp = r"([^\^\\!-\/<-@]{1,})"
 			elif len(types) == 0:
 				dot_exp = r"([^\\]{1,})"
 			elif types == ["NUMBER"] or types == ["INTEGER"] or types == ["ARRAY NUMBER"]:
 				# If it's expecting a number of some kind, the parameter shouldn't have any letters in it, and so we 
 				# can use a regex that does not count letter characters to detect this parameter
-				dot_exp = r"([^A-z]{1,})"
+				dot_exp = r"([^A-z]{1,})"'''
 			
 			# If any type is allowed (len(types) == 0) or the type is BOOLEAN or STRING (which contain letters)
 			# Use the regex that matches all characters except for backslashes
 
-			op_regex = op_regex.replace("_", dot_exp, 1) # Replace the _ placeholder with the matching group for that
+			op_regex = op_regex.replace("?", dot_exp, 1) # Replace the _ placeholder with the matching group for that
 			# parameter
 		
 		match = re.search(op_regex, block) # Try to match this operation (the previously generated regex) with the code
 
 		if match: # If it's a match, append it to the matching operations array
 			matching_ops.append([possible_op, match])
-	
+
 	if len(matching_ops) == 0: # If no operations match the code, return it unchanged
 		return [False, block, False]
 	
@@ -253,14 +257,11 @@ def operation_check(block):
 	# can be used with eachother. If this statement is composed entirely of them, then we can treat it differently
 
 		operators = [
-			[x[0].replace("_", "").replace("\\", ""), 
+			[x[0].replace("?", "").replace("\\", ""), 
 			FUNCTIONS[x[0]]["PRIORITY"],
 			x[0]]
 			for x in matching_ops
 		]
-
-		if "[]" in [x[0] for x in operators]:
-			op_info = [["["] + x[1:] for x in operators if x[0] == "[]"][0]
 
 		full_token_list = []
 		current_index = 0
@@ -284,16 +285,9 @@ def operation_check(block):
 
 			to_add = block[current_index:min_op]
 
-			if omit_bracket:
-				to_add = to_add.replace("]", "")
-				omit_bracket = False
-
 			full_token_list.append(to_add)
 			full_token_list.append(now_op)
 			current_index = min_op + len(now_op)
-
-			if now_op == "[":
-				omit_bracket = True
 		
 		#full_token_list.append(block[current_index:])
 		
@@ -414,6 +408,9 @@ def operation_check(block):
 					
 					result = FUNCTIONS[operation_name]["MAIN"](*params)
 
+					if type(result) is list:
+						result = list_to_array(result)
+					
 					full_token_list[token_ind] = str(result)
 					for x in params_ind:
 						full_token_list[x] = []
@@ -427,17 +424,18 @@ def operation_check(block):
 	# Just in case there's more than 1 matching operation, run this sorted command. It takes the span of the operation
 	# match (the start and end indices for when the operation applies), and subtracts the start index from end index 
 	# to determine how long the span is. Put the one with the longest span first
+	matching_ops = sorted(matching_ops, reverse=True, key=(lambda m: len(m[0])))
 	matching_ops = sorted(matching_ops, reverse=True, key=(lambda m: m[1].span()[1] - m[1].span()[0]))
 
 	# Assume it's the one with the longest span. This prevents subsets of operations being counted instead of the
 	operation, match = matching_ops[0] # actual operation specified. Define the operation and the match object
 
-	if operation == "out{_}": # If the operation is out{}, leave a flag for it. It'll be handled in parenthesis_parser
+	if operation == "out{?}": # If the operation is out{}, leave a flag for it. It'll be handled in parenthesis_parser
 		return ["out", f"({match.group(1)})", False]
 	
 	parameters = [] # List of parameters that will be used in the operation function
 
-	for g in range(operation.count("_")): # For each parameter necessary...
+	for g in range(operation.count("?")): # For each parameter necessary...
 		param = match.group(g + 1).strip() # Match the group of the parameter (group 0 is the entire block; start at 1)
 		param_name = ALPHABET.lower()[g] # Get the parameter name (which is just the corresponding letter in alphabet)
 		
@@ -474,7 +472,7 @@ def operation_check(block):
 					# not any of the other types. param is already a str, so it doesn't need to be made into one
 					fit_type = expect
 					break
-		
+
 		if fit_type == "" and len(expected_types) > 0: # If there ARE expected types but the parameter can't fit them
 			return [True, [operation, param_name, param], True] # There IS an operation but there is an error.
 			# Return the operation and param name for error specification
@@ -498,7 +496,10 @@ def variables(block, VARIABLES):
 
 # Returns a python list with the input as a B++ array
 def array_to_list(raw):
-	list_eq = raw[1:-1].split("\t ")
+	if "\t" not in raw:
+		list_eq = raw[1:-1].split("; ")
+	else:
+		list_eq = raw[1:-1].split("\t ")
 
 	for entry in range(len(list_eq)):
 		if is_whole(list_eq[entry]):
