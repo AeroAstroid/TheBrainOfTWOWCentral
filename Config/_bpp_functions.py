@@ -125,7 +125,7 @@ FUNCTIONS = {
 	},
 
 	"?choose?": {
-		"MAIN": (lambda a, b: random.sample(a, b)),
+		"MAIN": (lambda a, b: (random.sample(a, b) if b != 1 else random.sample(a, b)[0])),
 		"TYPES": {
 			"a": ["ARRAY"],
 			"b": ["INTEGER"]
@@ -224,7 +224,7 @@ def operation_check(block):
 			alph = ALPHABET.lower()[param]
 			types = FUNCTIONS[possible_op]["TYPES"][alph] # Find out what type is expected for that parameter
 
-			dot_exp = r"([^\^!-'\*-\/<-@_]{1,})"
+			dot_exp = r"([^\^!-&\*-\/<-@_]{1,})"
 			if possible_op == "out{?}":
 				dot_exp = r"([^\^]{1,})"
 			elif types == ["NUMBER"] or types == ["INTEGER"] or types == ["ARRAY NUMBER"]:
