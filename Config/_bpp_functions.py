@@ -253,6 +253,10 @@ def operation_check(block):
 		return [False, block, False]
 	
 	letter_operations = [x for x in matching_ops if strip_alpha(x[0]) != ""] # Operations that don't use letters are
+
+	if len(letter_operations) == 0 and strip_alpha(block) != "":
+		return [False, block, False]
+		
 	if len(letter_operations) == 0 and len(matching_ops) != 0: # all either math operations or other operations that
 	# can be used with eachother. If this statement is composed entirely of them, then we can treat it differently
 
