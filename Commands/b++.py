@@ -16,9 +16,9 @@ HELP = {
 
 PERMS = 1 # Member
 ALIASES = ["TAG"]
-REQ = []
+REQ = ["TWOW_CENTRAL"]
 
-async def MAIN(message, args, level, perms):
+async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 	if level == 1:
 		await message.channel.send("Include a subcommand!")
 		return
