@@ -1,5 +1,5 @@
 from Config._const import PREFIX
-from Config._functions import strip_alpha, find_all
+from Config._functions import strip_alpha, find_all, is_whole
 from Config._bpp_parsing import parenthesis_parser
 from Config._bpp_functions import list_to_array, array_to_list
 from Config._db import Database
@@ -26,6 +26,70 @@ async def MAIN(message, args, level, perms):
 	VARIABLES = {}
 
 	db = Database()
+
+	if args[1].lower() == "info":
+		tag_list = db.get_entries("b++programs", columns=["name", "program", "author", "uses"])
+		tag_list = sorted(tag_list, reverse=True, key=lambda m: m[3])
+
+		tag_leaderboard = False
+		if level == 2: # If it's not specified, assume it's the first page
+			tag_list = tag_list[:10]
+			page = 1
+			tag_leaderboard = True
+		
+		elif is_whole(args[2]):
+			if (int(args[2]) - 1) * 10 >= len(tag_list): # Detect if the page number is too big
+				await message.channel.send(f"There is no page {args[2]} on the B++ program list!")
+				return
+		
+			else: # This means the user specified a valid page number
+				lower = (int(args[2]) - 1) * 10
+				upper = int(args[2]) * 10
+				tag_list = tag_list[lower:upper]
+				page = int(args[2])
+				tag_leaderboard = True
+		
+		if tag_leaderboard:
+			beginning = f"```diff\nB++ Programs Page {page}\n\n"
+
+			for program in tag_list:
+				r = tag_list.index(program) + 1 + (page - 1) * 10
+				
+				line = f"{r}{' '*(2-len(str(r)))}: {program[0]} :: {program[3]} use{'s' if program[3] != 1 else ''}"
+
+				member_id = program[2]
+				try: # Try to gather a username from the ID
+					member = TWOW_CENTRAL.get_member(int(member_id)).name
+				except: # If you can't, just display the ID
+					member = str(member_id)
+
+				line += f" (written by {member})\n"
+			
+				beginning += line # Add this line to the final message
+			
+			beginning += "```" # Close off code block
+
+			await message.channel.send(beginning)
+			return
+
+		tag_name = args[2]
+
+		if tag_name not in [x[0] for x in tag_list]:
+			await message.channel.send("That tag does not exist.")
+			return
+		
+		program = tag_list[[x[0] for x in tag_list].index(tag_name)]
+
+		member_id = program[2]
+		try: # Try to gather a username from the ID
+			member = TWOW_CENTRAL.get_member(int(member_id)).name
+		except: # If you can't, just display the ID
+			member = str(member_id)
+
+		await message.channel.send(f"""**{program[0]}** (written by {member})
+		```{program[1]}```
+		Used {program[3]} time{'s' if program[3] != 1 else ''}""".replace("\n", "").replace("\t", ""))
+		return
 
 	if args[1].lower() == "delete":
 		if level == 2:
@@ -119,6 +183,11 @@ async def MAIN(message, args, level, perms):
 				return
 		
 			tag_name = args[2]
+
+			if len(tag_name) > 30:
+				await message.channel.send("That tag name is too long. 30 characters maximum.")
+				return
+			
 			program = " ".join(args[3:])
 
 		if program.startswith("```") and program.endswith("```"):
