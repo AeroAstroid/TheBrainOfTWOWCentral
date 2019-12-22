@@ -249,10 +249,20 @@ def operation_check(block):
 			# parameter
 		
 		match = re.search(op_regex, block) # Try to match this operation (the previously generated regex) with the code
-
+		
 		if match: # If it's a match, append it to the matching operations array
+			if possible_op.count("?") == 2 and "\\" == match.group(1)[-1]:
+				continue
+			
+			if not possible_op.startswith("?") and match.span()[0] != 0 and block[match.span()[0]-1] == "\\":
+				continue
+			
 			matching_ops.append([possible_op, match, letter_expect])
 
+
+	if "out{?}" in matching_ops or "out{" in block: # If the operation is out{}, leave a flag for it. It'll be handled
+		substring = block[block.find("out{")+4:block.find("}")]
+		return ["out", f"({substring})", False] # in parenthesis_parser
 
 	if len(matching_ops) == 0: # If no operations match the code, return it unchanged
 		return [False, block, False]
@@ -364,7 +374,8 @@ def operation_check(block):
 											break
 								
 								if fit_type == "" and len(expected_types) > 0:
-									return [True, [operation_name, param_name, c_param], True]
+									#return [True, [operation_name, param_name, c_param], True]
+									return [True, block, True]
 								
 								params_ind.append(search_ind)
 								params.append(c_param)
@@ -410,7 +421,8 @@ def operation_check(block):
 										break
 							
 							if fit_type == "" and len(expected_types) > 0:
-								return [True, [operation_name, param_name, c_param], True]
+								#return [True, [operation_name, param_name, c_param], True]
+								return [True, block, True]
 							
 							params_ind.append(search_ind)
 							params.append(c_param)
@@ -439,9 +451,6 @@ def operation_check(block):
 
 	# Assume it's the one with the longest span. This prevents subsets of operations being counted instead of the
 	operation, match, lt = matching_ops[0] # actual operation specified. Define the operation and the match object
-
-	if operation == "out{?}": # If the operation is out{}, leave a flag for it. It'll be handled in parenthesis_parser
-		return ["out", f"({match.group(1)})", False]
 	
 	parameters = [] # List of parameters that will be used in the operation function
 
@@ -484,7 +493,8 @@ def operation_check(block):
 					break
 
 		if fit_type == "" and len(expected_types) > 0: # If there ARE expected types but the parameter can't fit them
-			return [True, [operation, param_name, param], True] # There IS an operation but there is an error.
+			#return [True, [operation_name, param_name, c_param], True]
+			return [True, block, True] # There IS an operation but there is an error.
 			# Return the operation and param name for error specification
 			
 		parameters.append(param) # If everything went alright, add param to the parameter list

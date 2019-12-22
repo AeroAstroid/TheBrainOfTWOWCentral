@@ -2,7 +2,7 @@ from Config._bpp_functions import *
 from Config._functions import grammar_list
 
 # Breaks code up into the operations/variables in parentheses for them to be interpreted by other functions
-def parenthesis_parser(raw, VARIABLES, OUTPUT):
+def parenthesis_parser(raw, VARIABLES, OUTPUT, var=False):
 	expression = [[0, ""]] # List of all expressions and their parenthesis level
 	current_level = 0 # List of the current level in parsing
 	backslash = False # Is the next character backslashed?
@@ -22,6 +22,7 @@ def parenthesis_parser(raw, VARIABLES, OUTPUT):
 		
 		if char == "(":
 			if backslash: # If the parenthesis is backslashed, append it as a normal character
+				expression[current_var_index][1] += "\\"
 				expression[current_var_index][1] += char
 				backslash = False # End the backslash
 			else: # If it's not backslashed, it's a level rise
@@ -34,6 +35,7 @@ def parenthesis_parser(raw, VARIABLES, OUTPUT):
 		
 		if char == ")":
 			if backslash: # Again, if the parenthesis is backslashed, append it as a normal character
+				expression[current_var_index][1] += "\\"
 				expression[current_var_index][1] += char
 				backslash = False # End the backslash
 
@@ -43,6 +45,11 @@ def parenthesis_parser(raw, VARIABLES, OUTPUT):
 			# If it's not backslashed and it's valid...
 			expression[current_var_index][1] += ")" # Append it to the end of the current expression
 			current_level -= 1 # Go a level down
+			continue
+		
+		if char == ";":
+			expression[current_var_index][1] += char
+			backslash = False
 			continue
 		
 		if backslash: # If this character is backslashed but it's not a character that needs special escaping
@@ -70,10 +77,13 @@ def parenthesis_parser(raw, VARIABLES, OUTPUT):
 
 				if operation_info[0]: # There is an operation
 					if operation_info[0] == "out": # If that operation is out{}...
+						if var:
+							raise TypeError("Cannot call variable as an out{} operation")
+						
 						new_op_info = operation_check(operation_info[1][1:-1]) # Run the operation checker in the
 						# contents of out{} to solve an operation inside (this is not meant to be done for variables)
-
-						if new_op_info[0] and not new_op_info[2]: # If the operation went fine
+						
+						if new_op_info[0]: # If the operation went fine
 
 							if type(new_op_info[1]) == list:
 								new_op_info[1] = list_to_array(new_op_info[1])
@@ -105,7 +115,7 @@ def parenthesis_parser(raw, VARIABLES, OUTPUT):
 						operation_info = new_op_info # Replace new_op_info with operation_info
 						# It'll go through the if operation_info[2] checker below and the error will be reported
 					
-					if operation_info[2]: # If there was an error with the operation...
+					'''if operation_info[2]: # If there was an error with the operation...
 						operation = operation_info[1][0]
 						operation_f = operation.replace("_", " ").strip().replace("\\", "")
 						param_name = operation_info[1][1]
@@ -114,6 +124,7 @@ def parenthesis_parser(raw, VARIABLES, OUTPUT):
 
 						raise TypeError( # Raise the error
 						f"Operation `{operation_f}` expected type {expected_types}, but `{param}` can't fit said type")
+						'''
 					
 					# If it got here, that means the operation was successful and is not out{}
 					result = operation_info[1] # Define the result

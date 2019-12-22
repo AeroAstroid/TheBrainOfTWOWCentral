@@ -1,5 +1,5 @@
 from Config._const import PREFIX
-from Config._functions import strip_alpha, find_all, is_whole
+from Config._functions import strip_alpha, find_all, is_whole, strip_front
 from Config._bpp_parsing import parenthesis_parser
 from Config._bpp_functions import list_to_array, array_to_list
 from Config._db import Database
@@ -255,17 +255,19 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 						declaration = " = " in c_line
 
 			if declaration: # Deal with variable declaration
-				c_line.replace("\\=", "\n")
-				c_line.replace("==", "\t\t")
+				c_line = c_line.replace("\\=", "\n")
+				c_line = c_line.replace("==", "\t\t")
 				
 				sides = c_line.split("=")
 				sides[1] = "=".join(sides[1:])
 
-				c_line.replace("\n", "=")
-				c_line.replace("\t\t", "==")
+				sides = [x.replace("\n", "\=") for x in sides]
+				sides = [x.replace("\t\t", "==") for x in sides]
+				c_line = c_line.replace("\n", "=")
+				c_line = c_line.replace("\t\t", "==")
 
 				sides[0] = parenthesis_parser(sides[0].strip(), VARIABLES, OUTPUT)[0]
-				sides[1] = parenthesis_parser(sides[1].strip(), VARIABLES, OUTPUT)[0]
+				sides[1] = parenthesis_parser(strip_front(sides[1]), VARIABLES, OUTPUT, var=True)[0]
 
 				VARIABLES[sides[0]] = sides[1]
 				continue
@@ -277,7 +279,8 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 		return
 
 	try:
-		await message.channel.send(OUTPUT.replace("<@", "<\@")[:1950])
+		await message.channel.send(
+		OUTPUT.replace("<@", "<\@").replace("\\\\", "\t\t").replace("\\", "").replace("\t\t", "\\")[:1950])
 	except discord.errors.HTTPException:
 		pass
 	

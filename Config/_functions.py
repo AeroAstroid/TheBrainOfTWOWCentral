@@ -137,3 +137,7 @@ def match_count(pattern, search_string):
 		if mo is None: return total
 		total += 1
 		start = 1 + mo.start()
+
+# strip_front : Removes all leading whitespace characters
+def strip_front(string):
+	return re.sub(r"^\s+", "", string, flags=re.UNICODE)
