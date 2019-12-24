@@ -11,7 +11,6 @@ if "debug" in sys.argv: # Run bot with all the debug constants
 else: # Run bot normally
 	from Config._const import *
 
-
 PARAMS = {} # This holds parameters that can be called to be used in commands
 
 async def event_task(): # This is an event handler for the time-based functions of various events
@@ -64,6 +63,8 @@ async def on_ready():
 
 	PARAMS["COMMANDS"] = COMMANDS
 	PARAMS["EVENTS"] = EVENTS
+
+	PARAMS["UNO"] = UNO_INFO
 
 	PARAMS["TWOW_CENTRAL"] = discord.utils.get(BRAIN.guilds, id=TWOW_CENTRAL_ID)
 	PARAMS["STAFF"] = discord.utils.get(PARAMS["TWOW_CENTRAL"].roles, id=STAFF_ID)
@@ -201,6 +202,9 @@ async def on_ready():
 					PARAMS["COMMANDS"][cfile.upper()]["MAIN"] = cvars["MAIN"]
 				
 				await message.channel.send(f"Reimported command files in {round(time.time() - state[1], 2)} seconds.")
+			
+			if state[0] == 4: # Flag to redefine a PARAMS parameter
+				PARAMS[state[1]] = state[2]
 			
 			return
 
