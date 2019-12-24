@@ -1,5 +1,6 @@
-from Config._functions import grammar_list, is_whole, uno_image, uno_skip
+from Config._functions import is_whole, uno_image, uno_skip
 from Config._const import PREFIX, BRAIN, ORIGINAL_DECK
+import asyncio, os, numpy, random
 
 HELP = {
 	"MAIN": "Command for a bot implementation of UNO",
@@ -132,7 +133,7 @@ async def MAIN(message, args, level, perms, uno_info, TWOW_CENTRAL):
 
 				if played_card[0] == "0" or played_card[1] in ["C", "F"]:
 					if len(args) == 3:
-						await message.channel.send("When playing a wild card, you must include the color you want to change the game to!\nTo include a color, put another number next to the command, corresponding to the color you want.\nAdd the number 1 for red, 2 for green, 3 for blue or 4 for yellow!\nExample: `d/uno play {} 3`, will play the card and change the color to **blue.**".format(args[2]))
+						await message.channel.send("When playing a wild card, you must include the color you want to change the game to!\nTo include a color, put another number next to the command, corresponding to the color you want.\nAdd the number 1 for red, 2 for green, 3 for blue or 4 for yellow!\nExample: `tc/uno play {} 3`, will play the card and change the color to **blue.**".format(args[2]))
 						return [4, "UNO", uno_info]
 						
 					if not is_whole(args[3]):
@@ -141,12 +142,12 @@ async def MAIN(message, args, level, perms, uno_info, TWOW_CENTRAL):
 
 					if 1 <= int(args[3]) <= 4:
 						if uno_info["draw_carryover"] > 0:
-							await message.channel.send("Someone has played a **+2** upon you. You must play another **+2** or draw the cards!\nTo draw the cards instantly, use `d/uno play draw`.")
+							await message.channel.send("Someone has played a **+2** upon you. You must play another **+2** or draw the cards!\nTo draw the cards instantly, use `tc/uno play draw`.")
 							return [4, "UNO", uno_info]
 						if played_card[1] == "F":
 							uno_info["draw_carryover"] = -4 if uno_info["draw_carryover"] > -3 else uno_info["draw_carryover"] - 4
 						elif uno_info["draw_carryover"] < -3:
-							await message.channel.send("Someone has played a **+4** upon you. You must play another **+4** or draw the cards!\nTo draw the cards instantly, use `d/uno play draw`.")
+							await message.channel.send("Someone has played a **+4** upon you. You must play another **+4** or draw the cards!\nTo draw the cards instantly, use `tc/uno play draw`.")
 							return [4, "UNO", uno_info]
 
 						uno_info["hands"][uno_info["players"].index(message.author.id)].remove(played_card)
@@ -170,12 +171,12 @@ async def MAIN(message, args, level, perms, uno_info, TWOW_CENTRAL):
 
 				elif played_card[0] == uno_info["last_card"][0] or played_card[1] == uno_info["last_card"][1]:
 					if uno_info["draw_carryover"] < -3:
-						await message.channel.send("Someone has played a **+4** upon you. You must play another **+4** or draw the cards!\nTo draw the cards instantly, use `d/uno play draw`.")
+						await message.channel.send("Someone has played a **+4** upon you. You must play another **+4** or draw the cards!\nTo draw the cards instantly, use `tc/uno play draw`.")
 						return [4, "UNO", uno_info]
 					elif played_card[1] == "D":
 						uno_info["draw_carryover"] = 2 if uno_info["draw_carryover"] < 2 else uno_info["draw_carryover"] + 2
 					elif uno_info["draw_carryover"] > 0:
-						await message.channel.send("Someone has played a **+2** upon you. You must play another **+2** or draw the cards!\nTo draw the cards instantly, use `d/uno play draw`.")
+						await message.channel.send("Someone has played a **+2** upon you. You must play another **+2** or draw the cards!\nTo draw the cards instantly, use `tc/uno play draw`.")
 						return [4, "UNO", uno_info]
 
 					seven_f = False
@@ -188,7 +189,7 @@ async def MAIN(message, args, level, perms, uno_info, TWOW_CENTRAL):
 
 							player_list = "\n".join(player_list)
 
-							await message.channel.send("You must pick someone to trade hands with!\n\n{}\n\nTo successfully play the card and trade hands with someone, use `d/uno play {} x`, x being the number corresponding to the player.".format(player_list, args[2]))
+							await message.channel.send("You must pick someone to trade hands with!\n\n{}\n\nTo successfully play the card and trade hands with someone, use `tc/uno play {} x`, x being the number corresponding to the player.".format(player_list, args[2]))
 							return [4, "UNO", uno_info]
 						
 						if not is_whole(args[3]):
@@ -297,7 +298,7 @@ async def MAIN(message, args, level, perms, uno_info, TWOW_CENTRAL):
 
 			for card in uno_info["hands"][uno_info["players"].index(message.author.id)]:
 				if card[0] == uno_info["last_card"][0] or card[1] == uno_info["last_card"][1] or card[0] == "0":
-					await message.channel.send("You have valid cards you can play! Use `d/uno play` followed by a number to play one.")
+					await message.channel.send("You have valid cards you can play! Use `tc/uno play` followed by a number to play one.")
 					return [4, "UNO", uno_info]
 
 			await message.channel.send("You have no cards to play. Your turn is over!")
@@ -314,7 +315,7 @@ async def MAIN(message, args, level, perms, uno_info, TWOW_CENTRAL):
 			return [4, "UNO", uno_info]
 		
 		if uno_info["status"] == 1:
-			await message.channel.send("To quit a game during signups, use `d/uno join` again after already having joined.")
+			await message.channel.send("To quit a game during signups, use `tc/uno join` again after already having joined.")
 			return [4, "UNO", uno_info]
 		
 		if message.author.id not in uno_info["players"]:
@@ -357,7 +358,7 @@ async def MAIN(message, args, level, perms, uno_info, TWOW_CENTRAL):
 		uno_info["host"] = message.author.id
 		uno_info["channel"] = message.channel
 
-		await message.channel.send("**<@{}>** is creating a Uno round! Send `d/uno join` to join it.".format(message.author.id))
+		await message.channel.send("**<@{}>** is creating a Uno round! Send `tc/uno join` to join it.".format(message.author.id))
 
 		skipping = True
 		flag = False
@@ -367,7 +368,7 @@ async def MAIN(message, args, level, perms, uno_info, TWOW_CENTRAL):
 			sec += 1
 
 			if sec == 120:
-				await message.channel.send("**<@{}>**, you have 60 seconds to start the Uno round! Use `d/uno start` to start it. If you don't do it in time, you'll be skipped as the host.".format(
+				await message.channel.send("**<@{}>**, you have 60 seconds to start the Uno round! Use `tc/uno start` to start it. If you don't do it in time, you'll be skipped as the host.".format(
 					uno_info["host"]))
 			
 
@@ -376,7 +377,7 @@ async def MAIN(message, args, level, perms, uno_info, TWOW_CENTRAL):
 			
 			if len(uno_info["players"]) >= 2 and not flag:
 				flag = True
-				await message.channel.send("Two players have joined the round. **<@{}>** now has **three minutes** to start it with `d/uno start`!".format(
+				await message.channel.send("Two players have joined the round. **<@{}>** now has **three minutes** to start it with `tc/uno start`!".format(
 					uno_info["host"]))
 			
 			if len(uno_info["players"]) < 2 and flag:
