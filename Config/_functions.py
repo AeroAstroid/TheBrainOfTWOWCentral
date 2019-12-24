@@ -178,7 +178,7 @@ def uno_image(b_type, tag, hand=None, last=None, draw_c=None, name=None, config=
 		background.paste(last_played, (495, 106), last_played)
 	
 		if b_type == 0:
-			texty = "It's your turn! Use the [d/uno play] command to play a card."
+			texty = "It's your turn! Use the [tc/uno play] command to play a card."
 		else:
 			texty = "This is your hand!"
 
@@ -232,7 +232,7 @@ def uno_image(b_type, tag, hand=None, last=None, draw_c=None, name=None, config=
 			x_size = draw.textsize(str(option + 1), font_bold(30))[0]
 			draw.text((x_c - x_size / 2 + 35, y_c + 15), str(option + 1), n_color, font_bold(30))
 
-		instruc = "The round host can change any of these options with [d/uno config x y], x being the option number, y being any complement necessary."
+		instruc = "The round host can change any of these options with [tc/uno config x y], x being the option number, y being any complement necessary."
 		x_size = draw.textsize(instruc, font_bold(30))[0]
 		draw.text((600 - x_size / 2, 15), instruc, (255, 255, 255), font_bold(30))
 
