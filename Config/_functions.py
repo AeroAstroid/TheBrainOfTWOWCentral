@@ -162,10 +162,10 @@ def uno_image(b_type, tag, hand=None, last=None, draw_c=None, name=None, config=
 			card_image = Image.open("Images/Uno/{}.png".format(hand[card])).convert('RGBA').resize((119, 190))
 
 			x_coord = (600 - hand_range) + hand_range * 2 * ((card / (hand_size - 1)) if hand_size != 1 else 0)
-			sin_mod = numpy.sin(numpy.deg2rad(3 * x_coord / 20))
+			sin_mod = np.sin(np.deg2rad(3 * x_coord / 20))
 			y_coord = 705 - 95 * sin_mod
 
-			angle = (numpy.rad2deg(numpy.arcsin(sin_mod)) - 90) / 3
+			angle = (np.rad2deg(np.arcsin(sin_mod)) - 90) / 3
 
 			card_image = card_image.rotate(angle if x_coord >= 600 else -angle, expand=1)
 
@@ -213,8 +213,8 @@ def uno_image(b_type, tag, hand=None, last=None, draw_c=None, name=None, config=
 				draw.ellipse((x_c + 20, y_c + 20, x_c + 50, y_c + 50), fill='white')
 
 				for z in range(list(config.values())[option]):
-					angle = 2 * numpy.pi / list(config.values())[option] * z
-					draw.line((x_c + 35, y_c + 35, x_c + 35 * numpy.cos(angle) + 35, y_c + 35 * numpy.sin(angle) + 35), fill=(255, 255, 255), width=3)
+					angle = 2 * np.pi / list(config.values())[option] * z
+					draw.line((x_c + 35, y_c + 35, x_c + 35 * np.cos(angle) + 35, y_c + 35 * np.sin(angle) + 35), fill=(255, 255, 255), width=3)
 				
 				n_color = (0, 0, 0)
 
