@@ -54,3 +54,18 @@ OPTION_DESC = {
 	"d-skip": "Players hit with a +2/+4 are skipped",
 	"start": "Starting card count ($)"
 }
+
+UNO_INFO = {
+	"running": False,
+	"status": 0,
+	"players": [],
+	"order": [],
+	"hands": [],
+	"host": 0,
+	"current": 0,
+	"deck": ORIGINAL_DECK,
+	"last_card": "00",
+	"draw_carryover": 0,
+	"channel": 0,
+	"config": {"0-7": False, "d-skip": True, "start": 7}
+}
