@@ -1,6 +1,7 @@
 from Config._functions import is_whole, uno_image, uno_skip
 from Config._const import PREFIX, BRAIN, ORIGINAL_DECK
-import asyncio, os, numpy, random
+import asyncio, os, numpy, random, time, discord
+from collections import OrderedDict
 
 HELP = {
 	"MAIN": "Command for a bot implementation of UNO",

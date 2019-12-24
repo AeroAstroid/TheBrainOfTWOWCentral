@@ -1,6 +1,13 @@
 import numpy as np
 import random, string, re
 from Config._const import ALPHABET, OPTION_DESC, ORIGINAL_DECK
+from PIL import Image, ImageFont, ImageDraw
+
+def alt_font(z): return ImageFont.truetype("Fonts/ARIALUNI.TTF", z)
+def default(z): return ImageFont.truetype("Fonts/RobotoCondensed-Regular.ttf", z)
+def font_italic(z): return ImageFont.truetype("Fonts/RobotoCondensed-Italic.ttf", z)
+def font_bold(z): return ImageFont.truetype("Fonts/RobotoCondensed-Bold.ttf", z)
+def font_boltalic(z): return ImageFont.truetype("Fonts/RobotoCondensed-BoldItalic.ttf", z)
 
 # grammar_list : Simple function to properly list many strings
 def grammar_list(listed, c_or=False):
