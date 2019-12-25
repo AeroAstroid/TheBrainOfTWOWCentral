@@ -643,7 +643,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 					UNO_INFO["carryover"] = 0 # Reset the carryovers
 
 					if UNO_INFO["config"]["d-skip"]: # d-skip is whether players who drew from +2 or +4 are skipped
-						UNO_INFO["order"] += UNO_INFO["order"][0]
+						UNO_INFO["order"] += UNO_INFO["order"][0:1]
 						UNO_INFO["order"] = UNO_INFO["order"][1:]
 					continue # Do another iteration. If they weren't skipped, it's still their turn
 
