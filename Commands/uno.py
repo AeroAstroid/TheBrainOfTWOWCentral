@@ -8,8 +8,62 @@ HELP = {
 	"FORMAT": "[subcommand]",
 	"CHANNEL": 0,
 	
-	"USAGE": f"""wip
-	""".replace("\n", "").replace("\t", "")
+	"USAGE": f"""Available subcommands: `create`, `config`, `join`, `start`, `play`, `quit`, `end`. Use `{PREFIX}help 
+	uno [subcommand]` for more info on each of these subcommands.""".replace("\n", "").replace("\t", ""),
+
+	"CREATE": {
+		"MAIN": "Creates a Uno round",
+		"FORMAT": "",
+		"CHANNEL": 0,
+		"USAGE": f"""Using `{PREFIX}uno create` will create a Uno round, provided there isn't one currently running.
+		""".replace("\n", "").replace("\t", "")
+	},
+	"CONFIG": {
+		"MAIN": "Shows or modifies the adjustable settings for the Uno rounds",
+		"FORMAT": "(config_number) (new_number)",
+		"CHANNEL": 0,
+		"USAGE": f"""Using `{PREFIX}uno config` show you the current settings for the Uno round. The host can change
+		these settings provided it's currently joining period, by using `{PREFIX}uno config n` to toggle ON/OFF 
+		configurations by their code number, and `{PREFIX}uno config n x` to change the value in number configurations.
+		""".replace("\n", "").replace("\t", "")
+	},
+	"JOIN": {
+		"MAIN": "Join or leave a Uno round",
+		"FORMAT": "",
+		"CHANNEL": 0,
+		"USAGE": f"""Using `{PREFIX}uno join` will add you to the Uno round, or remove you if you're already in it. 
+		The host has three minutes to start the Uno round after two people join.""".replace("\n", "").replace("\t", "")
+	},
+	"START": {
+		"MAIN": "Starts a Uno round",
+		"FORMAT": "",
+		"CHANNEL": 0,
+		"USAGE": f"""Using `{PREFIX}uno start` will start the Uno round. Only usable if you're the round host, and if 
+		there are two or more players.""".replace("\n", "").replace("\t", "")
+	},
+	"PLAY": {
+		"MAIN": "Plays or draws cards",
+		"FORMAT": "[number/'draw'] (color)",
+		"CHANNEL": 0,
+		"USAGE": f"""Using `{PREFIX}uno play n` will play the `n`th card in your hand (card numbers are shown right 
+		above each card). When playing wild cards, you must include the `(color)` parameter - a number from 1 through 
+		4 denoting what color you want to switch to. Using `{PREFIX}uno play draw` will draw a card.
+		""".replace("\n", "").replace("\t", "")
+	},
+	"QUIT": {
+		"MAIN": "Quits the Uno round",
+		"FORMAT": "",
+		"CHANNEL": 0,
+		"USAGE": f"""Using `{PREFIX}uno quit` will remove you from the Uno round. Only usable after the game has 
+		started - to quit during joining period, use `{PREFIX}uno join` again.""".replace("\n", "").replace("\t", "")
+	},
+	"END": {
+		"MAIN": "Ends the Uno round",
+		"FORMAT": "",
+		"CHANNEL": 0,
+		"USAGE": f"""Using `{PREFIX}uno end` will end the Uno round automatically. Only the host or staff members 
+		can end a round.""".replace("\n", "").replace("\t", "")
+	}
 }
 
 PERMS = 1 # Members
