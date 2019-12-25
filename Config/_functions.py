@@ -182,8 +182,8 @@ def uno_image(b_type, tag, hand=None, last=None, draw_c=None, name=None, config=
 		background.paste(last_played, (495, 106), last_played)
 	
 		if b_type == 0: # Depending on the type, the text varies
-			texty = f"""It's your turn! Use the [{PREFIX}uno play] command to play a card.
-			Use [{PREFIX}uno play draw] to draw cards!""".replace("\t", "")
+			texty = f"""It's your turn! Use the [tc/uno play] command to play a card.
+			Use [tc/uno play draw] to draw cards!""".replace("\t", "")
 		else:
 			texty = "This is your hand!"
 
