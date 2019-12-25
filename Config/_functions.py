@@ -151,74 +151,81 @@ def strip_front(string):
 
 # uno_image : Handler for image generation for the UNO command
 def uno_image(b_type, tag, hand=None, last=None, draw_c=None, name=None, config=None):
-	background = Image.open("Images/Uno/Background.png")
+	background = Image.open("Images/Uno/Background.png") # Start with the background image
 	draw = ImageDraw.Draw(background)
 
-	if b_type in [0, 2]:
-		hand_size = len(hand)
+	if b_type in [0, 2]: # 0 or 2 displays a hand
+		hand_size = len(hand) # Take the hand size and calculate its horizontal pixel length
 		hand_range = ((hand_size - 1) * 90 * (0.95 ** hand_size)) if hand_size < 10 else 550
 
-		for card in range(len(hand)):
+		for card in range(len(hand)): # Draw each card on the image. First, load the card and resize it properly
 			card_image = Image.open("Images/Uno/{}.png".format(hand[card])).convert('RGBA').resize((119, 190))
 
+			# Calculate the x coordinate for this card
 			x_coord = (600 - hand_range) + hand_range * 2 * ((card / (hand_size - 1)) if hand_size != 1 else 0)
-			sin_mod = np.sin(np.deg2rad(3 * x_coord / 20))
-			y_coord = 705 - 95 * sin_mod
+			sin_mod = np.sin(np.deg2rad(3 * x_coord / 20)) # Depending on the x coordinate it's lower down
+			y_coord = 705 - 95 * sin_mod # Calculate the y coordinate
 
-			angle = (np.rad2deg(np.arcsin(sin_mod)) - 90) / 3
+			angle = (np.rad2deg(np.arcsin(sin_mod)) - 90) / 3 # The x coordinate also affects angles
 
-			card_image = card_image.rotate(angle if x_coord >= 600 else -angle, expand=1)
+			card_image = card_image.rotate(angle if x_coord >= 600 else -angle, expand=1) # Rotate the card
 
-			background.paste(card_image, (int(round(x_coord - card_image.width / 2)), int(round(y_coord - card_image.height / 2))), card_image)
+			background.paste(card_image, # Paste the card in at the proper position
+			(int(round(x_coord - card_image.width / 2)), int(round(y_coord - card_image.height / 2))),
+			card_image)
 
-			size_t = draw.textsize(str(card + 1), font_bold(40))
+			size_t = draw.textsize(str(card + 1), font_bold(40)) # Draw the card code above the card
 			draw.text((x_coord - size_t[0] / 2, y_coord - 150), str(card + 1), (255, 255, 255), font_bold(40))
 		
+		# Paste the last card played
 		last_played = Image.open("Images/Uno/{}.png".format(last)).convert('RGBA').resize((210, 337))
 		background.paste(last_played, (495, 106), last_played)
 	
-		if b_type == 0:
-			texty = "It's your turn! Use the [tc/uno play] command to play a card."
+		if b_type == 0: # Depending on the type, the text varies
+			texty = f"""It's your turn! Use the [{PREFIX}uno play] command to play a card.
+			Use [{PREFIX}uno play draw] to draw cards!""".replace("\t", "")
 		else:
 			texty = "This is your hand!"
 
-		size_t = draw.textsize(texty, font_bold(40))
+		size_t = draw.textsize(texty, font_bold(40)) # Draw the text, centered
 		draw.text((600 - size_t[0] / 2, 10),
 		texty,
 		(255, 255, 255),
 		font_bold(40))
 	
-	if b_type in [1, 3]:
+	if b_type in [1, 3]: # 1 and 3 are images containing just the last card - they're shared publicly
+		# Paste the last card playeds
 		last_played = Image.open("Images/Uno/{}.png".format(last)).convert('RGBA').resize((306, 490))
 		background.paste(last_played, (447, 180), last_played)
 
 		if b_type == 1:
-			texty = "It's {}'s turn to play a card!".format(name)
+			texty = f"It's {name}'s turn to play a card!"
 		else:
-			texty = "{} WINS THE GAME!".format(name)
+			texty = f"{name} WINS THE GAME!"
 
-		size_t = draw.textsize(texty, font_bold(50))
+		size_t = draw.textsize(texty, font_bold(50)) # Draw the text, centered
 		draw.text((600 - size_t[0] / 2, 25),
 		texty,
 		(255, 255, 255),
 		font_bold(50))
 	
-	if b_type == 4:
+	if b_type == 4: # 4 is the config menu
 
-		for option in range(len(config)):
-			x_c = 50 + 580 * (option // 8)
+		for option in range(len(config)): # Depending on the index of the option
+			x_c = 50 + 580 * (option // 8) # Draw it at different x and y coordinates
 			y_c = 130 + 85 * (option % 8)
 
-			if type(list(config.values())[option]) is int:
+			if type(list(config.values())[option]) is int: # If this setting is an integer, do the int visualization
 				draw.ellipse((x_c + 20, y_c + 20, x_c + 50, y_c + 50), fill='white')
 
-				for z in range(list(config.values())[option]):
+				for z in range(list(config.values())[option]): # Draw a number of lines corresponding to the int
 					angle = 2 * np.pi / list(config.values())[option] * z
-					draw.line((x_c + 35, y_c + 35, x_c + 35 * np.cos(angle) + 35, y_c + 35 * np.sin(angle) + 35), fill=(255, 255, 255), width=3)
+					draw.line((x_c + 35, y_c + 35, x_c + 35 * np.cos(angle) + 35, y_c + 35 * np.sin(angle) + 35),
+					fill=(255, 255, 255), width=3)
 				
 				n_color = (0, 0, 0)
 
-			else:
+			else: # If it's a boolean, it's either a black or white circle
 				draw.ellipse((x_c, y_c, x_c + 70, y_c + 70), fill='white')
 
 				if not list(config.values())[option]:
@@ -228,15 +235,19 @@ def uno_image(b_type, tag, hand=None, last=None, draw_c=None, name=None, config=
 				else:
 					n_color = (0, 0, 0)
 
-			draw.text((x_c + 90, y_c + 15), OPTION_DESC[list(config.keys())[option]].replace("$", str(list(config.values())[option])), (255, 255, 255), font_bold(30))
+			draw.text((x_c + 90, y_c + 15),
+			OPTION_DESC[list(config.keys())[option]].replace("$", str(list(config.values())[option])),
+			(255, 255, 255), font_bold(30))
 			x_size = draw.textsize(str(option + 1), font_bold(30))[0]
 			draw.text((x_c - x_size / 2 + 35, y_c + 15), str(option + 1), n_color, font_bold(30))
 
-		instruc = "The round host can change any of these options with [tc/uno config x y], x being the option number, y being any complement necessary."
+		instruc = """The round host can change any of these options with [tc/uno config x y], 
+		x being the option number, y being any complement necessary.""".replace("\n", "").replace("\t", "")
 		x_size = draw.textsize(instruc, font_bold(30))[0]
 		draw.text((600 - x_size / 2, 15), instruc, (255, 255, 255), font_bold(30))
 
-	background.save("Images/current_card_image_{}.png".format(tag))
+	# Save the image with the tag provided
+	background.save(f"Images/current_card_image_{tag}.png")
 	return
 
 # uno_skip : Sets the uno_info dict to normal
