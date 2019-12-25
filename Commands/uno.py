@@ -664,6 +664,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 					sec = 0 # Reset their timer
 					await player_member.send(
 					"Since you've drawn a card, your timer has been reset. You have **1 minute** to play.")
+					flag = False
 
 				if UNO_INFO["current"] != played:
 					break # If the current player has been changed it means the turn ended
