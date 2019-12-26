@@ -114,7 +114,7 @@ async def MAIN(message, args, level, perms, COMMANDS):
 		except:
 			pass
 		
-		embed.add_field(name="Cooldown Time", value=f"{COMMANDS[c]["HELP"]["COOLDOWN"]}sec \n\u200b", inline=False)
+		embed.add_field(name="Cooldown Time", value=f'{COMMANDS[c]["HELP"]["COOLDOWN"]}sec \n\u200b', inline=False)
 
 		# Conditions are usage permissions followed by channel permissions (as denoted in channel_list)
 		embed.add_field(name="Conditions",
