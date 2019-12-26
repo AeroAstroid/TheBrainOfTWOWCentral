@@ -54,6 +54,8 @@ async def event_task(): # This is an event handler for the time-based functions 
 async def on_ready():
 	open("Config/_tr_gen.txt", "w").close()
 
+	COOLDOWN = {}
+
 	# Define parameters that could be used in commands in the PARAMS dict
 	PARAMS["LOGIN"] = time.time()
 	PARAMS["LOGIN_TIME"] = datetime.utcnow()
@@ -167,44 +169,67 @@ async def on_ready():
 				await message.channel.send("❌ You don't have permission to run this command!")
 				return
 
+			try:
+				if COOLDOWN[message.author.id][command] > time.time():
+					await message.add_reaction("💬")
+					return
+				else:
+					del COOLDOWN[message.author.id][command]
+					if len(list(COOLDOWN[message.author.id].keys())) == 0:
+						del COOLDOWN[message.author.id]
+			except KeyError:
+				pass
+			
+			cooldown_time = PARAMS["COMMANDS"][command]["HELP"]["COOLDOWN"]
+			try:
+				COOLDOWN[message.author.id][command] = time.time() + cooldown_time
+			except KeyError:
+				COOLDOWN[message.author.id] = {}
+				COOLDOWN[message.author.id][command] = time.time() + cooldown_time
+			
 			# List all the required parameters for the command's function. These are specified in each command's script
 			requisites = [PARAMS[name] for name in PARAMS["COMMANDS"][command]["REQ"]]
 
 			# Run the command's main function, also specified in the command's script
 			state = await PARAMS["COMMANDS"][command]["MAIN"](message, args, level, perms, *requisites)
 
-			if state is None: # Most commands return this
-				return
+			if state is not None:
+				if state[0] == 0: # The restart command returns a [0] flag, signaling that the bot should be restarted
+					extra_args = []
+					if "debug" in sys.argv:
+						extra_args = ["debug"] # If the bot is being run with debug, restart it with debug too
+					os.execl(sys.executable, 'python', __file__, str(message.channel.id), str(time.time()), *extra_args)
 
-			if state[0] == 0: # The restart command returns a [0] flag, signaling that the bot should be restarted
-				extra_args = []
-				if "debug" in sys.argv:
-					extra_args = ["debug"] # If the bot is being run with debug, restart it with debug too
-				os.execl(sys.executable, 'python', __file__, str(message.channel.id), str(time.time()), *extra_args)
-
-			if state[0] == 1: # The event command returns a [1] flag, signaling to toggle the event
-				if PARAMS["EVENTS"][state[1]].RUNNING:
-					PARAMS["EVENTS"][state[1]].end()
-				else:
-					PARAMS["EVENTS"][state[1]].start(PARAMS["TWOW_CENTRAL"])
-			
-			if state[0] == 2: # The mmt command returns a [2] flag, triggering all updates to the event class
-				PARAMS["EVENTS"][state[1]] = state[2]
-			
-			if state[0] == 3: # The reimport command returns a [3] flag, signaling to reimport commands
-				global_vars = {}
-				exec(open("Commands/_commands.py").read(), global_vars)
-				PARAMS["COMMANDS"] = global_vars["COMMANDS"]
-
-				for cfile in global_vars["file_list"]:
-					cvars = {}
-					exec(open(f"Commands/{cfile}.py", encoding='utf-8').read(), cvars)
-					PARAMS["COMMANDS"][cfile.upper()]["MAIN"] = cvars["MAIN"]
+				if state[0] == 1: # The event command returns a [1] flag, signaling to toggle the event
+					if PARAMS["EVENTS"][state[1]].RUNNING:
+						PARAMS["EVENTS"][state[1]].end()
+					else:
+						PARAMS["EVENTS"][state[1]].start(PARAMS["TWOW_CENTRAL"])
 				
-				await message.channel.send(f"Reimported command files in {round(time.time() - state[1], 2)} seconds.")
+				if state[0] == 2: # The mmt command returns a [2] flag, triggering all updates to the event class
+					PARAMS["EVENTS"][state[1]] = state[2]
+				
+				if state[0] == 3: # The reimport command returns a [3] flag, signaling to reimport commands
+					global_vars = {}
+					exec(open("Commands/_commands.py").read(), global_vars)
+					PARAMS["COMMANDS"] = global_vars["COMMANDS"]
+
+					for cfile in global_vars["file_list"]:
+						cvars = {}
+						exec(open(f"Commands/{cfile}.py", encoding='utf-8').read(), cvars)
+						PARAMS["COMMANDS"][cfile.upper()]["MAIN"] = cvars["MAIN"]
+					
+					await message.channel.send(f"Reimported command files in {round(time.time() - state[1], 2)} seconds.")
+				
+				if state[0] == 4: # The uno command returns a [4] flag, editing a PARAMS entry
+					PARAMS[state[1]] = state[2]
 			
-			if state[0] == 4: # Flag to redefine a PARAMS parameter
-				PARAMS[state[1]] = state[2]
+			try:
+				if COOLDOWN[message.author.id][command] - time.time() > 0:
+					await asyncio.sleep(COOLDOWN[message.author.id][command] - time.time())
+					del COOLDOWN[message.author.id][command]
+			except KeyError:
+				pass
 			
 			return
 

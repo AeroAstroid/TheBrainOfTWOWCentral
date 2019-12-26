@@ -2,6 +2,7 @@ from Config._const import PREFIX
 import discord
 
 HELP = {
+	"COOLDOWN": 10,
 	"MAIN": "Searches between two message IDs",
 	"FORMAT": "[channel:] (before:) (after:) (limit:) (content:)",
 	"CHANNEL": 2,

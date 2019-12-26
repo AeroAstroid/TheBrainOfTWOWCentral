@@ -3,6 +3,7 @@ from Config._functions import grammar_list
 import discord
 
 HELP = {
+	"COOLDOWN": 1,
 	"MAIN": "Displays a screen containing every command you can use and information on it",
 	"FORMAT": "(command)",
 	"CHANNEL": 0,
@@ -112,6 +113,8 @@ async def MAIN(message, args, level, perms, COMMANDS):
 			embed.add_field(name="\u200b", value=COMMANDS[c]["HELP"]["USAGE2"] + "\n\u200b", inline=False)
 		except:
 			pass
+		
+		embed.add_field(name="Cooldown Time", value=f"{COMMANDS[c]["HELP"]["COOLDOWN"]}sec \n\u200b", inline=False)
 
 		# Conditions are usage permissions followed by channel permissions (as denoted in channel_list)
 		embed.add_field(name="Conditions",

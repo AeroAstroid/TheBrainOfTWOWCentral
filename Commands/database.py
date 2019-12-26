@@ -6,6 +6,7 @@ from calendar import monthrange
 from Config._db import Database
 
 HELP = {
+	"COOLDOWN": 3,
 	"MAIN": "Command used to interact with the Brain Postgres database",
 	"FORMAT": "[subcommand]",
 	"CHANNEL": 0,

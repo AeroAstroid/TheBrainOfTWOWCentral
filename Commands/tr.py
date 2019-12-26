@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw
 from Config._functions import grammar_list
 
 HELP = {
+	"COOLDOWN": 15,
 	"MAIN": "Generate a tr_ of random length and compare it to other objects",
 	"FORMAT": "",
 	"CHANNEL": 0,

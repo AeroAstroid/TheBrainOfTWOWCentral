@@ -4,6 +4,7 @@ import asyncio, os, numpy, random, time, discord
 from collections import OrderedDict
 
 HELP = {
+	"COOLDOWN": 2,
 	"MAIN": "Command for a bot implementation of UNO",
 	"FORMAT": "[subcommand]",
 	"CHANNEL": 0,

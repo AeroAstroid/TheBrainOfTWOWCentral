@@ -2,6 +2,7 @@ import discord
 from Config._const import PREFIX
 
 HELP = {
+	"COOLDOWN": 5,
 	"MAIN": "Toggles speaking at a public channel",
 	"FORMAT": "('on'/'off') [channels] ('confirm')",
 	"CHANNEL": 2,

@@ -6,6 +6,7 @@ from Config._db import Database
 import discord
 
 HELP = {
+	"COOLDOWN": 3,
 	"MAIN": "Allows you to write short tags and/or programs with a simplified instruction set",
 	"FORMAT": "[subcommand]",
 	"CHANNEL": 0,

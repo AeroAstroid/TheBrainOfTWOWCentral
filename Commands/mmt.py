@@ -7,6 +7,7 @@ from Config._db import Database
 # I'm kind of iffy on keeping this extremely long HELP dict here, but I feel like moving it down below the function
 # won't look good either, so for now I'm keeping it here
 HELP = {
+	"COOLDOWN": 2,
 	"MAIN": "Allows for playing and hosting MiniMiniTWOWs",
 	"FORMAT": "[subcommand]",
 	"CHANNEL": 3,

@@ -5,6 +5,7 @@ from Config._words import WORDS
 import random, time
 
 HELP = {
+	"COOLDOWN": 9999999,
 	"MAIN": "Test your typing speed",
 	"FORMAT": "",
 	"CHANNEL": 0,

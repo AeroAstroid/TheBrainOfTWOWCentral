@@ -1,6 +1,7 @@
 from Config._const import PREFIX, BOT_ROLE
 
 HELP = {
+	"COOLDOWN": 3,
 	"MAIN": "Toggles whether or not you have the `Interested in the Bot` role",
 	"FORMAT": "",
 	"CHANNEL": 0,

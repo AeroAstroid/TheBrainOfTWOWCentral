@@ -6,6 +6,7 @@ import numpy as np
 from Config._db import Database
 
 HELP = {
+	"COOLDOWN": 2,
 	"MAIN": "Command for the Big Red Button game",
 	"FORMAT": "('press'/'top')",
 	"CHANNEL": 4,

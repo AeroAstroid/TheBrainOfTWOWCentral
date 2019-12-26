@@ -1,6 +1,7 @@
 from Config._const import PREFIX
 
 HELP = {
+	"COOLDOWN": 10,
 	"MAIN": "Restarts the bot. If it's running locally, updates the code automatically",
 	"FORMAT": "",
 	"CHANNEL": 2,

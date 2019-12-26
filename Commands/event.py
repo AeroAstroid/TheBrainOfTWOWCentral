@@ -2,6 +2,7 @@ from Config._functions import grammar_list, is_whole, is_float
 from Config._const import PREFIX, BRAIN
 
 HELP = {
+	"COOLDOWN": 2,
 	"MAIN": "Used to manage events or other bot actions",
 	"FORMAT": "['list' / event] (subcommand) ('confirm')",
 	"CHANNEL": 2,

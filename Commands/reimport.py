@@ -2,6 +2,7 @@ from Config._const import PREFIX
 import time
 
 HELP = {
+	"COOLDOWN": 10,
 	"MAIN": "Reimports the commands, updating command code without needing to restart",
 	"FORMAT": "",
 	"CHANNEL": 2,

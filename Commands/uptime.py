@@ -2,6 +2,7 @@ import time
 from Config._const import PREFIX
 
 HELP = {
+	"COOLDOWN": 1,
 	"MAIN": "Displays how long the bot has been up for",
 	"FORMAT": "",
 	"CHANNEL": 1,

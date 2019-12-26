@@ -1,6 +1,7 @@
 from Config._const import PREFIX
 
 HELP = {
+	"COOLDOWN": 5,
 	"MAIN": "Deletes past messages under certain conditions",
 	"FORMAT": "[limit:] (after:) (user:) ('silent')",
 	"CHANNEL": 2,

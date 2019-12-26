@@ -2,6 +2,7 @@ from Config._const import PREFIX
 import random
 
 HELP = {
+	"COOLDOWN": 1,
 	"MAIN": "Meme command",
 	"FORMAT": "",
 	"CHANNEL": 0,

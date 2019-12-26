@@ -3,6 +3,7 @@ from Config._const import PREFIX
 from Config._functions import grammar_list
 
 HELP = {
+	"COOLDOWN": 1,
 	"MAIN": "Provides useful links to community sheets and/or projects",
 	"FORMAT": "(link)",
 	"CHANNEL": 1,
