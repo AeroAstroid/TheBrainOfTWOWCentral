@@ -431,7 +431,7 @@ class EVENT:
 					
 					else:
 						# Add the new rank to their rank history
-						current_rank = found[1]
+						current_rank = found[0][1]
 						if self.info["GAME"]["ROUND"] == 1:
 							current_rank += "\t"
 						else:

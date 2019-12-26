@@ -419,7 +419,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 				await UNO_INFO["channel"].send(f"**{message.author.name}** draws **{card_n}** cards!")
 				os.remove(f"Images/current_card_image_{tag}.png")
 
-				if UNO_INFO["d-skip"]: # d-skip is whether or not drawing by +2 or +4 skips you. If it skips you...
+				if UNO_INFO["config"]["d-skip"]: # d-skip is whether or not drawing by +2 or +4 skips you. If it skips you...
 					await message.channel.send("Your turn is over!")
 					UNO_INFO["current"] = 0 # Signals that the turn is over
 
@@ -455,7 +455,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 					return [4, "UNO", UNO_INFO]
 
 			await message.channel.send("You have no cards to play. Your turn is over!")
-			if UNO_INFO["no-cards"]: # no-cards is whether or not it should be publicly announced you have no cards
+			if UNO_INFO["config"]["no-cards"]: # no-cards is whether or not to publicly announce you have no cards
 				await UNO_INFO["channel"].send(f"**{message.author.name}** has no cards to play!")
 			UNO_INFO["current"] = 0 # Signals that the turn is overs
 			return [4, "UNO", UNO_INFO]
