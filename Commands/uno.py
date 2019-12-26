@@ -399,7 +399,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 			
 			if UNO_INFO["carryover"] > 0 or UNO_INFO["carryover"] < -3: # If there are cards to be drawn
 				card_n = numpy.abs(UNO_INFO["carryover"]) # Add the card number to the player's hand
-				UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)] += [UNO_INFO["deck"][:card_n]]
+				UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)] += UNO_INFO["deck"][:card_n]
 				UNO_INFO["deck"] = UNO_INFO["deck"][card_n:]
 
 				player_hand = UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)] # Redefine player_hand
