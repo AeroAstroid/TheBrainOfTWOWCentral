@@ -10,7 +10,10 @@ HELP = {
 	"MAIN": "The command for birthday registering and viewing",
 	"FORMAT": "(subcommand) (complements)",
 	"CHANNEL": 0,
-	"USAGE": f"""Using `{PREFIX}8ball` will sure do something""".replace("\n", "").replace("\t", "")
+	"USAGE": f"""Using `{PREFIX}birthday` without a subcommand displays your own registered birthday. 
+	Using `{PREFIX}birthday view` will show you the next birthday from now chronologically, and you can include 
+	an ID or username to see that person's birthday, if they've registered one. Using `{PREFIX}birthday register 
+	[dd/mm] (timezone)` will allow you to register or edit your birthday.""".replace("\n", "").replace("\t", "")
 }
 
 PERMS = 0 # Non-members
