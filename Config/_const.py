@@ -7,7 +7,7 @@ BRAIN = discord.Client() # The bot object
 
 CURRENT_HOUR = datetime.now(timezone.utc).hour # For event handler purposes
 
-PREFIX = "dbc/" # Command prefix
+PREFIX = "tc/" # Command prefix
 
 # For MMT purposes
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
