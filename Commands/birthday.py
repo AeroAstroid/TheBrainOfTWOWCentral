@@ -63,13 +63,13 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			birthday = birthday.split("/")
 			birthday_format = months[int(birthday[1])-1] + " " + str(int(birthday[0]))
 			timezone_f = ("+" if tz > 0 else "") + str(tz)
-			
+
 			try:
 				username = TWOW_CENTRAL.get_member(int(next_id)).name
-			except:
+			except AttributeError:
 				username = next_id
 			
-			await message.channel.send(f"The next birthday is **{next_id}**'s, on **{birthday_format}** in **UTC {timezone_f}**.")
+			await message.channel.send(f"The next birthday is **{username}**'s, on **{birthday_format}** in **UTC {timezone_f}**.")
 			return
 		
 		rest = " ".join(args[2:])
