@@ -34,8 +34,8 @@ async def MAIN(message, args, level, perms):
 			if totype[i] == " ":
 				spaced_text += zws
 
-		tt = await message.channel.send(f"<@{message.author.id}>: 
-						Type these {len(totype.split(' '))} words in any order:\n\n{spaced_text}")
+		tt = await message.channel.send(f"""<@{message.author.id}>: 
+						Type these {len(totype.split(' '))} words in any order:\n\n{spaced_text}""")
 
 		# adding stuff to database
 		if len(db.get_entries("typingtest", conditions={"id" : str(message.author.id)})) == 0:

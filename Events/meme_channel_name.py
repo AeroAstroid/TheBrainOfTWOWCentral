@@ -1,5 +1,4 @@
 import discord
-from Config._const import MEMES
 
 class EVENT:
 	LOADED = False
@@ -17,8 +16,8 @@ class EVENT:
 
 
 	# Executes when activated
-	def start(self, TWOW_CENTRAL): # Set the parameters
-		self.CHANNEL = discord.utils.get(TWOW_CENTRAL.channels, id=MEMES)
+	def start(self, TWOW_CENTRAL, PARAMS): # Set the parameters
+		self.CHANNEL = discord.utils.get(TWOW_CENTRAL.channels, id=PARAMS["MEMES"])
 		self.RUNNING = True
 
 	

@@ -1,7 +1,7 @@
 import time, discord, random, statistics
 import numpy as np
 from Config._functions import grammar_list, word_count, elim_prize
-from Config._const import GAME_CHANNEL, PREFIX, ALPHABET, BRAIN, DB_LINK
+from Config._const import PREFIX, ALPHABET, BRAIN, DB_LINK
 from Config._db import Database
 
 class EVENT:
@@ -51,10 +51,10 @@ class EVENT:
 
 
 	# Executes when activated
-	def start(self, TWOW_CENTRAL): # Set the parameters
+	def start(self, TWOW_CENTRAL, PARAMS): # Set the parameters
 		self.RUNNING = True
 		self.TWOW_CENTRAL = TWOW_CENTRAL
-		self.MMT_C = discord.utils.get(self.TWOW_CENTRAL.channels, id=GAME_CHANNEL)
+		self.MMT_C = discord.utils.get(self.TWOW_CENTRAL.channels, id=PARAMS["GAME_CHANNEL"])
 		self.info["GAME"]["PERIOD_START"] = time.time()
 
 	

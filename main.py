@@ -6,10 +6,12 @@ from Config._functions import *
 from Commands._commands import *
 from Events._events import *
 
-if "debug" in sys.argv: # Run bot with all the debug constants
-	from Config._debug_const import *
-else: # Run bot normally
-	from Config._const import *
+from Config._const import *
+
+if "debug" in sys.argv: # Run bot with debug constants
+	from Config._const_debug import *
+else: # Run bot with production constants
+	from Config._const_tc import *
 
 PARAMS = {} # This holds parameters that can be called to be used in commands
 
@@ -73,6 +75,9 @@ async def on_ready():
 	PARAMS["MEMBER"] = discord.utils.get(PARAMS["TWOW_CENTRAL"].roles, id=MEMBER_ID)
 	PARAMS["BOT_ROLE"] = discord.utils.get(PARAMS["TWOW_CENTRAL"].roles, id=BOT_ROLE)
 	PARAMS["PUBLIC_CHANNELS"] = PUBLIC_CHANNELS
+	PARAMS["GAME_CHANNEL"] = GAME_CHANNEL
+	PARAMS["BIRTHDAY_ROLE"] = BIRTHDAY_ROLE
+	PARAMS["MEMES"] = MEMES
 
 	PARAMS["LOGS"] = discord.utils.get(PARAMS["TWOW_CENTRAL"].channels, id=LOG_CHANNEL)
 

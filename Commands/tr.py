@@ -161,7 +161,10 @@ async def MAIN(message, args, level, perms):
 
 	os.remove("Images/generated tr_.png")
 
-	tr_gen = open("Config/_tr_gen.txt", "r").read().split(" ")
-	tr_gen.remove(str(message.id))
-	open("Config/_tr_gen.txt", "w").write(" ".join(tr_gen).strip())
+	try:
+		tr_gen = open("Config/_tr_gen.txt", "r").read().split(" ")
+		tr_gen.remove(str(message.id))
+		open("Config/_tr_gen.txt", "w").write(" ".join(tr_gen).strip())
+	except ValueError:
+		pass
 	return

@@ -1,5 +1,5 @@
 from Config._functions import grammar_list, elim_prize, word_count, formatting_fix, is_whole
-from Config._const import GAME_CHANNEL, PREFIX, ALPHABET, BRAIN, DB_LINK
+from Config._const import PREFIX, ALPHABET, BRAIN, DB_LINK
 import discord, time
 import numpy as np
 from Config._db import Database
@@ -106,9 +106,9 @@ HELP = {
 
 PERMS = 0 # Non-member
 ALIASES = []
-REQ = ["TWOW_CENTRAL", "EVENTS"]
+REQ = ["TWOW_CENTRAL", "EVENTS", "GAME_CHANNEL"]
 
-async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT):
+async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 	if not isinstance(message.channel, discord.DMChannel) and message.channel.id != GAME_CHANNEL:
 		await message.channel.send(f"MiniMiniTWOW commands can only be used in <#{GAME_CHANNEL}>!")
 		return

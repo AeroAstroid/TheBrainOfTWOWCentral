@@ -1,4 +1,4 @@
-from Config._const import PREFIX, BOT_ROLE
+from Config._const import PREFIX
 
 HELP = {
 	"COOLDOWN": 3,

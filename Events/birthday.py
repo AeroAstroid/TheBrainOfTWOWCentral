@@ -1,6 +1,6 @@
 import discord
 from Config._functions import grammar_list
-from Config._const import DB_LINK, BIRTHDAY_ROLE
+from Config._const import DB_LINK
 from datetime import datetime, timedelta
 from Config._db import Database
 
@@ -24,8 +24,8 @@ class EVENT:
 
 
 	# Executes when activated
-	def start(self, TWOW_CENTRAL): # Set the parameters
-		self.BIRTHDAY_ROLE = discord.utils.get(TWOW_CENTRAL.roles, id=BIRTHDAY_ROLE)
+	def start(self, TWOW_CENTRAL, PARAMS): # Set the parameters
+		self.BIRTHDAY_ROLE = discord.utils.get(TWOW_CENTRAL.roles, id=PARAMS["BIRTHDAY_ROLE"])
 		self.RUNNING = True
 
 	

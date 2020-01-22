@@ -1,5 +1,4 @@
 import time, discord
-from Config._const import MEMBER_ID
 
 class EVENT:
 	LOADED = False
@@ -30,9 +29,9 @@ class EVENT:
 	
 
 	# Executes when activated
-	def start(self, TWOW_CENTRAL):
+	def start(self, TWOW_CENTRAL, PARAMS):
 		self.TWOW_CENTRAL = TWOW_CENTRAL
-		self.MEMBER = discord.utils.get(TWOW_CENTRAL.roles, id=MEMBER_ID)
+		self.MEMBER = discord.utils.get(TWOW_CENTRAL.roles, id=PARAMS["MEMBER_ID"])
 		self.MUTED = discord.utils.get(TWOW_CENTRAL.roles, name="Mute")
 		self.LOGS = discord.utils.get(TWOW_CENTRAL.channels, name="logs")
 		self.RUNNING = True

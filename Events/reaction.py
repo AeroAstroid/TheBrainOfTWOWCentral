@@ -17,7 +17,7 @@ class EVENT:
 
 
 	# Executes when activated
-	def start(self, TWOW_CENTRAL): # Set the parameters
+	def start(self, TWOW_CENTRAL, PARAMS): # Set the parameters
 		self.RUNNING = True
 
 	
