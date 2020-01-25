@@ -65,7 +65,7 @@ def is_whole(s):
 	try:
 		es = int(s)
 		es2 = float(s)
-		if es == es2:
+		if es2 - es == 0:
 			return True
 		else:
 			return False
