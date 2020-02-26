@@ -3,6 +3,17 @@ from Config._const import ALPHABET
 from Config._functions import is_float, is_whole, strip_alpha, match_count
 import numpy as np
 
+def safe_multiply(a, b):
+	if isinstance(a, int) and isinstance(b, int) and \
+	    (abs(a) > 1<<512 or abs(b) > 1<<512):
+		raise ValueError('Numbers are too large to multiply')
+	return a*b
+		
+def safe_exponent(a, b):
+	if abs(a) > 1024 or b > 1024:
+		raise ValueError('Numbers are too large to exponentiate')
+	return a**b
+
 FUNCTIONS = {
 
 	# Basic operations
@@ -33,7 +44,7 @@ FUNCTIONS = {
 	},
 
 	"?\*?": {
-		"MAIN": (lambda a, b: a * b),
+		"MAIN": safe_multiply,
 		"TYPES": {
 			"a": ["NUMBER"],
 			"b": ["NUMBER"]
@@ -51,7 +62,7 @@ FUNCTIONS = {
 	},
 
 	"?\^?": {
-		"MAIN": (lambda a, b: a ** b),
+		"MAIN": safe_exponent,
 		"TYPES": {
 			"a": ["NUMBER"],
 			"b": ["NUMBER"]
