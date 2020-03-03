@@ -99,7 +99,7 @@ async def on_ready():
 		events = file.read().splitlines()
 		try:
 			for z in events:
-				PARAMS["EVENTS"][z.upper()].start(PARAMS["TWOW_CENTRAL"])
+				PARAMS["EVENTS"][z.upper()].start(PARAMS["TWOW_CENTRAL"], PARAMS)
 				print(f"Automatically started {z.upper()}")
 
 		except Exception:
@@ -209,7 +209,7 @@ async def on_ready():
 					if PARAMS["EVENTS"][state[1]].RUNNING:
 						PARAMS["EVENTS"][state[1]].end()
 					else:
-						PARAMS["EVENTS"][state[1]].start(PARAMS["TWOW_CENTRAL"])
+						PARAMS["EVENTS"][state[1]].start(PARAMS["TWOW_CENTRAL"], PARAMS)
 				
 				if state[0] == 2: # The mmt command returns a [2] flag, triggering all updates to the event class
 					PARAMS["EVENTS"][state[1]] = state[2]
