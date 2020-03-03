@@ -45,7 +45,7 @@ class EVENT:
 
 		day_change_tz = []
 		for timezone in range(-12, 15): # For each timezone
-			if (hour + timezone) % 24 == 0: # If the day just changed in this timezone
+			if (hour + timezone - 1) % 24 == 0: # If the day just changed in this timezone
 				tz_info = [timezone] # Timezone is the first element of the list
 
 				tz_time = current_time + timedelta(hours=timezone)
