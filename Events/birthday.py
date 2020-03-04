@@ -45,7 +45,7 @@ class EVENT:
 
 		day_change_tz = []
 		for timezone in range(-12, 15): # For each timezone
-			if (hour + timezone - 1) % 24 == 0: # If the day just changed in this timezone
+			if (hour + timezone) % 24 == 0: # If the day just changed in this timezone
 				tz_info = [timezone] # Timezone is the first element of the list
 
 				tz_time = current_time + timedelta(hours=timezone)
@@ -56,7 +56,38 @@ class EVENT:
 
 		for tz in day_change_tz:
 			l_d = tz[2] + timedelta(days=-1) # Get the last day in the timezone that just switched days
+			n_d = tz[2] + timedelta(days=1)
+
+			n_d = f"{n_d.day}/{n_d.month}"
 			l_d = f"{l_d.day}/{l_d.month}"
+
+
+			found = self.db.get_entries("birthday", columns=["id", "timezone"], conditions={"birthday": l_d})
+			for person in found:
+				if person[1] < tz[0] and self.BIRTHDAY_ROLE not in TWOW_CENTRAL.get_member(int(member[0])).roles:
+					f_tz = ("+" if person[1] > 0 else "") + str(person[1])
+					await self.CHANNEL.send(
+						f"🎉 It is no longer **{l_d} UTC {f_tz}**, but happy birthday to <@{person[0]}> regardless! 🎉"
+					)
+					await TWOW_CENTRAL.get_member(int(person[0])).add_roles(self.BIRTHDAY_ROLE)
+			
+			found = self.db.get_entries("birthday", columns=["id", "timezone"], conditions={"birthday": tz[1]})
+			for person in found:
+				if person[1] > tz[0] and self.BIRTHDAY_ROLE not in TWOW_CENTRAL.get_member(int(member[0])).roles:
+					f_tz = ("+" if person[1] > 0 else "") + str(person[1])
+					await self.CHANNEL.send(
+						f"🎉 It is no longer **{tz[1]} UTC {f_tz}**, but happy birthday to <@{person[0]}> regardless! 🎉"
+					)
+					await TWOW_CENTRAL.get_member(int(person[0])).add_roles(self.BIRTHDAY_ROLE)
+			
+			found = self.db.get_entries("birthday", columns=["id", "timezone"], conditions={"birthday": n_d})
+			for person in found:
+				if person[1] - 24 > tz[0] and self.BIRTHDAY_ROLE not in TWOW_CENTRAL.get_member(int(member[0])).roles:
+					f_tz = ("+" if person[1] > 0 else "") + str(person[1])
+					await self.CHANNEL.send(
+						f"🎉 It is no longer **{n_d} UTC {f_tz}**, but happy birthday to <@{person[0]}> regardless! 🎉"
+					)
+					await TWOW_CENTRAL.get_member(int(person[0])).add_roles(self.BIRTHDAY_ROLE)
 
 			# Find members whose birthdays just ended in that timezone
 			found = self.db.get_entries("birthday", columns=["id"], conditions={"birthday": l_d, "timezone": tz[0]})
