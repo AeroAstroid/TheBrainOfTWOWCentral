@@ -420,7 +420,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 		if level == 2: # If it's just `tc/mmt queue`
 			if not mmt.RUNNING: # The event is counted as off if there's nobody in queue. To check the queue, it needs
 				# to be on, so being the first to join the queue will start up the event
-				mmt.start(TWOW_CENTRAL)
+				mmt.start(TWOW_CENTRAL, {"GAME_CHANNEL": GAME_CHANNEL})
 			
 			if message.author.id in mmt.info["HOST_QUEUE"]: # If you're already in queue, leaves the queue
 				mmt.info["HOST_QUEUE"] = [x for x in mmt.info["HOST_QUEUE"] if x != message.author.id]
