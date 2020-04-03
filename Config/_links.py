@@ -2,7 +2,7 @@ LINKS = { # Every single link for the `tc/link` command is here.
 	"GLICKO": {
 		"MAIN": "<https://docs.google.com/spreadsheets/d/1adKck5yL7ybYQ9VCsScL0yDmCuZsSY5w4UgNgZAeesM>",
 		"INFO": """The **TWOW Glicko Sheet**, by `awepi`, `AnEpik`, `biscuitmistress`, `ChristianPanda`,
-		 `Epsilon`, `Lpcarver`, `Purplegaze`, `thenamesh`, and `Dark`.""".replace("\t", "").replace("\n", "")
+		 `Epsilon`, `Lpcarver`, `PlasmicTrojan`, `Purplegaze` and `thenamesh`.""".replace("\t", "").replace("\n", "")
 	},
 	"TTT": {
 		"MAIN": "<https://docs.google.com/spreadsheets/d/1cKXsXkAR_vHp72j-JOswzaYiYjLpQ0ADSz4GSmexlcI>",
