@@ -111,7 +111,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 
 		if level == 2: # `tc/config` shows you the current configurations
 			tag = str(time.time()).split(".")[1] # Get a pretty much random sequence of digits
-			uno_image(4, tag, config=UNO_INFO["config"]) # Generate the image with the [4] (config menu) flag
+			uno_image(4, tag, SERVER['PREFIX'], config=UNO_INFO["config"]) # Generate the image with the [4] (config menu) flag
 
 			await message.channel.send("These is the current game options configuration.",
 			file=discord.File(f"Images/current_card_image_{tag}.png")) # Send the image
@@ -256,7 +256,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 				player_hand = UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)] # Redefine player_hand
 				
 				tag = str(time.time()).split(".")[1] # Make the updated image for the player's hand
-				uno_image(2, tag, last=UNO_INFO["last_card"], hand=player_hand)
+				uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=player_hand)
 
 				# Send the image then promptly delete it
 				await message.channel.send("You have successfully played a card!",
@@ -335,7 +335,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 			player_hand = UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)] # Redefine player_hand
 
 			tag = str(time.time()).split(".")[1] # Make the updated image for the player's new hand
-			uno_image(2, tag, last=UNO_INFO["last_card"], hand=player_hand)
+			uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=player_hand)
 
 			await message.channel.send("You have successfully played a card!", # Send the image
 			file=discord.File(f"Images/current_card_image_{tag}.png"))
@@ -356,7 +356,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 
 				for player in UNO_INFO["players"]: # Send every single person their new hand
 					tag = str(time.time()).split(".")[1] # Make the image for their new hand
-					uno_image(2, tag, last=UNO_INFO["last_card"],
+					uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"],
 					hand=UNO_INFO["hands"][UNO_INFO["players"].index(player)])
 
 					await SERVER['MAIN'].get_member(player).send( # Send the new hand
@@ -379,13 +379,13 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 				player_hand = UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)]
 
 				tag = str(time.time()).split(".")[1] # Report your new hand
-				uno_image(2, tag, last=UNO_INFO["last_card"], hand=player_hand)
+				uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=player_hand)
 				await message.channel.send("This is your new hand!", 
 				file=discord.File(f"Images/current_card_image_{tag}.png"))
 				os.remove(f"Images/current_card_image_{tag}.png")
 
 				tag = str(time.time()).split(".")[1] # Show the other player their new hand
-				uno_image(2, tag, last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][int(args[3]) - 1])
+				uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][int(args[3]) - 1])
 				await SERVER["MAIN"].get_member(player_member).send(
 				f"**{message.author.name}** has traded their hand with you! This is your new hand.", 
 				file=discord.File(f"Images/current_card_image_{tag}.png"))
@@ -414,7 +414,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 				UNO_INFO["carryover"] = 0 # Reset the carryover
 
 				tag = str(time.time()).split(".")[1] # Report the new hand
-				uno_image(2, tag, last=UNO_INFO["last_card"], hand=player_hand)
+				uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=player_hand)
 				await message.channel.send(f"You draw **{card_n}** cards!", 
 				file=discord.File(f"Images/current_card_image_{tag}.png"))
 				
@@ -442,7 +442,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 				player_hand = UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)]
 
 				tag = str(time.time()).split(".")[1] # Report the new hand
-				uno_image(2, tag, last=UNO_INFO["last_card"], hand=player_hand)
+				uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=player_hand)
 
 				await message.channel.send("You've drawn a card!",
 				file=discord.File(f"Images/current_card_image_{tag}.png"))
@@ -574,7 +574,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 			UNO_INFO["hands"][-1] = list(sorted(UNO_INFO["hands"][-1])) # Sort that hand
 
 			tag = str(time.time()).split(".")[1] # Give the person their starting cards
-			uno_image(2, tag, last="QC", hand=UNO_INFO["hands"][-1])
+			uno_image(2, tag, SERVER['PREFIX'], last="QC", hand=UNO_INFO["hands"][-1])
 			await SERVER['MAIN'].get_member(player).send(
 			"The Uno round is starting! Here's your hand:", 
 			file=discord.File(f"Images/current_card_image_{tag}.png"))
@@ -607,7 +607,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 			player_name = player_member.name # Their username
 
 			tag = str(time.time()).split(".")[1] # Make the image reporting that it's the player's turn
-			uno_image(1, tag, last=UNO_INFO["last_card"], name=player_name)
+			uno_image(1, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], name=player_name)
 			await message.channel.send(file=discord.File(f"Images/current_card_image_{tag}.png"))
 			os.remove(f"Images/current_card_image_{tag}.png")
 
@@ -637,7 +637,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 					UNO_INFO["deck"] = UNO_INFO["deck"][dc:] # Remove those cards from the deck
 
 					tag = str(time.time()).split(".")[1] # Send the player their new hand
-					uno_image(2, tag, last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][player_index])
+					uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][player_index])
 					await player_member.send(f"You drew **{dc}** cards!",
 					file=discord.File(f"Images/current_card_image_{tag}.png"))
 					os.remove(f"Images/current_card_image_{tag}.png")
@@ -650,7 +650,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 					continue # Do another iteration. If they weren't skipped, it's still their turn
 
 			tag = str(time.time()).split(".")[1] # Show the player their cards
-			uno_image(0, tag, last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][player_index])
+			uno_image(0, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][player_index])
 			await player_member.send("""It is now your turn to play a card!
 			You have **1 minute** to play, or you'll be skipped.""",
 			file=discord.File(f"Images/current_card_image_{tag}.png"))
@@ -686,7 +686,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 					grammar = "" if dc == 1 else "s"
 
 					tag = str(time.time()).split(".")[1] # Report their new hand
-					uno_image(2, tag, last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][player_index])
+					uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][player_index])
 
 					await player_member.send(
 					"You took too long to play! You will draw cards as punishment.",
@@ -708,7 +708,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 			if (len(UNO_INFO["hands"][player_index]) == 0 or
 			len(UNO_INFO["players"]) == 1): # If they have no cards, they win! Or also if everyone else quit
 				tag = str(time.time()).split(".")[1] # Report the victory
-				uno_image(3, tag, last=UNO_INFO["last_card"], name=player_name)
+				uno_image(3, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], name=player_name)
 				await message.channel.send(f"**{player_name} WINS THE GAME!**", 
 				file=discord.File(f"Images/current_card_image_{tag}.png"))
 				os.remove(f"Images/current_card_image_{tag}.png")
