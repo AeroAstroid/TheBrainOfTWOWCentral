@@ -126,7 +126,7 @@ FUNCTIONS = {
 			"c": ["INTEGER"]
 		},
 		"PRIORITY": 4
-	}
+	},
 
 	"?&?": {
 		"MAIN": (lambda a, b: a + b),
