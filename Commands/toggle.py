@@ -1,22 +1,22 @@
 import discord
-from Config._const import PREFIX
 
-HELP = {
-	"COOLDOWN": 5,
-	"MAIN": "Toggles speaking at a public channel",
-	"FORMAT": "('on'/'off') [channels] ('confirm')",
-	"CHANNEL": 2,
-	"USAGE": f"""Using `{PREFIX}toggle [channels]` will prompt a confirmation message to toggle all channels included. 
-	By default, it'll switch locked channels to unlocked and vice-versa. Including `('on'/'off')` before `[channels]` 
-	specifies to unlock all channels or lock all channels. Including `('confirm')` anywhere in the command bypasses 
-	the confirmation message and triggers the toggling action instantly.""".replace("\n", "").replace("\t", "")
-}
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 5,
+		"MAIN": "Toggles speaking at a public channel",
+		"FORMAT": "('on'/'off') [channels] ('confirm')",
+		"CHANNEL": 2,
+		"USAGE": f"""Using `{PREFIX}toggle [channels]` will prompt a confirmation message to toggle all channels included. 
+		By default, it'll switch locked channels to unlocked and vice-versa. Including `('on'/'off')` before `[channels]` 
+		specifies to unlock all channels or lock all channels. Including `('confirm')` anywhere in the command bypasses 
+		the confirmation message and triggers the toggling action instantly.""".replace("\n", "").replace("\t", "")
+	}
 
 PERMS = 2 # Staff
 ALIASES = ["LOCK"]
-REQ = ["TWOW_CENTRAL", "BRAIN", "PUBLIC_CHANNELS", "LOGS"]
+REQ = []
 
-async def MAIN(message, args, level, perms, TWOW_CENTRAL, BRAIN, PUBLIC_CHANNELS, LOGS):
+async def MAIN(message, args, level, perms, SERVER):
 	if level == 1:
 		await message.channel.send("Include channels to toggle!")
 		return
@@ -37,16 +37,16 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, BRAIN, PUBLIC_CHANNELS
 	for ch in channels: # For every channel mentioned...
 		if ch.startswith("<#") and ch.endswith(">"): # Don't bother if it's not an actual channel mention
 			try:
-				if (discord.utils.get(TWOW_CENTRAL.channels, id=int(ch[2:-1])) is None
-				or int(ch[2:-1]) not in PUBLIC_CHANNELS): # If it's invalid or not a public channel, point so out
+				if (discord.utils.get(SERVERS["MAIN"].channels, id=int(ch[2:-1])) is None
+				or int(ch[2:-1]) not in SERVERS["PUBLIC_CHANNELS"]): # If it's invalid or not a public channel, point so out
 					add = f"The channel with ID {ch[2:-1]} is either invalid or not a public channel. No action will be taken.\n"
 					if len(lines[-1] + add) > 1950:
 						lines.append("")
 					lines[-1] += add
 
 				else: # Otherwise, it's valid, so add it
-					target_c = discord.utils.get(TWOW_CENTRAL.channels, id=int(ch[2:-1]))
-					c_perm = target_c.overwrites_for(TWOW_CENTRAL.default_role).send_messages
+					target_c = discord.utils.get(SERVERS["MAIN"].channels, id=int(ch[2:-1]))
+					c_perm = target_c.overwrites_for(SERVERS["MAIN"].default_role).send_messages
 
 					if mode is None: # If the user wants to switch the permissions...
 						if c_perm in [None, True]: # Channels that allow speaking...
@@ -93,7 +93,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, BRAIN, PUBLIC_CHANNELS
 	for act in actions:
 		# Toggle the channel (changing its send messages and add reactions permissions)
 		await act[0].set_permissions(
-			TWOW_CENTRAL.default_role, send_messages=act[1], add_reactions=act[1])
+			SERVERS["MAIN"].default_role, send_messages=act[1], add_reactions=act[1])
 
 		# Lines to be added to the confirmation and/or log message
 		add = f"**{act[0].mention} has been toggled {'ON' if act[1] is None else 'OFF'}.**\n"
@@ -110,6 +110,4 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, BRAIN, PUBLIC_CHANNELS
 
 	for z in lines:
 		await message.channel.send(z)
-	for z in log_lines: # Also post in the logs channel
-		await LOGS.send(z)
 	return

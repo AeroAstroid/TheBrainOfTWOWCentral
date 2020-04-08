@@ -1,22 +1,21 @@
-from Config._const import PREFIX
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 5,
+		"MAIN": "Deletes past messages under certain conditions",
+		"FORMAT": "[limit:] (after:) (user:) ('silent')",
+		"CHANNEL": 2,
 
-HELP = {
-	"COOLDOWN": 5,
-	"MAIN": "Deletes past messages under certain conditions",
-	"FORMAT": "[limit:] (after:) (user:) ('silent')",
-	"CHANNEL": 2,
-
-	"USAGE": f"""Using `{PREFIX}clean [limit:]` cleans the number of messages specified in `[limit:]` in the channel 
-	the command was used in. The parameters `(after:)` and `(user:)` can be used to specify a limit of when to stop 
-	deleting or whose messages to delete. Including the parameter `('silent')` performs the operation "silently", 
-	sending no confirmation message and deleting the command message as well.""".replace("\n", "").replace("\t", "")
-}
+		"USAGE": f"""Using `{PREFIX}clean [limit:]` cleans the number of messages specified in `[limit:]` in the channel 
+		the command was used in. The parameters `(after:)` and `(user:)` can be used to specify a limit of when to stop 
+		deleting or whose messages to delete. Including the parameter `('silent')` performs the operation "silently", 
+		sending no confirmation message and deleting the command message as well.""".replace("\n", "").replace("\t", "")
+	}
 
 PERMS = 2 # Staff
 ALIASES = ["PRUNE"]
 REQ = []
 
-async def MAIN(message, args, level, perms):
+async def MAIN(message, args, level, perms, SERVER):
 	if level == 1:
 		await message.channel.send("Provide information on which messages to clean!")
 		return

@@ -2,22 +2,17 @@ import time, discord
 from Config._functions import grammar_list
 
 class EVENT:
-	LOADED = False
-	RUNNING = False
-
-	param = { # Define all the parameters necessary
-		"CHANNEL": "",
-		"EMOJIS": []
-	}
-
-
 	# Executes when loaded
 	def __init__(self):
-		self.LOADED = True
+		self.RUNNING = False
+		self.param = { # Define all the parameters necessary
+			"CHANNEL": "",
+			"EMOJIS": []
+		}
 
 
 	# Executes when activated
-	def start(self, TWOW_CENTRAL, PARAMS): # Set the parameters
+	def start(self, SERVER): # Set the parameters
 		self.RUNNING = True
 
 	

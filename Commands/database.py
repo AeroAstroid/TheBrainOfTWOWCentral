@@ -1,23 +1,24 @@
 from Config._functions import grammar_list, is_whole, is_float
-from Config._const import PREFIX, BRAIN
+from Config._const import BRAIN
 import traceback
 
 from Config._db import Database
 
-HELP = {
-	"COOLDOWN": 3,
-	"MAIN": "Command used to interact with the Brain Postgres database",
-	"FORMAT": "[subcommand]",
-	"CHANNEL": 0,
-	"USAGE": f"""wip
-	""".replace("\n", "").replace("\t", "")
-}
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 3,
+		"MAIN": "Command used to interact with the Brain Postgres database",
+		"FORMAT": "[subcommand]",
+		"CHANNEL": 0,
+		"USAGE": f"""wip
+		""".replace("\n", "").replace("\t", "")
+	}
 
 PERMS = 1 # Member
 ALIASES = ["DB"]
 REQ = []
 
-async def MAIN(message, args, level, perms):
+async def MAIN(message, args, level, perms, SERVER):
 	db = Database()
 
 	if perms < 2: # Direct database viewing is staff-only

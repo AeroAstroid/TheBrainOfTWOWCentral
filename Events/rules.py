@@ -2,33 +2,29 @@ import time, discord, re
 from Config._functions import grammar_list
 
 class EVENT:
-	LOADED = False
-	RUNNING = False
-
-	EVENT_ROLE = 498254150044352514 # Event participant role
-
-	param = { # Define all the parameters necessary
-		"FINAL_5": False,
-		"MESSAGES": 0,
-		"LOGGING": 0,
-		"ROLE": 0,
-		"PLAYER_IDS": [],
-		"PLAYER_INFO": []
-	}
-
 	# Executes when loaded
 	def __init__(self):
-		self.LOADED = True
+		self.RUNNING = False
+		self.param = { # Define all the parameters necessary
+			"FINAL_5": False,
+			"MESSAGES": 0,
+			"LOGGING": 0,
+			"ROLE": 0,
+			"PLAYER_IDS": [],
+			"PLAYER_INFO": []
+		}
 
 
 	# Executes when activated
-	def start(self, TWOW_CENTRAL, PARAMS): # Set the parameters
+	def start(self, SERVER): # Set the parameters
 		self.RUNNING = True
 
+		self.SERVER = SERVER
+		self.EVENT_ROLE = 498254150044352514 # Event participant role
 		self.param["FINAL_5"] = False
-		self.param["ROLE"] = discord.utils.get(TWOW_CENTRAL.roles, id=self.EVENT_ROLE)
-		self.param["MESSAGES"] = discord.utils.get(TWOW_CENTRAL.channels, name="events") # Take messages from here
-		self.param["LOGGING"] = discord.utils.get(TWOW_CENTRAL.channels, name="event-time") # Log eliminations here
+		self.param["ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ROLE)
+		self.param["MESSAGES"] = discord.utils.get(SERVER["MAIN"].channels, name="events") # Take messages from here
+		self.param["LOGGING"] = discord.utils.get(SERVER["MAIN"].channels, name="event-time") # Log eliminations here
 
 		self.param["PLAYER_IDS"] = [x.id for x in self.param["ROLE"].members] # Set the players as the people with role
 		# Set [id, history, last_message] parameters for the message history and timer rules
@@ -135,7 +131,7 @@ class EVENT:
 	
 
 	# Function that runs every two seconds
-	async def on_two_second(self, TWOW_CENTRAL):
+	async def on_two_second(self):
 		for player_info in self.param["PLAYER_INFO"]:
 			pl_index = self.param["PLAYER_INFO"].index(player_info)
 
@@ -145,7 +141,7 @@ class EVENT:
 
 			if time.time() - player_info[2] > t: # If the player went too long without sending messages...
 				# Remove role, announce elimination, mark player as eliminated
-				await TWOW_CENTRAL.get_member(player_info[0]).remove_roles(self.param["ROLE"])
+				await self.SERVER["MAIN"].get_member(player_info[0]).remove_roles(self.param["ROLE"])
 				await self.param["LOGGING"].send(f"<@{player_info[0]}> has been eliminated for breaking Rule 1.")
 
 				self.param["PLAYER_INFO"][pl_index][0] = 0

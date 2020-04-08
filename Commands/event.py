@@ -1,34 +1,35 @@
 from Config._functions import grammar_list, is_whole, is_float
-from Config._const import PREFIX, BRAIN
+from Config._const import BRAIN
 
-HELP = {
-	"COOLDOWN": 2,
-	"MAIN": "Used to manage events or other bot actions",
-	"FORMAT": "['list' / event] (subcommand) ('confirm')",
-	"CHANNEL": 2,
-	
-	"USAGE": f"""Using `{PREFIX}event ['list']` lists all available events, and whether they're on or off. 
-	Specifying one of those events as `[event]` lets you toggle on/off that specific event, with a confirmation 
-	message. Including `('confirm')` bypasses the confirmation message. You can use the subcommand 
-	`{PREFIX}event [event] edit` to change parameters of an event that's currently running.
-	""".replace("\n", "").replace("\t", "")
-}
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 2,
+		"MAIN": "Used to manage events or other bot actions",
+		"FORMAT": "['list' / event] (subcommand) ('confirm')",
+		"CHANNEL": 2,
+		
+		"USAGE": f"""Using `{PREFIX}event ['list']` lists all available events, and whether they're on or off. 
+		Specifying one of those events as `[event]` lets you toggle on/off that specific event, with a confirmation 
+		message. Including `('confirm')` bypasses the confirmation message. You can use the subcommand 
+		`{PREFIX}event [event] edit` to change parameters of an event that's currently running.
+		""".replace("\n", "").replace("\t", "")
+	}
 
 PERMS = 2 # Staff
 ALIASES = []
-REQ = ["EVENTS"]
+REQ = []
 
-async def MAIN(message, args, level, perms, EVENTS):
+async def MAIN(message, args, level, perms, SERVER):
 	if level == 1:
 		await message.channel.send("Include events to call!")
 		return
 	
 	if args[1].lower() == "list": # List the events from the dict
-		event_list = [f'`{x}` - **{"ON" if EVENTS[x].RUNNING else "OFF"}**\n' for x in EVENTS.keys()]
+		event_list = [f'`{x}` - **{"ON" if SERVER["EVENTS"][x].RUNNING else "OFF"}**\n' for x in SERVER["EVENTS"].keys()]
 		await message.channel.send(f"Here is a list of bot events:\n\n{''.join(event_list)}")
 		return
 	
-	if args[1].upper() not in EVENTS.keys(): # Event doesn't exist
+	if args[1].upper() not in SERVER["EVENTS"].keys(): # Event doesn't exist
 		await message.channel.send("Invalid event.")
 		return
 
@@ -36,7 +37,7 @@ async def MAIN(message, args, level, perms, EVENTS):
 
 	if level != 2: # If it's not just `tc/event [event_name]`, check for subcommands
 		if args[2].lower() == "edit":
-			if not EVENTS[event].RUNNING:
+			if not SERVER["EVENTS"][event].RUNNING:
 				await message.channel.send("You can only change an event that's currently running.")
 				return
 			
@@ -89,11 +90,11 @@ async def MAIN(message, args, level, perms, EVENTS):
 				await message.channel.send(f"Include the new value for {grammar_list(no_value)}!")
 				return
 			
-			await EVENTS[event].edit_event(message, config_dict)
+			await SERVER["EVENTS"][event].edit_event(message, config_dict)
 			return # If everything went alright, edit the event parameters
 	
 	# If the command is purely `tc/event [event_name]`, it interprets as to toggle the event
-	if EVENTS[event].RUNNING:
+	if SERVER["EVENTS"][event].RUNNING:
 		action = "END"
 	else:
 		action = "START"

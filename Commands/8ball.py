@@ -1,20 +1,20 @@
-from Config._const import PREFIX
 import random
 
-HELP = {
-	"COOLDOWN": 1,
-	"MAIN": "Obtain advice from the wisdom of Brain's 8 Ball.",
-	"FORMAT": "",
-	"CHANNEL": 0,
-	"USAGE": f"""Using `{PREFIX}8ball` will generate advice from Brain's specialized 8 Ball.
-	""".replace("\n", "").replace("\t", "")
-}
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 1,
+		"MAIN": "Obtain advice from the wisdom of Brain's 8 Ball.",
+		"FORMAT": "",
+		"CHANNEL": 0,
+		"USAGE": f"""Using `{PREFIX}8ball` will generate advice from Brain's specialized 8 Ball.
+		""".replace("\n", "").replace("\t", "")
+	}
 
 PERMS = 0 # Non-members
 ALIASES = ["8"]
 REQ = []
 
-async def MAIN(message, args, level, perms):
+async def MAIN(message, args, level, perms, SERVER):
 	act = random.choice(
 		["invest in stocks", "create a bank account", "buy excessive amounts of lotion", "eat a berry",
 		"adjust for inflation", "play Terraria Multiplayer with Dark", "vote", "become rich and successful",

@@ -1,36 +1,37 @@
-from Config._const import PREFIX, DB_LINK
+from Config._const import DB_LINK
 from Config._functions import key_generator, strip_alpha, is_whole, number_key
 import random, time, asyncio, discord
 import numpy as np
 
 from Config._db import Database
 
-HELP = {
-	"COOLDOWN": 2,
-	"MAIN": "Command for the Big Red Button game",
-	"FORMAT": "('press'/'top')",
-	"CHANNEL": 4,
-	"USAGE": f"""Using `{PREFIX}bigredbutton` will give you information on the current Big Red Button, such as its 
-	chance of exploding, serial number and inspector code. Using `{PREFIX}bigredbutton press` will press the button. 
-	If it doesn't explode, you gain points equal to its chance of exploding. If it explodes, the button cannot be 
-	pressed for 5 minutes. You also lose points, and cannot press any buttons for 6 hours. Once a button's pressed, 
-	a new one is generated with new info. If the last digit of your user ID appears in the serial number, the button 
-	has a 0.67x chance of exploding when YOU press it. If the first letter of your username appears in the serial 
-	number, the button has a 2x chance of exploding.""".replace("\n", "").replace("\t", ""),
-	"USAGE2": """Upon explosion, you lose half of your points. If the factory inspector's code shares two digits with 
-	your discriminator, the button's explosion only takes away a quarter of your points. If it shares all three digits 
-	with your discriminator, it only takes away one tenth of your points upon exploding. Shared digits can only be 
-	paired once; an inspector code of 770 and a discriminator of 7316 only counts as one shared digit (because the 
-	first 7 pairs with the 7 in the discriminator, but the other 7 has no other 7 to pair with. This is so 
-	discriminators or inspector codes with repeating digits don't provide any advantage or disadvantage.)
-	""".replace("\n", "").replace("\t", "")
-}
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 2,
+		"MAIN": "Command for the Big Red Button game",
+		"FORMAT": "('press'/'top')",
+		"CHANNEL": 4,
+		"USAGE": f"""Using `{PREFIX}bigredbutton` will give you information on the current Big Red Button, such as its 
+		chance of exploding, serial number and inspector code. Using `{PREFIX}bigredbutton press` will press the button. 
+		If it doesn't explode, you gain points equal to its chance of exploding. If it explodes, the button cannot be 
+		pressed for 5 minutes. You also lose points, and cannot press any buttons for 6 hours. Once a button's pressed, 
+		a new one is generated with new info. If the last digit of your user ID appears in the serial number, the button 
+		has a 0.67x chance of exploding when YOU press it. If the first letter of your username appears in the serial 
+		number, the button has a 2x chance of exploding.""".replace("\n", "").replace("\t", ""),
+		"USAGE2": """Upon explosion, you lose half of your points. If the factory inspector's code shares two digits with 
+		your discriminator, the button's explosion only takes away a quarter of your points. If it shares all three digits 
+		with your discriminator, it only takes away one tenth of your points upon exploding. Shared digits can only be 
+		paired once; an inspector code of 770 and a discriminator of 7316 only counts as one shared digit (because the 
+		first 7 pairs with the 7 in the discriminator, but the other 7 has no other 7 to pair with. This is so 
+		discriminators or inspector codes with repeating digits don't provide any advantage or disadvantage.)
+		""".replace("\n", "").replace("\t", "")
+	}
 
 PERMS = 1 # Member
 ALIASES = ["BUTTON"]
-REQ = ["TWOW_CENTRAL"]
+REQ = []
 
-async def MAIN(message, args, level, perms, TWOW_CENTRAL):
+async def MAIN(message, args, level, perms, SERVER):
 
 	if isinstance(message.channel, discord.DMChannel): # Everyone should be able to see button presses
 		await message.channel.send("This command cannot be used in DMs!")
@@ -171,7 +172,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 				line = f"- {r}{' ' * (4 - len(str(r)))}|  "
 			
 			try: # Try to gather a username from the ID
-				member = TWOW_CENTRAL.get_member(int(person[0])).name
+				member = SERVER["MAIN"].get_member(int(person[0])).name
 			except: # If you can't, just display the ID
 				member = str(person[0])
 
