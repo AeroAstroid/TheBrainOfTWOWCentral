@@ -118,6 +118,16 @@ FUNCTIONS = {
 		"PRIORITY": 4
 	},
 
+	"?slice?to?": {
+		"MAIN": (lambda a, b, c: a[b-1:c-1]),
+		"TYPES": {
+			"a": ["ARRAY, STRING"],
+			"b": ["INTEGER"],
+			"c": ["INTEGER"]
+		},
+		"PRIORITY": 4
+	}
+
 	"?&?": {
 		"MAIN": (lambda a, b: a + b),
 		"TYPES": {
