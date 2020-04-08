@@ -503,7 +503,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 			return
 		
 		await UNO_INFO["channel"].send("***The host has ended the round!***")
-		uno_skip() # I've got a function for this, wow!
+		UNO_INFO = uno_skip() # I've got a function for this, wow!
 		return [4, "UNO", UNO_INFO]
 
 	if args[1].lower() == "create":
@@ -547,7 +547,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 			
 			if sec >= 180: # If the host ran out of time
 				await message.channel.send(f"**<@{UNO_INFO['host']}>** has been skipped from hosting the round.")
-				uno_skip()
+				UNO_INFO = uno_skip()
 				return [4, "UNO", UNO_INFO]
 			
 			if UNO_INFO["status"] == 2: # Represents that the game has started
@@ -739,5 +739,5 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 			if UNO_INFO["carryover"] in [-1, -2, -3]: # These three drawovers last for one turn only
 				UNO_INFO["carryover"] = 0 # They're reset right after
 
-		uno_skip() # The game is over! Reset the uno_info dict.
+		UNO_INFO = uno_skip() # The game is over! Reset the uno_info dict.
 		return [4, "UNO", UNO_INFO]
