@@ -135,8 +135,7 @@ async def on_ready():
 	# Notify that the bot is ready
 	print(f"\nLogged in at {PARAMS['LOGIN_TIME']} ({PARAMS['LOGIN']})\n")
 
-	for server in SERVERS:
-		await MAIN_SERVER["LOGS"].send(f"> Logged in at {PARAMS['LOGIN_TIME']} ({PARAMS['LOGIN']})")
+	await MAIN_SERVER["LOGS"].send(f"> Logged in at {PARAMS['LOGIN_TIME']} ({PARAMS['LOGIN']})")
 
 	@BRAIN.event
 	async def on_message(message):
@@ -175,11 +174,12 @@ async def on_ready():
 			msg_PREFIX = msg_guild["PREFIX"]
 
 			# Define the user's permissions: 3 = Developer; 2 = Staff; 1 = Member; 0 = Non-member
-			perms = 3 if message.author.id == 184768535107469314 else (
-				2 if message.author in msg_guild["STAFF_ROLE"].members else (
-				1 if message.author in msg_guild["MEMBER_ROLE"].members else 0))
-			
-			if perms < 2 and (message.guild is not None and message.channel.id not in msg_guild["BOT_CHANNELS"]):
+			if message.author.id == 184768535107469314: perms = 3
+			elif message.author in msg_guild["STAFF_ROLE"].members: perms = 2
+			elif message.author in msg_guild["MEMBER_ROLE"].members: perms = 1
+			else: perms = 0
+
+			if perms < 2 and (message.guild is not None and message.channel not in msg_guild["BOT_CHANNELS"]):
 				return # Ignore commands from non-staff that are not in bot channels
 			
 			if message.author.id == 382925349144494080:
