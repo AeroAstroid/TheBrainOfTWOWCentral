@@ -1,20 +1,20 @@
 import time
-from Config._const import PREFIX
 
-HELP = {
-	"COOLDOWN": 1,
-	"MAIN": "Displays how long the bot has been up for",
-	"FORMAT": "",
-	"CHANNEL": 1,
-	"USAGE": f"""Using `{PREFIX}uptime` simply returns the amount of time since 
-	the bot last restarted.""".replace("\n", "").replace("\t", "")
-}
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 1,
+		"MAIN": "Displays how long the bot has been up for",
+		"FORMAT": "",
+		"CHANNEL": 1,
+		"USAGE": f"""Using `{PREFIX}uptime` simply returns the amount of time since 
+		the bot last restarted.""".replace("\n", "").replace("\t", "")
+	}
 
 PERMS = 0 # Non-member
 ALIASES = ["UP"]
 REQ = ["LOGIN"]
 
-async def MAIN(message, args, level, perms, LOGIN):
+async def MAIN(message, args, level, perms, SERVER, LOGIN):
 	# 1000 * seconds = milliseconds
 	delta = 1000 * (time.time() - LOGIN)
 

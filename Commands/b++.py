@@ -1,25 +1,25 @@
-from Config._const import PREFIX
 from Config._functions import strip_alpha, find_all, is_whole, strip_front
 from Config._bpp_parsing import parenthesis_parser
 from Config._bpp_functions import list_to_array, array_to_list
 from Config._db import Database
 import discord
 
-HELP = {
-	"COOLDOWN": 3,
-	"MAIN": "Allows you to write short tags and/or programs with a simplified instruction set",
-	"FORMAT": "[subcommand]",
-	"CHANNEL": 0,
-	"USAGE": f"""The full documentation for all B++ functionality is displayed in this document: 
-	https://docs.google.com/document/d/1-UOafQ0qW0AzpR1xxCYU_2__VulfofMDeD62vjhptMM/edit
-	""".replace("\n", "").replace("\t", "")
-}
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 3,
+		"MAIN": "Allows you to write short tags and/or programs with a simplified instruction set",
+		"FORMAT": "[subcommand]",
+		"CHANNEL": 0,
+		"USAGE": f"""The full documentation for all B++ functionality is displayed in this document: 
+		https://docs.google.com/document/d/1-UOafQ0qW0AzpR1xxCYU_2__VulfofMDeD62vjhptMM/edit
+		""".replace("\n", "").replace("\t", "")
+	}
 
 PERMS = 1 # Member
 ALIASES = ["TAG"]
-REQ = ["TWOW_CENTRAL"]
+REQ = []
 
-async def MAIN(message, args, level, perms, TWOW_CENTRAL):
+async def MAIN(message, args, level, perms, SERVER):
 	if level == 1:
 		await message.channel.send("Include a subcommand!")
 		return
@@ -60,7 +60,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 
 				member_id = program[2]
 				try: # Try to gather a username from the ID
-					member = TWOW_CENTRAL.get_member(int(member_id)).name
+					member = SERVER["MAIN"].get_member(int(member_id)).name
 				except: # If you can't, just display the ID
 					member = str(member_id)
 
@@ -83,7 +83,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 
 		member_id = program[2]
 		try: # Try to gather a username from the ID
-			member = TWOW_CENTRAL.get_member(int(member_id)).name
+			member = SERVER["MAIN"].get_member(int(member_id)).name
 		except: # If you can't, just display the ID
 			member = str(member_id)
 

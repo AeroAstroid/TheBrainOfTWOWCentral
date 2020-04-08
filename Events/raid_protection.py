@@ -1,39 +1,29 @@
 import time, discord
 
 class EVENT:
-	LOADED = False
-	RUNNING = False
-
-	MEMBER = 0 # Member role
-	MUTED = 0 # Muted role
-	LOGS = 0 #logs channel
-	TWOW_CENTRAL = 0 # Server
-
 	# Note: These are the rules that will get you muted by the raid protection system
 	# 1. You cannot ping 5 or more people in 45 or less seconds.
 	# 2. You cannot send 5 or more messages in 10 or less seconds.
 	# 3. You cannot send 10 or more messages in 30 or less seconds.
 	# Breaking any of these as a non-member gets you muted.
 
-	param = { # Define all the parameters necessary 
-		"PING_LIMIT": 5,
-		"PING_TIME": 45,
-		"MESSAGE_LIMIT": [5, 10],
-		"MESSAGE_TIME": [10, 30],
-		"INFO": {}
-	}
-
 	# Executes when loaded
 	def __init__(self):
-		self.LOADED = True
+		self.RUNNING = False
+		self.param = { # Define all the parameters necessary 
+			"PING_LIMIT": 5,
+			"PING_TIME": 45,
+			"MESSAGE_LIMIT": [5, 10],
+			"MESSAGE_TIME": [10, 30],
+			"INFO": {}
+		}
 	
 
 	# Executes when activated
-	def start(self, TWOW_CENTRAL, PARAMS):
-		self.TWOW_CENTRAL = TWOW_CENTRAL
-		self.MEMBER = discord.utils.get(TWOW_CENTRAL.roles, id=PARAMS["MEMBER_ID"])
-		self.MUTED = discord.utils.get(TWOW_CENTRAL.roles, name="Mute")
-		self.LOGS = discord.utils.get(TWOW_CENTRAL.channels, name="logs")
+	def start(self, SERVER):
+		self.SERVER = SERVER
+		self.MEMBER = SERVER["MEMBER_ROLE"]
+		self.MUTED = discord.utils.get(SERVER["MAIN"].roles, name="Mute")
 		self.RUNNING = True
 	
 
@@ -78,9 +68,9 @@ class EVENT:
 		
 		if cause != "": # Mute the member
 			try:
-				if self.MUTED not in self.TWOW_CENTRAL.get_member(message.author.id).roles:
-					await self.TWOW_CENTRAL.get_member(message.author.id).add_roles(self.MUTED)
-					await self.LOGS.send(f"**Muted <@{message.author.id}> for {cause}.**")
+				if self.MUTED not in self.SERVER["MAIN"].get_member(message.author.id).roles:
+					await self.SERVER["MAIN"].get_member(message.author.id).add_roles(self.MUTED)
+					await message.channel.send(f"**Muted <@{message.author.id}> for {cause}.**")
 			except AttributeError: # This happens when a webhook breaks the rules. Ignore that
 				pass
 
@@ -92,7 +82,7 @@ class EVENT:
 	
 
 	# Function that runs every two seconds
-	async def on_two_second(self, TWOW_CENTRAL):
+	async def on_two_second(self):
 		keys = self.param["INFO"].keys()
 		try:
 			for person in keys:

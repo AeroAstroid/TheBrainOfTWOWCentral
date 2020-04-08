@@ -1,26 +1,27 @@
-from Config._const import PREFIX, BRAIN
+from Config._const import BRAIN
 from Config._db import Database
 import random, discord
 from datetime import datetime, timezone
 from calendar import monthrange
 from Config._functions import is_whole
 
-HELP = {
-	"COOLDOWN": 1,
-	"MAIN": "The command for birthday registering and viewing",
-	"FORMAT": "(subcommand) (complements)",
-	"CHANNEL": 0,
-	"USAGE": f"""Using `{PREFIX}birthday` without a subcommand displays your own registered birthday. 
-	Using `{PREFIX}birthday view` will show you the next birthday from now chronologically, and you can include 
-	an ID or username to see that person's birthday, if they've registered one. Using `{PREFIX}birthday register 
-	[dd/mm] (timezone)` will allow you to register or edit your birthday.""".replace("\n", "").replace("\t", "")
-}
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 1,
+		"MAIN": "The command for birthday registering and viewing",
+		"FORMAT": "(subcommand) (complements)",
+		"CHANNEL": 0,
+		"USAGE": f"""Using `{PREFIX}birthday` without a subcommand displays your own registered birthday. 
+		Using `{PREFIX}birthday view` will show you the next birthday from now chronologically, and you can include 
+		an ID or username to see that person's birthday, if they've registered one. Using `{PREFIX}birthday register 
+		[dd/mm] (timezone)` will allow you to register or edit your birthday.""".replace("\n", "").replace("\t", "")
+	}
 
 PERMS = 0 # Non-members
 ALIASES = ["BD"]
-REQ = ["TWOW_CENTRAL"]
+REQ = []
 
-async def MAIN(message, args, level, perms, TWOW_CENTRAL):
+async def MAIN(message, args, level, perms, SERVER):
 	db = Database()
 
 	months = ["January", "February", "March", "April", "May", "June",
@@ -31,7 +32,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 
 		if found == []:
 			await message.channel.send(f"""You are yet to register your birthday!
-			You can register by using **{PREFIX}birthday register `DD/MM` `timezone`**""".replace("\t", ""))
+			You can register by using **{SERVER["PREFIX"]}birthday register `DD/MM` `timezone`**""".replace("\t", ""))
 			return
 
 		birthday, tz = found[0][1:]
@@ -68,7 +69,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			timezone_f = ("+" if tz > 0 else "") + str(tz)
 
 			try:
-				username = TWOW_CENTRAL.get_member(int(next_id)).name
+				username = SERVER["MAIN"].get_member(int(next_id)).name
 			except AttributeError:
 				username = next_id
 			
@@ -84,7 +85,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			found = db.get_entries("birthday", conditions={"id": rest})
 
 			try:
-				username = TWOW_CENTRAL.get_member(int(rest)).name
+				username = SERVER["MAIN"].get_member(int(rest)).name
 			except:
 				username = rest
 			
@@ -102,7 +103,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			return
 		
 		else:
-			user = discord.utils.get(TWOW_CENTRAL.members, name=rest)
+			user = discord.utils.get(SERVER["MAIN"].members, name=rest)
 			
 			if user is None:
 				await message.channel.send("That user is not in the server!")
@@ -193,7 +194,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 		else:
 			is_new = "new "
 			db.edit_entry("birthday", entry={"birthday": birthday, "timezone": tz},
-			              conditions={"id": str(message.author.id)})
+				conditions={"id": str(message.author.id)})
 
 		await message.channel.send(f"Successfully recorded your {is_new}birthday as **{birthday} UTC {timezone_f}**!")
 		return

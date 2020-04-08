@@ -1,116 +1,117 @@
 from Config._functions import grammar_list, elim_prize, word_count, formatting_fix, is_whole
-from Config._const import PREFIX, ALPHABET, BRAIN, DB_LINK
+from Config._const import ALPHABET, BRAIN, DB_LINK
 import discord, time
 import numpy as np
 from Config._db import Database
 
 # I'm kind of iffy on keeping this extremely long HELP dict here, but I feel like moving it down below the function
 # won't look good either, so for now I'm keeping it here
-HELP = {
-	"COOLDOWN": 2,
-	"MAIN": "Allows for playing and hosting MiniMiniTWOWs",
-	"FORMAT": "[subcommand]",
-	"CHANNEL": 3,
-	"USAGE": f"""Available subcommands: `queue`, `create`, `start`, `spectate`, `join`, `prompt`, `respond`, 
-	`vote`, `transfer`, `end`. Use `{PREFIX}help mmt [subcommand]` for more info on each of these subcommands.
-	""".replace("\n", "").replace("\t", ""),
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 2,
+		"MAIN": "Allows for playing and hosting MiniMiniTWOWs",
+		"FORMAT": "[subcommand]",
+		"CHANNEL": 3,
+		"USAGE": f"""Available subcommands: `queue`, `create`, `start`, `spectate`, `join`, `prompt`, `respond`, 
+		`vote`, `transfer`, `end`. Use `{PREFIX}help mmt [subcommand]` for more info on each of these subcommands.
+		""".replace("\n", "").replace("\t", ""),
 
-	"QUEUE": {
-		"MAIN": "Command for the MiniMiniTWOW hosting queue",
-		"FORMAT": "(list)",
-		"CHANNEL": 4,
-		"USAGE": f"""Using `{PREFIX}mmt queue` adds you to the current hosting queue (or removes you from 
-		the queue if you're already on it). Using `{PREFIX}mmt queue list` displays the current hosting queue. 
-		Once it's your turn on the queue, you'll be notified and have to create a MiniMiniTWOW by using
-		`{PREFIX}mmt create`.""".replace("\n", "").replace("\t", "")
-	},
-	"CREATE": {
-		"MAIN": "Command to create a MiniMiniTWOW",
-		"FORMAT": "",
-		"CHANNEL": 4,
-		"USAGE": f"""Using `{PREFIX}mmt create` will create a MiniMiniTWOW. Can only be used if you're up first 
-		in the hosting queue.""".replace("\n", "").replace("\t", "")
-	},
-	"START": {
-		"MAIN": "Command to start a MiniMiniTWOW",
-		"FORMAT": "",
-		"CHANNEL": 4,
-		"USAGE": f"""Using `{PREFIX}mmt start` will start MiniMiniTWOW, ending signups. Can only be used if 
-		you're the host, and there are 2 or more players.""".replace("\n", "").replace("\t", "")
-	},
-	"JOIN": {
-		"MAIN": "Command to join a MiniMiniTWOW",
-		"FORMAT": "",
-		"CHANNEL": 4,
-		"USAGE": f"""Using `{PREFIX}mmt join` will sign you up to the current MiniMiniTWOW. If you're already 
-		signed up, using this command removes you from the MiniMiniTWOW. Joining a MiniMiniTWOW automatically 
-		makes you a spectator.""".replace("\n", "").replace("\t", "")
-	},
-	"SPECTATE": {
-		"MAIN": "Command to spectate a MiniMiniTWOW",
-		"FORMAT": "",
-		"CHANNEL": 4,
-		"USAGE": f"""Using `{PREFIX}mmt spectate` will make you a spectator of the current MiniMiniTWOW. If you're 
-		already a spectator, using this command makes you stop spectating. Once this command is used, starting the 
-		next voting period, you'll receive voting screens.""".replace("\n", "").replace("\t", "")
-	},
-	"PROMPT": {
-		"MAIN": "Command to spectate a MiniMiniTWOW",
-		"FORMAT": "[prompt]",
-		"CHANNEL": 4,
-		"USAGE": f"""Using `{PREFIX}mmt prompt [prompt]` will set the current prompt. Only usable if the MiniMiniTWOW 
-		is currently inbetween rounds, and if you're the host.""".replace("\n", "").replace("\t", "")
-	},
-	"RESPOND": {
-		"MAIN": "Command to submit a MiniMiniTWOW response",
-		"FORMAT": "[response]",
-		"CHANNEL": 6,
-		"USAGE": f"""Using `{PREFIX}mmt respond [response]` will record your response to the current prompt. Only 
-		usable during submission period and if you're an alive contestant.""".replace("\n", "").replace("\t", "")
-	},
-	"VOTE": {
-		"MAIN": "Command to cast a MiniMiniTWOW vote",
-		"FORMAT": "[vote]",
-		"CHANNEL": 6,
-		"USAGE": f"""Using `{PREFIX}mmt vote [vote]` will record your vote to the screen you received. Only usable 
-		during voting period and if you received a voting screen.""".replace("\n", "").replace("\t", "")
-	},
-	"TRANSFER": {
-		"MAIN": "Command to transfer ownership of a MiniMiniTWOW to someone else",
-		"FORMAT": "[new_host] ('confirm')",
-		"CHANNEL": 4,
-		"USAGE": f"""Can be used to make someone else the new host of the current MiniMiniTWOW. Using `{PREFIX}mmt 
-		transfer [new_host]` prompts a message asking you to confirm the transfer. Including `confirm` as an argument 
-		bypasses the confirmation message. `[new_host]` has to be a ping.""".replace("\n", "").replace("\t", "")
-	},
-	"END": {
-		"MAIN": "Command to end or vote to end a MiniMiniTWOW",
-		"FORMAT": "",
-		"CHANNEL": 4,
-		"USAGE": f"""Using `{PREFIX}mmt end` casts a vote to end a MiniMiniTWOW, or removes your vote if you had
-		already cast one. If used by staff or the current host, the MiniMiniTWOW ends immediately. Otherwise, you 
-		must be a spectator to cast an end vote. The MiniMiniTWOW is ended if the number of spectator votes is 
-		higher than or equal to `ceil(s^(4/5) + 0.8)`, where `s` is the number of spectators. By virtue of this 
-		formula, it's impossible to end a MiniMiniTWOW by spectator vote with less than 4 spectators.
-		""".replace("\n", "").replace("\t", "")
-	},
-	"STATS": {
-		"MAIN": "Command to display the overall MiniMiniTWOW stats",
-		"FORMAT": "[stat]",
-		"CHANNEL": 4,
-		"USAGE": f"""Using this command allows you to view one of the statistics rankins for MMT. Available stats
-		that can go under the `[stat]` argument are `nr`, `points`, `wins`, and `roundwins`.
-		""".replace("\n", "").replace("\t", "")
-	},
-}
+		"QUEUE": {
+			"MAIN": "Command for the MiniMiniTWOW hosting queue",
+			"FORMAT": "(list)",
+			"CHANNEL": 4,
+			"USAGE": f"""Using `{PREFIX}mmt queue` adds you to the current hosting queue (or removes you from 
+			the queue if you're already on it). Using `{PREFIX}mmt queue list` displays the current hosting queue. 
+			Once it's your turn on the queue, you'll be notified and have to create a MiniMiniTWOW by using
+			`{PREFIX}mmt create`.""".replace("\n", "").replace("\t", "")
+		},
+		"CREATE": {
+			"MAIN": "Command to create a MiniMiniTWOW",
+			"FORMAT": "",
+			"CHANNEL": 4,
+			"USAGE": f"""Using `{PREFIX}mmt create` will create a MiniMiniTWOW. Can only be used if you're up first 
+			in the hosting queue.""".replace("\n", "").replace("\t", "")
+		},
+		"START": {
+			"MAIN": "Command to start a MiniMiniTWOW",
+			"FORMAT": "",
+			"CHANNEL": 4,
+			"USAGE": f"""Using `{PREFIX}mmt start` will start MiniMiniTWOW, ending signups. Can only be used if 
+			you're the host, and there are 2 or more players.""".replace("\n", "").replace("\t", "")
+		},
+		"JOIN": {
+			"MAIN": "Command to join a MiniMiniTWOW",
+			"FORMAT": "",
+			"CHANNEL": 4,
+			"USAGE": f"""Using `{PREFIX}mmt join` will sign you up to the current MiniMiniTWOW. If you're already 
+			signed up, using this command removes you from the MiniMiniTWOW. Joining a MiniMiniTWOW automatically 
+			makes you a spectator.""".replace("\n", "").replace("\t", "")
+		},
+		"SPECTATE": {
+			"MAIN": "Command to spectate a MiniMiniTWOW",
+			"FORMAT": "",
+			"CHANNEL": 4,
+			"USAGE": f"""Using `{PREFIX}mmt spectate` will make you a spectator of the current MiniMiniTWOW. If you're 
+			already a spectator, using this command makes you stop spectating. Once this command is used, starting the 
+			next voting period, you'll receive voting screens.""".replace("\n", "").replace("\t", "")
+		},
+		"PROMPT": {
+			"MAIN": "Command to spectate a MiniMiniTWOW",
+			"FORMAT": "[prompt]",
+			"CHANNEL": 4,
+			"USAGE": f"""Using `{PREFIX}mmt prompt [prompt]` will set the current prompt. Only usable if the MiniMiniTWOW 
+			is currently inbetween rounds, and if you're the host.""".replace("\n", "").replace("\t", "")
+		},
+		"RESPOND": {
+			"MAIN": "Command to submit a MiniMiniTWOW response",
+			"FORMAT": "[response]",
+			"CHANNEL": 6,
+			"USAGE": f"""Using `{PREFIX}mmt respond [response]` will record your response to the current prompt. Only 
+			usable during submission period and if you're an alive contestant.""".replace("\n", "").replace("\t", "")
+		},
+		"VOTE": {
+			"MAIN": "Command to cast a MiniMiniTWOW vote",
+			"FORMAT": "[vote]",
+			"CHANNEL": 6,
+			"USAGE": f"""Using `{PREFIX}mmt vote [vote]` will record your vote to the screen you received. Only usable 
+			during voting period and if you received a voting screen.""".replace("\n", "").replace("\t", "")
+		},
+		"TRANSFER": {
+			"MAIN": "Command to transfer ownership of a MiniMiniTWOW to someone else",
+			"FORMAT": "[new_host] ('confirm')",
+			"CHANNEL": 4,
+			"USAGE": f"""Can be used to make someone else the new host of the current MiniMiniTWOW. Using `{PREFIX}mmt 
+			transfer [new_host]` prompts a message asking you to confirm the transfer. Including `confirm` as an argument 
+			bypasses the confirmation message. `[new_host]` has to be a ping.""".replace("\n", "").replace("\t", "")
+		},
+		"END": {
+			"MAIN": "Command to end or vote to end a MiniMiniTWOW",
+			"FORMAT": "",
+			"CHANNEL": 4,
+			"USAGE": f"""Using `{PREFIX}mmt end` casts a vote to end a MiniMiniTWOW, or removes your vote if you had
+			already cast one. If used by staff or the current host, the MiniMiniTWOW ends immediately. Otherwise, you 
+			must be a spectator to cast an end vote. The MiniMiniTWOW is ended if the number of spectator votes is 
+			higher than or equal to `ceil(s^(4/5) + 0.8)`, where `s` is the number of spectators. By virtue of this 
+			formula, it's impossible to end a MiniMiniTWOW by spectator vote with less than 4 spectators.
+			""".replace("\n", "").replace("\t", "")
+		},
+		"STATS": {
+			"MAIN": "Command to display the overall MiniMiniTWOW stats",
+			"FORMAT": "[stat]",
+			"CHANNEL": 4,
+			"USAGE": f"""Using this command allows you to view one of the statistics rankins for MMT. Available stats
+			that can go under the `[stat]` argument are `nr`, `points`, `wins`, and `roundwins`.
+			""".replace("\n", "").replace("\t", "")
+		},
+	}
 
 PERMS = 0 # Non-member
 ALIASES = []
-REQ = ["TWOW_CENTRAL", "EVENTS", "GAME_CHANNEL"]
+REQ = []
 
-async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
-	if not isinstance(message.channel, discord.DMChannel) and message.channel.id != GAME_CHANNEL:
-		await message.channel.send(f"MiniMiniTWOW commands can only be used in <#{GAME_CHANNEL}>!")
+async def MAIN(message, args, level, perms, SERVER):
+	if not isinstance(message.channel, discord.DMChannel) and message.channel != SERVER["GAME_CHANNEL"]:
+		await message.channel.send(f"MiniMiniTWOW commands can only be used in {SERVER['GAME_CHANNEL'].mention}!")
 		return
 	
 	if level == 1:
@@ -118,7 +119,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 		return
 	
 	# Shorten the notation for convenience
-	mmt = EVENT["MMT"]
+	mmt = SERVER["EVENTS"]["MMT"]
 
 	if args[1].lower() == "stats":
 
@@ -141,7 +142,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 		if args[2].lower() == "points":
 			for person in data: # `person` is a table entry, (id, placements, wins)
 				try: # Try to find that person's username through TWOW Central
-					member = TWOW_CENTRAL.get_member(int(person[0])).name
+					member = SERVER["MAIN"].get_member(int(person[0])).name
 					if member is None:
 						member = person[0]
 				except Exception: # If you can't find them, just use the ID instead
@@ -166,7 +167,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 		elif args[2].lower() == "wins":
 			for person in data:
 				try:
-					member = TWOW_CENTRAL.get_member(int(person[0])).name
+					member = SERVER["MAIN"].get_member(int(person[0])).name
 					if member is None:
 						member = person[0]
 				except Exception:
@@ -177,7 +178,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 		elif args[2].lower() == "roundwins":
 			for person in data:
 				try:
-					member = TWOW_CENTRAL.get_member(int(person[0])).name
+					member = SERVER["MAIN"].get_member(int(person[0])).name
 					if member is None:
 						member = person[0]
 				except Exception:
@@ -200,7 +201,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 		elif args[2].lower() == "nr":
 			for person in data:
 				try:
-					member = TWOW_CENTRAL.get_member(int(person[0])).name
+					member = SERVER["MAIN"].get_member(int(person[0])).name
 					if member is None:
 						member = person[0]
 				except Exception:
@@ -377,10 +378,10 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 			await message.channel.send("Invalid user! Ping the user you want to transfer the MiniMiniTWOW to!")
 			return
 		
-		# Try to find the person in TWOW Central
-		person = TWOW_CENTRAL.get_member(user_id)
+		# Try to find the person in the server
+		person = SERVER["MAIN"].get_member(user_id)
 
-		if person is None: # If they're not in TWOW Central, they can't become the new host
+		if person is None: # If they're not in the server, they can't become the new host
 			await message.channel.send("Invalid user! Ping the user you want to transfer the MiniMiniTWOW to!")
 			return
 		
@@ -420,17 +421,23 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 		if level == 2: # If it's just `tc/mmt queue`
 			if not mmt.RUNNING: # The event is counted as off if there's nobody in queue. To check the queue, it needs
 				# to be on, so being the first to join the queue will start up the event
-				mmt.start(TWOW_CENTRAL, {"GAME_CHANNEL": GAME_CHANNEL})
+				mmt.start(SERVER)
 			
 			if message.author.id in mmt.info["HOST_QUEUE"]: # If you're already in queue, leaves the queue
 				mmt.info["HOST_QUEUE"] = [x for x in mmt.info["HOST_QUEUE"] if x != message.author.id]
 				await mmt.MMT_C.send(f"🎩 <@{message.author.id}> has been removed from queue.")
 				return
 			
+			if message.author.id == mmt.info["GAME"]["HOST"]:
+				await mmt.MMT_C.send(
+				f"🎩 <@{message.author.id}>, you're already hosting the current MiniMiniTWOW - you can't join the queue!")
+				return
+
 			mmt.info["HOST_QUEUE"].append(message.author.id) # If you're not in queue, you're added to queue
 			await message.channel.send(
 			f"🎩 <@{message.author.id}> has been added to queue at position **{len(mmt.info['HOST_QUEUE'])}**.")
-			return
+
+			return [2, "MMT", mmt]
 		
 		if args[2].lower() == "list":
 			if len(mmt.info["HOST_QUEUE"]) == 0: # If the event is not running, the host queue's length is also 0
@@ -441,7 +448,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 			init = ["**This is the current MiniMiniTWOW hosting queue:**\n\n"]
 
 			for person in mmt.info["HOST_QUEUE"]: # `person` is an ID
-				member = TWOW_CENTRAL.get_member(person) # Try to find the user
+				member = SERVER["MAIN"].get_member(person) # Try to find the user
 
 				if member is None: # If you can't find the user, just use their ID and format it
 					member = f"`{person}`"
@@ -465,7 +472,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 	if args[1].lower() == "create":
 		if not mmt.RUNNING: # If the event isn't running
 			await message.channel.send(
-			f"There's no host to create a MiniMiniTWOW! Join the queue with `{PREFIX}mmt queue` to host!")
+			f"There's no host to create a MiniMiniTWOW! Join the queue with `{SERVER['PREFIX']}mmt queue` to host!")
 			return
 		
 		if mmt.info["GAME"]["PERIOD"] != 0: # If it's not time to create one
@@ -481,7 +488,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 		mmt.info["GAME"]["PERIOD_START"] = 0
 
 		await message.channel.send(
-		f"🎩 <@{message.author.id}> has created a MiniMiniTWOW! Use `{PREFIX}mmt join` to join it!")
+		f"🎩 <@{message.author.id}> has created a MiniMiniTWOW! Use `{SERVER['PREFIX']}mmt join` to join it!")
 		return
 	
 
@@ -535,7 +542,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 		f"🏁 **<@{message.author.id}> joined the MiniMiniTWOW!** Our player count is now {len(mmt.info['PLAYERS'])}!")
 		if len(mmt.info['PLAYERS']) == 2: # If there are two players, the signup timer begins
 			await mmt.MMT_C.send(f"""🏁 We have two players! <@{mmt.info["GAME"]["HOST"]}> has three minutes 
-			to start the MiniMiniTWOW with `{PREFIX}mmt start`.""".replace("\n", "").replace("\t", ""))
+			to start the MiniMiniTWOW with `{SERVER['PREFIX']}mmt start`.""".replace("\n", "").replace("\t", ""))
 			mmt.info["GAME"]["PERIOD_START"] = time.time()
 		return
 	
@@ -604,10 +611,10 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL, EVENT, GAME_CHANNEL):
 
 		for player in mmt.info["PLAYERS"]:
 			try: # DM everyone the prompt
-				await TWOW_CENTRAL.get_member(player).send(f"""
+				await SERVER['MAIN'].get_member(player).send(f"""
 				📝 **Round {mmt.info["GAME"]["ROUND"]} Responding** has started! The prompt is:
 				```{prompt}```
-				You must respond in {mmt.param["R_DEADLINE"]} seconds using `{PREFIX}mmt respond`!
+				You must respond in {mmt.param["R_DEADLINE"]} seconds using `{SERVER['PREFIX']}mmt respond`!
 				""".replace("\n", "").replace("\t", ""))
 			except Exception: # If something goes wrong, skip the person
 				pass

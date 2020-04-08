@@ -1,22 +1,22 @@
-from Config._const import PREFIX
 import discord
 
-HELP = {
-	"COOLDOWN": 10,
-	"MAIN": "Searches between two message IDs",
-	"FORMAT": "[channel:] (before:) (after:) (limit:) (content:)",
-	"CHANNEL": 2,
-	"USAGE": f"""Using `{PREFIX}search` will trigger a search command using bot message history. 
-	You can specify different options for searching `(before:)` an ID, `(after:)` an ID, searching only though a 
-	certain `(limit:)` of messages and in a specific `[channel:]`. **You must include at least one of `(after:)` or 
-	`(limit:)`.**""".replace("\n", "").replace("\t", "")
-}
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 10,
+		"MAIN": "Searches between two message IDs",
+		"FORMAT": "[channel:] (before:) (after:) (limit:) (content:)",
+		"CHANNEL": 2,
+		"USAGE": f"""Using `{PREFIX}search` will trigger a search command using bot message history. 
+		You can specify different options for searching `(before:)` an ID, `(after:)` an ID, searching only though a 
+		certain `(limit:)` of messages and in a specific `[channel:]`. **You must include at least one of `(after:)` or 
+		`(limit:)`.**""".replace("\n", "").replace("\t", "")
+	}
 
 PERMS = 2 # Staff
 ALIASES = ["S"]
-REQ = ["TWOW_CENTRAL"]
+REQ = []
 
-async def MAIN(message, args, level, perms, TWOW_CENTRAL):
+async def MAIN(message, args, level, perms, SERVER):
 	if level == 1:
 		await message.channel.send("Include the channel(s) to search in!")
 		return
@@ -52,7 +52,7 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 			await message.channel.send(f"Invalid channel! Make sure all specified channels are valid.")
 			return
 		
-		channels = [discord.utils.get(TWOW_CENTRAL.channels, id=x) for x in channels]
+		channels = [discord.utils.get(SERVER["MAIN"].channels, id=x) for x in channels]
 		channels = [x for x in channels if x is not None]
 
 	else:
@@ -65,11 +65,11 @@ async def MAIN(message, args, level, perms, TWOW_CENTRAL):
 					await message.channel.send(f"Invalid channel `{param[8:]}`! Make sure it's a valid channel.")
 					return
 		
-		if discord.utils.get(TWOW_CENTRAL.channels, id=channel) is None:
+		if discord.utils.get(SERVER["MAIN"].channels, id=channel) is None:
 			await message.channel.send(f"Invalid channel `{param[8:]}`! Make sure it's a valid channel.")
 			return
 		
-		channels = [discord.utils.get(TWOW_CENTRAL.channels, id=channel)]
+		channels = [discord.utils.get(SERVER["MAIN"].channels, id=channel)]
 
 	after = None
 	before = None

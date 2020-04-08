@@ -1,23 +1,23 @@
-from Config._const import PREFIX
 import numpy as np
 import os, discord, random, asyncio
 from PIL import Image, ImageDraw
 from Config._functions import grammar_list
 
-HELP = {
-	"COOLDOWN": 15,
-	"MAIN": "Generate a tr_ of random length and compare it to other objects",
-	"FORMAT": "",
-	"CHANNEL": 0,
-	"USAGE": f"""Using `{PREFIX}tr_` will generate a tr_ of random length and draw it accordingly, while also 
-	providing a scale reference in the form of an object or organism.""".replace("\n", "").replace("\t", "")
-}
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 15,
+		"MAIN": "Generate a tr_ of random length and compare it to other objects",
+		"FORMAT": "",
+		"CHANNEL": 0,
+		"USAGE": f"""Using `{PREFIX}tr_` will generate a tr_ of random length and draw it accordingly, while also 
+		providing a scale reference in the form of an object or organism.""".replace("\n", "").replace("\t", "")
+	}
 
 PERMS = 0 # Non-members
 ALIASES = ["TR_"]
 REQ = []
 
-async def MAIN(message, args, level, perms):
+async def MAIN(message, args, level, perms, SERVER):
 	if level != 1:
 		if args[1].lower() == "queue" and perms == 2:
 			await message.channel.send(open("Config/_tr_gen.txt", "r").read())

@@ -150,7 +150,7 @@ def strip_front(string):
 	return re.sub(r"^\s+", "", string, flags=re.UNICODE)
 
 # uno_image : Handler for image generation for the UNO command
-def uno_image(b_type, tag, hand=None, last=None, draw_c=None, name=None, config=None):
+def uno_image(b_type, tag, PREFIX, hand=None, last=None, draw_c=None, name=None, config=None):
 	background = Image.open("Images/Uno/Background.png") # Start with the background image
 	draw = ImageDraw.Draw(background)
 
@@ -182,8 +182,8 @@ def uno_image(b_type, tag, hand=None, last=None, draw_c=None, name=None, config=
 		background.paste(last_played, (495, 106), last_played)
 	
 		if b_type == 0: # Depending on the type, the text varies
-			texty = f"""It's your turn! Use the [tc/uno play] command to play a card.
-			Use [tc/uno play draw] to draw cards!""".replace("\t", "")
+			texty = f"""It's your turn! Use the [{PREFIX}uno play] command to play a card.
+			Use [{PREFIX}uno play draw] to draw cards!""".replace("\t", "")
 		else:
 			texty = "This is your hand!"
 
@@ -241,7 +241,7 @@ def uno_image(b_type, tag, hand=None, last=None, draw_c=None, name=None, config=
 			x_size = draw.textsize(str(option + 1), font_bold(30))[0]
 			draw.text((x_c - x_size / 2 + 35, y_c + 15), str(option + 1), n_color, font_bold(30))
 
-		instruc = """The round host can change any of these options with [tc/uno config x y], 
+		instruc = """The round host can change any of these options with [{PREFIX}uno config x y], 
 		x being the option number, y being any complement necessary.""".replace("\n", "").replace("\t", "")
 		x_size = draw.textsize(instruc, font_bold(30))[0]
 		draw.text((600 - x_size / 2, 15), instruc, (255, 255, 255), font_bold(30))

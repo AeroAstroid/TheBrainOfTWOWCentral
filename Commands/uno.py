@@ -1,77 +1,78 @@
 from Config._functions import is_whole, uno_image, uno_skip
-from Config._const import PREFIX, BRAIN, ORIGINAL_DECK
+from Config._const import BRAIN, ORIGINAL_DECK
 import asyncio, os, numpy, random, time, discord
 from collections import OrderedDict
 
-HELP = {
-	"COOLDOWN": 2,
-	"MAIN": "Command for a bot implementation of UNO",
-	"FORMAT": "[subcommand]",
-	"CHANNEL": 0,
-	
-	"USAGE": f"""Available subcommands: `create`, `config`, `join`, `start`, `play`, `quit`, `end`. Use `{PREFIX}help 
-	uno [subcommand]` for more info on each of these subcommands.""".replace("\n", "").replace("\t", ""),
+def HELP(PREFIX): 
+	return {
+		"COOLDOWN": 2,
+		"MAIN": "Command for a bot implementation of UNO",
+		"FORMAT": "[subcommand]",
+		"CHANNEL": 0,
+		
+		"USAGE": f"""Available subcommands: `create`, `config`, `join`, `start`, `play`, `quit`, `end`. Use `{PREFIX}help 
+		uno [subcommand]` for more info on each of these subcommands.""".replace("\n", "").replace("\t", ""),
 
-	"CREATE": {
-		"MAIN": "Creates a Uno round",
-		"FORMAT": "",
-		"CHANNEL": 0,
-		"USAGE": f"""Using `{PREFIX}uno create` will create a Uno round, provided there isn't one currently running.
-		""".replace("\n", "").replace("\t", "")
-	},
-	"CONFIG": {
-		"MAIN": "Shows or modifies the adjustable settings for the Uno rounds",
-		"FORMAT": "(config_number) (new_number)",
-		"CHANNEL": 0,
-		"USAGE": f"""Using `{PREFIX}uno config` show you the current settings for the Uno round. The host can change
-		these settings provided it's currently joining period, by using `{PREFIX}uno config n` to toggle ON/OFF 
-		configurations by their code number, and `{PREFIX}uno config n x` to change the value in number configurations.
-		""".replace("\n", "").replace("\t", "")
-	},
-	"JOIN": {
-		"MAIN": "Join or leave a Uno round",
-		"FORMAT": "",
-		"CHANNEL": 0,
-		"USAGE": f"""Using `{PREFIX}uno join` will add you to the Uno round, or remove you if you're already in it. 
-		The host has three minutes to start the Uno round after two people join.""".replace("\n", "").replace("\t", "")
-	},
-	"START": {
-		"MAIN": "Starts a Uno round",
-		"FORMAT": "",
-		"CHANNEL": 0,
-		"USAGE": f"""Using `{PREFIX}uno start` will start the Uno round. Only usable if you're the round host, and if 
-		there are two or more players.""".replace("\n", "").replace("\t", "")
-	},
-	"PLAY": {
-		"MAIN": "Plays or draws cards",
-		"FORMAT": "[number/'draw'] (color)",
-		"CHANNEL": 0,
-		"USAGE": f"""Using `{PREFIX}uno play n` will play the `n`th card in your hand (card numbers are shown right 
-		above each card). When playing wild cards, you must include the `(color)` parameter - a number from 1 through 
-		4 denoting what color you want to switch to. Using `{PREFIX}uno play draw` will draw a card.
-		""".replace("\n", "").replace("\t", "")
-	},
-	"QUIT": {
-		"MAIN": "Quits the Uno round",
-		"FORMAT": "",
-		"CHANNEL": 0,
-		"USAGE": f"""Using `{PREFIX}uno quit` will remove you from the Uno round. Only usable after the game has 
-		started - to quit during joining period, use `{PREFIX}uno join` again.""".replace("\n", "").replace("\t", "")
-	},
-	"END": {
-		"MAIN": "Ends the Uno round",
-		"FORMAT": "",
-		"CHANNEL": 0,
-		"USAGE": f"""Using `{PREFIX}uno end` will end the Uno round automatically. Only the host or staff members 
-		can end a round.""".replace("\n", "").replace("\t", "")
+		"CREATE": {
+			"MAIN": "Creates a Uno round",
+			"FORMAT": "",
+			"CHANNEL": 0,
+			"USAGE": f"""Using `{PREFIX}uno create` will create a Uno round, provided there isn't one currently running.
+			""".replace("\n", "").replace("\t", "")
+		},
+		"CONFIG": {
+			"MAIN": "Shows or modifies the adjustable settings for the Uno rounds",
+			"FORMAT": "(config_number) (new_number)",
+			"CHANNEL": 0,
+			"USAGE": f"""Using `{PREFIX}uno config` show you the current settings for the Uno round. The host can change
+			these settings provided it's currently joining period, by using `{PREFIX}uno config n` to toggle ON/OFF 
+			configurations by their code number, and `{PREFIX}uno config n x` to change the value in number configurations.
+			""".replace("\n", "").replace("\t", "")
+		},
+		"JOIN": {
+			"MAIN": "Join or leave a Uno round",
+			"FORMAT": "",
+			"CHANNEL": 0,
+			"USAGE": f"""Using `{PREFIX}uno join` will add you to the Uno round, or remove you if you're already in it. 
+			The host has three minutes to start the Uno round after two people join.""".replace("\n", "").replace("\t", "")
+		},
+		"START": {
+			"MAIN": "Starts a Uno round",
+			"FORMAT": "",
+			"CHANNEL": 0,
+			"USAGE": f"""Using `{PREFIX}uno start` will start the Uno round. Only usable if you're the round host, and if 
+			there are two or more players.""".replace("\n", "").replace("\t", "")
+		},
+		"PLAY": {
+			"MAIN": "Plays or draws cards",
+			"FORMAT": "[number/'draw'] (color)",
+			"CHANNEL": 0,
+			"USAGE": f"""Using `{PREFIX}uno play n` will play the `n`th card in your hand (card numbers are shown right 
+			above each card). When playing wild cards, you must include the `(color)` parameter - a number from 1 through 
+			4 denoting what color you want to switch to. Using `{PREFIX}uno play draw` will draw a card.
+			""".replace("\n", "").replace("\t", "")
+		},
+		"QUIT": {
+			"MAIN": "Quits the Uno round",
+			"FORMAT": "",
+			"CHANNEL": 0,
+			"USAGE": f"""Using `{PREFIX}uno quit` will remove you from the Uno round. Only usable after the game has 
+			started - to quit during joining period, use `{PREFIX}uno join` again.""".replace("\n", "").replace("\t", "")
+		},
+		"END": {
+			"MAIN": "Ends the Uno round",
+			"FORMAT": "",
+			"CHANNEL": 0,
+			"USAGE": f"""Using `{PREFIX}uno end` will end the Uno round automatically. Only the host or staff members 
+			can end a round.""".replace("\n", "").replace("\t", "")
+		}
 	}
-}
 
 PERMS = 1 # Members
 ALIASES = []
-REQ = ["UNO", "TWOW_CENTRAL"]
+REQ = ["UNO"]
 
-async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
+async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 	if level == 1: # If the command is just `tc/uno`
 		await message.channel.send("You must include a command mode for that command!")
 		return
@@ -110,7 +111,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 
 		if level == 2: # `tc/config` shows you the current configurations
 			tag = str(time.time()).split(".")[1] # Get a pretty much random sequence of digits
-			uno_image(4, tag, config=UNO_INFO["config"]) # Generate the image with the [4] (config menu) flag
+			uno_image(4, tag, SERVER['PREFIX'], config=UNO_INFO["config"]) # Generate the image with the [4] (config menu) flag
 
 			await message.channel.send("These is the current game options configuration.",
 			file=discord.File(f"Images/current_card_image_{tag}.png")) # Send the image
@@ -220,7 +221,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 					f"""When playing a wild card, you must include the color you want to change the game to!
 					To include a color, put another number next to the command, corresponding to the color you want.
 					Add the number 1 for red, 2 for green, 3 for blue or 4 for yellow!
-					Example: `{PREFIX}uno play {args[2]} 3`, will play the card and change the color to **blue.**
+					Example: `{SERVER['PREFIX']}uno play {args[2]} 3`, will play the card and change the color to **blue.**
 					""".replace("\t", ""))
 					return
 					
@@ -235,13 +236,13 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 				if UNO_INFO["carryover"] > 0: # If the carryover is positive, there are cards to be drawn made up
 					await message.channel.send( # of one or more +2s.
 					f"""Someone has played a **+2** upon you. You must play another **+2** or draw the cards!
-					To draw the cards instantly, use `{PREFIX}uno play draw`.""".replace("\t", ""))
+					To draw the cards instantly, use `{SERVER['PREFIX']}uno play draw`.""".replace("\t", ""))
 					return
 				
 				if UNO_INFO["carryover"] < -3 and played_card != "0F": # If the carryover is negative and below -3,
 					await message.channel.send( # There are cards to be drawn made up of one or more +4s
 					f"""Someone has played a **+4** upon you. You must play another **+4** or draw the cards!
-					To draw the cards instantly, use `{PREFIX}uno play draw`.""".replace("\t", ""))
+					To draw the cards instantly, use `{SERVER['PREFIX']}uno play draw`.""".replace("\t", ""))
 					return
 
 				if played_card == "0F": # If a +4 was played, make the carryover -4 if there weren't any
@@ -255,7 +256,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 				player_hand = UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)] # Redefine player_hand
 				
 				tag = str(time.time()).split(".")[1] # Make the updated image for the player's hand
-				uno_image(2, tag, last=UNO_INFO["last_card"], hand=player_hand)
+				uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=player_hand)
 
 				# Send the image then promptly delete it
 				await message.channel.send("You have successfully played a card!",
@@ -273,13 +274,13 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 			if UNO_INFO["carryover"] < -3: # If the carryover is negative and below -3,
 				await message.channel.send( # There are cards to be drawn made up of one or more +4s
 				f"""Someone has played a **+4** upon you. You must play another **+4** or draw the cards!
-				To draw the cards instantly, use `{PREFIX}uno play draw`.""".replace("\t", ""))
+				To draw the cards instantly, use `{SERVER['PREFIX']}uno play draw`.""".replace("\t", ""))
 				return
 			
 			if UNO_INFO["carryover"] > 0 and played_card[1] != "D": # If the carryover is positive, there are cards
 				await message.channel.send( # to be drawn made up of one or more +2s.
 				f"""Someone has played a **+2** upon you. You must play another **+2** or draw the cards!
-				To draw the cards instantly, use `{PREFIX}uno play draw`.""".replace("\t", ""))
+				To draw the cards instantly, use `{SERVER['PREFIX']}uno play draw`.""".replace("\t", ""))
 				return
 			
 			if played_card[1] == "D": # If a +2 was played, make the carryover 2 if there weren't any
@@ -294,7 +295,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 					player_list = []
 					for player in range(len(UNO_INFO["players"])): # For each player that isn't you
 						if UNO_INFO["players"][player] != message.author.id:
-							player_name = TWOW_CENTRAL.get_member(UNO_INFO["players"][player]).name
+							player_name = SERVER["MAIN"].get_member(UNO_INFO["players"][player]).name
 							player_hand_size = len(UNO_INFO["hands"][player])
 
 							player_list.append(
@@ -307,7 +308,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 					
 					{player_list}
 					
-					To successfully play the card and trade hands with someone, use `{PREFIX}uno play {args[2]} x`
+					To successfully play the card and trade hands with someone, use `{SERVER['PREFIX']}uno play {args[2]} x`
 					*(x being the number corresponding to the player)*
 					""".replace("\t", ""))
 
@@ -334,7 +335,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 			player_hand = UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)] # Redefine player_hand
 
 			tag = str(time.time()).split(".")[1] # Make the updated image for the player's new hand
-			uno_image(2, tag, last=UNO_INFO["last_card"], hand=player_hand)
+			uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=player_hand)
 
 			await message.channel.send("You have successfully played a card!", # Send the image
 			file=discord.File(f"Images/current_card_image_{tag}.png"))
@@ -355,10 +356,10 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 
 				for player in UNO_INFO["players"]: # Send every single person their new hand
 					tag = str(time.time()).split(".")[1] # Make the image for their new hand
-					uno_image(2, tag, last=UNO_INFO["last_card"],
+					uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"],
 					hand=UNO_INFO["hands"][UNO_INFO["players"].index(player)])
 
-					await TWOW_CENTRAL.get_member(player).send( # Send the new hand
+					await SERVER['MAIN'].get_member(player).send( # Send the new hand
 					"Everyone's hand has rotated! This is your new hand!", 
 					file=discord.File(f"Images/current_card_image_{tag}.png"))
 					os.remove(f"Images/current_card_image_{tag}.png") # Delete the images
@@ -370,7 +371,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 				# Make your own hand the other player's
 				UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)] = provisory_hand
 
-				player_member = TWOW_CENTRAL.get_member(UNO_INFO["players"][int(args[3]) - 1])
+				player_member = SERVER["MAIN"].get_member(UNO_INFO["players"][int(args[3]) - 1])
 				player_name = player_member.name
 				await UNO_INFO["channel"].send( # Report the trade
 				f"**{message.author.name}** trades hands with **{player_name}**!")
@@ -378,14 +379,14 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 				player_hand = UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)]
 
 				tag = str(time.time()).split(".")[1] # Report your new hand
-				uno_image(2, tag, last=UNO_INFO["last_card"], hand=player_hand)
+				uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=player_hand)
 				await message.channel.send("This is your new hand!", 
 				file=discord.File(f"Images/current_card_image_{tag}.png"))
 				os.remove(f"Images/current_card_image_{tag}.png")
 
 				tag = str(time.time()).split(".")[1] # Show the other player their new hand
-				uno_image(2, tag, last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][int(args[3]) - 1])
-				await TWOW_CENTRAL.get_member(player_member).send(
+				uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][int(args[3]) - 1])
+				await SERVER["MAIN"].get_member(player_member).send(
 				f"**{message.author.name}** has traded their hand with you! This is your new hand.", 
 				file=discord.File(f"Images/current_card_image_{tag}.png"))
 				os.remove(f"Images/current_card_image_{tag}.png")
@@ -413,7 +414,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 				UNO_INFO["carryover"] = 0 # Reset the carryover
 
 				tag = str(time.time()).split(".")[1] # Report the new hand
-				uno_image(2, tag, last=UNO_INFO["last_card"], hand=player_hand)
+				uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=player_hand)
 				await message.channel.send(f"You draw **{card_n}** cards!", 
 				file=discord.File(f"Images/current_card_image_{tag}.png"))
 				
@@ -441,7 +442,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 				player_hand = UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)]
 
 				tag = str(time.time()).split(".")[1] # Report the new hand
-				uno_image(2, tag, last=UNO_INFO["last_card"], hand=player_hand)
+				uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=player_hand)
 
 				await message.channel.send("You've drawn a card!",
 				file=discord.File(f"Images/current_card_image_{tag}.png"))
@@ -452,7 +453,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 			for card in UNO_INFO["hands"][UNO_INFO["players"].index(message.author.id)]:
 				if card[0] == UNO_INFO["last_card"][0] or card[1] == UNO_INFO["last_card"][1] or card[0] == "0":
 					await message.channel.send(
-					f"You have valid cards you can play! Use `{PREFIX}uno play` followed by a number to play one.")
+					f"You have valid cards you can play! Use `{SERVER['PREFIX']}uno play` followed by a number to play one.")
 					return [4, "UNO", UNO_INFO]
 
 			await message.channel.send("You have no cards to play. Your turn is over!")
@@ -472,7 +473,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 		
 		if UNO_INFO["status"] == 1: # Redirect to tc/uno join
 			await message.channel.send(
-			f"To quit a game during signups, use `{PREFIX}uno join` again after already having joined.")
+			f"To quit a game during signups, use `{SERVER['PREFIX']}uno join` again after already having joined.")
 			return
 		
 		if message.author.id not in UNO_INFO["players"]: # If you're not a player
@@ -516,7 +517,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 		UNO_INFO["channel"] = message.channel # The channel in which the game started is used for game updates
 
 		await message.channel.send(
-		f"<@{message.author.id}> is creating a Uno round! Send `{PREFIX}uno join` to join it.")
+		f"<@{message.author.id}> is creating a Uno round! Send `{SERVER['PREFIX']}uno join` to join it.")
 
 		flag = False # Whether or not the timer is currently active
 		sec = 0 # Variable to handle timers
@@ -526,7 +527,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 
 			if sec == 120: # If 2 out of 3 minutes have passed, warn the host to start quickly
 				await message.channel.send(
-				f"""<@{UNO_INFO["host"]}>, you have 60 seconds to start the Uno round! Use `{PREFIX}uno start` 
+				f"""<@{UNO_INFO["host"]}>, you have 60 seconds to start the Uno round! Use `{SERVER['PREFIX']}uno start` 
 				to start it. If you don't do it in time, you'll be skipped as the host.
 				""".replace("\n", "").replace("\t", ""))
 
@@ -573,8 +574,8 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 			UNO_INFO["hands"][-1] = list(sorted(UNO_INFO["hands"][-1])) # Sort that hand
 
 			tag = str(time.time()).split(".")[1] # Give the person their starting cards
-			uno_image(2, tag, last="QC", hand=UNO_INFO["hands"][-1])
-			await TWOW_CENTRAL.get_member(player).send(
+			uno_image(2, tag, SERVER['PREFIX'], last="QC", hand=UNO_INFO["hands"][-1])
+			await SERVER['MAIN'].get_member(player).send(
 			"The Uno round is starting! Here's your hand:", 
 			file=discord.File(f"Images/current_card_image_{tag}.png"))
 			os.remove(f"Images/current_card_image_{tag}.png")
@@ -602,11 +603,11 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 			current_player = UNO_INFO["order"][0] # Get the current player having their turn
 			player_index = UNO_INFO["players"].index(current_player) # This becomes useful later on
 			UNO_INFO["current"] = current_player # Record the current player
-			player_member = TWOW_CENTRAL.get_member(current_player)
+			player_member = SERVER['MAIN'].get_member(current_player)
 			player_name = player_member.name # Their username
 
 			tag = str(time.time()).split(".")[1] # Make the image reporting that it's the player's turn
-			uno_image(1, tag, last=UNO_INFO["last_card"], name=player_name)
+			uno_image(1, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], name=player_name)
 			await message.channel.send(file=discord.File(f"Images/current_card_image_{tag}.png"))
 			os.remove(f"Images/current_card_image_{tag}.png")
 
@@ -618,12 +619,12 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 				defense = False # Can the player defend against the cards?
 				for card in UNO_INFO["hands"][player_index]:
 					if card[1] == "F" and UNO_INFO["carryover"] < -3: # If it's made of +4s and the player has one
-						await TWOW_CENTRAL.get_member(current_player).send("**You must play a +4 or draw the cards!**")
+						await SERVER['MAIN'].get_member(current_player).send("**You must play a +4 or draw the cards!**")
 						defense = True
 						break
 					
 					if card[1] == "D" and UNO_INFO["carryover"] > 1: # If it's made of +2s and the player has one
-						await TWOW_CENTRAL.get_member(current_player).send("**You must play a +2 or draw the cards!**")
+						await SERVER['MAIN'].get_member(current_player).send("**You must play a +2 or draw the cards!**")
 						defense = True
 						break
 					
@@ -636,7 +637,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 					UNO_INFO["deck"] = UNO_INFO["deck"][dc:] # Remove those cards from the deck
 
 					tag = str(time.time()).split(".")[1] # Send the player their new hand
-					uno_image(2, tag, last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][player_index])
+					uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][player_index])
 					await player_member.send(f"You drew **{dc}** cards!",
 					file=discord.File(f"Images/current_card_image_{tag}.png"))
 					os.remove(f"Images/current_card_image_{tag}.png")
@@ -649,7 +650,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 					continue # Do another iteration. If they weren't skipped, it's still their turn
 
 			tag = str(time.time()).split(".")[1] # Show the player their cards
-			uno_image(0, tag, last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][player_index])
+			uno_image(0, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][player_index])
 			await player_member.send("""It is now your turn to play a card!
 			You have **1 minute** to play, or you'll be skipped.""",
 			file=discord.File(f"Images/current_card_image_{tag}.png"))
@@ -685,7 +686,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 					grammar = "" if dc == 1 else "s"
 
 					tag = str(time.time()).split(".")[1] # Report their new hand
-					uno_image(2, tag, last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][player_index])
+					uno_image(2, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], hand=UNO_INFO["hands"][player_index])
 
 					await player_member.send(
 					"You took too long to play! You will draw cards as punishment.",
@@ -707,7 +708,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 			if (len(UNO_INFO["hands"][player_index]) == 0 or
 			len(UNO_INFO["players"]) == 1): # If they have no cards, they win! Or also if everyone else quit
 				tag = str(time.time()).split(".")[1] # Report the victory
-				uno_image(3, tag, last=UNO_INFO["last_card"], name=player_name)
+				uno_image(3, tag, SERVER['PREFIX'], last=UNO_INFO["last_card"], name=player_name)
 				await message.channel.send(f"**{player_name} WINS THE GAME!**", 
 				file=discord.File(f"Images/current_card_image_{tag}.png"))
 				os.remove(f"Images/current_card_image_{tag}.png")
@@ -720,7 +721,7 @@ async def MAIN(message, args, level, perms, UNO_INFO, TWOW_CENTRAL):
 			if UNO_INFO["carryover"] == -1: # -1 carryover means a skip card
 				skipped_player = UNO_INFO["order"][0] # The next player over is skipped
 				await message.channel.send(
-				f"**{player_name}** skips **{TWOW_CENTRAL.get_member(skipped_player).name}**'s turn!")
+				f"**{player_name}** skips **{SERVER['MAIN'].get_member(skipped_player).name}**'s turn!")
 				UNO_INFO["order"] += UNO_INFO["order"][0:1] # Increment order again
 				UNO_INFO["order"] = UNO_INFO["order"][1:]
 			

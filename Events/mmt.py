@@ -1,60 +1,54 @@
 import time, discord, random, statistics
 import numpy as np
 from Config._functions import grammar_list, word_count, elim_prize
-from Config._const import PREFIX, ALPHABET, BRAIN, DB_LINK
+from Config._const import ALPHABET, BRAIN, DB_LINK
 from Config._db import Database
 
 class EVENT:
-	LOADED = False
-	RUNNING = False
-
-	TWOW_CENTRAL = 0 # Server variable
-	MMT_C = "" # The game channel
-
 	db = Database()
-
-	info = {
-		"HOST_QUEUE": [],
-
-		"PLAYERS": [],
-		"RESPONSES": [],
-
-		"SPECTATORS": [],
-		"VOTES": {
-			"ID": [],
-			"RESP": [],
-			"VOTE": []
-		},
-
-		"GAME": {
-			"ROUND": 0,
-			"PERIOD": 0,
-			"PROMPT": "",
-			"HOST": 0,
-			"PERIOD_START": 0,
-			"END_VOTES": [],
-		}
-	}
-
-	param = { # Define all the parameters necessary
-		"ELIM_RATE": 0.2,
-		"R_DEADLINE": 180,
-		"V_DEADLINE": 150,
-		"Q_DEADLINE": 60,
-		"S_DEADLINE": 180,
-		"P_DEADLINE": 120
-	}
 
 	# Executes when loaded
 	def __init__(self):
-		self.LOADED = True
+		self.RUNNING = False
+		self.info = {
+			"HOST_QUEUE": [],
+
+			"PLAYERS": [],
+			"RESPONSES": [],
+
+			"SPECTATORS": [],
+			"VOTES": {
+				"ID": [],
+				"RESP": [],
+				"VOTE": []
+			},
+
+			"GAME": {
+				"ROUND": 0,
+				"PERIOD": 0,
+				"PROMPT": "",
+				"HOST": 0,
+				"PERIOD_START": 0,
+				"END_VOTES": [],
+			}
+		}
+
+		self.param = { # Define all the parameters necessary
+			"ELIM_RATE": 0.2,
+			"R_DEADLINE": 180,
+			"V_DEADLINE": 150,
+			"Q_DEADLINE": 60,
+			"S_DEADLINE": 180,
+			"P_DEADLINE": 120
+		}
 
 
 	# Executes when activated
-	def start(self, TWOW_CENTRAL, PARAMS): # Set the parameters
+	def start(self, SERVER): # Set the parameters
 		self.RUNNING = True
-		self.TWOW_CENTRAL = TWOW_CENTRAL
-		self.MMT_C = discord.utils.get(self.TWOW_CENTRAL.channels, id=PARAMS["GAME_CHANNEL"])
+		self.SERVER = SERVER
+		self.PREFIX = SERVER["PREFIX"]
+		self.MMT_C = SERVER["GAME_CHANNEL"]
 		self.info["GAME"]["PERIOD_START"] = time.time()
 
 	
@@ -102,7 +96,7 @@ class EVENT:
 
 
 	# Function that runs every two seconds
-	async def on_two_second(self, TWOW_CENTRAL):
+	async def on_two_second(self):
 		if len(self.info["HOST_QUEUE"]) == 0 and self.info["GAME"]["HOST"] == 0:
 			await self.MMT_C.send("🎩 There are no more people in queue to host a MiniMiniTWOW.")
 			self.end()
@@ -113,7 +107,7 @@ class EVENT:
 			self.info["HOST_QUEUE"] = self.info["HOST_QUEUE"][1:] # Remove first person from queue
 
 			await self.MMT_C.send(f"""🎩 <@{self.info["GAME"]["HOST"]}> is now up on the queue! Send 
-			`{PREFIX}mmt create` to create a MiniMiniTWOW within the next {self.param["Q_DEADLINE"]} seconds, 
+			`{self.PREFIX}mmt create` to create a MiniMiniTWOW within the next {self.param["Q_DEADLINE"]} seconds, 
 			or you'll be skipped from queue!""".replace("\n", "").replace("\t", ""))
 
 			self.info["GAME"]["PERIOD_START"] = time.time() # Start the mmt create timer
@@ -126,7 +120,7 @@ class EVENT:
 			# If there's around 30 seconds left to create the MMT
 			if remain in [self.param["Q_DEADLINE"] - 30, self.param["Q_DEADLINE"] - 31]:
 				await self.MMT_C.send(f"""🎩 <@{self.info["GAME"]["HOST"]}>, you have 30 seconds to create the 
-				MiniMiniTWOW with `{PREFIX}mmt create`. Do it, or you'll be skipped from queue!
+				MiniMiniTWOW with `{self.PREFIX}mmt create`. Do it, or you'll be skipped from queue!
 				""".replace("\n", "").replace("\t", ""))
 
 			# If it's past the deadline
@@ -144,7 +138,7 @@ class EVENT:
 				# If there's around 30 seconds left to start the MMT
 				if remain in [self.param["S_DEADLINE"] - 30, self.param["S_DEADLINE"] - 31]:
 					await self.MMT_C.send(f"""🏁 <@{self.info["GAME"]["HOST"]}>, you have 30 seconds to end signups 
-					start the MiniMiniTWOW with `{PREFIX}mmt start`. Do it, or you'll be skipped from queue!
+					start the MiniMiniTWOW with `{self.PREFIX}mmt start`. Do it, or you'll be skipped from queue!
 					""".replace("\n", "").replace("\t", ""))
 					return
 				
@@ -161,14 +155,14 @@ class EVENT:
 
 			if remain < 1.95: # If the prompt decision period *just started*
 				await self.MMT_C.send(f"""📰 <@{self.info["GAME"]["HOST"]}> has {self.param["P_DEADLINE"]} seconds 
-				to decide on the Round {self.info["GAME"]["ROUND"]} Prompt by using `{PREFIX}mmt prompt`.
+				to decide on the Round {self.info["GAME"]["ROUND"]} Prompt by using `{self.PREFIX}mmt prompt`.
 				""".replace("\n", "").replace("\t", ""))
 				return
 
 			# If there's around 30 seconds left to decide the prompt
 			if round(remain) in [self.param["P_DEADLINE"] - 30, self.param["P_DEADLINE"] - 31]:
 				await self.MMT_C.send(f"""📰 <@{self.info["GAME"]["HOST"]}>, you have 30 seconds to decide on a prompt 
-				with `{PREFIX}mmt prompt`. Do it, or you'll be skipped from queue!
+				with `{self.PREFIX}mmt prompt`. Do it, or you'll be skipped from queue!
 				""".replace("\n", "").replace("\t", ""))
 				return
 
@@ -196,7 +190,7 @@ class EVENT:
 
 					if self.info["RESPONSES"][ind] == "":
 						try:
-							await self.TWOW_CENTRAL.get_member(player).send(
+							await self.SERVER["MAIN"].get_member(player).send(
 							f"""📝 <@{player}>, you have 1 minute to submit to the current prompt!
 							```{self.info["GAME"]["PROMPT"]}```
 							If you don't respond, you'll be eliminated!""".replace("\n", "").replace("\t", ""))
@@ -282,7 +276,7 @@ class EVENT:
 
 					message = f"""🗳️ **Round {self.info["GAME"]["ROUND"]} Voting**
 					```{self.info["GAME"]["PROMPT"]}```
-					Cast your vote on the entries below by using `{PREFIX}mmt vote` followed by the letters 
+					Cast your vote on the entries below by using `{self.PREFIX}mmt vote` followed by the letters 
 					of each response ordered from best to worst in your opinion. You have {self.param["V_DEADLINE"]} 
 					seconds to vote!""".replace("\n", "").replace("\t", "")
 
@@ -296,7 +290,7 @@ class EVENT:
 					message += "\n" + screen
 					
 					try: # Try to send the screen to the member
-						await self.TWOW_CENTRAL.get_member(spec).send(message)
+						await self.SERVER["MAIN"].get_member(spec).send(message)
 					except Exception: # If you can't, skip them
 						pass
 				

@@ -6,7 +6,6 @@ from Config._functions import grammar_list
 class Database:
 	def __init__(self):
 		pass
-	
 
 	# Retrieve a list of tables. Example: db.get_tables()
 	def get_tables(self):
@@ -18,7 +17,7 @@ class Database:
 			# This SQL statement grabs all tables from the 'public' schema (which is where every table I use is)
 			cursor.execute(""" SELECT tablename FROM pg_tables WHERE schemaname = 'public' """)
 			return [x[0].split(".")[1] for x in cursor.fetchall()] # Return just the table's names, without the schema
-	
+
 
 	# Retrieve a table's columns. Setting include_type to True includes data types. Example: db.get_columns("birthday")
 	def get_columns(self, table, include_type=False):
@@ -41,6 +40,34 @@ class Database:
 				columns = [x[0] for x in columns]
 			return columns
 	
+	# Add a column to the end of a table. columns is a list of [name, type] matchups. Example: db.add_columns("serverdata", [["prefix", "text"], ["members", "integer"]])
+	def add_columns(self, table, columns):
+		if table not in self.get_tables():
+			raise NameError(f"The table {table} is not in the database.")
+
+		if len(columns) == 0:
+			raise ValueError("No columns have been specified to be added.")
+		
+		full_name = f"public.{table.lower()}" # Schema name
+
+		with psycopg2.connect(DB_LINK, sslmode='require') as db:
+			cursor = db.cursor()
+
+			for i in range(len(columns)): # Add the columns one by one (so we can check them each individually for
+				datatype = columns[i][1] # code that might be harmful)
+
+				if datatype not in ["text", "integer", "real"]: # The three datatypes we use
+					raise TypeError(f"The only SQL data types available are text, integer and real - not {datatype}.")
+
+				# If the datatype is right, add the column. I have to use regular string addition for the datatype, but
+				# since we made sure it's one of the three data types above, there's no harm in doing this
+				cursor.execute(sql.SQL(""" ALTER TABLE {table_name} ADD {column} """ + datatype).format(
+					table_name = sql.Identifier(full_name),
+					column = sql.Identifier(columns[i][0])
+				))
+			
+			return
+
 
 	# Gets entries from a table. You can specify the limit - if not, it's 10. You can specify the columns to get - if
 	# not, returns all of them. You can specify the conditions on which to gather them - if not, gathers all of them.

@@ -1,18 +1,19 @@
-from Config._const import PREFIX, DB_LINK, BRAIN
+from Config._const import DB_LINK, BRAIN
 from Config._functions import is_whole, is_float
 from Config._db import Database
 from Config._words import WORDS
 import random, time
 
-HELP = {
-	"COOLDOWN": 9999999,
-	"MAIN": "Test your typing speed",
-	"FORMAT": "",
-	"CHANNEL": 0,
-	"USAGE": f"""Using `{PREFIX}typingtest` will prompt you to type a sequence of random common English words,
-    and will report your speed and accuracy when you finish.""".replace("\n", "").replace("\t", ""),
-	"HIDE" : 1
-}
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 9999999,
+		"MAIN": "Test your typing speed",
+		"FORMAT": "",
+		"CHANNEL": 0,
+		"USAGE": f"""Using `{PREFIX}typingtest` will prompt you to type a sequence of random common English words,
+		and will report your speed and accuracy when you finish.""".replace("\n", "").replace("\t", ""),
+		"HIDE" : 1
+	}
 
 a = "tc/db add typingtest id-text totype-text start-text best-text"
 
@@ -23,7 +24,7 @@ REQ = []
 db = Database()
 zws = "​"
 
-async def MAIN(message, args, level, perms):
+async def MAIN(message, args, level, perms, SERVER):
 	if level == 1:
 		totype = " ".join(random.sample(WORDS, random.randrange(45, 61, 1))) # creates list of words
 
@@ -42,7 +43,7 @@ async def MAIN(message, args, level, perms):
 			db.add_entry("typingtest", [str(message.author.id), totype, str(tt.created_at.timestamp()), "0"])
 		else:
 			db.edit_entry("typingtest", entry={"totype" : totype, "start" : str(tt.created_at.timestamp())},
-				      conditions={"id" : str(message.author.id)})
+				conditions={"id" : str(message.author.id)})
 
 		msg = await BRAIN.wait_for('message', check=(lambda m: m.channel == message.channel and m.author == message.author))
 		typed_words = msg.content.lower().split(' ')
@@ -50,7 +51,7 @@ async def MAIN(message, args, level, perms):
 		success = 0
 		chars = 0
 		duration = round(msg.created_at.timestamp() - float(db.get_entries("typingtest", limit=50, columns=["start"], 
-									     conditions={"id": str(message.author.id)})[0][0]), 3)
+			conditions={"id": str(message.author.id)})[0][0]), 3)
 
 		# counting total successful characters typed
 		for word in typed_words:
@@ -65,7 +66,7 @@ async def MAIN(message, args, level, perms):
 			return
 		else:
 			player_best = float(db.get_entries("typingtest", limit=50, columns=["best"],
-							   conditions={"id" : str(message.author.id)})[0][0])
+				conditions={"id" : str(message.author.id)})[0][0])
 			if wpm > player_best:
 				record_message = f"^n^nThat's a new personal best, beating your old best of {round(player_best, 2)} WPM!"
 				db.edit_entry("typingtest", entry={"best" : str(wpm)}, conditions={"id" : str(message.author.id)})
