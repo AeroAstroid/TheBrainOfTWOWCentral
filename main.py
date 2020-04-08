@@ -129,7 +129,7 @@ async def on_ready():
 				print(f"Automatically started {event_name.upper()} in {SERVERS[event_server]['MAIN'].name}")
 
 			except Exception as e:
-				print(e)
+				print(f"Error starting {event_name} in {event_server}:", e)
 				pass
 
 	# Notify that the bot is ready
