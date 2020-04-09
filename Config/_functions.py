@@ -262,7 +262,7 @@ def uno_skip():
 		"current": 0,
 		"deck": ORIGINAL_DECK,
 		"last_card": "00",
-		"draw_carryover": 0,
+		"carryover": 0,
 		"channel": 0,
 		"config": {"0-7": False, "d-skip": True, "start": 7}
 	}

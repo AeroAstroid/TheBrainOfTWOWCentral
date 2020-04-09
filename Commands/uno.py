@@ -538,7 +538,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 				flag = True
 				await message.channel.send(
 				f"""Two players have joined the round. <@{UNO_INFO["host"]}> now has **three minutes** to start it 
-				with `tc/uno start`!""".replace("\n", "").replace("\t", ""))
+				with `{SERVER['PREFIX']}uno start`!""".replace("\n", "").replace("\t", ""))
 			
 			if len(UNO_INFO["players"]) < 2 and flag: # If the timer is active but it shouldn't be
 				flag = False
