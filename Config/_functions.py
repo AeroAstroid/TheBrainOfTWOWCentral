@@ -47,10 +47,10 @@ def make_book(name):
     face = Image.open("Images/Book/face.png").convert("RGBA")
 
     left = ImageChops.multiply(
-        left, Image.new("HSV", left.size, makelettertint(name[0])).convert("RGBA")
+        left, Image.new("HSV", left.size, make_letter_tint(name[0])).convert("RGBA")
     )
     right = ImageChops.multiply(
-        right, Image.new("HSV", right.size, makelettertint(name[1])).convert("RGBA")
+        right, Image.new("HSV", right.size, make_letter_tint(name[1])).convert("RGBA")
     )
 
     left.paste(right, (0, 0), right)
