@@ -29,15 +29,15 @@ async def MAIN(message, args, level, perms, SERVER):
 			book_image = make_book(book[:2])
 			book_image.save(f"Images/Book/{book[:2]}.png")
 			book_msg = await message.channel.send(f"**{book}**", file=discord.File(f"Images/Book/{book[:2]}.png"))
-			
-			if len(link_list[-1]) + len(f"<{book_msg.attachments[0].url}>") > 1950:
+
+			if len(link_list[-1]) + len(f"<{book_msg.attachments[0].url}>") > 1800:
 				link_list.append([])
 			link_list[-1].append(f"<{book_msg.attachments[0].url}>")
 
 			os.remove(f"Images/Book/{book[:2]}.png")
 		
 		for z in link_list:
-			await message.channel.send(z)
+			await message.channel.send("\n".join(z))
 	else:
 		book_image = make_book(book[0][:2])
 		book_image.save(f"Images/Book/{book[0][:2]}.png")
