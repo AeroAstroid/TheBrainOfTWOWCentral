@@ -25,6 +25,40 @@ def grammar_list(listed, c_or=False):
 	return listed
 
 
+# make_letter_tint : Returns a color for a book depending on the letter
+def make_letter_tint(char):
+    char = char.upper()
+    charcode = ord(char)
+    if char >= "0" and char <= "9":
+        hue1 = (charcode - ord("0")) / 10
+    else:
+        hue1 = (charcode - ord("A")) / 26 % 1
+    hue360 = hue1 * 255
+    return tuple((int(hue360), 153, 255))
+
+
+# make_book : Generates a book image for a given contestant name
+def make_book(name):
+    if len(name) < 2:
+        name += name
+
+    left = Image.open("Images/Book/left.png").convert("RGBA")
+    right = Image.open("Images/Book/right.png").convert("RGBA")
+    face = Image.open("Images/Book/face.png").convert("RGBA")
+
+    left = ImageChops.multiply(
+        left, Image.new("HSV", left.size, makelettertint(name[0])).convert("RGBA")
+    )
+    right = ImageChops.multiply(
+        right, Image.new("HSV", right.size, makelettertint(name[1])).convert("RGBA")
+    )
+
+    left.paste(right, (0, 0), right)
+    left.paste(face, (0, 0), face)
+
+    return left
+
+
 # word_count : Returns a response's word count
 def word_count(response):
 	words = 0

@@ -20,14 +20,14 @@ REQ = []
 async def MAIN(message, args, level, perms, SERVER):
 	if level != 1:
 		if args[1].lower() == "queue" and perms == 2:
-			await message.channel.send(open("Config/_tr_gen.txt", "r").read())
+			await message.channel.send(open("Config/_image_gen.txt", "r").read())
 			return
 	
-	tr_gen = open("Config/_tr_gen.txt", "r").read()
+	tr_gen = open("Config/_image_gen.txt", "r").read()
 	tr_gen += f" {message.id}"
-	open("Config/_tr_gen.txt", "w").write(tr_gen.strip())
+	open("Config/_image_gen.txt", "w").write(tr_gen.strip())
 
-	while not open("Config/_tr_gen.txt", "r").read().startswith(str(message.id)):
+	while not open("Config/_image_gen.txt", "r").read().startswith(str(message.id)):
 		await asyncio.sleep(1)
 
 	pixel_count = 250 * np.power(10, np.power(np.e, random.uniform(0, 2.5)) - 1)
@@ -162,9 +162,9 @@ async def MAIN(message, args, level, perms, SERVER):
 	os.remove("Images/generated tr_.png")
 
 	try:
-		tr_gen = open("Config/_tr_gen.txt", "r").read().split(" ")
+		tr_gen = open("Config/_image_gen.txt", "r").read().split(" ")
 		tr_gen.remove(str(message.id))
-		open("Config/_tr_gen.txt", "w").write(" ".join(tr_gen).strip())
+		open("Config/_image_gen.txt", "w").write(" ".join(tr_gen).strip())
 	except ValueError:
 		pass
 	return
