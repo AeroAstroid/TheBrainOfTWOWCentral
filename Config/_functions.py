@@ -1,7 +1,7 @@
 import numpy as np
 import random, string, re
 from Config._const import ALPHABET, OPTION_DESC, ORIGINAL_DECK
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageFont, ImageDraw, ImageChops
 
 def alt_font(z): return ImageFont.truetype("Fonts/ARIALUNI.TTF", z)
 def default(z): return ImageFont.truetype("Fonts/RobotoCondensed-Regular.ttf", z)
