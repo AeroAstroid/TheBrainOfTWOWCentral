@@ -1,4 +1,5 @@
 import discord
+from Config._functions import is_whole
 
 def HELP(PREFIX):
 	return {
