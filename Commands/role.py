@@ -50,7 +50,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			else:
 				await member.add_roles(role)
 		except:
-			await message.channel.send(member_id, "not found")
+			await message.channel.send(member_id + " not found")
 	
 	await message.channel.send(f"Successfully updated {role.name} members")
 	return
