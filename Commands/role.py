@@ -43,14 +43,20 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 	
 	for member_id in args[3:]:
-		member = SERVER["MAIN"].get_member(int(member_id))
-		try:
-			if args[2] == "remove":
-				await member.remove_roles(role)
-			else:
-				await member.add_roles(role)
-		except:
-			await message.channel.send(member_id + " not found")
+		if member_id == "all" and args[2] == "remove":
+			all_members = role.members
+			for m in all_members:
+				await m.remove_roles(role)
+			
+		else:
+			member = SERVER["MAIN"].get_member(int(member_id))
+			try:
+				if args[2] == "remove":
+					await member.remove_roles(role)
+				else:
+					await member.add_roles(role)
+			except:
+				await message.channel.send(member_id + " not found")
 	
 	await message.channel.send(f"Successfully updated {role.name} members")
 	return
