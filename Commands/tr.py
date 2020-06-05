@@ -78,7 +78,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		"Bonsai Tree": 0.8,
 		"Four Year Old Child": 1.1,
 		"Aegislash": 1.7,
-		"Purplegaze": 1.77,
+		"Purplegaze": 1.78,
 		"Medium Dog House": 0.65,
 		"Hedgehog": 0.12,
 		"Pine Tree": 15,
