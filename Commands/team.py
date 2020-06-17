@@ -76,7 +76,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			
 			teams = sorted(teams, reverse=True, key=lambda m: m[1])
 
-			teams = [" ".join(t) for t in teams]
+			teams = [" ".join(str(t)) for t in teams]
 
 			for t in teams:
 				if len(output[-1]) + len(t) > 1980:
@@ -122,7 +122,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		cont_list_l = [x.lower() for x in cont_list]
 
-		key = args[2].lower()
+		key = " ".join(args[2:]).lower()
 
 		found_first = False
 		picked = []
@@ -139,8 +139,12 @@ async def MAIN(message, args, level, perms, SERVER):
 			role_name_list = [
 				discord.utils.get(SERVER["MAIN"].roles, id=int(x)).name for x in role_list
 				if discord.utils.get(SERVER["MAIN"].roles, id=int(x)) != None]
+			
+			await message.channel.send(role_name_list)
 
-			found_list = [x for x in role_name_list if x.startswith(key)]
+			found_list = [x for x in role_name_list if x.lower().startswith(key)]
+
+			await message.channel.send(found_list)
 			
 			if len(found_list) == 1:
 				ind = role_name_list.index(found_list[0])
