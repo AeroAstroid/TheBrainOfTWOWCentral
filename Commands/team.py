@@ -76,7 +76,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			
 			teams = sorted(teams, reverse=True, key=lambda m: m[1])
 
-			teams = [" ".join(str(t)) for t in teams]
+			teams = [" ".join([str(a) for a in t]) for t in teams]
 
 			for t in teams:
 				if len(output[-1]) + len(t) > 1980:
