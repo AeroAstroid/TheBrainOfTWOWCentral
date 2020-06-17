@@ -135,16 +135,12 @@ async def MAIN(message, args, level, perms, SERVER):
 		elif len(found_list) > 1:
 			found_first = True
 		
-		if picked != []:
+		if picked == []:
 			role_name_list = [
 				discord.utils.get(SERVER["MAIN"].roles, id=int(x)).name for x in role_list
 				if discord.utils.get(SERVER["MAIN"].roles, id=int(x)) != None]
-			
-			await message.channel.send(role_name_list)
 
 			found_list = [x for x in role_name_list if x.lower().startswith(key)]
-
-			await message.channel.send(found_list)
 			
 			if len(found_list) == 1:
 				ind = role_name_list.index(found_list[0])
