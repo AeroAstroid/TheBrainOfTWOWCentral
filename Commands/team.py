@@ -32,7 +32,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		role_list = roles.split(" ")
 
 		if contnames != "":
-			cont_list = contnames.split(" ")
+			cont_list = contnames.split(" / ")
 		
 		if emojis != "":
 			emoji_list = emojis.split(" ")
@@ -60,5 +60,5 @@ async def MAIN(message, args, level, perms, SERVER):
 			output[-1] += line
 
 		for m in output:
-			await message.channel.send(output)
+			await message.channel.send(m)
 		return
