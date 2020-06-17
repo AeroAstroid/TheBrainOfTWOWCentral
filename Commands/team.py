@@ -24,7 +24,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	id_search_key = str(SERVER["MAIN"].id)
 
 	roles, contestants, contnames, emojis, limit = db.get_entries(
-		"teamdata", columns=["roles", "contestants", "contname", "emojis", "limit"],
+		"teamdata", columns=["roles", "contestants", "contname", "emojis", "teamlimit"],
 		conditions={"server":id_search_key}
 	)
 
