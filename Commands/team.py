@@ -26,7 +26,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	roles, contestants, contnames, emojis, limit = db.get_entries(
 		"teamdata", columns=["roles", "contestants", "contname", "emojis", "teamlimit"],
 		conditions={"server":id_search_key}
-	)
+	)[0]
 
 	if level == 1:
 		role_list = roles.split(" ")
