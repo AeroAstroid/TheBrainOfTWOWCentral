@@ -6,7 +6,7 @@ import random, time
 
 def HELP(PREFIX):
 	return {
-		"COOLDOWN": 9999999,
+		"COOLDOWN": 20,
 		"MAIN": "Test your typing speed",
 		"FORMAT": "",
 		"CHANNEL": 0,
