@@ -13,7 +13,7 @@ def HELP(PREFIX):
 	}
 
 PERMS = 1 # Non-members
-ALIASES = [""]
+ALIASES = []
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
