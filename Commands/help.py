@@ -53,7 +53,7 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 				# This variable is the "last command's permissions" one that gets checked above to determine separations
 				perm = COMMANDS[c]['PERMS']
 				# 2 = Staff; 1 = Member; 0 = Non-Member
-				values = '**{Staff}\n**' if perm == 2 else ('{Member}\n' if perm == 1 else '{Non-Member}\n')
+				values = '**{Developer}\n**' if perm == 3 else ('**{Staff}\n**' if perm == 2 else ('{Member}\n' if perm == 1 else '{Non-Member}\n'))
 
 				# Add aliases, if any
 				command_alias_list = [f"{SERVER['PREFIX']}{command.lower()}" for command in COMMANDS[c]['ALIASES']]
