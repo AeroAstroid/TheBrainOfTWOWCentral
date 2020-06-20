@@ -61,13 +61,13 @@ async def MAIN(message, args, level, perms, SERVER):
 			return
 		
 		old_entry = twow_list[0]
-		old_entry = dict(zip(["name", "hosts", "link", "desc", "time", "verified"], old_entry))
+		old_entry = dict(zip(["name", "hosts", "link", "description", "time", "verified"], old_entry))
 		
 		entry = {
 			"name": None,
 			"hosts": None,
 			"link": None,
-			"desc": None,
+			"description": None,
 			"time": None,
 			"verified": None}
 		
@@ -127,6 +127,8 @@ async def MAIN(message, args, level, perms, SERVER):
 					tag = "host"
 				if k == "time":
 					tag = "deadline"
+				if k == "description":
+					tag = "desc"
 				
 				old_info_string += f"{tag}:[{v}] "
 		
@@ -141,6 +143,8 @@ async def MAIN(message, args, level, perms, SERVER):
 					tag = "host"
 				if k == "time":
 					tag = "deadline"
+				if k == "description":
+					tag = "desc"
 				
 				new_info_strings += f"{tag}:[{v}] "
 		
