@@ -56,7 +56,10 @@ class EVENT:
 			self.db.add_entry("signuptwows", list(twow))
 		
 		if announce:
-			new_twow_names = list(zip(*twow_list))[0]
+			try:
+				new_twow_names = list(zip(*twow_list))[0]
+			except IndexError:
+				new_twow_names = []
 			old_twow_names = [
 				x.content[x.content.find("📖  **__")+7 : x.content.find("__** - Hosted by")]
 				for x in self.MESSAGES
