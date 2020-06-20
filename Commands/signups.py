@@ -148,7 +148,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				
 				new_info_string += f"{tag}:[{v}] "
 		
-		await message.channel.send(f"""**{twow_info[0]}** has been edited in the signup list.
+		await message.channel.send(f"""**{cond['name']}** has been edited in the signup list.
 		
 		**Old TWOW Info**:
 		{old_info_string}
