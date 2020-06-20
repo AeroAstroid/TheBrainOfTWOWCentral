@@ -146,7 +146,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				if k == "description":
 					tag = "desc"
 				
-				new_info_strings += f"{tag}:[{v}] "
+				new_info_string += f"{tag}:[{v}] "
 		
 		await message.channel.send(f"""**{twow_info[0]}** has been edited in the signup list.
 		
