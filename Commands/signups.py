@@ -1,4 +1,5 @@
 import discord, datetime
+from Config._functions import is_whole
 from Config._db import Database
 
 def HELP(PREFIX):
@@ -20,8 +21,20 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 	
 	if args[1].lower() == "setup":
-		for _ in range(10):
+		if level == 2:
+			n = 10
+		elif is_whole(args[2]):
+			n = int(args[2])
+		else:
+			n = 10
+		
+		msg_ids = [str(message.channel.id)]
+		for _ in range(n):
 			msg = await message.channel.send("\u200b")
+			msg_ids.append(str(msg.id))
+		
+		await message.channel.send(" ".join(msg_ids))
+		return
 	
 	if args[1].lower() == "update":
 		await message.channel.send("Updating list...")
