@@ -19,6 +19,7 @@ class EVENT:
 		self.db = Database()
 		self.SERVER = SERVER
 		self.CHANNEL = ""
+		self.ANNOUNCE = ""
 	
 	# Executes when deactivated
 	def end(self): # Reset the parameters
@@ -55,7 +56,7 @@ class EVENT:
 		for twow in twow_list:
 			self.db.add_entry("signuptwows", list(twow))
 		
-		if announce:
+		if announce and self.ANNOUNCE != "":
 			try:
 				new_twow_names = list(zip(*twow_list))[0]
 			except IndexError:
