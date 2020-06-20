@@ -168,7 +168,10 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 		db = Database()
 		
-		twow_name = " ".join(args[2:])
+		if "dont_announce" in msg:
+			twow_name = " ".join(args[2:-1])
+		else:
+			twow_name = " ".join(args[2:])
 
 		twow_list = db.get_entries("signuptwows", conditions={"name": twow_name})
 
