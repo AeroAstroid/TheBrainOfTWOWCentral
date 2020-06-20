@@ -6,15 +6,23 @@ db = Database()
 
 columns = db.get_entries("serverdata")
 
+MAIN_SERVER = {}
 SERVERS = {}
 
-MAIN_SERVER = {}
-MAIN_SERVER["ID"] = 481509601590771724 #653673010821201920
+MAIN_SERVER["ID"] = 481509601590771724
 MAIN_SERVER["MAIN"] = discord.utils.get(BRAIN.guilds, id=MAIN_SERVER["ID"])
-MAIN_SERVER["LOGS"] = discord.utils.get(MAIN_SERVER["MAIN"].channels, id=653677748832698378) #653673395954647095
-MAIN_SERVER["BIRTHDAY"] = discord.utils.get(MAIN_SERVER["MAIN"].channels, id=653630098813222943) #653771648616366103
-MAIN_SERVER["MEMES"] = discord.utils.get(MAIN_SERVER["MAIN"].channels, id=656639194415759371) #656641155869704205
-MAIN_SERVER["INTERESTED"] = discord.utils.get(MAIN_SERVER["MAIN"].roles, id=654072824318918677) # 654094896562438154
+MAIN_SERVER["LOGS"] = discord.utils.get(MAIN_SERVER["MAIN"].channels, id=653677748832698378)
+MAIN_SERVER["BIRTHDAY"] = discord.utils.get(MAIN_SERVER["MAIN"].channels, id=653630098813222943)
+MAIN_SERVER["MEMES"] = discord.utils.get(MAIN_SERVER["MAIN"].channels, id=656639194415759371)
+MAIN_SERVER["INTERESTED"] = discord.utils.get(MAIN_SERVER["MAIN"].roles, id=654072824318918677)
+
+'''
+MAIN_SERVER["ID"] = 653673010821201920
+MAIN_SERVER["MAIN"] = discord.utils.get(BRAIN.guilds, id=MAIN_SERVER["ID"])
+MAIN_SERVER["LOGS"] = discord.utils.get(MAIN_SERVER["MAIN"].channels, id=653673395954647095)
+MAIN_SERVER["BIRTHDAY"] = discord.utils.get(MAIN_SERVER["MAIN"].channels, id=653771648616366103)
+MAIN_SERVER["MEMES"] = discord.utils.get(MAIN_SERVER["MAIN"].channels, id=656641155869704205)
+MAIN_SERVER["INTERESTED"] = discord.utils.get(MAIN_SERVER["MAIN"].roles, id=654094896562438154)'''
 
 for server in columns:
 	server_inst = discord.utils.get(BRAIN.guilds, id=int(server[0]))
