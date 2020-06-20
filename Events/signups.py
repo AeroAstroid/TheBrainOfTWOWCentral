@@ -18,6 +18,7 @@ class EVENT:
 		self.MESSAGES = []
 		self.db = Database()
 		self.SERVER = SERVER
+		self.CHANNEL = ""
 	
 	# Executes when deactivated
 	def end(self): # Reset the parameters
@@ -30,11 +31,11 @@ class EVENT:
 	async def update_list(self, hour=False, announce=True):
 		if len(self.MESSAGES) == 0:
 			msgs = [int(x) for x in self.db.get_entries("signupmessages")[0][0].split(" ")]
-			channel = discord.utils.get(self.SERVER["MAIN"].channels, id=msgs[0])
+			self.CHANNEL = discord.utils.get(self.SERVER["MAIN"].channels, id=msgs[0])
 			self.MESSAGES = [""] * (len(msgs) - 2)
 			self.ANNOUNCE = ""
 
-			async for msg in channel.history(limit=100):
+			async for msg in self.CHANNEL.history(limit=100):
 				if msg.id in msgs:
 					if msgs.index(msg.id) != len(msgs) - 1:
 						self.MESSAGES[msgs.index(msg.id) - 1] = msg
@@ -88,6 +89,15 @@ class EVENT:
 			else:
 				announce_msg = f"__**Recent list changes:**__\n\n" + "\n".join(new_announcement_list)
 				await self.ANNOUNCE.edit(content=announce_msg)
+			
+			for x in just_added:
+				verif = twow_list[new_twow_names.index(x)]
+				if verif == 1:
+					msg = await self.CHANNEL.send("<@&488451010319220766> <@&723946317839073370>")
+				else:
+					msg = await self.CHANNEL.send("<@&723946317839073370>")
+				
+				await msg.delete()
 
 		formatted_list = []
 		for twow in twow_list:
