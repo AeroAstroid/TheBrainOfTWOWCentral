@@ -42,6 +42,116 @@ async def MAIN(message, args, level, perms, SERVER):
 		await message.channel.send("Updated list!")
 		return
 	
+	if args[1].lower() == "edit":
+		msg = message.content
+
+		if "name:[" not in msg:
+			await message.channel.send("Include the name of the TWOW you want to edit!")
+			return
+
+		db = Database()
+		
+		starting_bound = msg[msg.find("name:[") + 6:]
+		twow_name = starting_bound[:starting_bound.find("]")]
+
+		twow_list = db.get_entries("signuptwows", conditions={"name": twow_name})
+
+		if len(twow_list) == 0:
+			await message.channel.send(f"There's no TWOW named **{twow_name}** in the signup list!")
+			return
+		
+		old_entry = twow_list[0]
+		old_entry = dict(zip(["name", "hosts", "link", "desc", "time", "verified"], old_entry))
+		
+		entry = {
+			"name": None,
+			"hosts": None,
+			"link": None,
+			"desc": None,
+			"time": None,
+			"verified": None}
+		
+		cond = {"name": twow_name}
+
+		if "newname:[" in msg:
+			starting_bound = msg[msg.find("newname:[") + 9:]
+			new_name = starting_bound[:starting_bound.find("]")]
+			entry["name"] = new_name
+		
+		if "host:[" in msg:
+			starting_bound = msg[msg.find("host:[") + 6:]
+			hosts = starting_bound[:starting_bound.find("]")]
+			entry["hosts"] = hosts
+		
+		if "link:[" in msg:
+			starting_bound = msg[msg.find("link:[") + 6:]
+			link = starting_bound[:starting_bound.find("]")]
+			entry["link"] = link
+		
+		if "desc:[":
+			starting_bound = msg[msg.find("desc:[") + 6:]
+			desc = starting_bound[:starting_bound.find("]")]
+			entry["desc"] = desc
+		
+		if "deadline:[" in msg:
+			starting_bound = msg[msg.find("deadline:[") + 10:]
+			dl_string = starting_bound[:starting_bound.find("]")]
+			deadline = datetime.datetime.strptime(dl_string, "%d/%m/%Y %H:%M")
+			deadline = deadline.replace(tzinfo=datetime.timezone.utc).timestamp()
+			entry["time"] = deadline
+		
+		if "verified:[" in msg:
+			starting_bound = msg[msg.find("verified:[") + 10:]
+			verified = starting_bound[:starting_bound.find("]")]
+			if verified in ["0", ""]:
+				vf = 0
+			else:
+				vf = 1
+			entry["verified"] = vf
+		
+		entry = {k: d for k, d in entry.items() if d is not None}
+		
+		if len(entry.keys()) == 0:
+			await message.channel.send("You've made no edits to this TWOW!")
+			return
+		
+		db.edit_entry("signuptwows", entry=entry, conditions=cond)
+
+		await SERVER["EVENTS"]["SIGNUPS"].update_list()
+
+		old_info_string = ""
+		for k, v in old_entry.items():
+			if v != "":
+				tag = k
+				if k == "hosts":
+					tag = "host"
+				if k == "time":
+					tag = "deadline"
+				
+				old_info_string += f"{tag}:[{v}] "
+		
+		for k, v in entry.items():
+			old_entry[k] = v
+		
+		new_info_string = ""
+		for k, v in old_entry.items():
+			if v != "":
+				tag = k
+				if k == "hosts":
+					tag = "host"
+				if k == "time":
+					tag = "deadline"
+				
+				new_info_strings += f"{tag}:[{v}] "
+		
+		await message.channel.send(f"""**{twow_info[0]}** has been edited in the signup list.
+		
+		**Old TWOW Info**:
+		{old_info_string}
+
+		**New TWOW Info**:
+		{new_info_string}""".replace("\t", ""))
+	
 	if args[1].lower() == "remove":
 		msg = message.content
 
