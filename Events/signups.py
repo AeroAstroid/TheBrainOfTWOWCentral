@@ -51,6 +51,10 @@ class EVENT:
 		
 		twow_list = [x for x in twow_list if x != ""]
 
+		self.db.remove_entry("signuptwows")
+		for twow in twow_list:
+			self.db.add_entry("signuptwows", twow)
+		
 		if announce:
 			new_twow_names = list(zip(*twow_list))[0]
 			old_twow_names = [
