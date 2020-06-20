@@ -45,6 +45,12 @@ class EVENT:
 		twow_list = self.db.get_entries("signuptwows")
 		twow_list = sorted(twow_list, key=lambda m: self.param["TIME_ORDER"] * m[4])
 
+		for ind, twow in enumerate(twow_list):
+			if twow[4] <= time.time():
+				twow_list[ind] = ""
+		
+		twow_list = [x for x in twow_list if x != ""]
+
 		if announce:
 			new_twow_names = list(zip(*twow_list))[0]
 			old_twow_names = [
