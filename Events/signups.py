@@ -84,7 +84,7 @@ class EVENT:
 							old_announcement_list[z] = " : ".join(halves)
 						elif halves[0][0][2:] != "23":
 							halves[0] = (
-							f"`({int(halves[0][0][2:])+1} hour{'s' if int(halves[0][0][2:])+1==1 else ''} ago)`")
+							f"`({int(halves[0][0][2:])+1} hours ago)`")
 							old_announcement_list[z] = " : ".join(halves)
 						else:
 							old_announcement_list[z] = ""
