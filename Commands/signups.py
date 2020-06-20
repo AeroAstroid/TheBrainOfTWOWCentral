@@ -38,7 +38,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	
 	if args[1].lower() == "update":
 		await message.channel.send("Updating list...")
-		await SERVER["EVENTS"]["SIGNUPS"].update_list()
+		await SERVER["EVENTS"]["SIGNUPS"].update_list(update_channel=True)
 		await message.channel.send("Updated list!")
 		return
 	

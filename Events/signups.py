@@ -29,8 +29,8 @@ class EVENT:
 		self.RUNNING = False
 
 	# Exclusive to this event, updates the list of TWOWs in signups
-	async def update_list(self, hour=False, announce=True):
-		if len(self.MESSAGES) == 0:
+	async def update_list(self, hour=False, announce=True, update_channel=False):
+		if len(self.MESSAGES) == 0 or update_channel:
 			msgs = [int(x) for x in self.db.get_entries("signupmessages")[0][0].split(" ")]
 			self.CHANNEL = discord.utils.get(self.SERVER["MAIN"].channels, id=msgs[0])
 			self.MESSAGES = [""] * (len(msgs) - 2)
