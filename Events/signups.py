@@ -7,7 +7,9 @@ class EVENT:
 	# Executes when loaded
 	def __init__(self):
 		self.RUNNING = False
-		self.param = {}
+		self.param = {
+			"TIME_ORDER": 1
+		}
 
 
 	# Executes when activated
@@ -19,22 +21,73 @@ class EVENT:
 	
 	# Executes when deactivated
 	def end(self): # Reset the parameters
-		self.param = {}
+		self.param = {
+			"TIME_ORDER": 1
+		}
 		self.RUNNING = False
 
 	# Exclusive to this event, updates the list of TWOWs in signups
-	async def update_list(self):
+	async def update_list(self, hour=False, announce=True):
 		if len(self.MESSAGES) == 0:
 			msgs = [int(x) for x in self.db.get_entries("signupmessages")[0][0].split(" ")]
 			channel = discord.utils.get(self.SERVER["MAIN"].channels, id=msgs[0])
-			self.MESSAGES = [""] * (len(msgs) - 1)
+			self.MESSAGES = [""] * (len(msgs) - 2)
+			self.ANNOUNCE = ""
 
 			async for msg in channel.history(limit=100):
 				if msg.id in msgs:
-					self.MESSAGES[msgs.index(msg.id) - 1] = msg
+					if msgs.index(msg.id) != len(msgs) - 1:
+						self.MESSAGES[msgs.index(msg.id) - 1] = msg
+					else:
+						self.ANNOUNCE = msg
 		
 		twow_list = self.db.get_entries("signuptwows")
-		twow_list = sorted(twow_list, key=lambda m: m[4])
+		twow_list = sorted(twow_list, key=lambda m: self.param["TIME_ORDER"] * m[4])
+
+		if announce:
+			new_twow_names = list(zip(*twow_list))[0]
+			old_twow_names = [
+				x.content[x.content.find("📖  **__")+7 : x.content.find("__** - Hosted by")]
+				for x in self.MESSAGES
+				if x.content != "\u200b"
+			]
+
+			just_added = [x for x in new_twow_names if x not in old_twow_names]
+			just_removed = [x for x in old_twow_names if x not in new_twow_names]
+
+			new_announcement_list = []
+			for x in just_added:
+				new_announcement_list.append(f"`(<1 hour ago)` : Added **{x}** to the signup list")
+			for x in just_removed:
+				new_announcement_list.append(f"`(<1 hour ago)` : Removed **{x}** from the signup list")
+			
+			if self.ANNOUNCE.content != "\u200b":
+				old_announcement_list = self.ANNOUNCE.content.split("\n")[2:]
+
+				if hour:
+					for z in range(len(old_announcement_list)):
+						halves = old_announcement_list[z].split(" : ")
+						halves[0] = halves[0].split(" ")
+						if halves[0][0][2:] == "<1":
+							halves[0] = "`(1 hour ago)`"
+							old_announcement_list[z] = " : ".join(halves)
+						elif halves[0][0][2:] != "23":
+							halves[0] = (
+							f"`({int(halves[0][0][2:])+1} hour{'s' if int(halves[0][0][2:])+1==1 else ''} ago)`")
+							old_announcement_list[z] = " : ".join(halves)
+						else:
+							old_announcement_list[z] = ""
+				
+				if new_announcement_list != []:
+					old_announcement_list = [x for x in old_announcement_list if x != ""]
+					old_announcement_list += new_announcement_list
+
+					announce_msg = f"__**Recent list changes:**__\n\n" + "\n".join(old_announcement_list)
+					await self.ANNOUNCE.edit(content=announce_msg)
+			
+			else:
+				announce_msg = f"__**Recent list changes:**__\n\n" + "\n".join(new_announcement_list)
+				await self.ANNOUNCE.edit(content=announce_msg)
 
 		formatted_list = []
 		for twow in twow_list:
@@ -95,7 +148,7 @@ class EVENT:
 
 	# Function that runs every hour
 	async def on_one_hour(self):
-		await self.update_list()
+		await self.update_list(hour=True)
 		
 	# Change a parameter of the event
 	async def edit_event(self, message, new_params):

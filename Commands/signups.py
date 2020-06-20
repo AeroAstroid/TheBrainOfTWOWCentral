@@ -117,7 +117,8 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 		db.edit_entry("signuptwows", entry=entry, conditions=cond)
 
-		await SERVER["EVENTS"]["SIGNUPS"].update_list()
+		announce = "dont_announce" in msg
+		await SERVER["EVENTS"]["SIGNUPS"].update_list(announce=announce)
 
 		old_info_string = ""
 		for k, v in old_entry.items():
@@ -180,7 +181,8 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		db.remove_entry("signuptwows", conditions={"name": twow_name})
 
-		await SERVER["EVENTS"]["SIGNUPS"].update_list()
+		announce = "dont_announce" in msg
+		await SERVER["EVENTS"]["SIGNUPS"].update_list(announce=announce)
 
 		await message.channel.send(f"""**{twow_info[0]}** has been removed from the signup list!
 		
@@ -231,13 +233,19 @@ async def MAIN(message, args, level, perms, SERVER):
 			deadline = deadline.replace(tzinfo=datetime.timezone.utc).timestamp()
 			entry[4] = deadline
 		
-		verified = 0
-		if "is_verified" in msg:
-			verified = 1
-		entry[5] = verified
+		vf = 0
+		if "verified:[" in msg:
+			starting_bound = msg[msg.find("verified:[") + 10:]
+			verified = starting_bound[:starting_bound.find("]")]
+			if verified not in ["0", ""]:
+				vf = 1
+		entry[5] = vf
 
 		db.add_entry("signuptwows", entry[:6])
-		await SERVER["EVENTS"]["SIGNUPS"].update_list()
+		
+		announce = "dont_announce" in msg
+		await SERVER["EVENTS"]["SIGNUPS"].update_list(announce=announce)
+
 		await message.channel.send(f"""**{entry[0]}** has been added to the list of TWOWs in signups!
 		**Host:** {entry[1]}
 		**Description:** {entry[3]}
