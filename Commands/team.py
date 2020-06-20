@@ -23,10 +23,14 @@ async def MAIN(message, args, level, perms, SERVER):
 
 	id_search_key = str(SERVER["MAIN"].id)
 
-	roles, contestants, contnames, emojis, limit = db.get_entries(
-		"teamdata", columns=["roles", "contestants", "contname", "emojis", "teamlimit"],
-		conditions={"server":id_search_key}
-	)[0]
+	try:
+		roles, contestants, contnames, emojis, limit = db.get_entries(
+			"teamdata", columns=["roles", "contestants", "contname", "emojis", "teamlimit"],
+			conditions={"server":id_search_key}
+		)[0]
+	except IndexError:
+		await message.channel.send("There are no team flairs in this server!")
+		return
 
 	flair_list = False
 	count = False

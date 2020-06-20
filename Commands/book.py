@@ -39,9 +39,9 @@ async def MAIN(message, args, level, perms, SERVER):
 		for z in link_list:
 			await message.channel.send("\n".join(z))
 	else:
-		book_image = make_book(book[0][:2])
-		book_image.save(f"Images/Book/{book[0][:2]}.png")
-		await message.channel.send(f"**{book[0]}**", file=discord.File(f"Images/Book/{book[0][:2]}.png"))
-		os.remove(f"Images/Book/{book[0][:2]}.png")
+		book_image = make_book(book_names[0][:2])
+		book_image.save(f"Images/Book/{book_names[0][:2]}.png")
+		await message.channel.send(f"**{book_names[0]}**", file=discord.File(f"Images/Book/{book_names[0][:2]}.png"))
+		os.remove(f"Images/Book/{book_names[0][:2]}.png")
 
 	return
