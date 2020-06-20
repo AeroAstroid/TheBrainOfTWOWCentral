@@ -85,7 +85,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 		if "link:[" in msg:
 			starting_bound = msg[msg.find("link:[") + 6:]
-			link = starting_bound[:starting_bound.find("]")]
+			link = starting_bound[:starting_bound.find("]")].replace("<", "").replace(">", "")
 			entry["link"] = link
 		
 		if "desc:[" in msg:
@@ -146,6 +146,8 @@ async def MAIN(message, args, level, perms, SERVER):
 				if k == "description":
 					tag = "desc"
 				
+				if k == "link":
+					v = f"<{v}>"
 				new_info_string += f"{tag}:[{v}] "
 		
 		await message.channel.send(f"""**{cond['name']}** has been edited in the signup list.
@@ -213,7 +215,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 		if "link:[" in msg:
 			starting_bound = msg[msg.find("link:[") + 6:]
-			link = starting_bound[:starting_bound.find("]")]
+			link = starting_bound[:starting_bound.find("]")].replace("<", "").replace(">", "")
 			entry[2] = link
 		
 		if "desc:[":
