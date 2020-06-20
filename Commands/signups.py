@@ -117,7 +117,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 		db.edit_entry("signuptwows", entry=entry, conditions=cond)
 
-		announce = "dont_announce" in msg
+		announce = "dont_announce" not in msg
 		await SERVER["EVENTS"]["SIGNUPS"].update_list(announce=announce)
 
 		old_info_string = ""
@@ -184,7 +184,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		db.remove_entry("signuptwows", conditions={"name": twow_name})
 
-		announce = "dont_announce" in msg
+		announce = "dont_announce" not in msg
 		await SERVER["EVENTS"]["SIGNUPS"].update_list(announce=announce)
 
 		await message.channel.send(f"""**{twow_info[0]}** has been removed from the signup list!
@@ -246,7 +246,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		db.add_entry("signuptwows", entry[:6])
 		
-		announce = "dont_announce" in msg
+		announce = "dont_announce" not in msg
 		await SERVER["EVENTS"]["SIGNUPS"].update_list(announce=announce)
 
 		await message.channel.send(f"""**{entry[0]}** has been added to the list of TWOWs in signups!
