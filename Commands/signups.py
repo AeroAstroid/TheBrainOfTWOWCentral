@@ -88,10 +88,10 @@ async def MAIN(message, args, level, perms, SERVER):
 			link = starting_bound[:starting_bound.find("]")]
 			entry["link"] = link
 		
-		if "desc:[":
+		if "desc:[" in msg:
 			starting_bound = msg[msg.find("desc:[") + 6:]
 			desc = starting_bound[:starting_bound.find("]")]
-			entry["desc"] = desc
+			entry["description"] = desc
 		
 		if "deadline:[" in msg:
 			starting_bound = msg[msg.find("deadline:[") + 10:]
