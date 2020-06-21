@@ -12,7 +12,7 @@ class EVENT:
 	# Executes when activated
 	def start(self, SERVER): # Set the parameters
 		self.SERVER = SERVER
-		self.CHANNEL = discord.utils.get(SERVER["MAIN"].channels, id=MAIN_SERVER["MEMES"])
+		self.CHANNEL = MAIN_SERVER["MEMES"]
 		self.RUNNING = True
 
 	
@@ -23,7 +23,7 @@ class EVENT:
 	# Function that runs every hour
 	async def on_one_hour(self):
 		current_diacritic = self.CHANNEL.name[3]
-		new_index = (self.param["CYCLE"].find(current_diacritic) + 1) % len(self.PARAM["CYCLE"])
+		new_index = (self.param["CYCLE"].find(current_diacritic) + 1) % len(self.param["CYCLE"])
 		await self.CHANNEL.edit(name=f"mem{self.param['CYCLE'][new_index]}s")
 		return
 

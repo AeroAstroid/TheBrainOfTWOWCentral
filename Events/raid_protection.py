@@ -23,7 +23,7 @@ class EVENT:
 	def start(self, SERVER):
 		self.SERVER = SERVER
 		self.MEMBER = SERVER["MEMBER_ROLE"]
-		self.MUTED = discord.utils.get(SERVER["MAIN"].roles, name="Mute")
+		self.MUTED = discord.utils.get(SERVER["MAIN"].roles, name="Muted")
 		self.RUNNING = True
 	
 

@@ -19,7 +19,7 @@ class EVENT:
 	# Executes when activated
 	def start(self, SERVER): # Set the parameters
 		self.SERVER = SERVER
-		self.BIRTHDAY_ROLE = discord.utils.get(SERVER["MAIN"].roles, id=MAIN_SERVER["BIRTHDAY"])
+		self.BIRTHDAY_ROLE = MAIN_SERVER["BIRTHDAY"]
 		self.RUNNING = True
 
 	
@@ -58,7 +58,7 @@ class EVENT:
 
 			found = self.db.get_entries("birthday", columns=["id", "timezone"], conditions={"birthday": l_d})
 			for person in found:
-				if person[1] < tz[0] and self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(member[0])).roles:
+				if person[1] < tz[0] and self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(person[0])).roles:
 					f_tz = ("+" if person[1] > 0 else "") + str(person[1])
 					await self.CHANNEL.send(
 						f"🎉 It is no longer **{l_d} UTC {f_tz}**, but happy birthday to <@{person[0]}> regardless! 🎉"
@@ -67,7 +67,7 @@ class EVENT:
 			
 			found = self.db.get_entries("birthday", columns=["id", "timezone"], conditions={"birthday": tz[1]})
 			for person in found:
-				if person[1] > tz[0] and self.BIRTHDAY_ROLE not in SERVER.get_member(int(member[0])).roles:
+				if person[1] > tz[0] and self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(person[0])).roles:
 					f_tz = ("+" if person[1] > 0 else "") + str(person[1])
 					await self.CHANNEL.send(
 						f"🎉 It is no longer **{tz[1]} UTC {f_tz}**, but happy birthday to <@{person[0]}> regardless! 🎉"
@@ -76,7 +76,7 @@ class EVENT:
 			
 			found = self.db.get_entries("birthday", columns=["id", "timezone"], conditions={"birthday": n_d})
 			for person in found:
-				if person[1] - 24 > tz[0] and self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(member[0])).roles:
+				if person[1] - 24 > tz[0] and self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(person[0])).roles:
 					f_tz = ("+" if person[1] > 0 else "") + str(person[1])
 					await self.CHANNEL.send(
 						f"🎉 It is no longer **{n_d} UTC {f_tz}**, but happy birthday to <@{person[0]}> regardless! 🎉"

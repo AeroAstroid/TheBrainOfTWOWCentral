@@ -25,11 +25,11 @@ async def event_task(): # This is an event handler for the time-based functions 
 		hour_function = False # Detect if the hour just changed
 
 		try:
+			if datetime.utcnow().hour != PARAMS["HOUR"]:
+				hour_function = True
+				PARAMS["HOUR"] = datetime.utcnow().hour
+			
 			for server in SERVERS:
-				if datetime.utcnow().hour != PARAMS["HOUR"]:
-					hour_function = True
-					PARAMS["HOUR"] = datetime.utcnow().hour
-
 				for event in SERVERS[server]["EVENTS"].keys():
 					if not SERVERS[server]["EVENTS"][event].RUNNING:
 						continue # We only care about events that are currently running
@@ -45,15 +45,25 @@ async def event_task(): # This is an event handler for the time-based functions 
 					# If the hour just changed, run the hour function
 					if hour_function:
 						try:
-							await SERVERS[server]["EVENTS"][event].on_one_hour()
+							SERVERS[server]["EVENTS"][event].on_one_hour
 						except AttributeError:
-							pass
+							continue
+						
+						try:
+							print(f"Running {server} {event} one-hour function")
+							await SERVERS[server]["EVENTS"][event].on_one_hour()
+							print(f"Ran successfully.\n")
+						except Exception as e:
+							print(f"Error in {server} {event} one-hour function: {e}")
+							traceback.print_exc()
+							print("-----------------------------------------------------------\n")
 			
 			if len(SERVERS.keys()) != 0 and not PARAMS["EVENT_TASK"]:
 				PARAMS["EVENT_TASK"] = True
 				print("Event handler successfully loaded!")
 
 		except NameError:
+			traceback.print_exc()
 			pass
 
 		# This results in more accurate intervals than using asyncio.sleep(2)
@@ -139,6 +149,7 @@ async def on_ready():
 
 	@BRAIN.event
 	async def on_message(message):
+
 		# Ignore bot messages
 		if message.author == BRAIN.user: return
 		
