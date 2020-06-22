@@ -94,7 +94,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				username = f"**`[{bd[0]}]`**"
 			
 			day = bd[1].split("/")[0]
-			tz = ("+" if int(bd[2]) > 0 else "") + bd[2]
+			tz = ("+" if bd[2] > 0 else "") + str(bd[2])
 
 			line = f"> {username} - {month_name} {day}, UTC {tz}\n"
 
