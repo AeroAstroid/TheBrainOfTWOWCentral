@@ -56,7 +56,7 @@ class EVENT:
 		for twow in twow_list:
 			self.db.add_entry("signuptwows", list(twow))
 		
-		if announce and self.ANNOUNCE != "":
+		if announce:
 			try:
 				new_twow_names = list(zip(*twow_list))[0]
 			except IndexError:
@@ -87,18 +87,18 @@ class EVENT:
 							halves[0] = "`(1 hour ago)`"
 							old_announcement_list[z] = " : ".join(halves)
 						elif halves[0][0][2:] != "23":
-							halves[0] = (
-							f"`({int(halves[0][0][2:])+1} hours ago)`")
+							halves[0] = f"`({int(halves[0][0][2:])+1} hours ago)`"
 							old_announcement_list[z] = " : ".join(halves)
 						else:
 							old_announcement_list[z] = ""
 				
+				old_announcement_list = [x for x in old_announcement_list if x != ""]
+
 				if new_announcement_list != []:
-					old_announcement_list = [x for x in old_announcement_list if x != ""]
 					old_announcement_list += new_announcement_list
 
-					announce_msg = f"__**Recent list changes:**__\n\n" + "\n".join(old_announcement_list)
-					await self.ANNOUNCE.edit(content=announce_msg)
+				announce_msg = f"__**Recent list changes:**__\n\n" + "\n".join(old_announcement_list)
+				await self.ANNOUNCE.edit(content=announce_msg)
 			
 			else:
 				announce_msg = f"__**Recent list changes:**__\n\n" + "\n".join(new_announcement_list)
