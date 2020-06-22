@@ -12,9 +12,12 @@ def HELP(PREFIX):
 		"FORMAT": "(subcommand) (complements)",
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}birthday` without a subcommand displays your own registered birthday. 
-		Using `{PREFIX}birthday view` will show you the next birthday from now chronologically, and you can include 
-		an ID or username to see that person's birthday, if they've registered one. Using `{PREFIX}birthday register 
-		[dd/mm] (timezone)` will allow you to register or edit your birthday.""".replace("\n", "").replace("\t", "")
+		Using `{PREFIX}birthday next` will show you the next birthday from now chronologically. Using 
+		`{PREFIX}birthday user [username/id]` allows you to see that person's birthday, if they've registered one. 
+		Using `{PREFIX}birthday register [dd/mm] (timezone)` will allow you to register or edit your birthday. 
+		Using `{PREFIX}birthday month (month_number/month_name)` allows you to see all the birthdays in a given 
+		month if you've specified one, or the current one if you didn't specify a month.
+		""".replace("\n", "").replace("\t", "")
 	}
 
 PERMS = 0 # Non-members
@@ -45,35 +48,99 @@ async def MAIN(message, args, level, perms, SERVER):
 		f"""**{message.author.name}**'s birthday is set as **{birthday_format}** in **UTC {timezone_f}**.""")
 		return
 	
-	if args[1].lower() == "view":
+	if args[1].lower() == "month":
 		if level == 2:
-			found = db.get_entries("birthday")
-			found = sorted(found, key=lambda k: int(k[1].split("/")[0]))
-			found = sorted(found, key=lambda k: int(k[1].split("/")[1]))
+			chosen_month = datetime.now(timezone.utc).month
 
-			day, month = datetime.now(timezone.utc).day, datetime.now(timezone.utc).month
-
-			for bd in found:
-				if int(bd[1].split("/")[1]) > month:
-					next_bd = bd
-					break
-				elif int(bd[1].split("/")[1]) == month and int(bd[1].split("/")[0]) > day:
-					next_bd = bd
-					break
-			else:
-				next_bd = found[0]
+		elif is_whole(args[2]):
+			if int(args[2]) > 12 or int(args[2]) < 1:
+				await message.channel.send(
+					"Invalid month number. If you're picking a month number, choose one between 1 and 12!")
+				return
 			
-			next_id, birthday, tz = next_bd
-			birthday = birthday.split("/")
-			birthday_format = months[int(birthday[1])-1] + " " + str(int(birthday[0]))
-			timezone_f = ("+" if tz > 0 else "") + str(tz)
+			chosen_month = int(args[2])
 
+		else:
+			possible_months = [x for x in months if x.lower().startswith(args[2].lower())]
+
+			if len(possible_months) == 0:
+				await message.channel.send("There's no valid month with that name!")
+				return
+			
+			if len(possible_months) > 1:
+				await message.channel.send(
+					f"""There are multiple months fitting that search key. Please specify which one you mean!
+					`({', '.join(possible_months)})`""".replace("\t", ""))
+				return
+			
+			chosen_month = months.index(possible_months[0]) + 1
+		
+		found = db.get_entries("birthday")
+		found = [k for k in found if int(k[1].split("/")[1]) == chosen_month]
+		month_name = months[chosen_month - 1]
+
+		if len(found) == 0:
+			await message.channel.send(f"There are no registered birthdays in {month_name}!")
+			return
+		
+		found = sorted(found, key=lambda k: int(k[1].split("/")[0]))
+
+		messages = [f"Here are all the birthdays registered in {month_name}:\n\n"]
+
+		for bd in found:
 			try:
-				username = SERVER["MAIN"].get_member(int(next_id)).name
-			except AttributeError:
-				username = next_id
+				username = f"**{SERVER['MAIN'].get_member(int(bd[0])).name}**"
+			except Exception:
+				username = f"**`[{bd[0]}]`**"
 			
-			await message.channel.send(f"The next birthday is **{username}**'s, on **{birthday_format}** in **UTC {timezone_f}**.")
+			day = bd[1].split("/")[0]
+			tz = ("+" if int(bd[2]) > 0 else "") + bd[2]
+
+			line = f"> {username} - {month_name} {day}, UTC {tz}\n"
+
+			if len(messages[-1]) + len(line) > 1900:
+				messages.append("")
+			
+			messages[-1] += line
+		
+		for m in messages:
+			await message.channel.send(m)
+		
+		return
+
+	if args[1].lower() == "next":
+		found = db.get_entries("birthday")
+		found = sorted(found, key=lambda k: int(k[1].split("/")[0]))
+		found = sorted(found, key=lambda k: int(k[1].split("/")[1]))
+
+		day, month = datetime.now(timezone.utc).day, datetime.now(timezone.utc).month
+
+		for bd in found:
+			if int(bd[1].split("/")[1]) > month:
+				next_bd = bd
+				break
+			elif int(bd[1].split("/")[1]) == month and int(bd[1].split("/")[0]) > day:
+				next_bd = bd
+				break
+		else:
+			next_bd = found[0]
+		
+		next_id, birthday, tz = next_bd
+		birthday = birthday.split("/")
+		birthday_format = months[int(birthday[1])-1] + " " + str(int(birthday[0]))
+		timezone_f = ("+" if tz > 0 else "") + str(tz)
+
+		try:
+			username = SERVER["MAIN"].get_member(int(next_id)).name
+		except AttributeError:
+			username = next_id
+		
+		await message.channel.send(f"The next birthday is **{username}**'s, on **{birthday_format}** in **UTC {timezone_f}**.")
+		return
+	
+	if args[1].lower() == "user":
+		if level == 2:
+			await message.channel.send("Include the username or ID of the person whose birthday you want to check.")
 			return
 		
 		rest = " ".join(args[2:])
@@ -131,7 +198,6 @@ async def MAIN(message, args, level, perms, SERVER):
 			
 		# Check if the person is in the birthday database or not
 		found = db.get_entries("birthday", conditions={"id": str(message.author.id)})
-		print(found)
 		
 		birthday = args[2].split("/")
 
