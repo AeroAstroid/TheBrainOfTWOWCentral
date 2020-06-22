@@ -202,16 +202,35 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send(f"**{rest}**'s birthday is on **{birthday_format}** in **UTC {timezone_f}**.")
 			return
 	
-	if args[1].lower() == "register":			
-		# Check if the person is in the birthday database or not
+	if args[1].lower() == "remove":
 		found = db.get_entries("birthday", conditions={"id": str(message.author.id)})
 
-		if level == 2:
-			if found == []:
-				await message.channel.send("Include your birthday in `DD/MM` to register!")
-				return
-			
+		if found == []:
+			await message.channel.send("You haven't registered a birthday yet to remove it!")
+			return
+		
+		await message.channel.send(f"""Are you sure you want to remove your birthday from the database? Send `confirm` 
+		in this channel to confirm. Send anything else to cancel.""".replace("\n", "").replace("\t", ""))
 
+		# Wait for a message by the same author in the same channel
+		msg = await BRAIN.wait_for('message', 
+		check=(lambda m: m.channel == message.channel and m.author == message.author))
+
+		if msg.content.lower() != "confirm": # If it's not `confirm`, cancel command
+			await message.channel.send("Birthday registering cancelled.")
+			return
+		
+		db.remove_entry("birthday", conditions={"id": str(message.author.id)})
+		await message.channel.send("Your birthday has been removed from the database.")
+		return
+
+	if args[1].lower() == "register":
+		if level == 2:
+			await message.channel.send("Include your birthday in `DD/MM` to register!")
+			return
+			
+		# Check if the person is in the birthday database or not
+		found = db.get_entries("birthday", conditions={"id": str(message.author.id)})
 		
 		birthday = args[2].split("/")
 
