@@ -64,8 +64,19 @@ async def MAIN(message, args, level, perms, SERVER):
 			possible_months = [x for x in months if x.lower().startswith(args[2].lower())]
 
 			if len(possible_months) == 0:
-				await message.channel.send("There's no valid month with that name!")
-				return
+				new_possible = [x for x in months if args[2].lower() in x.lower()]
+
+				if len(new_possible) == 0:
+					await message.channel.send("There's no valid month with that name!")
+					return
+				
+				if len(new_possible) > 1:
+					await message.channel.send(
+						f"""There are multiple months fitting that search key. Please specify which one you mean!
+						`({', '.join(new_possible)})`""".replace("\t", ""))
+					return
+				
+				possible_months = new_possible
 			
 			if len(possible_months) > 1:
 				await message.channel.send(
@@ -191,13 +202,16 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send(f"**{rest}**'s birthday is on **{birthday_format}** in **UTC {timezone_f}**.")
 			return
 	
-	if args[1].lower() == "register":
-		if level == 2:
-			await message.channel.send("Include your birthday in `DD/MM` to register!")
-			return
-			
+	if args[1].lower() == "register":			
 		# Check if the person is in the birthday database or not
 		found = db.get_entries("birthday", conditions={"id": str(message.author.id)})
+
+		if level == 2:
+			if found == []:
+				await message.channel.send("Include your birthday in `DD/MM` to register!")
+				return
+			
+
 		
 		birthday = args[2].split("/")
 
