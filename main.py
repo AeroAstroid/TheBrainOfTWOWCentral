@@ -164,6 +164,7 @@ async def on_ready():
 					
 					try:
 						await msg_guild["EVENTS"][event].on_message(message, perms)
+				       		print(f"Sending message {message.content} to event...")
 					except:
 						print("Error!")
 						pass
