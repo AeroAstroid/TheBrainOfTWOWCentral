@@ -121,7 +121,7 @@ class EVENT:
 			
 			await message.author.remove_roles(self.param["ROLE"])
 			await self.param["LOGGING"].send(f"""<@{message.author.id}> has been eliminated for breaking
-			Rule{'s' if len(broken) != 1 else ''} {grammar_list(broken)}.""".replace("\t", "").replace("\n", " "))
+			Rule{'s' if len(broken) != 1 else ''} {grammar_list(broken)}."".replace("\t", "").replace("\n", " "))
 
 			for rule in broken:
 				await message.add_reaction(emojis[int(rule) - 1])
