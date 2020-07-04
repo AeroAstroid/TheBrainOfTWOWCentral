@@ -161,7 +161,7 @@ async def on_ready():
 				for event in msg_guild["EVENTS"].keys():
 					if not msg_guild["EVENTS"][event].RUNNING:
 						break
-					
+					print(msg_guild["EVENTS"][event])
 					try:
 						await msg_guild["EVENTS"][event].on_message(message, perms)
 						print(f"Sending message {message.content} to event...")
