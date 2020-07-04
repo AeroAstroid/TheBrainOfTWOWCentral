@@ -47,6 +47,7 @@ class EVENT:
 	# [Event-specific] Function that checks for each rule
 	def rule_check(self, msg, context):
 		message = msg.content
+		print(message)
 		broken = []
 
 		# Rule 2. Do not send any messages that contain exactly two words.
@@ -95,6 +96,7 @@ class EVENT:
 		if max(lengths) >= 10:
 			broken.append("10")
 		
+		print(broken)
 		return broken
 	
 
