@@ -156,6 +156,12 @@ async def on_ready():
 		try:
 			if message.guild is not None:
 				msg_guild = SERVERS[str(message.guild.id)]
+				
+				 # Define the user's permissions: 3 = Developer; 2 = Staff; 1 = Member; 0 = Non-member
+				if message.author.id == 184768535107469314: perms = 3
+				elif message.author in msg_guild["STAFF_ROLE"].members: perms = 2
+				elif message.author in msg_guild["MEMBER_ROLE"].members: perms = 1
+				else: perms = 0
 
 				# Run event on_message on every message
 				for event in msg_guild["EVENTS"].keys():
