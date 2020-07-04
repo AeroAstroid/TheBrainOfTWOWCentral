@@ -103,7 +103,7 @@ class EVENT:
 	# Function that runs on each message
 	async def on_message(self, message, PERMS):
 		print(message.channel)
-		print(self.param("MESSAGES")]
+		print(self.param["MESSAGES"])
 		if message.author.id not in self.param["PLAYER_IDS"] or message.channel != self.param["MESSAGES"]:
 			return # Filters for messages that are valid for the event
 
