@@ -165,7 +165,7 @@ async def on_ready():
 					try:
 						await msg_guild["EVENTS"][event].on_message(message, perms)
 					except:
-				       		print("Error!")
+						print("Error!")
 						pass
 			
 			# Not bother with non-commands from here on
