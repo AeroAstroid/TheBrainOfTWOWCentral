@@ -168,12 +168,12 @@ async def on_ready():
 					if not msg_guild["EVENTS"][event].RUNNING:
 						break
 					print(msg_guild["EVENTS"][event])
-					try:
+					#try:
 						await msg_guild["EVENTS"][event].on_message(message, perms)
-						print(f"Sending message {message.content} to event...")
-					except AttributeError:
-						print("Error!")
-						pass
+						#print(f"Sending message {message.content} to event...")
+					#except:
+						#print("Error!")
+						#pass
 			
 			# Not bother with non-commands from here on
 			msg_guild = None
