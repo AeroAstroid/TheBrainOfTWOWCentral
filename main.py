@@ -163,7 +163,7 @@ async def on_ready():
 						break
 					
 					try:
-						await msg_guild["EVENTS"][event].on_message(message, perms)
+						await msg_guild["EVENTS"][event].on_message(message)
 					except:
 						pass
 			

@@ -26,7 +26,7 @@ class EVENT:
 	
 
 	# Function that runs on each message
-	async def on_message(self, message, PERMS):
+	async def on_message(self, message):
 		if message.channel.mention != self.param["CHANNEL"]:
 			return # Only messages that are in the channel
 

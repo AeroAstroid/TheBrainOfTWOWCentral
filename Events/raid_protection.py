@@ -33,8 +33,8 @@ class EVENT:
 	
 
 	# Function that runs on every message
-	async def on_message(self, message, PERMS):
-		if PERMS > 0:
+	async def on_message(self, message):
+		if self.MEMBER in self.SERVER.get_member(message.author.id).roles:
 			return # Only non-members are subject to raid detection
 
 		# Make sure there's an entry for the non-member on the dict
