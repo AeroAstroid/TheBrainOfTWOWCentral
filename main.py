@@ -163,7 +163,7 @@ async def on_ready():
 						break
 					print(msg_guild["EVENTS"][event])
 					#try:
-				       	await msg_guild["EVENTS"][event].on_message(message)
+					await msg_guild["EVENTS"][event].on_message(message)
 					#except:
 						#print("Error!")
 						#pass
