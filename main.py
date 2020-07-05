@@ -162,11 +162,11 @@ async def on_ready():
 					print(msg_guild["EVENTS"][event])
 					if not msg_guild["EVENTS"][event].RUNNING:
 						break
-					#try:
-					await msg_guild["EVENTS"][event].on_message(message)
-					#except:
-						#print("Error!")
-						#pass
+					try:
+						await msg_guild["EVENTS"][event].on_message(message)
+					except:
+						print("Error!")
+						traceback.print_exc()
 			
 			# Not bother with non-commands from here on
 			msg_guild = None
