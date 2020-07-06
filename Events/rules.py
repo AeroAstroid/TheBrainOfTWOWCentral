@@ -23,8 +23,8 @@ class EVENT:
 		self.EVENT_ROLE = 498254150044352514 # Event participant role
 		self.param["FINAL_5"] = False
 		self.param["ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ROLE)
-		self.param["MESSAGES"] = discord.utils.get(SERVER["MAIN"].channels, name="event-testing") # Take messages from here
-		self.param["LOGGING"] = discord.utils.get(SERVER["MAIN"].channels, name="event-testing") # Log eliminations here
+		self.param["MESSAGES"] = discord.utils.get(SERVER["MAIN"].channels, name="event-time") # Take messages from here
+		self.param["LOGGING"] = discord.utils.get(SERVER["MAIN"].channels, name="dawthons-lair") # Log eliminations here
 
 		self.param["PLAYER_IDS"] = [x.id for x in self.param["ROLE"].members] # Set the players as the people with role
 		# Set [id, history, last_message] parameters for the message history and timer rules
