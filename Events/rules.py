@@ -53,7 +53,7 @@ class EVENT:
 		# Rule 2. Vowels are essential to many English words! Every message you send must have at least one vowel in it (including the letter “y”)
 		vowels = ["a", "e", "i", "o", "u", "y"]
 		c = 0
-		for chr in list(message):
+		for chr in list(message.lower()):
 			if chr in vowels: c += 1
 		if c == 0:
 			broken.append("2")
