@@ -50,50 +50,51 @@ class EVENT:
 		print(message)
 		broken = []
 
-		# Rule 2. Do not send any messages that contain exactly two words.
-		if len(message.split(" ")) == 2:
+		# Rule 2. Vowels are essential to many English words! Every message you send must have at least one vowel in it (including the letter “y”)
+		vowels = ["a", "e", "i", "o", "u", "y"]
+		c = 0
+		for chr in list(message):
+			if chr in vowels: c += 1
+		if c == 0:
 			broken.append("2")
 		
-		# Rule 3. Do not send any words containing three or more of the same letter.
-		words = [list(x.lower()) for x in message.split(" ")]
-		breaking = False
-		for word in words:
-			for char in word:
-				if word.count(char) >= 3:
-					broken.append("3")
-					breaking = True
-					break
+		# Rule 3. I don’t like the verbosity meta in TWOW right now; you can only use words that are 8 characters or less!
+		lengths = [len(x) for x in message.split(" ")]
+		if max(lengths) > 8 :
+			broken.append("3")
 
-			if breaking: break
-
-		# Rule 4. Do not send more than 10 words. This is TWOW, you imbecile.
-		if len(message.split(" ")) > 10:
+		# Rule 4. The number 3 sucks lmfao; Your message cannot be exactly 3 words.
+		if len(message.split(" ")) == 3:
 			broken.append("4")
 
 		# Rule 5. Do not send any embeds, images or files.
 		if msg.attachments:
 			broken.append("5")
 
-		# Rule 6. Do not use the letter R.
-		if "r" in message.lower():
+		# Rule 6. Once again, the number 3 sucks lmfao; You can’t use the letter C.
+		if "c" in message.lower():
 			broken.append("6")
 		
-		# Rule 7. No message of yours can have the same amount of characters as any of your previous messages.
-		lengths = [len(x) for x in context]
-		if len(message) in lengths:
-			broken.append("7")
+		# Rule 7. You have to be obedient to everything. No negative answers. You can’t use the words: “no”, “nope”, “never”, “nah”, “disagree”, “na”
+		banned_words = ["no", "nope", "never", "nah", "disagree"]
+		for word in banned_words:
+			if word in message.lower().split(" "):
+				broken.append("7")
+				break
 
-		# Rule 8. Do not send any messages that end in a vowel.
-		if message.lower()[-1] in list("aeiouy"):
-			broken.append("8")
+		# Rule 8. Don’t you dare deface us staff members. You’re not allowed to say the name of a staff member.
+		banned_words = ["alley", "alleywr", "cause", "cause key", "dark", "dawthon", "epik", "anepik", "kitten", "kittenruler", "sinistershovel", "neonic", "neonicplasma", "thenamesh", "h", "purple", "purplegaze", "harrysoaps", "blandy", "trojan", "plasmictrojan"]
+		for word in banned_words:
+			if word in message.lower().split(" "):
+				broken.append("8")
+				break
 		
-		# Rule 9. Do not send any messages that have a character count in the 40s.
-		if 39 < len(message) < 50:
+		# Rule 9. You can’t have a character count that’s above 60 characters. Once again, the verbosity meta sucks.
+		if 60 < len(message):
 			broken.append("9")
 		
-		# Rule 10. Do not send any words that have ten or more letters.
-		lengths = [len(x) for x in message.split(" ")]
-		if max(lengths) >= 10:
+		# Rule 10. You can’t use more than 9 vowels in your message.
+		if c > 9:
 			broken.append("10")
 		
 		print(broken)
@@ -138,8 +139,8 @@ class EVENT:
 			pl_index = self.param["PLAYER_INFO"].index(player_info)
 
 			# The two different cases of Rule 1
-			if self.param["FINAL_5"]: t = 72
-			else: t = 180
+			if self.param["FINAL_5"]: t = 45
+			else: t = 90
 
 			if time.time() - player_info[2] > t: # If the player went too long without sending messages...
 				# Remove role, announce elimination, mark player as eliminated
@@ -156,7 +157,7 @@ class EVENT:
 			for p in self.param["PLAYER_INFO"]:
 				p[2] = time.time()
 			
-			await self.param["LOGGING"].send("**Five players remain.** The threshold for Rule 1 is now multiplied by 0.4.")
+			await self.param["LOGGING"].send("**Five players remain.** The threshold for Rule 1 is now multiplied by 0.5.")
 		
 		# Remove eliminated players from the lists
 		self.param["PLAYER_IDS"] = [p for p in self.param["PLAYER_IDS"] if p != 0]
