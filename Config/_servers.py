@@ -35,8 +35,17 @@ for server in columns:
 	SERVERS[server[0]]["MAIN"] = server_inst
 	SERVERS[server[0]]["STAFF_ROLE"] = discord.utils.get(server_inst.roles, id=int(server[1]))
 	SERVERS[server[0]]["MEMBER_ROLE"] = discord.utils.get(server_inst.roles, id=int(server[2]))
-	SERVERS[server[0]]["PUBLIC_CHANNELS"] = [discord.utils.get(server_inst.channels, id=int(x)) for x in server[3].split(" ")]
-	SERVERS[server[0]]["BOT_CHANNELS"] = [discord.utils.get(server_inst.channels, id=int(x)) for x in server[4].split(" ")]
+	
+	try:
+		SERVERS[server[0]]["PUBLIC_CHANNELS"] = [discord.utils.get(server_inst.channels, id=int(x)) for x in server[3].split(" ")]
+	except ValueError:
+		SERVERS[server[0]]["PUBLIC_CHANNELS"] = []
+	
+	try:
+		SERVERS[server[0]]["BOT_CHANNELS"] = [discord.utils.get(server_inst.channels, id=int(x)) for x in server[4].split(" ")]
+	except ValueError:
+		SERVERS[server[0]]["BOT_CHANNELS"] = []
+	
 	SERVERS[server[0]]["GAME_CHANNEL"] = discord.utils.get(server_inst.channels, id=int(server[5]))
 	SERVERS[server[0]]["BOT_ROLE"] = discord.utils.get(server_inst.roles, id=int(server[6]))
 	SERVERS[server[0]]["PREFIX"] = server[7]
