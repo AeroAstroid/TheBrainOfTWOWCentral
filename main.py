@@ -160,13 +160,11 @@ async def on_ready():
 				# Run event on_message on every message
 				for event in msg_guild["EVENTS"].keys():
 					if not msg_guild["EVENTS"][event].RUNNING:
-						break
-					print(msg_guild["EVENTS"][event])
+						continue
 					try:
 						await msg_guild["EVENTS"][event].on_message(message)
 					except:
-						print("Error!")
-						pass
+				       		pass
 			
 			# Not bother with non-commands from here on
 			msg_guild = None
