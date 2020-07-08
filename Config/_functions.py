@@ -298,6 +298,6 @@ def uno_skip():
 		"last_card": "00",
 		"carryover": 0,
 		"channel": 0,
-		"config": {"0-7": False, "d-skip": True, "start": 7}
+		"config": {"0-7": False, "d-skip": True, "start": 7, "no-cards": True}
 	}
 	return uno_info
