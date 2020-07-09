@@ -51,7 +51,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	message_to_send = " ".join(args[2+int(direct):])
 
 	try:
-		await target_channel.send(message_to_send)
+		await target.send(message_to_send)
 	except Exception as err:
 		await message.channel.send(f"`{err}`: Could not send")
 		return
