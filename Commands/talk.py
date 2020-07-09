@@ -26,7 +26,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	
 	direct = False
 	if not is_whole(args[1]):
-		if args[1].lower != "dm":
+		if args[1].lower() != "dm":
 			await message.channel.send("Invalid channel ID.")
 			return
 
