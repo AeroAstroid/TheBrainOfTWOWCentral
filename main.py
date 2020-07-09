@@ -156,7 +156,7 @@ async def on_ready():
 		try:
 			if message.guild is not None:
 				msg_guild = SERVERS[str(message.guild.id)]
-				       
+				
 				# Run event on_message on every message
 				for event in msg_guild["EVENTS"].keys():
 					if not msg_guild["EVENTS"][event].RUNNING:
@@ -164,7 +164,7 @@ async def on_ready():
 					try:
 						await msg_guild["EVENTS"][event].on_message(message)
 					except:
-				       		pass
+						pass
 			
 			# Not bother with non-commands from here on
 			msg_guild = None
