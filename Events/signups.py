@@ -105,8 +105,7 @@ class EVENT:
 				await self.ANNOUNCE.edit(content=announce_msg)
 			
 			for x in just_added:
-				verif = twow_list[new_twow_names.index(x)]
-				print(verif, type(verif))
+				verif = twow_list[new_twow_names.index(x)][-1]
 				if verif == 1:
 					msg = await self.CHANNEL.send("<@&488451010319220766> <@&723946317839073370>")
 				else:
