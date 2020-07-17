@@ -42,7 +42,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	else:
 		upper_bound = int(args[2])
 	
-	number = random.randint(0, upper_bound) + 1
+	number = random.randint(1, upper_bound)
 
 	hint = ""
 
