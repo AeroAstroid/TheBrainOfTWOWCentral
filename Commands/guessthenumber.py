@@ -46,7 +46,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	if mode != "simple":
 		if mode == "digits":
 			hint = list(str(number))
-			blanks = random.sample(range(len(n_str)), np.floor(len(n_str)/2))
+			blanks = random.sample(range(len(hint)), np.floor(len(hint)/2))
 			for ind in blanks:
 				hint[ind] = "-"
 			hint = f"**{''.join(hint)}**"
@@ -84,5 +84,5 @@ async def MAIN(message, args, level, perms, SERVER):
 	await message.channel.send(f"""{message.author.mention} {result}
 	The number generated between **1** and **{upper_bound}** was **{number}**.
 	Your guess was **{guess}**.
-	You played on **`{mode}`** mode.""")
+	You played on **`{mode}`** mode.""".replace("\t", ""))
 	return
