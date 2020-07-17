@@ -1,7 +1,7 @@
 from Config._functions import grammar_list, is_whole, is_float
 from Config._const import BRAIN
 import traceback
-import os
+import os, discord
 from Config._db import Database
 
 def HELP(PREFIX):
