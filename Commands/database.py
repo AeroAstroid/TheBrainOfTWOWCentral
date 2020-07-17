@@ -1,7 +1,7 @@
 from Config._functions import grammar_list, is_whole, is_float
 from Config._const import BRAIN
 import traceback
-
+import os
 from Config._db import Database
 
 def HELP(PREFIX):
@@ -117,6 +117,16 @@ async def MAIN(message, args, level, perms, SERVER):
 		# from the command - meaning the user wants to see the table's entries, not add or remove them
 		if get_entries:
 			entries = db.get_entries(name, limit=limit)
+
+			if "return_file" in [x.lower() for x in args]:
+				all_entries = "\n".join(["\t".join([str(h) for h in e]) for e in entries])
+				open(f"{name}_{message.id}.txt", "w", encoding="utf-8").write(all_entries)
+
+				await message.channel.send("Here's a file containing the database entries.",
+				file=discord.File(f"{name}_{message.id}.txt"))
+
+				os.remove(f"{name}_{message.id}.txt")
+				return
 
 			# "\t".join([str(h) for h in e]) returns a single entry, with all its columns joined by tabs
 			# ["\t".join([str(h) for h in e]) for e in entries] returns a list of those entry strings
