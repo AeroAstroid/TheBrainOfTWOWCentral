@@ -36,6 +36,9 @@ async def MAIN(message, args, level, perms, SERVER):
 	elif 2 > int(args[2]) or int(args[2]) > 1000000000:
 		await message.channel.send("Pick an integer between 2 and 1000000000 for the upper bound!")
 		return
+	elif int(args[2]) > 100000 and mode == "factors":
+		await message.channel.send("For the `factors` mode, pick an integer between 2 and 100000!")
+		return
 	else:
 		upper_bound = int(args[2])
 	
@@ -48,7 +51,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			hint = list(str(number))
 			blanks = random.sample(range(len(hint)), int(len(hint)/2))
 			for ind in blanks:
-				hint[ind] = "-"
+				hint[ind] = "█"
 			hint = f"**{''.join(hint)}**"
 		
 		if mode == "factors":
