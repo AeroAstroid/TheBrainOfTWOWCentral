@@ -54,7 +54,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				hint[ind] = "█"
 			hint = f"**{''.join(hint)}**"
 		
-		if mode == "factors":
+		elif mode == "factors":
 			factors = []
 			for i in range(2, number):
 				if number % i == 0:
@@ -67,6 +67,11 @@ async def MAIN(message, args, level, perms, SERVER):
 			else:
 				factor_list = ", ".join([str(x) for x in random.sample(factors, 2)])
 				hint = f"Two of its factors are **{factor_list}**."
+		
+		else:
+			await message.channel.send(
+				"That mode does not exist! Current available modes are `simple`, `factors` and `digits`.")
+			return
 	
 		hint = f"**Number Hint** : {hint}"
 
