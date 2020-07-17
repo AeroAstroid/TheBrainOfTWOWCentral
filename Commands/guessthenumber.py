@@ -46,7 +46,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	if mode != "simple":
 		if mode == "digits":
 			hint = list(str(number))
-			blanks = random.sample(range(len(hint)), np.floor(len(hint)/2))
+			blanks = random.sample(range(len(hint)), int(len(hint)/2))
 			for ind in blanks:
 				hint[ind] = "-"
 			hint = f"**{''.join(hint)}**"
