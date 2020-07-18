@@ -58,11 +58,14 @@ class EVENT:
 
 			# All people whose birthdays were yesterday
 			found = self.db.get_entries("birthday", columns=["id", "timezone"], conditions={"birthday": l_d})
-			for person in found:
-				print("Birthday yesterday:")
-				print(person)
-				print(self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(person[0])).roles)
-				print(tz)
+			for person in found: # Cycle through all
+				# person[1] < tz[0] checks if the timezone whose day just changed is greater than the person's timezone
+				# since the day flips over in greater timezones first and then gradually smaller values, this checks
+				# to see if the day has flipped over to the current day (tz[1]) in the person's timezone yet.
+				# If person[1] < tz[0], it hasn't, and it's still l_d ("yesterday", tz[1] - 1 day) in their timezone,
+				# so it's still their birthday.
+				# the second boolean just checks if the person already has the birthday role. If they don't and the
+				# first boolean is true, that means this person's birthday was missed, so correct that
 				if person[1] < tz[0] and (self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(person[0])).roles):
 					f_tz = ("+" if person[1] > 0 else "") + str(person[1])
 					await self.CHANNEL.send(
@@ -70,38 +73,46 @@ class EVENT:
 					)
 					await self.SERVER["MAIN"].get_member(int(person[0])).add_roles(self.BIRTHDAY_ROLE)
 			
+			# All people whose birthdays are today
 			found = self.db.get_entries("birthday", columns=["id", "timezone"], conditions={"birthday": tz[1]})
-			for person in found:
-				print("Birthday the current day:")
-				print(person)
-				print(self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(person[0])).roles)
-				print(tz)
+			for person in found: # Cycle through all
+				# person[1] > tz[0] checks if the timezone whose day just changed is smaller than the person's timezone
+				# since the day flips over in greater timezones first and then gradually smaller values, this checks
+				# to see if the day has flipped over to the next day (tz[1] + 1 day) in the person's timezone yet.
+				# If person[1] > tz[0], it hasn't, and it's still tz[1] (today) in their timezone, so it's still their
+				# birthday. If person[1] == tz[0], that means it just became their birthday, and that's covered later.
+				# the second boolean just checks if the person already has the birthday role. If they don't and the
+				# first boolean is true, that means this person's birthday was missed, so correct that
 				if person[1] > tz[0] and (self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(person[0])).roles):
 					f_tz = ("+" if person[1] > 0 else "") + str(person[1])
-					'''await self.CHANNEL.send(
+					await self.CHANNEL.send(
 						f"🎉 It is no longer **{tz[1]} UTC {f_tz}**, but happy birthday to <@{person[0]}> regardless! 🎉"
-					)'''
+					)
 					await self.SERVER["MAIN"].get_member(int(person[0])).add_roles(self.BIRTHDAY_ROLE)
 			
 			found = self.db.get_entries("birthday", columns=["id", "timezone"], conditions={"birthday": n_d})
 			for person in found:
-				print("Birthday tomorrow:")
-				print(person)
-				print(self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(person[0])).roles)
-				print(tz)
+				# person[1] - 24 > tz[0] checks if the timezone whose day just changed is smaller enough than the
+				# person's timezone such that there's a difference of two days between the timezone that just changed
+				# and the person's. This checks to see if it's already n_d ("tomorrow", tz[1] + 1 day) somewhere and if
+				# it's also at least 1 AM, so that it's possible we missed someone there.
+				# If person[1] - 24 > tz[0], it is, and it's already n_d in their timezone, so it's already their
+				# birthday. If person[1] == tz[0], that means it just became their birthday, and that's covered later.
+				# the second boolean just checks if the person already has the birthday role. If they don't and the
+				# first boolean is true, that means this person's birthday was missed, so correct that
 				if person[1] - 24 > tz[0] and (self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(person[0])).roles):
 					f_tz = ("+" if person[1] > 0 else "") + str(person[1])
-					'''await self.CHANNEL.send(
+					await self.CHANNEL.send(
 						f"🎉 It is no longer **{n_d} UTC {f_tz}**, but happy birthday to <@{person[0]}> regardless! 🎉"
-					)'''
+					)
 					await self.SERVER["MAIN"].get_member(int(person[0])).add_roles(self.BIRTHDAY_ROLE)
 
-			# Find members whose birthdays just ended in that timezone
+			# Find members whose birthdays just ended in that timezone (one day ago, same timezone = exactly 24h ago)
 			found = self.db.get_entries("birthday", columns=["id"], conditions={"birthday": l_d, "timezone": tz[0]})
-			for member in found: # Remove their birthday role
+			for member in found: # Remove their birthday role, as their birthday just ended
 				await self.SERVER["MAIN"].get_member(int(member[0])).remove_roles(self.BIRTHDAY_ROLE)
 
-			# Now, search for members whose birthday just started
+			# Now, search for members whose birthday just started (today, in the day-changing timezone = it's midnight)
 			found = self.db.get_entries("birthday", columns=["id"], conditions={"birthday": tz[1], "timezone": tz[0]})
 
 			if len(found) == 0: # If there are none, return
