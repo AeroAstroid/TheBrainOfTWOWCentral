@@ -151,7 +151,7 @@ class EVENT:
 
 			verified_string = ""
 			if twow[5] > 0:
-				verified_string = "\n⭐  **VERIFIED TWOW!**"
+				verified_string = "\n⭐  **VERIFIED TWOW!** (<@&488451010319220766>)"
 			
 			message = f"""\u200b
 			\u200b{verified_string}
