@@ -1,3 +1,5 @@
+import discord
+
 def HELP(PREFIX):
 	return {
 		"COOLDOWN": 1,
@@ -13,6 +15,13 @@ ALIASES = ["MEMBERS"]
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
-	member_count = len(SERVER["MAIN"].members)
-	await message.channel.send(f"We have **{member_count}** members.")
+	if level == 1:
+		member_count = len(SERVER["MAIN"].members)
+		await message.channel.send(f"We have **{member_count}** members.")
+	elif args[1].lower() == "list":
+		member_list = sorted([x.name for x in SERVER["MAIN"].members])
+		open("member_list.txt", "w", encoding="utf-8").write("\n".join(member_list))
+		await message.channel.send(f"Here's a list of all **{len(member_list)}** server members:",
+		file=discord.File("member_list.txt"))
+		os.remove("member_list.txt")
 	return
