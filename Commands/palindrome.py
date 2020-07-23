@@ -20,12 +20,13 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 
 	phrase = list(" ".join(args[1:]).upper())
+	rev_phrase = list(reversed(phrase))
 
 	repeating = {}
 	for char in phrase:
 		if phrase.count(char) > 1 and char not in repeating.keys():
 			ind1 = phrase.index(char)
-			ind2 = len(phrase) - reversed(phrase).index(char) - 1
+			ind2 = len(phrase) - rev_phrase.index(char) - 1
 			repeating[char] = [ind2 - ind1, ind1, ind2]
 	
 	if len(repeating.keys()) == 0:
