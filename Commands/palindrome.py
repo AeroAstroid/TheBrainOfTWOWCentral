@@ -60,8 +60,8 @@ async def MAIN(message, args, level, perms, SERVER):
 		if not valid:
 			continue
 		
-		adjusted1 = l_set[2]
-		adjusted2 = l_set[3]
+		adjusted1 = l_set[2] + 1
+		adjusted2 = l_set[3] - 1
 
 		ind = 0
 		while True:
@@ -85,6 +85,8 @@ async def MAIN(message, args, level, perms, SERVER):
 	
 	unsimplified = "".join(phrase)
 
+	phrase = ["("] + phrase + [")"]
+
 	for ind, char in enumerate(phrase):
 		if ind < len(phrase) - 1:
 			if char == "(" and phrase[ind + 1] == "(":
@@ -99,7 +101,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				phrase[ind] == "\t"
 	
 	phrase = [x for x in phrase if x not in ["", "\t"]]
-	phrase = f"({''.join(phrase)})"
+	phrase = ''.join(phrase)
 
 	await message.channel.send(f"""Successfully generated a Cary-style palindrome!
 	**Original Phrase** : `{' '.join(args[1:]).upper()}`
