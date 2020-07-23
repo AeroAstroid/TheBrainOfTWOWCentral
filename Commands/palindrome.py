@@ -67,7 +67,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		while True:
 			if adjusted1 == ind:
 				phrase[adjusted1:adjusted1] = "("
-				adjusted_2 += 1
+				adjusted2 += 1
 			
 			if adjusted2 == ind:
 				phrase[adjusted2:adjusted2] = ")"
