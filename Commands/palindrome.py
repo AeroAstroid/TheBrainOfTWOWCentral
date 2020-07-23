@@ -19,7 +19,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		await message.channel.send("Include a phrase to turn into a Cary-style palindrome!")
 		return
 
-	input_phrase = " ".join(args[1])
+	input_phrase = " ".join(args[1:])
 	str_phrase = input_phrase.upper()
 	phrase = list(str_phrase)
 
@@ -64,13 +64,11 @@ async def MAIN(message, args, level, perms, SERVER):
 		substr_length -= 1
 	
 	if len(repeating) == 0:
-		print("can't turn into palindrome")
+		await message.channel.send("Unable to turn this into a Cary-style palindrome!")
 		return
 	
 	repeating = sorted(repeating, reverse=True, key=lambda m: m[1])
 	repeating = sorted(repeating, reverse=True, key=lambda m: len(m[0]))
-
-	print(repeating)
 
 	p_sets = []
 
