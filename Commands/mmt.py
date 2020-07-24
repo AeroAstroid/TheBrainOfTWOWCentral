@@ -110,16 +110,16 @@ ALIASES = []
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
-	if not isinstance(message.channel, discord.DMChannel) and message.channel != SERVER["GAME_CHANNEL"]:
-		await message.channel.send(f"MiniMiniTWOW commands can only be used in {SERVER['GAME_CHANNEL'].mention}!")
-		return
-	
 	if level == 1:
 		await message.channel.send("Include a subcommand!")
 		return
 	
 	# Shorten the notation for convenience
 	mmt = SERVER["EVENTS"]["MMT"]
+	
+	if not isinstance(message.channel, discord.DMChannel) and message.channel != mmt.MMT_C:
+		await message.channel.send(f"MiniMiniTWOW commands can only be used in {SERVER['GAME_CHANNEL'].mention}!")
+		return
 
 	if args[1].lower() == "stats":
 
