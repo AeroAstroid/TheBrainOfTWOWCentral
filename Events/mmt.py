@@ -48,7 +48,7 @@ class EVENT:
 		self.RUNNING = True
 		self.SERVER = SERVER
 		self.PREFIX = SERVER["PREFIX"]
-		self.MMT_C = SERVER["GAME_CHANNEL"]
+		self.MMT_C = discord.utils.get(SERVER["MAIN"].channels, name="event-time")
 		self.info["GAME"]["PERIOD_START"] = time.time()
 
 	
