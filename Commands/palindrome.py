@@ -1,5 +1,4 @@
 import discord, os
-import numpy as np
 
 def HELP(PREFIX):
 	return {
@@ -27,7 +26,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 
 	def place_p(p_ind, phrase, p_list, p):
-		p_ind = int(p_ind)
+		p_ind = round(p_ind)
 		phrase[p_ind:p_ind] = p
 		for z in range(len(p_list[1])):
 			if p_list[1][z] >= p_ind or (p_list[1][z] == p_ind and p == "(" and p_list[0][z] == ")"):
@@ -100,24 +99,24 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		if len(rept[0]) > 1 and rept[0] != rept[0][::-1]:
 			ind_list[-1][0] += "("
-			ind_list[-1][1].append(rept[2])
+			ind_list[-1][1].append(rept[2] + 1/3)
 			ind_list[-1][0] += ")"
-			ind_list[-1][1].append(rept[2] + len(rept[0]))
+			ind_list[-1][1].append(rept[2] + len(rept[0]) - 1/3)
 
 		ind_list[-1][0] += "("
-		ind_list[-1][1].append(rept[2] + len(rept[0]) + 1/2)
+		ind_list[-1][1].append(rept[2] + len(rept[0]))
 
 		ind_list[-1][0] += ")"
 		ind_list[-1][1].append(rept[3])
 
 		if len(rept[0]) > 1 and rept[0] != rept[0][::-1]:
 			ind_list[-1][0] += "("
-			ind_list[-1][1].append(rept[3] + 1/2)
+			ind_list[-1][1].append(rept[3] + 1/3)
 			ind_list[-1][0] += ")"
-			ind_list[-1][1].append(rept[3] + len(rept[0]))
+			ind_list[-1][1].append(rept[3] + len(rept[0]) - 1/3)
 	
 		ind_list[-1][0] += ")"
-		ind_list[-1][1].append(rept[3] + len(rept[0]) + 1/2)
+		ind_list[-1][1].append(rept[3] + len(rept[0])
 
 		p_list[0] += list(ind_list[-1][0])
 		p_list[1] += ind_list[-1][1]
