@@ -116,7 +116,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			ind_list[-1][1].append(rept[3] + len(rept[0]) - 1/3)
 	
 		ind_list[-1][0] += ")"
-		ind_list[-1][1].append(rept[3] + len(rept[0])
+		ind_list[-1][1].append(rept[3] + len(rept[0]))
 
 		p_list[0] += list(ind_list[-1][0])
 		p_list[1] += ind_list[-1][1]
