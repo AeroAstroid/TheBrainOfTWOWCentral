@@ -1,4 +1,5 @@
 import discord, os
+import numpy as np
 
 def HELP(PREFIX):
 	return {
@@ -20,131 +21,118 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 
 	input_phrase = " ".join(args[1:])
+
+	if "(" in input_phrase or ")" in input_phrase:
+		await message.channel.send("Your phrase cannot include parentheses!")
+		return
+
+	def place_p(p_ind, phrase, p_list, p):
+		p_ind = int(p_ind)
+		phrase[p_ind:p_ind] = p
+		for z in range(len(p_list[1])):
+			if p_list[1][z] >= p_ind or (p_list[1][z] == p_ind and p == "(" and p_list[0][z] == ")"):
+				p_list[1][z] += 1
+		
+		return [phrase, p_list]
+
 	str_phrase = input_phrase.upper()
 	phrase = list(str_phrase)
 
-	repeating = []
 	substr_length = int(len(phrase) / 2)
 
+	rept_list = []
+
 	while substr_length != 0:
-		for s in range(len(phrase) - 2*substr_length + 1):
-			test_substr = phrase[s:s+substr_length]
-			test_substr = "".join(test_substr)
+		checks = len(phrase) - 2*substr_length - 1
 
-			if str_phrase.count(test_substr) > 1:
-				ind1 = str_phrase.find(test_substr)
-				ind2 = str_phrase.rfind(test_substr)
+		for s in range(checks):
+			substr = str_phrase[s:s+substr_length]
 
-				valid = True
+			if str_phrase.count(substr) > 1:
+				ind1 = str_phrase.find(substr)
+				ind2 = str_phrase.rfind(substr)
 
-				for already_found in repeating:
-					f1start = already_found[2]
-					f1end = f1start + len(already_found[0])
+				rept_list.append([substr, substr_length*(ind2-ind1), ind1, ind2])
 
-					f2start = already_found[2]
-					f2end = f1start + len(already_found[0])
-
-					ind1end = ind1 + substr_length
-					ind2end = ind2 + substr_length
-
-					intersecting11 = (f1start < ind1 <= f1end) or (f1end > ind1end >= f1start)
-					intersecting22 = (f2start < ind2 <= f2end) or (f2end > ind2end >= f2start)
-					intersecting12 = (f2start < ind1 <= f2end) or (f2end > ind1end >= f2start)
-					intersecting21 = (f1start < ind2 <= f1end) or (f1end > ind2end >= f1start)
-
-					if True in [intersecting11, intersecting22, intersecting12, intersecting21]:
-						valid = False
-						break
-				
-				if not valid:
-					continue
-				
-				repeating.append([test_substr, ind2 - ind1, ind1, ind2])
-		
 		substr_length -= 1
-	
-	if len(repeating) == 0:
-		await message.channel.send("Unable to turn this into a Cary-style palindrome!")
-		return
-	
-	repeating = sorted(repeating, reverse=True, key=lambda m: m[1])
-	repeating = sorted(repeating, reverse=True, key=lambda m: len(m[0]))
 
-	p_sets = []
+	rept_list = sorted(rept_list, reverse=True, key=lambda m: m[1])
 
-	for l_set in repeating:
-		valid = True
-
-		for p in p_sets:
-			intersecting = (l_set[2] < p[2]) or (l_set[3] > p[1])
-
-			if not intersecting: # If they're not intersecting, there's no conflict with this p_set
-				continue
-			
-			after1 = l_set[2] > p[1]
-			after2 = l_set[3] > p[2]
-			
-
-			if after1 and after2: # (p (l )p )l -- invalid
-				valid = False
-			elif not after1 and not after2: # (l (p )l )p -- invalid
-				valid = False
-		
-		if not valid:
+	for r_ind, r in enumerate(rept_list):
+		if len(r) < 4:
 			continue
 		
-		adjusted1 = l_set[2]
-		adjusted2 = l_set[3]
+		i1start = r[2]
+		i1end = r[2] + len(r[0])
+		i2start = r[3]
+		i2end = r[3] + len(r[0])
 
-		ind = 0
-		while True:
-			if adjusted1 == ind:
-				phrase[adjusted1:adjusted1] = "("
-				adjusted2 += 1
-
-				if adjusted2 - adjusted1 > len(l_set[0]) + 1:
-					second_ind = adjusted1 + len(l_set[0]) + 1
-					phrase[second_ind:second_ind] = "("
-					adjusted2 += 1
-				
-				if len(l_set[0]) > 1:
-					phrase[adjusted1+1:adjusted1+1] = "("
-					second_ind = adjusted1 + 2 + len(l_set[0])
-					phrase[second_ind:second_ind] = ")"
-					adjusted2 += 2
+		for c_ind, c in enumerate(rept_list):
+			if c_ind == r_ind or len(c) < 4:
+				continue
 			
-			if adjusted2 == ind:
-				adjusted2 += len(l_set[0]) - 4
-				if adjusted2 - adjusted1 > len(l_set[0]) + 2:
-					second_ind = adjusted2 - len(l_set[0])
-					phrase[second_ind:second_ind] = ")"
-				phrase[adjusted2+1:adjusted2+1] = ")"
+			c1start = c[2]
+			c1end = c[2] + len(c[0])
+			c2start = c[3]
+			c2end = c[3] + len(c[0])
 
-				if len(l_set[0]) > 1:
-					substr_start = adjusted2-len(l_set[0])+1
-					phrase[substr_start:substr_start] = "("
-					second_ind = adjusted2 + 2
-					phrase[second_ind:second_ind] = ")"
-				break
+			inter_11 = (i1start <= c1start < i1end) or (c1start <= i1start < c1end)
+			inter_12 = (i1start <= c2start < i1end) or (c2start <= i1start < c2end)
+			inter_21 = (i2start <= c1start < i2end) or (c1start <= i2start < c1end)
+			inter_22 = (i2start <= c2start < i2end) or (c2start <= i2start < c2end)
 
-			try:
-				if phrase[ind] in "()":
-					if ind < adjusted1:
-						adjusted1 += 1
-					if ind < adjusted2:
-						adjusted2 += 1
-			except IndexError:
-				pass
-			
-			ind += 1
-		
-		p_sets.append([len(l_set[0])] + l_set[2:])
+			inter_before = (c2start > i2start > c1start > i1start)
+			inter_after = (i2start > c2start > i1start > c1start)
+
+			if (inter_11 or inter_12 or inter_21 or inter_22 or inter_before or inter_after):
+				rept_list[c_ind] = [""]
+
+	rept_list = [x for x in rept_list if x != [""]]
+
+	ind_list = []
+	p_list = [[], []]
+
+	for rept in rept_list:
+		ind_list.append(["", []])
+
+		ind_list[-1][0] += "("
+		ind_list[-1][1].append(rept[2])
+
+		if len(rept[0]) > 1 and rept[0] != rept[0][::-1]:
+			ind_list[-1][0] += "("
+			ind_list[-1][1].append(rept[2])
+			ind_list[-1][0] += ")"
+			ind_list[-1][1].append(rept[2] + len(rept[0]))
+
+		ind_list[-1][0] += "("
+		ind_list[-1][1].append(rept[2] + len(rept[0]) + 1/2)
+
+		ind_list[-1][0] += ")"
+		ind_list[-1][1].append(rept[3])
+
+		if len(rept[0]) > 1 and rept[0] != rept[0][::-1]:
+			ind_list[-1][0] += "("
+			ind_list[-1][1].append(rept[3] + 1/2)
+			ind_list[-1][0] += ")"
+			ind_list[-1][1].append(rept[3] + len(rept[0]))
 	
+		ind_list[-1][0] += ")"
+		ind_list[-1][1].append(rept[3] + len(rept[0]) + 1/2)
+
+		p_list[0] += list(ind_list[-1][0])
+		p_list[1] += ind_list[-1][1]
+
+	p_list[0] = [x for _,x in sorted(zip(p_list[1], p_list[0]))]
+	p_list[1] = sorted(p_list[1])
+
+	for char in range(len(p_list[1])):
+		phrase, p_list = place_p(p_list[1][char], phrase, p_list, p_list[0][char])
+
 	phrase = "".join(phrase)
 
 	await message.channel.send(f"""Successfully generated a Cary-style palindrome!
-	**Original Phrase** : `{' '.join(args[1:]).upper()}`
+	**Original Phrase** : `{str_phrase}`
 	**Generated Palindrome** : `{phrase}`
 	
-	Try it out at https://htwins.net/palindrome/ !""".replace("\t", ""))
+	Try it out with **carykh**'s Palindromer: https://htwins.net/palindrome/""".replace("\t", ""))
 	return
