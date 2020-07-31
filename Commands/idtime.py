@@ -53,7 +53,12 @@ async def MAIN(message, args, level, perms, SERVER):
 			snowflaketime = (int(snowflaketime, 2) + 1420070400000)/1000
 			unix_list.append(snowflaketime)
 			if mode == "timestamp":
-				format_list.append(str(datetime.datetime.fromtimestamp(snowflaketime))[:-3] + " UTC")
+				ft = str(datetime.datetime.fromtimestamp(snowflaketime))
+				if ft.endswith("000"):
+					ft = ft[:-3]
+				else:
+					ft = ft + ".000"
+				format_list.append(ft + " UTC")
 			elif mode == "unix":
 				format_list.append(str(snowflaketime))
 		for i in range(len(snowflake_list)):
