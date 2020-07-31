@@ -8,7 +8,7 @@ def HELP(PREFIX):
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}idtime` will return the time corresponding to the provided Discord 
 		snowflake. You can include two IDs instead of one to calculate the difference in time between 
-		them. You can also specify a mode (timestamp, unix) to display the resultime time in.
+		them. You can also specify a mode (timestamp, unix) to display the resulting time in.
 		""".replace("\n", "").replace("\t", "")
 	}
 
