@@ -7,8 +7,9 @@ def HELP(PREFIX):
 		"FORMAT": "[id] (id2) (mode)",
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}idtime` will return the time corresponding to the provided Discord 
-		snowflake. You can include two IDs instead of one to calculate the difference in time between 
-		them. You can also specify a mode (timestamp, unix) to display the resulting time in.
+		snowflake. "message" or "user" can replace numeric IDs to use the ID of your message or your account 
+		respectively. Two IDs can be included instead of one to calculate the difference in time between 
+		them. A mode (timestamp, unix) can be specified at the end to display the resulting time in.
 		""".replace("\n", "").replace("\t", "")
 	}
 
@@ -29,8 +30,13 @@ async def MAIN(message, args, level, perms, SERVER):
 				try:
 					snowflake_list.append(int(elem))
 				except ValueError:
-					mode = elem
-					break
+					if elem == "message":
+						snowflake_list.append(message.id)
+					elif elem == "user":
+						snowflake_list.append(message.author.id)
+					else:
+						mode = elem
+						break
 			if mode not in ["timestamp", "unix"]:
 				mode = "timestamp"
 		else:
