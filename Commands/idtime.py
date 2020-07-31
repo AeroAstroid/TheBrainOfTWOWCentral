@@ -55,14 +55,14 @@ async def MAIN(message, args, level, perms, SERVER):
 			ds = abs(unix_list[0] - unix_list[1])
 			diff = []
 			for increment in [86400, 3600, 60]:
-				diff.append(round(ds - ds % increment))
+				diff.append(round(ds - ds % increment) // increment)
 				ds = ds % increment
 			diff.append(round(ds, 3))
 			diff[0] = str(diff[0])
 			diff[1] = str(diff[1]).zfill(2)
 			diff[2] = str(diff[2]).zfill(2)
 			sec = str(diff[3]).split(".")
-			diff[3] = sec[0].zfill(2) + sec[1].ljust(3, '0')
+			diff[3] = sec[0].zfill(2) + "." + sec[1].ljust(3, '0')
 			output += "Difference: **" + (":".join(diff)).lstrip("0:") + "**"
 		elif len(snowflake_list) == 0:
 			await message.channel.send("Invalid ID.")
