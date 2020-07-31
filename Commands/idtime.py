@@ -46,7 +46,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			elif mode == "unix":
 				format_list.append(str(snowflaketime))
 		for i in range(len(snowflake_list)):
-			output += message.channel.send(str(snowflake_list[i]) + " → **" + format_list[i] + "**")
+			output += (str(snowflake_list[i]) + " → **" + format_list[i] + "**")
 			output += "\n"
 		if len(snowflake_list) == 0:
 			await message.channel.send("Invalid ID.")
