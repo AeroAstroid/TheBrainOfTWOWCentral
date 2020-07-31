@@ -20,7 +20,9 @@ async def MAIN(message, args, level, perms, SERVER):
 	else:
 		snowflake_list = []
 		format_list = []
+		unix_list = []
 		if level > 1:
+			mode = "n/a"
 			for elem in args[1:]:
 				try:
 					snowflake_list.append(int(elem))
@@ -41,6 +43,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			snowflaketime = bin(snowflake)[2:].zfill(64)
 			snowflaketime = snowflaketime[:42]
 			snowflaketime = (int(snowflaketime, 2) + 1420070400000)/1000
+			unix_list.append(snowflaketime)
 			if mode == "timestamp":
 				format_list.append(str(datetime.datetime.fromtimestamp(snowflaketime))[:-3] + " UTC")
 			elif mode == "unix":
@@ -48,7 +51,20 @@ async def MAIN(message, args, level, perms, SERVER):
 		for i in range(len(snowflake_list)):
 			output += (str(snowflake_list[i]) + " → **" + format_list[i] + "**")
 			output += "\n"
-		if len(snowflake_list) == 0:
+		if len(snowflake_list) > 1:
+			ds = abs(unix_list[0] - unix_list[1])
+			diff = []
+			for increment in [86400, 3600, 60]:
+				diff.append(round(ds - ds % increment))
+				ds = ds % increment
+			diff.append(round(ds, 3))
+			diff[0] = str(diff[0])
+			diff[1] = str(diff[1]).zfill(2)
+			diff[2] = str(diff[2]).zfill(2)
+			sec = str(diff[3]).split(".")
+			diff[3] = sec[0].zfill(2) + sec[1].ljust(3, '0')
+			output += "Difference: **" + (":".join(diff)).lstrip("0:") + "**"
+		elif len(snowflake_list) == 0:
 			await message.channel.send("Invalid ID.")
 			return
 		await message.channel.send(output)
