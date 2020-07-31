@@ -27,7 +27,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			snowflake = snowflake[:42]
 			snowflake = (int(snowflake, 2) + 1420070400000)/1000
 			timeformat = str(datetime.datetime.fromtimestamp(snowflake))[:-3]
-			await message.channel.send(args[1] + " → **" + timeformat + "UTC**")
+			await message.channel.send(args[1] + " → **" + timeformat + " UTC**")
 		except ValueError:
 			await message.channel.send("Invalid ID.")
 	return
