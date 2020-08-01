@@ -12,7 +12,7 @@ def HELP(PREFIX):
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}typingtest` will prompt you to type a sequence of random common English words,
 		and will report your speed and accuracy when you finish.""".replace("\n", "").replace("\t", ""),
-		"HIDE" : 1
+		"HIDE" : 0
 	}
 
 a = "tc/db add typingtest id-text totype-text start-text best-text"
