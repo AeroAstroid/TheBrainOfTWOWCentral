@@ -66,6 +66,9 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 				comlist[comcat].append(c)
 		
 		categories = list(comlist.keys())
+		for cat in categories:
+			if cat not in ci.keys():
+				ci[cat] = 89 # adds un-indexed categories right before Other
 		categories = sorted(categories, key = lambda x: ci[x])
 
 		for cat in categories:
