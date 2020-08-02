@@ -57,7 +57,10 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 			else:
 				hide_command = COMMANDS[c]['HELP'](SERVER["PREFIX"])['HIDE']
 			if hide_command == 0:
-				comcat = COMMANDS[c]['HELP'](SERVER["PREFIX"])["CATEGORY"]
+				try:
+					comcat = COMMANDS[c]['HELP'](SERVER["PREFIX"])["CATEGORY"]
+				except:
+					comcat = "Other"
 				if comcat not in comlist.keys():
 					comlist[comcat] = []
 				comlist[comcat].append(c)
