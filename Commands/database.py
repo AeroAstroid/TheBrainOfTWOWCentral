@@ -15,7 +15,7 @@ def HELP(PREFIX):
 		"CATEGORY" : "Developer"
 	}
 
-PERMS = 2 # Staff
+PERMS = 3 # Developer
 ALIASES = ["DB"]
 REQ = []
 
