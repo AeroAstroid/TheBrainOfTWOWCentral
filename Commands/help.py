@@ -57,9 +57,10 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 			else:
 				hide_command = COMMANDS[c]['HELP'](SERVER["PREFIX"])['HIDE']
 			if hide_command == 0:
-				if COMMANDS[c]['CATEGORY'] not in comlist.keys():
-					comlist[COMMANDS[c]['CATEGORY']] = []
-				comlist[commands[c]['CATEGORY']].append(c)
+				comcat = COMMANDS[c]['HELP'](SERVER["PREFIX"])["CATEGORY"]
+				if comcat not in comlist.keys():
+					comlist[comcat] = []
+				comlist[comcat].append(c)
 		
 		categories = list(comlist.keys())
 		categories = sorted(categories, key = lambda x: ci[x])
