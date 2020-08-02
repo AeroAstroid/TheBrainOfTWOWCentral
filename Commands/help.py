@@ -65,18 +65,11 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 		categories = list(comlist.keys())
 		categories = sorted(categories, key = lambda x: ci[x])
 
-		# Finding the final non-staff category so that staff and developer are separated
-		for cat in categories:
-			if ci[cat] >= 100:
-				break
-			else:
-				fns = cat
-
 		for cat in categories:
 			values = ""
 			for cn in comlist[cat]:
 				values += "`" + SERVER["PREFIX"] + cn.lower() + "`\n"
-			embed.add_field(name=cat, value=values, inline=(cat != fns))
+			embed.add_field(name=cat, value=values)
 
 		await message.channel.send(embed=embed)
 		return
