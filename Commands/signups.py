@@ -12,7 +12,7 @@ def HELP(PREFIX):
 	}
 
 PERMS = 2 # Staff
-ALIASES = [""]
+ALIASES = []
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
