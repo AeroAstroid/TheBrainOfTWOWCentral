@@ -147,7 +147,7 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 			pass
 
 		embed.add_field(name="Conditions",
-		value = f"""Requires {'staff' if perms == 2 else ('member' if perms == 1 else 'no')} permissions
+		value = f"""Requires {'developer' if perms == 3 else ('staff' if perms == 2 else ('member' if perms == 1 else 'no'))} permissions
 		{channel_list[COMMANDS[c]['HELP'](SERVER['PREFIX'])[sc]['CHANNEL']]}""".replace("\t", ""), inline=False)
 
 	await message.channel.send(embed=embed)
