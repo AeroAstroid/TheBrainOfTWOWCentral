@@ -10,6 +10,9 @@ class EVENT:
 	# Executes when loaded
 	def __init__(self):
 		self.RUNNING = False
+		
+		self.MMT_C = discord.utils.get(SERVER["MAIN"].channels, name="event-time")
+
 		self.info = {
 			"HOST_QUEUE": [],
 
@@ -48,7 +51,6 @@ class EVENT:
 		self.RUNNING = True
 		self.SERVER = SERVER
 		self.PREFIX = SERVER["PREFIX"]
-		self.MMT_C = discord.utils.get(SERVER["MAIN"].channels, name="event-time")
 		self.info["GAME"]["PERIOD_START"] = time.time()
 
 	
