@@ -75,10 +75,8 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 		for cat in categories:
 			values = ""
 			for cn in comlist[cat]:
-				values += "`" + SERVER["PREFIX"] + cn + "`\n"
-			embed.add_field(name=cat, value=values)
-			if cat == fns:
-				embed.add_field(name="\u200b", value="\u200b", inline=False) # separates staff commands
+				values += "`" + SERVER["PREFIX"] + cn.lower() + "`\n"
+			embed.add_field(name=cat, value=values, inline=(cat != fns))
 
 		await message.channel.send(embed=embed)
 		return
