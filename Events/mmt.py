@@ -10,8 +10,8 @@ class EVENT:
 	# Executes when loaded
 	def __init__(self):
 		self.RUNNING = False
-		
-		self.MMT_C = discord.utils.get(SERVER["MAIN"].channels, name="event-time")
+
+		self.MMT_C = discord.utils.get(SERVER["MAIN"].channels, name="game-room")
 
 		self.info = {
 			"HOST_QUEUE": [],
