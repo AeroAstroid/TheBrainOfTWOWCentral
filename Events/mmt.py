@@ -11,7 +11,7 @@ class EVENT:
 	def __init__(self):
 		self.RUNNING = False
 
-		self.MMT_C = discord.utils.get(SERVER["MAIN"].channels, name="game-room")
+		self.CHANNEL_NAME = "game-room"
 
 		self.info = {
 			"HOST_QUEUE": [],
@@ -48,6 +48,7 @@ class EVENT:
 
 	# Executes when activated
 	def start(self, SERVER): # Set the parameters
+		self.MMT_C = discord.utils.get(SERVER["MAIN"].channels, name=self.CHANNEL_NAME)
 		self.RUNNING = True
 		self.SERVER = SERVER
 		self.PREFIX = SERVER["PREFIX"]
