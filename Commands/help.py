@@ -119,7 +119,7 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 
 		# Conditions are usage permissions followed by channel permissions (as denoted in channel_list)
 		embed.add_field(name="Conditions",
-		value = f"""Requires {'staff' if perms == 2 else ('member' if perms == 1 else 'no')} permissions
+		value = f"""Requires {'developer' if perms == 3 else ('staff' if perms == 2 else ('member' if perms == 1 else 'no'))} permissions
 		{channel_list[COMMANDS[c]['HELP'](SERVER['PREFIX'])['CHANNEL']]}""".replace("\t", ""), inline=False)
 		# Usually, after every multiline string I have to add .replace("\n", "").replace("\t", "") because I don't
 		# want the newlines and tabs to actually show up. Here, there's actually an intended newline, so I just
