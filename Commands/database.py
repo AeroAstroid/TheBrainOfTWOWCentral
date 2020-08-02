@@ -11,7 +11,8 @@ def HELP(PREFIX):
 		"FORMAT": "[subcommand]",
 		"CHANNEL": 0,
 		"USAGE": f"""wip
-		""".replace("\n", "").replace("\t", "")
+		""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Developer"
 	}
 
 PERMS = 1 # Member

@@ -5,7 +5,8 @@ def HELP(PREFIX):
 		"FORMAT": "",
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}interested` will add the `Interested in the Bot` to you, or remove it if you already 
-		have it.""".replace("\n", "").replace("\t", "")
+		have it.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Community"
 	}
 
 PERMS = 0 # Member

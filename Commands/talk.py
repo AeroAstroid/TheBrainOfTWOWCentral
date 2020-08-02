@@ -8,7 +8,8 @@ def HELP(PREFIX):
 		"MAIN": "Talk.",
 		"FORMAT": "",
 		"CHANNEL": 0,
-		"USAGE": f"""Talk.""".replace("\n", "").replace("\t", "")
+		"USAGE": f"""Talk.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Staff"
 	}
 
 PERMS = 3 # Developer

@@ -7,7 +7,8 @@ def HELP(PREFIX):
 		"FORMAT": "",
 		"CHANNEL": 1,
 		"USAGE": f"""Using `{PREFIX}uptime` simply returns the amount of time since 
-		the bot last restarted.""".replace("\n", "").replace("\t", "")
+		the bot last restarted.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Utility"
 	}
 
 PERMS = 0 # Non-member

@@ -9,7 +9,8 @@ def HELP(PREFIX):
 		"FORMAT": "",
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}book` will generate a booksona image with colors taking into account the first 
-		two letters of the name provided, as is customary for TWOW books.""".replace("\n", "").replace("\t", "")
+		two letters of the name provided, as is customary for TWOW books.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Utility"
 	}
 
 PERMS = 1 # Non-members

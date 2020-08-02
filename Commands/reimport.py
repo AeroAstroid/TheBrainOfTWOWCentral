@@ -7,7 +7,8 @@ def HELP(PREFIX):
 		"FORMAT": "",
 		"CHANNEL": 2,
 		"USAGE": f"""Using `{PREFIX}reimport` will trigger a command reimport. 
-		It'll report the time it took to import the commands.""".replace("\n", "").replace("\t", "")
+		It'll report the time it took to import the commands.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Developer"
 	}
 
 PERMS = 3 # Developer

@@ -8,7 +8,8 @@ def HELP(PREFIX):
 		"FORMAT": "(link)",
 		"CHANNEL": 1,
 		"USAGE": f"""Using `{PREFIX}link` returns a list of available links. Including one of those as the `(link)` 
-		parameter will grant you that link, and information on it.""".replace("\n", "").replace("\t", "")
+		parameter will grant you that link, and information on it.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Utility"
 	}
 
 PERMS = 1 # Member

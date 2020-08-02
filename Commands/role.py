@@ -7,7 +7,8 @@ def HELP(PREFIX):
 		"MAIN": "Role distribution command",
 		"FORMAT": "",
 		"CHANNEL": 0,
-		"USAGE": f"""wip""".replace("\n", "").replace("\t", "")
+		"USAGE": f"""wip""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Staff"
 	}
 
 PERMS = 2 # Staff

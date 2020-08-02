@@ -7,7 +7,8 @@ def HELP(PREFIX):
 		"FORMAT": "[phrase]",
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}palindrome [phrase]` will output a Cary-style palindrome of `[phrase]`, or notify 
-		you if such a palindrome could not be constructed.""".replace("\n", "").replace("\t", "")
+		you if such a palindrome could not be constructed.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Utility"
 	}
 
 PERMS = 0 # Non-members

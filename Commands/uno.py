@@ -9,6 +9,7 @@ def HELP(PREFIX):
 		"MAIN": "Command for a bot implementation of UNO",
 		"FORMAT": "[subcommand]",
 		"CHANNEL": 0,
+		"CATEGORY" : "Games",
 		
 		"USAGE": f"""Available subcommands: `create`, `config`, `join`, `start`, `play`, `quit`, `end`. Use `{PREFIX}help 
 		uno [subcommand]` for more info on each of these subcommands.""".replace("\n", "").replace("\t", ""),

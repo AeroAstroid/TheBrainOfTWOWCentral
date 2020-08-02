@@ -7,7 +7,8 @@ def HELP(PREFIX):
 		"FORMAT": "",
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}8ball` will generate advice from Brain's specialized 8 Ball.
-		""".replace("\n", "").replace("\t", "")
+		""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Fun"
 	}
 
 PERMS = 0 # Non-members

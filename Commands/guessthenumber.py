@@ -13,7 +13,8 @@ def HELP(PREFIX):
 		1 and `upper_bound`. If the parameter is not specified, it'll default to 100. The bot will give you hints 
 		depending on what mode you chose. Current available modes are `simple`: gives you no hints, `factors`: gives 
 		you two factors of the number (or notifies you if it doesn't have enough non-trivial factors), `digits`: gives 
-		you half of the number's digits in advance.""".replace("\n", "").replace("\t", "")
+		you half of the number's digits in advance.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Fun"
 	}
 
 PERMS = 0 # Non-members

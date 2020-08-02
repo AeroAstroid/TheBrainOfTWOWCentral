@@ -5,7 +5,8 @@ def HELP(PREFIX):
 		"FORMAT": "",
 		"CHANNEL": 2,
 		"USAGE": f"""Using `{PREFIX}restart` will trigger a bot restart. 
-		It'll report the time it took to restart once it's back up.""".replace("\n", "").replace("\t", "")
+		It'll report the time it took to restart once it's back up.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Developer"
 	}
 
 PERMS = 3 # Developer

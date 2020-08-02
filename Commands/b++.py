@@ -12,7 +12,8 @@ def HELP(PREFIX):
 		"CHANNEL": 0,
 		"USAGE": f"""The full documentation for all B++ functionality is displayed in this document: 
 		https://docs.google.com/document/d/1-UOafQ0qW0AzpR1xxCYU_2__VulfofMDeD62vjhptMM/edit
-		""".replace("\n", "").replace("\t", "")
+		""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Fun"
 	}
 
 PERMS = 1 # Member
