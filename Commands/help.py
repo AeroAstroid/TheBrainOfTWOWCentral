@@ -67,6 +67,7 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 
 		for cat in categories:
 			values = ""
+			comlist[cat].sort()
 			for cn in comlist[cat]:
 				values += "`" + SERVER["PREFIX"] + cn.lower() + "`\n"
 			embed.add_field(name=cat, value=values)
