@@ -1,13 +1,14 @@
 LINKS = { # Every single link for the `tc/link` command is here.
 	"GLICKO": {
 		"MAIN": "<https://docs.google.com/spreadsheets/d/1adKck5yL7ybYQ9VCsScL0yDmCuZsSY5w4UgNgZAeesM>",
-		"INFO": """The **TWOW Glicko Sheet**, by `awepi`, `AnEpik`, `biscuitmistress`, `ChristianPanda`,
-		 `Epsilon`, `Lpcarver`, `PlasmicTrojan`, `Purplegaze` and `thenamesh`.""".replace("\t", "").replace("\n", "")
+		"INFO": """The **TWOW Glicko Sheet**, by `awepi`, `AnEpik`, `biscuitmistress`, `Dark`,
+		 `Epsilon`, `Lpcarver`, `PlasmicTrojan`, `Purplegaze`, `TheDoubledSquare`, and `thenamesh`.
+		 """.replace("\t", "").replace("\n", "")
 	},
 	"TTT": {
 		"MAIN": "<https://docs.google.com/spreadsheets/d/1cKXsXkAR_vHp72j-JOswzaYiYjLpQ0ADSz4GSmexlcI>",
 		"INFO": """The **MiniTWOW Top Three Tracker Sheet**, by `8th`, `Purplegaze`, `thenamesh`, `Alleywr`,
-		 and `ChristianPanda`.""".replace("\t", "").replace("\n", "")
+		 and `TheDoubledSquare`.""".replace("\t", "").replace("\n", "")
 	},
 	"PORTAL": {
 		"MAIN": "<https://docs.google.com/spreadsheets/d/1puxY-ljaDAYqlVnPEYiHFcrB7x2YnZAW74TjMmsxZuI>",
