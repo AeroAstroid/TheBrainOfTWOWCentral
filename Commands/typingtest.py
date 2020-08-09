@@ -90,8 +90,10 @@ async def MAIN(message, args, level, perms, SERVER):
 				page = int(args[2])
 			except:
 				await message.channel.send("Invalid page.")
+				return
 			if page >= len(scores)/10 + 1 or page < 1:
 				await message.channel.send("Invalid page.")
+				return
 		output = f"```md\n---🎖️ tc/typingtest Personal Best Leaderboard - Page {page} 🎖️---\n\n"
 		output += f" Rank |  {'Name': <24}|   WPM"
 		for i in range(page*10-10, page*10, 1):
