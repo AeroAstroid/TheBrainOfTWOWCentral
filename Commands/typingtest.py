@@ -11,7 +11,7 @@ def HELP(PREFIX):
 		"FORMAT": "",
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}typingtest` will prompt you to type a sequence of random common English words,
-		and will report your speed and accuracy when you finish. Using `{PREFIX}typingtest top (page)` will show
+		and will report your speed and accuracy when you finish. Using `{PREFIX}typingtest top (page)` will show 
 		the all-time personal best leaderboard.""".replace("\n", "").replace("\t", ""),
 		"HIDE" : 0,
 		"CATEGORY" : "Fun"
