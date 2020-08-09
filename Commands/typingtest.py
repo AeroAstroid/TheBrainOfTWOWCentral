@@ -107,6 +107,8 @@ async def MAIN(message, args, level, perms, SERVER):
 					break
 			if name == None:
 				name = str(scores[i][0])
+			if len(name) > 24:
+				name = name[:23] + "…"
 			wf = str(round(float(scores[i][1]), 2))
 			if wf.find(".") != len(wf) - 3:
 				wf = wf + "0"
