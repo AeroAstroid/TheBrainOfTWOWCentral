@@ -89,15 +89,12 @@ async def MAIN(message, args, level, perms, SERVER):
 		output += f" Rank |  {"Name": <24}|  WPM"
 		for i in range(page*10-10, page*10, 1):
 			name = None
-			for serv in BRAIN.guilds:
-				if serv.get_member(scores[i][0]) != None:
-					name = serv.get_member(scores[i][0]).name
-					break
 			if name == None:
 				name = str(scores[i][0])
 			wf = str(round(float(scores[i][1]), 2))
 			if wf.find(".") != len(wf) - 3:
 				wf = wf + "0"
 			output += f"\n{"#" if i == 0 else ">"} {(i+1): <4}|  {name: <24}|  {wf}"
+		output += "```"
 		await message.channel.send(output)
 	return
