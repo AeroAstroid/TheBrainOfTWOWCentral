@@ -82,5 +82,9 @@ async def MAIN(message, args, level, perms, SERVER):
 	if args[1].lower() == "top":
 		if message.author.id != 183331874670641152:
 			return
-		await message.channel.send(db.get_entries("typingtest", columns=["id", "best"]))
+		teststring = str(db.get_entries("typingtest", columns=["id", "best"]))
+		while len(teststring) > 1950:
+			test2 = teststring[:1950]
+			await message.channel.send(test2)
+			teststring = teststring[1950:]
 	return
