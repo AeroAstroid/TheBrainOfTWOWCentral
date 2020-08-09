@@ -11,7 +11,8 @@ def HELP(PREFIX):
 		"FORMAT": "",
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}typingtest` will prompt you to type a sequence of random common English words,
-		and will report your speed and accuracy when you finish.""".replace("\n", "").replace("\t", ""),
+		and will report your speed and accuracy when you finish. Using `{PREFIX}typingtest top (page)` will show
+		the all-time personal best leaderboard.""".replace("\n", "").replace("\t", ""),
 		"HIDE" : 0,
 		"CATEGORY" : "Fun"
 	}
@@ -107,7 +108,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			wf = str(round(float(scores[i][1]), 2))
 			if wf.find(".") != len(wf) - 3:
 				wf = wf + "0"
-			output += f"\n{'#' if i == 0 else '>'} {(i+1): <4}|  {name.replace("_", "ˍ"): <24}| {wf: >6}"
+			output += f"\n{'#' if i == 0 else '>'} {(i+1): <4}|  {name.replace('_', 'ˍ'): <24}| {wf: >6}"
 		output += "```"
 		await message.channel.send(output)
 	return
