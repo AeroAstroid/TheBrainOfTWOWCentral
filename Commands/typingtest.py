@@ -79,15 +79,23 @@ async def MAIN(message, args, level, perms, SERVER):
 			Time: {duration}^nWPM: **{round(wpm, 2)}**{record_message}^n
 			""".replace("\n", "").replace("\t", "").replace("^n", "\n"))
 	elif args[1].lower() == "top":
-		if message.author.id != 183331874670641152:
-			return
 		scores = db.get_entries("typingtest", columns=["id", "best"])
-		scores.sort(key = lambda x: x[1])
+		scores.sort(key = lambda x: float(x[1]))
 		scores.reverse()
-		page = 1
+		if level == 2:
+			page = 1
+		else:
+			try:
+				page = int(args[2])
+			except:
+				await message.channel.send("Invalid page.")
+			if page >= len(scores)/10 + 1 or page < 1:
+				await message.channel.send("Invalid page.")
 		output = f"```md\n---🎖️ tc/typingtest Personal Best Leaderboard - Page {page} 🎖️---\n\n"
 		output += f" Rank |  {'Name': <24}|  WPM"
 		for i in range(page*10-10, page*10, 1):
+			if i >= len(scores):
+				break
 			name = None
 			for serv in BRAIN.guilds:
 				mem = serv.get_member(int(scores[i][0]))
