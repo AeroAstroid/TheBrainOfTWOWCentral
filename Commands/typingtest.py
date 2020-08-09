@@ -79,8 +79,9 @@ async def MAIN(message, args, level, perms, SERVER):
 			Words typed correctly: {success} out of {len(totype.split(' '))} ({round(100*(success/len(totype.split(' '))), 1)}%)^n
 			Time: {duration}^nWPM: **{round(wpm, 2)}**{record_message}^n
 			""".replace("\n", "").replace("\t", "").replace("^n", "\n"))
-	elif args[1].lower() == "top":
+	elif args[1].lower() == "top": # Leaderboard
 		scores = db.get_entries("typingtest", columns=["id", "best"])
+		# Database gets a list of tuples: ('id', 'best wpm')
 		scores.sort(key = lambda x: float(x[1]))
 		scores.reverse()
 		if level == 2:
@@ -100,18 +101,18 @@ async def MAIN(message, args, level, perms, SERVER):
 			if i >= len(scores):
 				break
 			name = None
-			for serv in BRAIN.guilds:
+			for serv in BRAIN.guilds: # go through every server trying to find the name of an id
 				mem = serv.get_member(int(scores[i][0]))
 				if mem != None:
 					name = mem.name
 					break
 			if name == None:
-				name = str(scores[i][0])
+				name = str(scores[i][0]) # if no user is found, just use the id
 			if len(name) > 24:
-				name = name[:23] + "…"
+				name = name[:23] + "…" # crop long names
 			wf = str(round(float(scores[i][1]), 2))
 			if wf.find(".") != len(wf) - 3:
-				wf = wf + "0"
+				wf = wf + "0" # fixes "94.3" not being formatted as "94.30"
 			output += f"\n{'#' if i == 0 else '='} {(i+1): <4}|  {name.replace('_', 'ˍ'): <24}| {wf: >6}"
 		output += "```"
 		await message.channel.send(output)
