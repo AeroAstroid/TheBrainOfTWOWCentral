@@ -80,5 +80,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			""".replace("\n", "").replace("\t", "").replace("^n", "\n"))
 		return
 	if args[1].lower() == "top":
-		await message.channel.send(db.get_entries("typingtest", columns=["best"])[0])
+		if message.author.id != 183331874670641152:
+			return
+		await message.channel.send(db.get_entries("typingtest", columns=["id", "best"]))
 	return
