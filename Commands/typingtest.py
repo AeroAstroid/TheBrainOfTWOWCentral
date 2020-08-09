@@ -96,7 +96,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				await message.channel.send("Invalid page.")
 				return
 		output = f"```md\n---🎖️ Typing Test Leaderboard - Page {page} 🎖️---\n\n"
-		output += f" Rank |  {'Name': <24}|   WPM"
+		output += f" Rank |  {'Name': <24}|  WPM"
 		for i in range(page*10-10, page*10, 1):
 			if i >= len(scores):
 				break
