@@ -79,22 +79,4 @@ async def MAIN(message, args, level, perms, SERVER):
 			Time: {duration}^nWPM: **{round(wpm, 2)}**{record_message}^n
 			""".replace("\n", "").replace("\t", "").replace("^n", "\n"))
 		return
-	if args[1].lower() == "top":
-		if message.author.id != 183331874670641152:
-			return
-		scores = db.get_entries("typingtest", columns=["id", "best"])
-		scores.sort(key = lambda x: x[1])
-		page = 1
-		output = f"```md\n---🎖️ tc/typingtest Personal Best Leaderboard - Page {page} 🎖️---\n\n"
-		output += f" Rank |  {"Name": <24}|  WPM"
-		for i in range(page*10-10, page*10, 1):
-			name = None
-			if name == None:
-				name = str(scores[i][0])
-			wf = str(round(float(scores[i][1]), 2))
-			if wf.find(".") != len(wf) - 3:
-				wf = wf + "0"
-			output += f"\n{"#" if i == 0 else ">"} {(i+1): <4}|  {name: <24}|  {wf}"
-		output += "```"
-		await message.channel.send(output)
 	return
