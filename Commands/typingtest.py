@@ -92,7 +92,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			if page >= len(scores)/10 + 1 or page < 1:
 				await message.channel.send("Invalid page.")
 		output = f"```md\n---🎖️ tc/typingtest Personal Best Leaderboard - Page {page} 🎖️---\n\n"
-		output += f" Rank |  {'Name': <24}|  WPM"
+		output += f" Rank |  {'Name': <24}|   WPM"
 		for i in range(page*10-10, page*10, 1):
 			if i >= len(scores):
 				break
@@ -107,7 +107,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			wf = str(round(float(scores[i][1]), 2))
 			if wf.find(".") != len(wf) - 3:
 				wf = wf + "0"
-			output += f"\n{'#' if i == 0 else '>'} {(i+1): <4}|  {name: <24}|  {wf: >6}"
+			output += f"\n{'#' if i == 0 else '>'} {(i+1): <4}|  {name.replace("_", "ˍ"): <24}| {wf: >6}"
 		output += "```"
 		await message.channel.send(output)
 	return
