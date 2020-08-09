@@ -6,7 +6,7 @@ import random, time
 
 def HELP(PREFIX):
 	return {
-		"COOLDOWN": 20,
+		"COOLDOWN": 1,
 		"MAIN": "Test your typing speed",
 		"FORMAT": "",
 		"CHANNEL": 0,
@@ -107,7 +107,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			wf = str(round(float(scores[i][1]), 2))
 			if wf.find(".") != len(wf) - 3:
 				wf = wf + "0"
-			output += f"\n{'#' if i == 0 else '>'} {(i+1): <4}|  {name: <24}|  {wf}"
+			output += f"\n{'#' if i == 0 else '>'} {(i+1): <4}|  {name: <24}|  {wf: >6}"
 		output += "```"
 		await message.channel.send(output)
 	return
