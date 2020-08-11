@@ -69,7 +69,7 @@ class EVENT:
 				if person[1] < tz[0] and (self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(person[0])).roles):
 					f_tz = ("+" if person[1] > 0 else "") + str(person[1])
 					await self.CHANNEL.send(
-						f"🎉 It is no longer **{l_d} UTC {f_tz}**, but happy birthday to <@{person[0]}> regardless! 🎉"
+						f"🎉 It is no longer **{l_d} UTC {f_tz}**, but happy birthday to **{person[0]}.name** regardless! 🎉"
 					)
 					await self.SERVER["MAIN"].get_member(int(person[0])).add_roles(self.BIRTHDAY_ROLE)
 			
@@ -86,7 +86,7 @@ class EVENT:
 				if person[1] > tz[0] and (self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(person[0])).roles):
 					f_tz = ("+" if person[1] > 0 else "") + str(person[1])
 					await self.CHANNEL.send(
-						f"🎉 It is no longer **{tz[1]} UTC {f_tz}**, but happy birthday to <@{person[0]}> regardless! 🎉"
+						f"🎉 It is no longer **{tz[1]} UTC {f_tz}**, but happy birthday to **{person[0]}.name** regardless! 🎉"
 					)
 					await self.SERVER["MAIN"].get_member(int(person[0])).add_roles(self.BIRTHDAY_ROLE)
 			
@@ -103,7 +103,7 @@ class EVENT:
 				if person[1] - 24 > tz[0] and (self.BIRTHDAY_ROLE not in self.SERVER["MAIN"].get_member(int(person[0])).roles):
 					f_tz = ("+" if person[1] > 0 else "") + str(person[1])
 					await self.CHANNEL.send(
-						f"🎉 It is no longer **{n_d} UTC {f_tz}**, but happy birthday to <@{person[0]}> regardless! 🎉"
+						f"🎉 It is no longer **{n_d} UTC {f_tz}**, but happy birthday to **{person[0]}.name** regardless! 🎉"
 					)
 					await self.SERVER["MAIN"].get_member(int(person[0])).add_roles(self.BIRTHDAY_ROLE)
 
