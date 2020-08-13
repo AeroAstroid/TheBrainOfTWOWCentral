@@ -11,7 +11,7 @@ class EVENT:
 	def __init__(self):
 		self.RUNNING = False
 
-		self.CHANNEL_NAME = "event-time"
+		self.CHANNEL_NAME = "game-room"
 
 		self.info = {
 			"HOST_QUEUE": [],
