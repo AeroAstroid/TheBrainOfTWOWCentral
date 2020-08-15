@@ -172,7 +172,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				await message.channel.send("You already have that team flair!")
 				return
 			
-			if len(current_flair_list) == limit:
+			if len(current_flair_list) >= limit:
 				await message.channel.send(
 					f"You already have {limit} flair{'' if limit==1 else 's'}. You can't get any more!")
 				return
