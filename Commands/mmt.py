@@ -316,7 +316,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			mmt.force_skip()
 			return
 		
-		if perms == 2: # Do the same if it's a staff member
+		if perms >= 2: # Do the same if it's a staff member
 			await message.channel.send("**The current MiniMiniTWOW has been ended by staff! The queue moves on.**")
 			mmt.force_skip()
 			return
@@ -340,13 +340,13 @@ async def MAIN(message, args, level, perms, SERVER):
 			mmt.info["GAME"]["END_VOTES"] = [x for x in mmt.info["GAME"]["END_VOTES"] if x != message.author.id]
 			votes = len(mmt.info["GAME"]["END_VOTES"]) # Calculate the new number of votes
 			await message.channel.send(f"""🚪 {message.author.mention} removes their vote to end the MiniMiniTWOW. 
-			There are now **{votes}{nec_seg}** votes.""")
+			The vote count is **{votes}{nec_seg}**.""")
 			return
 		
 		mmt.info["GAME"]["END_VOTES"].append(message.author.id) # Add user's ID to list of end votes
 		votes = len(mmt.info["GAME"]["END_VOTES"]) # Calculate new number of votes
 		await message.channel.send(f"""🚪 **{message.author.mention} voted to end the MiniMiniTWOW!** 
-		There are now **{votes}{nec_seg}** votes.""")
+		The vote count is **{votes}{nec_seg}**.""")
 
 		if votes >= necessary: # If the amount of votes reaches the required...
 			await message.channel.send("""**The current MiniMiniTWOW has been ended 
