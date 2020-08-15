@@ -24,7 +24,8 @@ def HELP(PREFIX):
 		paired once; an inspector code of 770 and a discriminator of 7316 only counts as one shared digit (because the 
 		first 7 pairs with the 7 in the discriminator, but the other 7 has no other 7 to pair with. This is so 
 		discriminators or inspector codes with repeating digits don't provide any advantage or disadvantage.)
-		""".replace("\n", "").replace("\t", "")
+		""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Fun"
 	}
 
 PERMS = 1 # Member

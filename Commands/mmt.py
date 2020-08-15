@@ -15,6 +15,7 @@ def HELP(PREFIX):
 		"USAGE": f"""Available subcommands: `queue`, `create`, `start`, `spectate`, `join`, `prompt`, `respond`, 
 		`vote`, `transfer`, `end`. Use `{PREFIX}help mmt [subcommand]` for more info on each of these subcommands.
 		""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Games",
 
 		"QUEUE": {
 			"MAIN": "Command for the MiniMiniTWOW hosting queue",

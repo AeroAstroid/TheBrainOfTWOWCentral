@@ -17,7 +17,8 @@ def HELP(PREFIX):
 		Using `{PREFIX}birthday register [dd/mm] (timezone)` will allow you to register or edit your birthday. 
 		Using `{PREFIX}birthday month (month_number/month_name)` allows you to see all the birthdays in a given 
 		month if you've specified one, or the current one if you didn't specify a month.
-		""".replace("\n", "").replace("\t", "")
+		""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Community"
 	}
 
 PERMS = 0 # Non-members

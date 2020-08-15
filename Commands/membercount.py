@@ -7,7 +7,8 @@ def HELP(PREFIX):
 		"FORMAT": "",
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}membercount` will return the current member count of the server 
-		it's used in.""".replace("\n", "").replace("\t", "")
+		it's used in.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Community"
 	}
 
 PERMS = 0 # Non-members

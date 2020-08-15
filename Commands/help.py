@@ -10,7 +10,8 @@ def HELP(PREFIX):
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}help` shows you a list of commands and aliases. Filling in the parameter 
 		`(command)` shows you information on a specific command. In command help pages, parameters marked 
-		with [brackets] are mandatory. Those marked with (parentheses) are optional.""".replace("\n", "").replace("\t", "")
+		with [brackets] are mandatory. Those marked with (parentheses) are optional.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Utility"
 	}
 
 PERMS = 0 # Everyone
@@ -27,9 +28,16 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 		for a in COMMANDS[c]['ALIASES']:
 			alias_list[a] = c
 
-	# Lambda returns the permissions, so it's sorted with lower permissions first (so that staff commands are
-	# displayed last)
-	com = sorted(com, key = lambda x: COMMANDS[x]["PERMS"])
+	# Category indices for sorting. Values above 100 will cause commands to appear after a space separator.
+	ci = {
+		"Utility" : 1,
+		"Community" : 2,
+		"Fun" : 3,
+		"Games" : 4,
+		"Other" : 90,
+		"Staff" : 101,
+		"Developer" : 102
+	}
 
 	if level == 1: # If command is `tc/help`
 		embed.title = "The Brain of TWOW Central"
@@ -41,31 +49,35 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 		# Set Brain PFP for the default help page
 		embed.set_thumbnail(url=BRAIN.user.avatar_url_as(static_format="png"))
 
-		perm = 0 # This variable serves to check for boundaries between commands of different permission requirements
+		comlist = {}
 
 		for c in com:
 			if 'HIDE' not in COMMANDS[c]['HELP'](SERVER["PREFIX"]).keys():
-				# If the last command wasn't a staff command but this one is, add a non-inline field as a separator
-				# This has the effect of creating a vertical space separation between non-staff and staff commands
-				if perm != 2 and COMMANDS[c]['PERMS'] == 2:
-					embed.add_field(name="\u200b", value="\u200b", inline=False)
-
-				# This variable is the "last command's permissions" one that gets checked above to determine separations
-				perm = COMMANDS[c]['PERMS']
-				# 2 = Staff; 1 = Member; 0 = Non-Member
-				values = '**{Developer}\n**' if perm == 3 else ('**{Staff}\n**' if perm == 2 else ('{Member}\n' if perm == 1 else '{Non-Member}\n'))
-
-				# Add aliases, if any
-				command_alias_list = [f"{SERVER['PREFIX']}{command.lower()}" for command in COMMANDS[c]['ALIASES']]
-				values += "\n".join(command_alias_list)
-
-				# Adding a newline and zero-width space creates a sort of vertical buffer between each line of
-				# embed fields, making it less cluttered
-				values += "\n\u200b"
-
-				# Add the command's field finally
-				embed.add_field(name=f"**{SERVER['PREFIX']}{c.lower()}**", value=values)
+				hide_command = 0
+			else:
+				hide_command = COMMANDS[c]['HELP'](SERVER["PREFIX"])['HIDE']
+			if hide_command == 0:
+				try:
+					comcat = COMMANDS[c]['HELP'](SERVER["PREFIX"])["CATEGORY"]
+				except:
+					comcat = "Other"
+				if comcat not in comlist.keys():
+					comlist[comcat] = []
+				comlist[comcat].append(c)
 		
+		categories = list(comlist.keys())
+		for cat in categories:
+			if cat not in ci.keys():
+				ci[cat] = 89 # adds un-indexed categories right before Other
+		categories = sorted(categories, key = lambda x: ci[x])
+
+		for cat in categories:
+			values = ""
+			comlist[cat].sort()
+			for cn in comlist[cat]:
+				values += "`" + SERVER["PREFIX"] + cn.lower() + "`\n"
+			embed.add_field(name=cat, value=values)
+
 		await message.channel.send(embed=embed)
 		return
 	
@@ -119,7 +131,7 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 
 		# Conditions are usage permissions followed by channel permissions (as denoted in channel_list)
 		embed.add_field(name="Conditions",
-		value = f"""Requires {'staff' if perms == 2 else ('member' if perms == 1 else 'no')} permissions
+		value = f"""Requires {'developer' if perms == 3 else ('staff' if perms == 2 else ('member' if perms == 1 else 'no'))} permissions
 		{channel_list[COMMANDS[c]['HELP'](SERVER['PREFIX'])['CHANNEL']]}""".replace("\t", ""), inline=False)
 		# Usually, after every multiline string I have to add .replace("\n", "").replace("\t", "") because I don't
 		# want the newlines and tabs to actually show up. Here, there's actually an intended newline, so I just
@@ -147,7 +159,7 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 			pass
 
 		embed.add_field(name="Conditions",
-		value = f"""Requires {'staff' if perms == 2 else ('member' if perms == 1 else 'no')} permissions
+		value = f"""Requires {'developer' if perms == 3 else ('staff' if perms == 2 else ('member' if perms == 1 else 'no'))} permissions
 		{channel_list[COMMANDS[c]['HELP'](SERVER['PREFIX'])[sc]['CHANNEL']]}""".replace("\t", ""), inline=False)
 
 	await message.channel.send(embed=embed)

@@ -12,7 +12,8 @@ def HELP(PREFIX):
 		Specifying one of those events as `[event]` lets you toggle on/off that specific event, with a confirmation 
 		message. Including `('confirm')` bypasses the confirmation message. You can use the subcommand 
 		`{PREFIX}event [event] edit` to change parameters of an event that's currently running.
-		""".replace("\n", "").replace("\t", "")
+		""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Staff"
 	}
 
 PERMS = 2 # Staff

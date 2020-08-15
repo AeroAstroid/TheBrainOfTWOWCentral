@@ -6,13 +6,15 @@ import random, time
 
 def HELP(PREFIX):
 	return {
-		"COOLDOWN": 20,
+		"COOLDOWN": 1,
 		"MAIN": "Test your typing speed",
 		"FORMAT": "",
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}typingtest` will prompt you to type a sequence of random common English words,
-		and will report your speed and accuracy when you finish.""".replace("\n", "").replace("\t", ""),
-		"HIDE" : 0
+		and will report your speed and accuracy when you finish. Using `{PREFIX}typingtest top (page)` will show 
+		the all-time personal best leaderboard.""".replace("\n", "").replace("\t", ""),
+		"HIDE" : 0,
+		"CATEGORY" : "Fun"
 	}
 
 a = "tc/db add typingtest id-text totype-text start-text best-text"
@@ -77,7 +79,41 @@ async def MAIN(message, args, level, perms, SERVER):
 			Words typed correctly: {success} out of {len(totype.split(' '))} ({round(100*(success/len(totype.split(' '))), 1)}%)^n
 			Time: {duration}^nWPM: **{round(wpm, 2)}**{record_message}^n
 			""".replace("\n", "").replace("\t", "").replace("^n", "\n"))
-		return
-	if args[1].lower() == "top":
-		await message.channel.send(db.get_entries("typingtest", columns=["best"])[0])
+	elif args[1].lower() == "top": # Leaderboard
+		scores = db.get_entries("typingtest", columns=["id", "best"])
+		# Database gets a list of tuples: ('id', 'best wpm')
+		scores.sort(key = lambda x: float(x[1]))
+		scores.reverse()
+		if level == 2:
+			page = 1
+		else:
+			try:
+				page = int(args[2])
+			except:
+				await message.channel.send("Invalid page.")
+				return
+			if page >= len(scores)/10 + 1 or page < 1:
+				await message.channel.send("Invalid page.")
+				return
+		output = f"```md\n---🎖️ Typing Test Leaderboard - Page {page} 🎖️---\n\n"
+		output += f" Rank |  {'Name': <24}|  WPM"
+		for i in range(page*10-10, page*10, 1):
+			if i >= len(scores):
+				break
+			name = None
+			for serv in BRAIN.guilds: # go through every server trying to find the name of an id
+				mem = serv.get_member(int(scores[i][0]))
+				if mem != None:
+					name = mem.name
+					break
+			if name == None:
+				name = str(scores[i][0]) # if no user is found, just use the id
+			if len(name) > 24:
+				name = name[:23] + "…" # crop long names
+			wf = str(round(float(scores[i][1]), 2))
+			if wf.find(".") != len(wf) - 3:
+				wf = wf + "0" # fixes "94.3" not being formatted as "94.30"
+			output += f"\n{'#' if i == 0 else '-'} {(i+1): <4}|  {name.replace('_', 'ˍ').replace('*', '∗'): <24}| {wf: >6}"
+		output += "\n```"
+		await message.channel.send(output)
 	return

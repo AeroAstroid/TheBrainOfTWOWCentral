@@ -8,11 +8,12 @@ def HELP(PREFIX):
 		"MAIN": "Command to manage the #twows-in-signups channel",
 		"FORMAT": "wip",
 		"CHANNEL": 0,
-		"USAGE": f"""wip""".replace("\n", "").replace("\t", "")
+		"USAGE": f"""wip""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Staff"
 	}
 
 PERMS = 2 # Staff
-ALIASES = [""]
+ALIASES = []
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):

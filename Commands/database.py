@@ -11,19 +11,16 @@ def HELP(PREFIX):
 		"FORMAT": "[subcommand]",
 		"CHANNEL": 0,
 		"USAGE": f"""wip
-		""".replace("\n", "").replace("\t", "")
+		""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Developer"
 	}
 
-PERMS = 1 # Member
+PERMS = 3 # Developer
 ALIASES = ["DB"]
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
 	db = Database()
-
-	if perms < 2: # Direct database viewing is staff-only
-		await message.channel.send("You don't have permission to run this subcommand.")
-		return
 
 
 	if level == 2: # If it's just `tc/db main`, list the tables using the get_tables() function.

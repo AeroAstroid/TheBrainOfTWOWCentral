@@ -10,7 +10,8 @@ def HELP(PREFIX):
 		snowflake. "message" or "user" can replace numeric IDs to use the ID of your message or your account 
 		respectively. Two IDs can be included instead of one to calculate the difference in time between 
 		them. A mode (timestamp, unix) can be specified at the end to display the resulting time in.
-		""".replace("\n", "").replace("\t", "")
+		""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Utility"
 	}
 
 PERMS = 0 # Non-members

@@ -9,7 +9,8 @@ def HELP(PREFIX):
 		"USAGE": f"""Using `{PREFIX}toggle [channels]` will prompt a confirmation message to toggle all channels included. 
 		By default, it'll switch locked channels to unlocked and vice-versa. Including `('on'/'off')` before `[channels]` 
 		specifies to unlock all channels or lock all channels. Including `('confirm')` anywhere in the command bypasses 
-		the confirmation message and triggers the toggling action instantly.""".replace("\n", "").replace("\t", "")
+		the confirmation message and triggers the toggling action instantly.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Staff"
 	}
 
 PERMS = 2 # Staff

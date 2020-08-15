@@ -11,7 +11,8 @@ def HELP(PREFIX):
 		of the current team flairs. Using `{PREFIX}team count` gives you a list of all team flairs and how many people 
 		have each one. To get a team flair, use `{PREFIX}team get` followed by either the name of the team or the name 
 		of its contestant. To remove a team flair that you have, use `{PREFIX}team remove`, followed by either the 
-		name of the team or the name of its contestant.""".replace("\n", "").replace("\t", "")
+		name of the team or the name of its contestant.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Community"
 	}
 
 PERMS = 1 # Member

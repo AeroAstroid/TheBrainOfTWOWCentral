@@ -10,7 +10,8 @@ def HELP(PREFIX):
 		"FORMAT": "",
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}tr_` will generate a tr_ of random length and draw it accordingly, while also 
-		providing a scale reference in the form of an object or organism.""".replace("\n", "").replace("\t", "")
+		providing a scale reference in the form of an object or organism.""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Fun"
 	}
 
 PERMS = 0 # Non-members

@@ -9,7 +9,8 @@ def HELP(PREFIX):
 		"USAGE": f"""Using `{PREFIX}search` will trigger a search command using bot message history. 
 		You can specify different options for searching `(before:)` an ID, `(after:)` an ID, searching only though a 
 		certain `(limit:)` of messages and in a specific `[channel:]`. **You must include at least one of `(after:)` or 
-		`(limit:)`.**""".replace("\n", "").replace("\t", "")
+		`(limit:)`.**""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Staff"
 	}
 
 PERMS = 2 # Staff
