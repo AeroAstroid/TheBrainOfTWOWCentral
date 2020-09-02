@@ -282,7 +282,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 	try:
 		await message.channel.send(
-		OUTPUT.replace("<@", "<\@").replace("\\\\", "\t\t").replace("\\", "").replace("\t\t", "\\")[:1950])
+		OUTPUT.replace("<@", "<\@").replace("\\\\", "\t\t").replace("\\", "").replace("\t\t", "\\").replace(u"\uF000","\n")[:1950])
 	except discord.errors.HTTPException:
 		pass
 	
