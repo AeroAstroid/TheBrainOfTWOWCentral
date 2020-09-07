@@ -1,6 +1,7 @@
 import discord, asyncio, io, aiohttp
 from datetime import datetime
 from Config._db import Database
+from Config._functions import grammar_list
 from Config._servers import MAIN_SERVER
 
 class EVENT:
