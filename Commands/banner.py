@@ -34,7 +34,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		msg = [f"Here's a list of all the set banners.\nCurrent banner: **#{banner_ind}**\n"]
 
 		for ind, url in enumerate(banner_list):
-			to_add_line = f"**Banner #{ind}** : {url}\n"
+			to_add_line = f"**Banner #{ind}** : <{url}>\n"
 
 			if len(msg[-1]) + len(to_add_line) > 1900:
 				msg.append("")
