@@ -35,7 +35,7 @@ class EVENT:
 		if hour % self.param["HOUR_SPEED"] != 0:
 			return
 		
-		banner_ind, banner_list = db.get_entries("tcbanner")[0]
+		banner_ind, banner_list = self.db.get_entries("tcbanner")[0]
 		banner_list = banner_list.split(" ")
 
 		banner_ind += 1
@@ -43,7 +43,7 @@ class EVENT:
 
 		new_banner = banner_list[banner_ind]
 
-		db.edit_entry("tcbanner", entry={"current": banner_ind, "url": " ".join(banner_list)})
+		self.db.edit_entry("tcbanner", entry={"current": banner_ind, "url": " ".join(banner_list)})
 
 		async with aiohttp.ClientSession() as session:
 			try:
