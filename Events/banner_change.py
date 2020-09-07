@@ -11,7 +11,7 @@ class EVENT:
 	def __init__(self):
 		self.RUNNING = False
 		self.param = {
-			"HOUR_SPEED": 6
+			"HOUR_SPEED": 1
 		}
 
 	# Executes when activated

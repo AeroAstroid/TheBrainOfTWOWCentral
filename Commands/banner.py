@@ -45,6 +45,38 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send(z)
 		return
 
+	if args[1].lower() == "set" and perms >= 2:
+		if not is_whole(args[2]):
+			await message.channel.send("Send a valid banner number!")
+			return
+
+		ind = int(args[2])
+
+		if not 0 <= ind < len(banner_list):
+			await message.channel.send("There's no banner with that number!")
+			return
+		
+		new_banner = banner_list[ind]
+
+		db.edit_entry("tcbanner", entry={"current": ind, "url": " ".join(banner_list)})
+
+		async with aiohttp.ClientSession() as session:
+			try:
+				async with session.get(new_banner) as resp:
+					if resp.status != 200:
+						await message.channel.send(f'<{new_banner}> is an invalid link!')
+						return
+					
+					data = io.BytesIO(await resp.read())
+					await SERVER["MAIN"].edit(banner=data.read())
+
+					await message.channel.send(f"Successfully set to banner **#{ind}**!")
+				
+			except aiohttp.client_exceptions.InvalidURL:
+				await message.channel.send(f'<{new_banner}> is an invalid link!')
+				return
+		return
+
 	if args[1].lower() == "cycle" and perms >= 2:
 		await message.channel.send("Stepping through the banner list.")
 
