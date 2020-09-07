@@ -49,22 +49,27 @@ async def MAIN(message, args, level, perms, SERVER):
 		await message.channel.send("Stepping through the banner list.")
 
 		banner_ind += 1
-		banner_list %= len(banner_list)
+		banner_ind %= len(banner_list)
 
 		new_banner = banner_list[banner_ind]
 
-		db.edit_entry("tcbanner", entry={"current": banner_ind, "url": banner_list})
+		db.edit_entry("tcbanner", entry={"current": banner_ind, "url": " ".join(banner_list)})
 
 		async with aiohttp.ClientSession() as session:
-			async with session.get(new_banner) as resp:
-				if resp.status != 200:
-					await message.channel.send(f'<{new_banner}> is an invalid link!')
-					return
-				
-				data = io.BytesIO(await resp.read())
-				await SERVER["MAIN"].edit(banner=data.read())
+			try:
+				async with session.get(new_banner) as resp:
+					if resp.status != 200:
+						await message.channel.send(f'<{new_banner}> is an invalid link!')
+						return
+					
+					data = io.BytesIO(await resp.read())
+					await SERVER["MAIN"].edit(banner=data.read())
 
-				await message.channel.send(f"Successfully set to banner **#{banner_ind}**!")
+					await message.channel.send(f"Successfully set to banner **#{banner_ind}**!")
+				
+			except aiohttp.client_exceptions.InvalidURL:
+				await message.channel.send(f'<{new_banner}> is an invalid link!')
+				return
 		return
 	
 	if args[1].lower() == "add" and perms >= 2:
@@ -79,14 +84,18 @@ async def MAIN(message, args, level, perms, SERVER):
 			return
 		
 		async with aiohttp.ClientSession() as session:
-			async with session.get(banner_link) as resp:
-				if resp.status != 200:
-					await message.channel.send(f'<{banner_link}> is an invalid link!')
-					return
-				
-				banner_list.append(banner_link)
-				db.edit_entry("tcbanner", entry={"current": banner_ind, "url": banner_list})
-				await message.channel.send(f"Successfully added the image as banner **#{len(banner_list)-1}**!")
+			try:
+				async with session.get(banner_link) as resp:
+					if resp.status != 200:
+						await message.channel.send(f'<{banner_link}> is an invalid link!')
+						return
+					
+					banner_list.append(banner_link)
+					db.edit_entry("tcbanner", entry={"current": banner_ind, "url": " ".join(banner_list)})
+					await message.channel.send(f"Successfully added the image as banner **#{len(banner_list)-1}**!")
+			except aiohttp.client_exceptions.InvalidURL:
+				await message.channel.send(f'<{banner_link}> is an invalid link!')
+				return
 		return
 	
 	if args[1].lower() == "remove" and perms >= 2:
@@ -113,17 +122,24 @@ async def MAIN(message, args, level, perms, SERVER):
 			banner_ind -= 1
 		
 		elif banner_ind == ind:
-			banner_ind %= len(banner_list)
+			try:
+				banner_ind %= len(banner_list)
 
-			banner_link = banner_list[banner_ind]
+				banner_link = banner_list[banner_ind]
 
-			async with aiohttp.ClientSession() as session:
-				async with session.get(banner_link) as resp:
-					data = io.BytesIO(await resp.read())
-					await SERVER["MAIN"].edit(banner=data.read())
+				async with aiohttp.ClientSession() as session:
+					try:
+						async with session.get(banner_link) as resp:
+							data = io.BytesIO(await resp.read())
+							await SERVER["MAIN"].edit(banner=data.read())
+							await message.channel.send("Moved on to the next banner, as the current one was deleted.")
 
-			await message.channel.send("Moved on to the next banner, as the current one was deleted.")
+					except aiohttp.client_exceptions.InvalidURL:
+						pass
+			
+			except ZeroDivisionError:
+				banner_ind = 0
 		
-		db.edit_entry("tcbanner", entry={"current": banner_ind, "url": banner_list})
+		db.edit_entry("tcbanner", entry={"current": banner_ind, "url": " ".join(banner_list)})
 
 		return
