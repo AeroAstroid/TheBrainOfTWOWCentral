@@ -55,7 +55,8 @@ class EVENT:
 
 			n_d = f"{n_d.day}/{n_d.month}"
 			l_d = f"{l_d.day}/{l_d.month}"
-
+			
+			'''
 			# All people whose birthdays were yesterday
 			found = self.db.get_entries("birthday", columns=["id", "timezone"], conditions={"birthday": l_d})
 			for person in found: # Cycle through all
@@ -109,6 +110,7 @@ class EVENT:
 					but happy birthday to <@{person[0]}> regardless! 🎉""".replace("\n", "").replace("\t", "")
 					)
 					await self.SERVER["MAIN"].get_member(int(person[0])).add_roles(self.BIRTHDAY_ROLE)
+			'''
 
 			# Find members whose birthdays just ended in that timezone (one day ago, same timezone = exactly 24h ago)
 			found = self.db.get_entries("birthday", columns=["id"], conditions={"birthday": l_d, "timezone": tz[0]})
