@@ -186,7 +186,7 @@ async def MAIN(message, args, level, perms, SERVER, UNO_INFO):
 		
 		if len(UNO_INFO["players"]) < 2: # If there are less than two playerss
 			await message.channel.send("You can only start a Uno round with two or more players!")
-			returns
+			return
 		
 		UNO_INFO["status"] = 2 # Change the game status and distribute cards
 		await message.channel.send("**The Uno round is starting!** Currently distributing cards...")
