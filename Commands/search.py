@@ -27,8 +27,6 @@ async def MAIN(message, args, level, perms, SERVER):
 		counter = await message.channel.send(f"Searching for le smiley... Found 0 messages so far.")
 		msg_links = []
 
-		print(SERVER["MAIN"].text_channels)
-
 		for chnl in SERVER["MAIN"].text_channels:
 			try:
 				async for msg_history in chnl.history():
@@ -44,6 +42,7 @@ async def MAIN(message, args, level, perms, SERVER):
 								if user.id == 322153346020671488:
 									msg_links.append(msg_history.jump_url)
 									print(msg_history.jump_url)
+				print(chnl.name)
 			except discord.errors.Forbidden:
 				continue
 		
