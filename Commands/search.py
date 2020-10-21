@@ -22,6 +22,26 @@ async def MAIN(message, args, level, perms, SERVER):
 		await message.channel.send("Include the channel(s) to search in!")
 		return
 	
+	if perms == 3 and args[1].lower() == "findsmiley":
+		recorded_count = 0
+		counter = await message.channel.send(f"Searching for le smiley... Found 0 messages so far.")
+		msg_links = []
+
+		for chnl in SERVER["MAIN"].text_channels:
+			async for msg_history in chnl.history():
+				recorded_count += 1
+				if recorded_count % 1000 == 0:
+					await counter.edit(content=f"Searching for le smiley... Found {recorded_count} messages so far.")
+				
+				for r in msg_history.reactions:
+					if r.emoji == "😃":
+						async for user in r.users():
+							if user.id == 322153346020671488:
+								msg_links.append(msg_history.jump_url)
+		
+		await message.channel.send("\n".join(msg_links[:10]))
+		return
+	
 	included_args = {
 		"channel": message.content.lower().find("channel:") > -1,
 		"after": message.content.lower().find("after:") > -1,
