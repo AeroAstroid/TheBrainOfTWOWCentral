@@ -31,7 +31,8 @@ async def MAIN(message, args, level, perms, SERVER):
 			async for msg_history in chnl.history():
 				recorded_count += 1
 				if recorded_count % 1000 == 0:
-					await counter.edit(content=f"Searching for le smiley... Found {recorded_count} messages so far.")
+					await counter.edit(
+					content=f"Searching for le smiley... Found {len(msg_links)} / {recorded_count} messages so far.")
 				
 				for r in msg_history.reactions:
 					if r.emoji == "😃":
