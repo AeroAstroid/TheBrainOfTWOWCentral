@@ -27,6 +27,8 @@ async def MAIN(message, args, level, perms, SERVER):
 		counter = await message.channel.send(f"Searching for le smiley... Found 0 messages so far.")
 		msg_links = []
 
+		print(SERVER["MAIN"].text_channels)
+
 		for chnl in SERVER["MAIN"].text_channels:
 			try:
 				async for msg_history in chnl.history():
@@ -37,13 +39,18 @@ async def MAIN(message, args, level, perms, SERVER):
 					
 					for r in msg_history.reactions:
 						if r.emoji == "😃":
+							print(f"smiley in {msg_history.id}")
 							async for user in r.users():
 								if user.id == 322153346020671488:
 									msg_links.append(msg_history.jump_url)
+									print(msg_history.jump_url)
 			except discord.errors.Forbidden:
 				continue
 		
-		await message.channel.send("\n".join(msg_links[:10]))
+		if len(msg_links) == 0:
+			await message.channel.send("found none")
+		else:
+			await message.channel.send("\n".join(msg_links[:10]))
 		return
 	
 	included_args = {
