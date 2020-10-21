@@ -28,17 +28,20 @@ async def MAIN(message, args, level, perms, SERVER):
 		msg_links = []
 
 		for chnl in SERVER["MAIN"].text_channels:
-			async for msg_history in chnl.history():
-				recorded_count += 1
-				if recorded_count % 1000 == 0:
-					await counter.edit(
-					content=f"Searching for le smiley... Found {len(msg_links)} / {recorded_count} messages so far.")
-				
-				for r in msg_history.reactions:
-					if r.emoji == "😃":
-						async for user in r.users():
-							if user.id == 322153346020671488:
-								msg_links.append(msg_history.jump_url)
+			try:
+				async for msg_history in chnl.history():
+					recorded_count += 1
+					if recorded_count % 1000 == 0:
+						await counter.edit(
+						content=f"Searching for le smiley... Found {len(msg_links)} / {recorded_count} messages so far.")
+					
+					for r in msg_history.reactions:
+						if r.emoji == "😃":
+							async for user in r.users():
+								if user.id == 322153346020671488:
+									msg_links.append(msg_history.jump_url)
+			except discord.errors.Forbidden:
+				continue
 		
 		await message.channel.send("\n".join(msg_links[:10]))
 		return
