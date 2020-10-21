@@ -29,7 +29,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		for chnl in SERVER["MAIN"].text_channels:
 			try:
-				async for msg_history in chnl.history():
+				async for msg_history in chnl.history(limit=None):
 					recorded_count += 1
 					if recorded_count % 1000 == 0:
 						await counter.edit(
