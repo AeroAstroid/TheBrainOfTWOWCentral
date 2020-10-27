@@ -14,6 +14,16 @@ def safe_exponent(a, b):
 		raise ValueError('Numbers are too large to exponentiate')
 	return a**b
 
+def safe_sort(a):
+	if len(a) > 1000:
+		raise ValueError('Iterable is too large to be sorted')
+	return sorted(a)
+
+def safe_desort(a):
+	if len(a) > 1000:
+		raise ValueError('Iterable is too large to be sorted')
+	return sorted(a, reverse=True)
+
 FUNCTIONS = {
 
 	# Basic operations
@@ -154,14 +164,14 @@ FUNCTIONS = {
 	},
 
 	"sort?": {
-		"MAIN": (lambda a: sorted(a)),
+		"MAIN": safe_sort,
 		"TYPES": {
 			"a": ["ARRAY NUMBER", "ARRAY STRING", "ARRAY BOOLEAN"]
 		}
 	},
 
 	"desort?": {
-		"MAIN": (lambda a: sorted(a, reverse=True)),
+		"MAIN": safe_desort,
 		"TYPES": {
 			"a": ["ARRAY NUMBER", "ARRAY STRING", "ARRAY BOOLEAN"]
 		}

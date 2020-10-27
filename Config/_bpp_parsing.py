@@ -128,7 +128,8 @@ def parenthesis_parser(raw, VARIABLES, OUTPUT, var=False):
 					
 					# If it got here, that means the operation was successful and is not out{}
 					result = operation_info[1] # Define the result
-				
+					if type(result) == list: 
+						result = list_to_array(result) # Converts result to b++ array format if operation result is a list
 				elif r != 0: # If there was no matching operation, try to interpret it as a variable
 					# Do this if and only if r != 0, because if r == 0 the expression is outside parentheses, and
 					# variables are not meant to be called outside parentheses even when there's only a variable call
