@@ -3,7 +3,10 @@ from datetime import datetime, timezone
 
 DB_LINK = os.getenv("BRAIN_DB") # Postgres DB link
 
-BRAIN = discord.Client() # The bot object
+intents = discord.Intents.default()
+intents.members = True
+
+BRAIN = discord.Client(intents=intents) # The bot object
 
 CURRENT_HOUR = datetime.now(timezone.utc).hour # For event handler purposes
 
