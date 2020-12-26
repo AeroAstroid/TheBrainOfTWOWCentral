@@ -26,9 +26,13 @@ REQ = []
 db = Database()
 zws = "​"
 
+for wrd in WORDS:
+	if len(wrd) > 6 or len(wrd) < 4:
+		WORDS.remove(wrd)
+		
 async def MAIN(message, args, level, perms, SERVER):
 	if level == 1:
-		totype = " ".join(random.sample(WORDS, random.randrange(45, 61, 1))) # creates list of words
+		totype = " ".join(random.sample(WORDS, 54)) # creates list of words
 
 		# adding zero-width spaces between words to prevent copy+paste
 		spaced_text = ""
