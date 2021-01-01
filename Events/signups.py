@@ -153,10 +153,12 @@ class EVENT:
 			if twow[5] > 0:
 				verified_string = "\n⭐  **FEATURED TWOW!** (<@&488451010319220766>)"
 			
+			twow[3] = twow[3].replace('\n', '\n> ')
+			
 			message = f"""\u200b
 			\u200b{verified_string}
 			📖  **__{twow[0]}__** - Hosted by **{twow[1]}**
-			> {twow[3].replace('\n', '\n> ')}
+			> {twow[3]}
 			{signup_warning}
 			{chosen_emoji}  **Signup Deadline** : **{t_l_string}** `({deadline_string})`
 			📥  **Server Link** : {twow[2]}""".replace("\t", "")
