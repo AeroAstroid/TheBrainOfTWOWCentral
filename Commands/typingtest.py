@@ -50,6 +50,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		msg = await BRAIN.wait_for('message', check=(lambda m: m.channel == message.channel and m.author == message.author))
 		typed_words = msg.content.lower().split(' ')
 		target_words = totype.split(' ')
+		count = len(target_words)
 		success = 0
 		chars = 0
 		duration = round(msg.created_at.timestamp() - float(db.get_entries("typingtest", limit=50, columns=["start"], 
@@ -63,7 +64,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				target_words.remove(word)
 		chars += -1
 		wpm = chars/len(totype) * chars/duration*12 # WPM = CPM / 5
-		if success < 10 or len(typed_words) > len(target_words) + 10:
+		if success < 10 or len(typed_words) > count + 10:
 			await message.channel.send("Typing test cancelled.") # cancel if there was no attempt
 			return
 		else:
