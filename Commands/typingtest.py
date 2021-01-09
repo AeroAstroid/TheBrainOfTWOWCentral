@@ -63,7 +63,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				target_words.remove(word)
 		chars += -1
 		wpm = chars/len(totype) * chars/duration*12 # WPM = CPM / 5
-		if success < 10:
+		if success < 10 or len(typed_words) > len(target_words) + 10:
 			await message.channel.send("Typing test cancelled.") # cancel if there was no attempt
 			return
 		else:
