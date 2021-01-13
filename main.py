@@ -184,7 +184,7 @@ async def on_ready():
 			msg_PREFIX = msg_guild["PREFIX"]
 
 			# Define the user's permissions: 3 = Developer; 2 = Staff; 1 = Member; 0 = Non-member
-			if message.author.id in [184768535107469314, 183331874670641152, 179686717534502913]: perms = 3
+			if message.author.id in [184768535107469314, 183331874670641152, 179686717534502913, 202051164991127552]: perms = 3
 			elif message.author in msg_guild["STAFF_ROLE"].members: perms = 2
 			elif message.author in msg_guild["MEMBER_ROLE"].members: perms = 1
 			else: perms = 0
