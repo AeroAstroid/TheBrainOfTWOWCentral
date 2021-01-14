@@ -30,7 +30,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 	
 
-	if args[1].lower() == "add": # `tc/db main add` creates a table
+	if args[1].lower() == "add": # `tc/db add` creates a table
 
 		if level == 2:
 			await message.channel.send("Include a name for the new table!")
@@ -52,7 +52,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 
 
-	if args[1].lower() == "remove": # `tc/db main remove` deletes (a.k.a. drops) a table
+	if args[1].lower() == "remove": # `tc/db remove` deletes (a.k.a. drops) a table
 
 		if level == 2:
 			await message.channel.send("Include the table you want to remove!")
@@ -66,7 +66,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 	
 
-	if args[1].lower() == "layout": # `tc/db main layout` displays all columns and datatypes of a table
+	if args[1].lower() == "layout": # `tc/db layout` displays all columns and datatypes of a table
 
 		if level == 2:
 			await message.channel.send("Include the table you want to see the layout of!")
@@ -84,7 +84,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 	
 
-	if args[1].lower() == "entries": # `tc/db main entries` Displays, adds or removes entries of a table
+	if args[1].lower() == "entries": # `tc/db entries` Displays, adds or removes entries of a table
 
 		if level == 2:
 			await message.channel.send("Include the table you want to see the layout of!")
