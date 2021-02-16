@@ -94,11 +94,11 @@ async def MAIN(message, args, level, perms, SERVER):
 				await message.channel.send(f"**{program[0]}** (written by {member})")
 				await message.channel.send(f"```{program_code_msg[:1000]}```")
 				await message.channel.send(f"```{program_code_msg[1000:]}```")
-				await message.channel.send(f"Used {program[3]} time{'s' if program[3] != 1 else ''})
+				await message.channel.send(f"Used {program[3]} time{'s' if program[3] != 1 else ''}")
 			else:
 				await message.channel.send(f"**{program[0]}** (written by {member})")
 				await message.channel.send(f"```{program_code_msg}```")
-				await message.channel.send(f"Used {program[3]} time{'s' if program[3] != 1 else ''})
+				await message.channel.send(f"Used {program[3]} time{'s' if program[3] != 1 else ''}")
 		else:
 			await message.channel.send(f"""**{program[0]}** (written by {member})
 			```{program[1]}```
