@@ -87,10 +87,22 @@ async def MAIN(message, args, level, perms, SERVER):
 			member = SERVER["MAIN"].get_member(int(member_id)).name
 		except: # If you can't, just display the ID
 			member = str(member_id)
-
-		await message.channel.send(f"""**{program[0]}** (written by {member})
-		```{program[1]}```
-		Used {program[3]} time{'s' if program[3] != 1 else ''}""".replace("\n", "").replace("\t", ""))
+		
+		if len(program[1]) + 6 >= 1900:
+			program_code_msg = program[1]
+			if len(program_code_msg) >= 1990:
+				await message.channel.send(f"**{program[0]}** (written by {member})")
+				await message.channel.send(f"```{program_code_msg[:1000]}```")
+				await message.channel.send(f"```{program_code_msg[1000:]}```")
+				await message.channel.send(f"Used {program[3]} time{'s' if program[3] != 1 else ''})
+			else:
+				await message.channel.send(f"**{program[0]}** (written by {member})")
+				await message.channel.send(f"```{program_code_msg}```")
+				await message.channel.send(f"Used {program[3]} time{'s' if program[3] != 1 else ''})
+		else:
+			await message.channel.send(f"""**{program[0]}** (written by {member})
+			```{program[1]}```
+			Used {program[3]} time{'s' if program[3] != 1 else ''}""".replace("\n", "").replace("\t", ""))
 		return
 
 	if args[1].lower() == "delete":
