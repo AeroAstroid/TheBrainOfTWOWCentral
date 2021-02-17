@@ -131,7 +131,7 @@ FUNCTIONS = {
 	"?slice?to?": {
 		"MAIN": (lambda a, b, c: a[b-1:c-1]),
 		"TYPES": {
-			"a": ["ARRAY, STRING"],
+			"a": ["ARRAY", "STRING"],
 			"b": ["INTEGER"],
 			"c": ["INTEGER"]
 		},
@@ -263,7 +263,7 @@ def operation_check(block):
 			if possible_op == "out{?}":
 				dot_exp = r"([^\^]{1,})"
 			elif types == ["NUMBER"] or types == ["INTEGER"] or types == ["ARRAY NUMBER"]:
-				dot_exp = r"([^\\A-z]{1,})"
+				dot_exp = r"([^\\A-Za-z]{1,})" # A-z would include square brackets, which are necessary in ARRAY NUMBERs
 			'''if len(strip_alpha(possible_op)) == 0:
 				dot_exp = r"([^\^\\!-\/<-@]{1,})"
 			elif len(types) == 0:
