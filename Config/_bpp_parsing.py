@@ -27,7 +27,9 @@ def parenthesis_parser(raw, VARIABLES, OUTPUT, var=False):
 				backslash = False # End the backslash
 			else: # If it's not backslashed, it's a level rise
 				current_level += 1 # Increase the current level
+
 				expression[current_var_index][1] += "{res}" # There's an operation to solve for this expression now
+
 				expression.append([current_level, "("]) # Add a new expression with the new level
 			continue
 		
@@ -39,9 +41,10 @@ def parenthesis_parser(raw, VARIABLES, OUTPUT, var=False):
 
 			elif current_level == 0: # Throw an error if there's an imbalance in the parenthesis level
 				raise SyntaxError("Unbackslashed closing parentheses without any opening parentheses.")
-				# If it's not backslashed and it's valid...
-				expression[current_var_index][1] += ")" # Append it to the end of the current expression
-				current_level -= 1 # Go a level down
+			
+			# If it's not backslashed and it's valid...
+			expression[current_var_index][1] += ")" # Append it to the end of the current expression
+			current_level -= 1 # Go a level down
 			continue
 		
 		if char == ";":

@@ -24,6 +24,11 @@ def safe_desort(a):
 		raise ValueError('Iterable is too large to be sorted')
 	return sorted(a, reverse=True)
 
+def safe_concat(a, b):
+	if len(a + b) > 500:
+		raise ValueError('Strings are too large to be concatenated')
+	return a + b
+
 FUNCTIONS = {
 
 	# Basic operations
@@ -139,7 +144,7 @@ FUNCTIONS = {
 	},
 
 	"?&?": {
-		"MAIN": (lambda a, b: a + b),
+		"MAIN": safe_concat,
 		"TYPES": {
 			"a": ["ARRAY", "STRING"],
 			"b": ["ARRAY", "STRING"]
