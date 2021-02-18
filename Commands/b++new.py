@@ -4,7 +4,9 @@ from Config._bppnew_parsing import *
 
 from Config._db import Database
 
-import discord, os, re, datetime, time
+import discord, os, re, time
+
+from datetime import datetime as dt
 
 def HELP(PREFIX):
 	return {
@@ -64,7 +66,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				except: # If you can't, just display the ID
 					member = str(member_id)
 
-				created_on = datetime.utcfromtimestamp(program[4]).strftime('%Y-%m-%d %H:%M:%S UTC')
+				created_on = dt.utcfromtimestamp(program[4]).strftime('%Y-%m-%d %H:%M:%S UTC')
 				line += f" (written by {member} at {created_on})\n"
 			
 				beginning += line # Add this line to the final message
@@ -88,8 +90,8 @@ async def MAIN(message, args, level, perms, SERVER):
 		except: # If you can't, just display the ID
 			member = str(member_id)
 		
-		created_on = datetime.utcfromtimestamp(program[4]).strftime('%Y-%m-%d %H:%M:%S UTC')
-		c_d = datetime.datetime.now() - datetime.utcfromtimestamp(program[4])
+		created_on = dt.utcfromtimestamp(program[4]).strftime('%Y-%m-%d %H:%M:%S UTC')
+		c_d = dt.now() - dt.utcfromtimestamp(program[4])
 		c_d = (('' if c_d.days==0 else f'{c_d.days} day{"s" if c_d.days!=1 else ""}, ') +
 		('' if c_d.hours==0 else f'{c_d.hours} hour{"s" if c_d.hours!=1 else ""}, ') +
 		('' if c_d.minutes==0 else f'{c_d.minutes} minute{"s" if c_d.minutes!=1 else ""}, ') +
@@ -99,8 +101,8 @@ async def MAIN(message, args, level, perms, SERVER):
 		msg += f"Created on {created_on} `({c_d} ago)`\n"
 
 		if program[5] != 0:
-			last_used = datetime.utcfromtimestamp(program[5]).strftime('%Y-%m-%d %H:%M:%S UTC')
-			u_d = datetime.datetime.now() - datetime.utcfromtimestamp(program[5])
+			last_used = dt.utcfromtimestamp(program[5]).strftime('%Y-%m-%d %H:%M:%S UTC')
+			u_d = dt.now() - dt.utcfromtimestamp(program[5])
 			u_d = (('' if u_d.days==0 else f'{u_d.days} day{"s" if u_d.days!=1 else ""}, ') +
 			('' if u_d.hours==0 else f'{u_d.hours} hour{"s" if u_d.hours!=1 else ""}, ') +
 			('' if u_d.minutes==0 else f'{u_d.minutes} minute{"s" if u_d.minutes!=1 else ""}, ') +
