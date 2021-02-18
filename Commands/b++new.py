@@ -92,10 +92,15 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 		created_on = dt.utcfromtimestamp(program[4]).strftime('%Y-%m-%d %H:%M:%S UTC')
 		c_d = dt.now() - dt.utcfromtimestamp(program[4])
-		c_d = (('' if c_d.days==0 else f'{c_d.days} day{"s" if c_d.days!=1 else ""}, ') +
-		('' if c_d.hours==0 else f'{c_d.hours} hour{"s" if c_d.hours!=1 else ""}, ') +
-		('' if c_d.minutes==0 else f'{c_d.minutes} minute{"s" if c_d.minutes!=1 else ""}, ') +
-		(f'{c_d.seconds} second{"s" if c_d.seconds!=1 else ""}'))
+
+		d = c_d.days
+		h, rm = divmod(c_d.seconds, 3600)
+		m, s = divmod(rm, 60)
+
+		c_d = (('' if d==0 else f'{d} day{"s" if d!=1 else ""}, ') +
+		('' if h==0 else f'{h} hour{"s" if h!=1 else ""}, ') +
+		('' if m==0 else f'{m} minute{"s" if m!=1 else ""}, ') +
+		(f'{s} second{"s" if s!=1 else ""}'))
 		
 		msg = f"**{program[0]}** -- by {member} -- {program[3]} use{'s' if program[3]!=1 else ''}\n"
 		msg += f"Created on {created_on} `({c_d} ago)`\n"
@@ -103,10 +108,16 @@ async def MAIN(message, args, level, perms, SERVER):
 		if program[5] != 0:
 			last_used = dt.utcfromtimestamp(program[5]).strftime('%Y-%m-%d %H:%M:%S UTC')
 			u_d = dt.now() - dt.utcfromtimestamp(program[5])
-			u_d = (('' if u_d.days==0 else f'{u_d.days} day{"s" if u_d.days!=1 else ""}, ') +
-			('' if u_d.hours==0 else f'{u_d.hours} hour{"s" if u_d.hours!=1 else ""}, ') +
-			('' if u_d.minutes==0 else f'{u_d.minutes} minute{"s" if u_d.minutes!=1 else ""}, ') +
-			(f'{u_d.seconds} second{"s" if u_d.seconds!=1 else ""}'))
+			
+			d = u_d.days
+			h, rm = divmod(u_d.seconds, 3600)
+			m, s = divmod(rm, 60)
+
+			u_d = (('' if d==0 else f'{d} day{"s" if d!=1 else ""}, ') +
+			('' if h==0 else f'{h} hour{"s" if h!=1 else ""}, ') +
+			('' if m==0 else f'{m} minute{"s" if m!=1 else ""}, ') +
+			(f'{s} second{"s" if s!=1 else ""}'))
+
 			msg += f"Last used on {last_used} `({u_d} ago)`\n"
 
 		if len(program[1]) > 1700:
