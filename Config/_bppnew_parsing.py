@@ -36,7 +36,7 @@ def run_bpp_program(code):
 			backslashed = True
 			continue
 
-		if char == "[":
+		if char == "[" and not current[1]:
 			tag_level += 1
 
 			if tag_level == 1:
@@ -83,8 +83,8 @@ def run_bpp_program(code):
 			
 			normal_case = False
 		
-		if char == "]":
-			if not current[1] and current[0] != "":
+		if char == "]" and not current[1]:
+			if current[0] != "":
 				functions[tag_str()].append(current[0])
 				current = ["", False]
 			tag_level -= 1
