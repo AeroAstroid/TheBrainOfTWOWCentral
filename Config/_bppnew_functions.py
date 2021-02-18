@@ -116,9 +116,9 @@ def MATH(a, b, c):
 
 	if b == "*":
 		if abs(a) > 1e50:
-			raise ValueError(f"First parameter of MATH function too large to safely multiply: {safe_cut{a}} (limit 10^50)")
+			raise ValueError(f"First parameter of MATH function too large to safely multiply: {safe_cut(a)} (limit 10^50)")
 		if abs(c) > 1e50:
-			raise ValueError(f"Second parameter of MATH function too large to safely multiply: {safe_cut{a}} (limit 10^50)")
+			raise ValueError(f"Second parameter of MATH function too large to safely multiply: {safe_cut(a)} (limit 10^50)")
 		return a*c
 
 	if b == "/":
