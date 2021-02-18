@@ -124,6 +124,13 @@ def is_float(s):
 			return False
 
 
+# is_number : Simple detection for numbers
+def is_number(s):
+	try: float(s)
+	except: return False
+	return True
+
+
 # key_generator : Generates a random alphanumeric string with variable length
 def key_generator(n):
 	return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(n))

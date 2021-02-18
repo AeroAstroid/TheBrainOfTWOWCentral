@@ -1,0 +1,177 @@
+import random, statistics, re, itertools
+from Config._const import ALPHABET
+from Config._functions import is_float, is_whole, is_number, strip_alpha, match_count
+import numpy as np
+
+def express_array(l):
+	str_form = " ".join(["\"" + str(a) + "\"" for a in l])
+	return f'[ARRAY {str_form}]'
+
+def safe_cut(s):
+	return str(s)[:15] + ("..." if len(s) > 15 else "")
+
+def ARRAY(*a):
+	return list(a)
+
+def CONCAT(*a):
+	all_type = None
+	
+	for a1 in a:
+		if all_type is None: all_type = type(a1)
+		elif type(a1) != all_type:
+			raise TypeError(f"CONCAT parameters must either be all arrays or all strings")
+	
+	if all_type == str:
+		a = [str(a1) for a1 in a]
+		return ''.join(a)
+	if all_type == list:
+		a = list(itertools.chain(*a))
+		return a
+
+	
+def DEFINE(a, b):
+	if type(a) != str:
+		raise NameError(f"Variable name must be a string: {safe_cut(a)}")
+
+	if re.search(r"[^A-Za-z_0-9]", a) or re.search(r"[0-9]", a[0]):
+		raise NameError(
+		f"Variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
+	
+	return (True, b)
+
+def VAR(a):
+	if type(a) != str:
+		raise NameError(f"Variable name must be a string: {safe_cut(a)}")
+
+	if re.search(r"[^A-Za-z_0-9]", a) or re.search(r"[0-9]", a[0]):
+		raise NameError(
+		f"Variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
+	
+	return (False, a)
+
+def REPEAT(a, b):
+	if not is_whole(b):
+		raise ValueError(f"Second parameter of REPEAT function is not an integer: {safe_cut(b)}")
+	a = str(a)
+	b = int(b)
+
+	return a * b
+
+def CHOOSE(*a):
+	if len(a) == 1:
+		a = a[0]
+	return random.choice(a)
+
+def CHOOSECHAR(a):
+	if type(a) != str:
+		raise ValueError(f"CHOOSECHAR function parameter is not a string: {safe_cut(a)}")
+
+	return random.choice(list(a))
+
+def IF(a, b, c):
+	a = a not in [0, "0"]
+
+	if a:
+		return b
+	else:
+		return c
+
+def COMPARE(a, b, c):
+	operations = [">", "<", ">=", "<=", "!="]
+	if b not in operations:
+		raise ValueError(f"Operation parameter of COMPARE function is not a comparison operator: {safe_cut(b)}")
+
+	if is_number(a): a = float(a)
+	if is_number(c): c = float(c)
+
+	if b == ">": return int(a > c)
+	if b == "<": return int(a < c)
+	if b == ">=": return int(a >= c)
+	if b == "<=": return int(a <= c)
+	if b == "!=": return int(a != c)
+
+def MATH(a, b, c):
+	operations = "+-*/^"
+	if not is_number(a):
+		raise ValueError(f"First parameter of MATH function is not a number: {safe_cut(a)}")
+	if b not in operations:
+		raise ValueError(f"Operation parameter of MATH function not an operation: {safe_cut(b)}")
+	if not is_number(c):
+		raise ValueError(f"Second parameter of MATH function is not a number: {safe_cut(c)}")
+
+	a = int(a) if is_whole(a) else float(a)
+	c = int(c) if is_whole(c) else float(c)
+
+	if b == "+": return a+c
+	if b == "-": return a-c
+	if b == "*": return a*c
+
+	if b == "/":
+		if c == 0: raise ZeroDivisionError(f"Second parameter of MATH function in division cannot be zero")
+		return a/c
+	
+	if b == "^":
+		if abs(a) > 1024:
+			raise ValueError(f"First parameter of MATH function too large to safely exponentiate: {safe_cut(a)} (limit 1024)")
+		if abs(c) > 128:
+			raise ValueError(f"Second parameter of MATH function too large to safely exponentiate: {safe_cut(c)} (limit 128)")
+		return a**c
+
+def RANDINT(a, b):
+	if not is_whole(a):
+		raise ValueError(f"First parameter of RANDINT function is not an integer: {safe_cut(a)}")
+	if not is_whole(b):
+		raise ValueError(f"Second parameter of RANDINT function is not an integer: {safe_cut(b)}")
+
+	ints = [int(a), int(b)]
+	a, b = [min(ints), max(ints)]
+
+	if a == b: b += 1
+
+	return random.randrange(a, b)
+
+def RANDOM(a, b):
+	if not is_number(a):
+		raise ValueError(f"First parameter of RANDOM function is not a number: {safe_cut(a)}")
+	if not is_number(b):
+		raise ValueError(f"Second parameter of RANDOM function is not a number: {safe_cut(b)}")
+
+	a = float(a)
+	b = float(b)
+
+	return random.uniform(a, b)
+
+def ROUND(a):
+	if not is_number(a):
+		raise ValueError(f"ROUND function parameter is not a number: {safe_cut(a)}")
+	
+	return int(round(float(a)))
+
+def FLOOR(a):
+	if not is_number(a):
+		raise ValueError(f"FLOOR function parameter is not a number: {safe_cut(a)}")
+	
+	return int(a)
+
+def CEIL(a):
+	if not is_number(a):
+		raise ValueError(f"CEIL function parameter is not a number: {safe_cut(a)}")
+	
+	return np.ceil(a)
+
+FUNCTIONS = {
+	"MATH": MATH,
+	"RANDINT": RANDINT,
+	"RANDOM": RANDOM,
+	"FLOOR": FLOOR,
+	"CEIL": CEIL,
+	"COMPARE": COMPARE,
+	"IF": IF,
+	"CHOOSE": CHOOSE,
+	"CHOOSECHAR": CHOOSECHAR,
+	"REPEAT": REPEAT,
+	"DEFINE": DEFINE,
+	"VAR": VAR,
+	"CONCAT": CONCAT,
+	"ARRAY": ARRAY
+}
