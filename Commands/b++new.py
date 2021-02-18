@@ -4,7 +4,7 @@ from Config._bppnew_parsing import *
 
 from Config._db import Database
 
-import discord
+import discord, os
 
 def HELP(PREFIX):
 	return {
@@ -18,7 +18,7 @@ def HELP(PREFIX):
 	}
 
 PERMS = 1 # Member
-ALIASES = ["TAGNEW"]
+ALIASES = ["TAGNEW", "NEWB++", "NEWTAG"]
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
@@ -27,7 +27,19 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 	
 	if args[1].lower() == "run":
-		program = " ".join(args[2:])
+		if len(args) > 2:
+			program = " ".join(args[2:])
+
+		elif len(message.attachments) != 0:
+			try:
+				await message.attachments[0].save(f"Config/{message.id}.txt")
+			except Exception:
+				await message.channel.send("Include a valid program!")
+				return
+			
+			program = open(f"Config/{message.id}.txt", "r", encoding="utf-8").read()
+			os.remove(f"Config/{message.id}.txt")
+
 
 		while program.startswith("`") and program.endswith("`"):
 			program = program[1:-1]

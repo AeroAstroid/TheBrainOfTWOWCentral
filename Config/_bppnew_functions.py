@@ -52,7 +52,9 @@ def VAR(a):
 def REPEAT(a, b):
 	if not is_whole(b):
 		raise ValueError(f"Second parameter of REPEAT function is not an integer: {safe_cut(b)}")
-	a = str(a)
+
+	if type(a) != list:
+		a = str(a)
 	b = int(b)
 
 	return a * b
@@ -83,6 +85,9 @@ def COMPARE(a, b, c):
 
 	if is_number(a): a = float(a)
 	if is_number(c): c = float(c)
+
+	if type(a) != type(c):
+		raise TypeError(f"Entries to compare in COMPARE function are not the same type")
 
 	if b == ">": return int(a > c)
 	if b == "<": return int(a < c)
@@ -151,13 +156,13 @@ def FLOOR(a):
 	if not is_number(a):
 		raise ValueError(f"FLOOR function parameter is not a number: {safe_cut(a)}")
 	
-	return int(a)
+	return int(float(a))
 
 def CEIL(a):
 	if not is_number(a):
 		raise ValueError(f"CEIL function parameter is not a number: {safe_cut(a)}")
 	
-	return np.ceil(a)
+	return np.ceil(float(a))
 
 FUNCTIONS = {
 	"MATH": MATH,
@@ -165,6 +170,7 @@ FUNCTIONS = {
 	"RANDOM": RANDOM,
 	"FLOOR": FLOOR,
 	"CEIL": CEIL,
+	"ROUND", ROUND,
 	"COMPARE": COMPARE,
 	"IF": IF,
 	"CHOOSE": CHOOSE,

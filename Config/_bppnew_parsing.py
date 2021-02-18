@@ -111,8 +111,6 @@ def run_bpp_program(code):
 		
 		tag_code = tag_code[:tag_level]
 		tag_code += [1] * (tag_level - len(tag_code))
-	
-	print(functions)
 
 	VARIABLES = {}
 
