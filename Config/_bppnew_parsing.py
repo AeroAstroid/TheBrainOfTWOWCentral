@@ -69,12 +69,17 @@ def run_bpp_program(code):
 
 				found_f = ""
 
+				tag_function = ''.join(code[ind+1:ind+len(f_name)+2]).upper()
+
 				for f_name in FUNCTIONS.keys():
 					try:
-						if ''.join(code[ind+1:ind+len(f_name)+2]).upper() == f_name + " ":
+						if tag_function == f_name + " ":
 							found_f = f_name
 							goto = ind + len(f_name) + 2
 					except IndexError: pass
+				
+				if found_f == "":
+					raise NameError(f"Function {tag_function[:-1]} doesn't exist")
 
 				functions[new_tag_code] = [found_f]
 				functions[tag_str()].append((new_tag_code,))

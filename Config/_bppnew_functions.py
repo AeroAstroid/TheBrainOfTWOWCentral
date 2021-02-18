@@ -10,6 +10,13 @@ def express_array(l):
 def safe_cut(s):
 	return str(s)[:15] + ("..." if len(s) > 15 else "")
 
+def INDEX(a, b):
+	if type(a) not in [list, str]:
+		raise TypeError(f"First parameter of INDEX function must be a string or an array: {safe_cut(a)}")
+	if not is_whole(b):
+		raise TypeError(f"Second parameter of INDEX function must be an integer: {safe_cut(b)}")
+	return a[b]
+
 def ARRAY(*a):
 	return list(a)
 
@@ -19,7 +26,7 @@ def CONCAT(*a):
 	for a1 in a:
 		if all_type is None: all_type = type(a1)
 		elif type(a1) != all_type:
-			raise TypeError(f"CONCAT parameters must either be all arrays or all strings")
+			raise TypeError("CONCAT parameters must either be all arrays or all strings")
 	
 	if all_type == str:
 		a = [str(a1) for a1 in a]
@@ -189,5 +196,6 @@ FUNCTIONS = {
 	"DEFINE": DEFINE,
 	"VAR": VAR,
 	"CONCAT": CONCAT,
-	"ARRAY": ARRAY
+	"ARRAY": ARRAY,
+	"INDEX": INDEX
 }
