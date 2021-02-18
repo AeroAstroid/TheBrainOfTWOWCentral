@@ -57,6 +57,9 @@ def REPEAT(a, b):
 		a = str(a)
 	b = int(b)
 
+	if b > 1024:
+		raise ValueError(f"Second parameter of REPEAT function is too large: {safe_cut(b)} (limit 1024)")
+
 	return a * b
 
 def CHOOSE(*a):
@@ -79,7 +82,7 @@ def IF(a, b, c):
 		return c
 
 def COMPARE(a, b, c):
-	operations = [">", "<", ">=", "<=", "!="]
+	operations = [">", "<", ">=", "<=", "!=", "="]
 	if b not in operations:
 		raise ValueError(f"Operation parameter of COMPARE function is not a comparison operator: {safe_cut(b)}")
 
@@ -94,6 +97,7 @@ def COMPARE(a, b, c):
 	if b == ">=": return int(a >= c)
 	if b == "<=": return int(a <= c)
 	if b == "!=": return int(a != c)
+	if b == "=": return int(a == c)
 
 def MATH(a, b, c):
 	operations = "+-*/^"
@@ -109,7 +113,13 @@ def MATH(a, b, c):
 
 	if b == "+": return a+c
 	if b == "-": return a-c
-	if b == "*": return a*c
+
+	if b == "*":
+		if abs(a) > 1e50:
+			raise ValueError(f"First parameter of MATH function too large to safely multiply: {safe_cut{a}} (limit 10^50)")
+		if abs(c) > 1e50:
+			raise ValueError(f"Second parameter of MATH function too large to safely multiply: {safe_cut{a}} (limit 10^50)")
+		return a*c
 
 	if b == "/":
 		if c == 0: raise ZeroDivisionError(f"Second parameter of MATH function in division cannot be zero")
