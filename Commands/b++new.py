@@ -280,9 +280,10 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send(f"There's no program under the name `{tag_name}`!")
 			return
 		
-		program = tag_list[1]
+		tag_info = [x for x in tag_list if x[0] == tag_name][0]
+		program = tag_info[1]
 
-		uses += 1
+		uses = tag_info[2] + 1
 		db.edit_entry("b++2programs", entry={"uses": uses, "lastused": time.time()}, conditions={"name": tag_name})
 
 		
