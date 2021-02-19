@@ -274,11 +274,13 @@ async def MAIN(message, args, level, perms, SERVER):
 		program = program.replace("{}", "\v")
 
 		program_args = []
+
+		author = message.author.id
 	
 	else:
 		tag_name = args[1]
 
-		tag_list = db.get_entries("b++2programs", columns=["name", "program", "uses"])
+		tag_list = db.get_entries("b++2programs", columns=["name", "program", "author", "uses"])
 
 		if tag_name not in [x[0] for x in tag_list]:
 			await message.channel.send(f"There's no program under the name `{tag_name}`!")
@@ -287,13 +289,15 @@ async def MAIN(message, args, level, perms, SERVER):
 		tag_info = [x for x in tag_list if x[0] == tag_name][0]
 		program = tag_info[1]
 
-		uses = tag_info[2] + 1
+		uses = tag_info[3] + 1
 		db.edit_entry("b++2programs", entry={"uses": uses, "lastused": time.time()}, conditions={"name": tag_name})
 
 		program_args = args[2:]
+
+		author = tag_info[2]
 		
 	try:
-		program_output = run_bpp_program(program, program_args, message.author.id)
+		program_output = run_bpp_program(program, program_args, author)
 		program_output = program_output.replace("<@", "<\\@")
 	except Exception as e:
 		await message.channel.send(f'{type(e).__name__}:\n```{e}```')
