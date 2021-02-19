@@ -272,6 +272,8 @@ async def MAIN(message, args, level, perms, SERVER):
 			program = program[1:-1]
 		
 		program = program.replace("{}", "\v")
+
+		program_args = []
 	
 	else:
 		tag_name = args[1]
