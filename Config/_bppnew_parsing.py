@@ -1,5 +1,9 @@
-from Config._functions import is_whole
-from Config._bppnew_functions import express_array, safe_cut, FUNCTIONS
+try:
+	from Config._functions import is_whole
+	from Config._bppnew_functions import express_array, safe_cut, FUNCTIONS
+except ModuleNotFoundError:
+	from _functions import is_whole
+	from _bppnew_functions import express_array, safe_cut, FUNCTIONS
 
 def run_bpp_program(code):
 	# Pointers for tag and function organization
@@ -56,6 +60,11 @@ def run_bpp_program(code):
 							goto = ind + len(f_name) + 2
 					except IndexError: pass
 				
+				if found_f == "":
+					end_of_f = min(code.find(" ", ind+1), code.find("]", ind+1))
+					called_f = ''.join(code[ind+1:end_of_f])
+					raise NameError(f"Function {called_f} does not exist")
+				
 				functions[tag_str()] = [found_f]
 			
 			else:
@@ -77,8 +86,9 @@ def run_bpp_program(code):
 					except IndexError: pass
 				
 				if found_f == "":
-					called_f = code[ind+1:code.find(" ", start=ind+1)]
-					raise NameError(f"Function {called_f} doesn't exist")
+					end_of_f = min(code.find(" ", ind+1), code.find("]", ind+1))
+					called_f = ''.join(code[ind+1:end_of_f])
+					raise NameError(f"Function {called_f} does not exist")
 
 				functions[new_tag_code] = [found_f]
 				functions[tag_str()].append((new_tag_code,))

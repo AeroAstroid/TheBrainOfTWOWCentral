@@ -1,7 +1,12 @@
 import random, statistics, re, itertools
-from Config._const import ALPHABET
-from Config._functions import is_float, is_whole, is_number, strip_alpha, match_count
 import numpy as np
+
+try:
+	from Config._const import ALPHABET
+	from Config._functions import is_float, is_whole, is_number, strip_alpha, match_count
+except ModuleNotFoundError:
+	from _const import ALPHABET
+	from _functions import is_float, is_whole, is_number, strip_alpha, match_count
 
 def express_array(l):
 	str_form = " ".join(["\"" + str(a) + "\"" for a in l])
