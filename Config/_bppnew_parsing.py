@@ -150,12 +150,12 @@ def run_bpp_program(code, p_args):
 			if result[0] == "d":
 				VARIABLES[args[0]] = result[1]
 				result = ""
-			if result[0] == "v":
+			elif result[0] == "v":
 				try:
 					result = VARIABLES[args[0]]
 				except KeyError:
 					raise NameError(f"No variable by the name {safe_cut(args[0])} defined")
-			if result[0] == "a":
+			elif result[0] == "a":
 				if result[1] >= len(p_args) or -result[1] >= len(p_args) + 1:
 					result = ""
 				else:
