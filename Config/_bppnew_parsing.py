@@ -5,6 +5,7 @@ try:
 except ModuleNotFoundError:
 	from _functions import is_whole
 	from _bppnew_functions import express_array, safe_cut, FUNCTIONS
+	from _db import Database
 
 def run_bpp_program(code, p_args, author):
 	# Pointers for tag and function organization
@@ -176,9 +177,9 @@ def run_bpp_program(code, p_args, author):
 			elif result[0] == "gd":
 				v_name = args[0]
 				if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
-					result[1] = express_array(result[1]) if type(result[1]) == list else result[1]
+					v_value = express_array(result[1]) if type(result[1]) == list else result[1]
 
-					db.add_entry("b++2variables", [v_name, str(result[1]), var_type(result[1]), str(author)])
+					db.add_entry("b++2variables", [v_name, str(v_value), var_type(v_value), str(author)])
 					result = ""
 
 				else:
@@ -227,4 +228,4 @@ if __name__ == "__main__":
 	program = input("Program:\n\t")
 	print("\n")
 	program = program.replace("{}", "\v")
-	print(run_bpp_program(program, [4, 3, 6, 2]))
+	print(run_bpp_program(program, [], 184768535107469314))
