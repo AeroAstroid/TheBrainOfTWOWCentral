@@ -219,7 +219,8 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 		while program.startswith("`") and program.endswith("`"):
 			program = program[1:-1]
-		program.replace("{}", "\t")
+		
+		program = program.replace("{}", "\v")
 		
 		db.edit_entry("b++2programs", entry={"program": program}, conditions={"name": tag_name})
 		await message.channel.send(f"Succesfully edited program {tag_name}!")
@@ -269,7 +270,8 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		while program.startswith("`") and program.endswith("`"):
 			program = program[1:-1]
-		program.replace("{}", "\t")
+		
+		program = program.replace("{}", "\v")
 	
 	else:
 		tag_name = args[1]

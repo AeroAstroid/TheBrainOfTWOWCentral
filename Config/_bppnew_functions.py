@@ -15,7 +15,7 @@ def INDEX(a, b):
 		raise TypeError(f"First parameter of INDEX function must be a string or an array: {safe_cut(a)}")
 	if not is_whole(b):
 		raise TypeError(f"Second parameter of INDEX function must be an integer: {safe_cut(b)}")
-	return a[b]
+	return a[int(b)]
 
 def ARRAY(*a):
 	return list(a)

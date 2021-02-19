@@ -125,6 +125,8 @@ def run_bpp_program(code):
 		args = v[1:]
 
 		for i, a in enumerate(args):
+			if v[0] == "IF" and is_whole(v[1]) and int(v[1]) != 2-i:
+				continue
 			if type(a) == tuple:
 				k1 = a[0]
 				functions[k][i+1] = evaluate_result(k1)
@@ -155,9 +157,12 @@ def run_bpp_program(code):
 			if type(v) == list: v = express_array(v)
 			results.append(v)
 
-	return output.format(*results)
+	output = output.replace("{}", "\t").replace("{", "{{").replace("}", "}}").replace("\t", "{}")
+
+	return output.format(*results).replace("\v", "{}")
 
 if __name__ == "__main__":
 	program = input("Program:\n\t")
 	print("\n")
+	program = program.replace("{}", "\v")
 	print(run_bpp_program(program))
