@@ -293,7 +293,8 @@ async def MAIN(message, args, level, perms, SERVER):
 		program_args = args[2:]
 		
 	try:
-		program_output = run_bpp_program(program, program_args).replace("<@", "<\\@")
+		program_output = run_bpp_program(program, program_args, message.author.id)
+		program_output = program_output.replace("<@", "<\\@")
 	except Exception as e:
 		await message.channel.send(f'{type(e).__name__}:\n```{e}```')
 		return

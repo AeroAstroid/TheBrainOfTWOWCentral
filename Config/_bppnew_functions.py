@@ -15,6 +15,8 @@ def express_array(l):
 def safe_cut(s):
 	return str(s)[:15] + ("..." if len(s) > 15 else "")
 
+def COMMENT(*a): return ""
+
 def ABS(a):
 	if not is_number(a):
 		raise TypeError(f"Parameter of ABS function must be a number: {safe_cut(a)}")
@@ -51,6 +53,26 @@ def ARGS(a):
 		raise ValueError(f"ARGS function index must be an integer: {safe_cut(a)}")
 	
 	return ("a", int(a))
+
+def GLOBALDEFINE(a, b):
+	if type(a) != str:
+		raise NameError(f"Global variable name must be a string: {safe_cut(a)}")
+
+	if re.search(r"[^A-Za-z_0-9]", a) or re.search(r"[0-9]", a[0]):
+		raise NameError(
+		f"Global variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
+	
+	return ("gd", b)
+
+def GLOBALVAR(a):
+	if type(a) != str:
+		raise NameError(f"Global variable name must be a string: {safe_cut(a)}")
+
+	if re.search(r"[^A-Za-z_0-9]", a) or re.search(r"[0-9]", a[0]):
+		raise NameError(
+		f"Global variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
+	
+	return ("gv", a)
 
 def DEFINE(a, b):
 	if type(a) != str:
@@ -215,5 +237,8 @@ FUNCTIONS = {
 	"ARRAY": ARRAY,
 	"INDEX": INDEX,
 	"ARGS": ARGS,
-	"ABS": ABS
+	"ABS": ABS,
+	"#": COMMENT,
+	"GLOBAL DEFINE": GLOBALDEFINE,
+	"GLOBAL VAR": GLOBALVAR
 }

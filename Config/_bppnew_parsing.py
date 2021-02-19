@@ -1,11 +1,12 @@
 try:
 	from Config._functions import is_whole
 	from Config._bppnew_functions import express_array, safe_cut, FUNCTIONS
+	from Config._db import Database
 except ModuleNotFoundError:
 	from _functions import is_whole
 	from _bppnew_functions import express_array, safe_cut, FUNCTIONS
 
-def run_bpp_program(code, p_args):
+def run_bpp_program(code, p_args, author):
 	# Pointers for tag and function organization
 	tag_level = 0
 	tag_code = []
@@ -130,6 +131,15 @@ def run_bpp_program(code, p_args):
 
 	base_keys = [k for k in functions if is_whole(k)]
 
+	db = Database()
+	
+	type_list = [int, float, str, list]
+	def var_type(v):
+		try:
+			return type_list.index(type(v))
+		except IndexError:
+			raise TypeError(f"Value {safe_cut(v)} could not be attributed to any valid data type")
+	
 	def evaluate_result(k):
 		v = functions[k]
 		args = v[1:]
@@ -150,16 +160,52 @@ def run_bpp_program(code, p_args):
 			if result[0] == "d":
 				VARIABLES[args[0]] = result[1]
 				result = ""
+
 			elif result[0] == "v":
 				try:
 					result = VARIABLES[args[0]]
 				except KeyError:
 					raise NameError(f"No variable by the name {safe_cut(args[0])} defined")
+
 			elif result[0] == "a":
 				if result[1] >= len(p_args) or -result[1] >= len(p_args) + 1:
 					result = ""
 				else:
 					result = p_args[result[1]]
+
+			elif result[0] == "gd":
+				v_name = args[0]
+				if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
+					result[1] = express_array(result[1]) if type(result[1]) == list else result[1]
+
+					db.add_entry("b++2variables", [v_name, str(result[1]), var_type(result[1]), str(author)])
+					result = ""
+
+				else:
+					v_list = db.get_entries("b++2variables", columns=["name", "owner"])
+					v_owner = [v for v in v_list if v_name == v[0]][0][1]
+
+					if v_owner != str(author):
+						raise PermissionError(
+						f"Only the author of the {v_name} variable can edit its value ({v_owner})")
+					
+					db.edit_entry(
+						"b++2variables",
+						entry={"value": str(result[1]), "type": var_type(result[1])},
+						conditions={"name": v_name})
+					result = ""
+				
+			elif result[0] == "gv":
+				v_name = args[0]
+
+				if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
+					raise NameError(f"No global variable by the name {safe_cut(v_name)} defined")
+
+				v_list = db.get_entries("b++2variables", columns=["name", "value", "type"])
+				v_value, v_type = [v[1:3] for v in v_list if v[0] == v_name][0]
+				v_value = type_list[v_type](v_value)
+
+				result = v_value
 		
 		functions[k] = result
 		return result
