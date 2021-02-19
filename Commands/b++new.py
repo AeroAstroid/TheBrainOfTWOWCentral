@@ -288,9 +288,10 @@ async def MAIN(message, args, level, perms, SERVER):
 		uses = tag_info[2] + 1
 		db.edit_entry("b++2programs", entry={"uses": uses, "lastused": time.time()}, conditions={"name": tag_name})
 
+		program_args = args[2:]
 		
 	try:
-		program_output = run_bpp_program(program).replace("<@", "<\\@")
+		program_output = run_bpp_program(program, program_args).replace("<@", "<\\@")
 	except Exception as e:
 		await message.channel.send(f'{type(e).__name__}:\n```{e}```')
 		return

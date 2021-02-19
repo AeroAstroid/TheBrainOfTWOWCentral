@@ -5,7 +5,7 @@ except ModuleNotFoundError:
 	from _functions import is_whole
 	from _bppnew_functions import express_array, safe_cut, FUNCTIONS
 
-def run_bpp_program(code):
+def run_bpp_program(code, p_args):
 	# Pointers for tag and function organization
 	tag_level = 0
 	tag_code = []
@@ -111,7 +111,7 @@ def run_bpp_program(code):
 					current = ["", False]
 				normal_case = False
 		
-		if char == "\"":
+		if char in '"“”':
 			if current[0] == "" and not current[1]:
 				current[1] = True
 			elif current[1]:
@@ -145,15 +145,21 @@ def run_bpp_program(code):
 		
 		result = FUNCTIONS[v[0]](*args)
 
+		# Tuples indicate special behavior necessary
 		if type(result) == tuple:
-			if result[0]:
+			if result[0] == "d":
 				VARIABLES[args[0]] = result[1]
 				result = ""
-			else:
+			if result[0] == "v":
 				try:
 					result = VARIABLES[args[0]]
 				except KeyError:
 					raise NameError(f"No variable by the name {safe_cut(args[0])} defined")
+			if result[0] == "a":
+				if result[1] >= len(p_args) or -result[1] >= len(p_args) + 1:
+					result = ""
+				else:
+					result = p_args[result[1]]
 		
 		functions[k] = result
 		return result
@@ -175,4 +181,4 @@ if __name__ == "__main__":
 	program = input("Program:\n\t")
 	print("\n")
 	program = program.replace("{}", "\v")
-	print(run_bpp_program(program))
+	print(run_bpp_program(program, [4, 3, 6, 2]))

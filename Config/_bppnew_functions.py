@@ -40,7 +40,12 @@ def CONCAT(*a):
 		a = list(itertools.chain(*a))
 		return a
 
+def ARGS(a):
+	if not is_whole(a):
+		raise ValueError(f"ARGS function index must be an integer: {safe_cut(a)}")
 	
+	return ("a", int(a))
+
 def DEFINE(a, b):
 	if type(a) != str:
 		raise NameError(f"Variable name must be a string: {safe_cut(a)}")
@@ -49,7 +54,7 @@ def DEFINE(a, b):
 		raise NameError(
 		f"Variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
 	
-	return (True, b)
+	return ("d", b)
 
 def VAR(a):
 	if type(a) != str:
@@ -59,7 +64,7 @@ def VAR(a):
 		raise NameError(
 		f"Variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
 	
-	return (False, a)
+	return ("v", a)
 
 def REPEAT(a, b):
 	if not is_whole(b):
@@ -202,5 +207,6 @@ FUNCTIONS = {
 	"VAR": VAR,
 	"CONCAT": CONCAT,
 	"ARRAY": ARRAY,
-	"INDEX": INDEX
+	"INDEX": INDEX,
+	"ARGS": ARGS
 }
