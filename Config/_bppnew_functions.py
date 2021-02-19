@@ -15,6 +15,12 @@ def express_array(l):
 def safe_cut(s):
 	return str(s)[:15] + ("..." if len(s) > 15 else "")
 
+def ABS(a):
+	if not is_number(a):
+		raise TypeError(f"Parameter of ABS function must be a number: {safe_cut(a)}")
+
+	return abs(int(a) if is_whole(a) else float(a))
+
 def INDEX(a, b):
 	if type(a) not in [list, str]:
 		raise TypeError(f"First parameter of INDEX function must be a string or an array: {safe_cut(a)}")
@@ -208,5 +214,6 @@ FUNCTIONS = {
 	"CONCAT": CONCAT,
 	"ARRAY": ARRAY,
 	"INDEX": INDEX,
-	"ARGS": ARGS
+	"ARGS": ARGS,
+	"ABS": ABS
 }
