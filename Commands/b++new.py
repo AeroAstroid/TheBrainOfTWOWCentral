@@ -157,7 +157,12 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		elif len(message.attachments) != 0:
 			try:
+				if message.attachments[0].size >= 20000:
+					await message.channel.send("Your program must be under **20KB**.")
+					return
+				
 				await message.attachments[0].save(f"Config/{message.id}.txt")
+				
 			except Exception:
 				await message.channel.send("Include a valid program to save!")
 				return
@@ -205,7 +210,12 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		elif len(message.attachments) != 0:
 			try:
+				if message.attachments[0].size >= 20000:
+					await message.channel.send("Your program must be under **20KB**.")
+					return
+				
 				await message.attachments[0].save(f"Config/{message.id}.txt")
+
 			except Exception:
 				await message.channel.send("Include a valid program to run!")
 				return
@@ -256,7 +266,12 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		elif len(message.attachments) != 0:
 			try:
+				if message.attachments[0].size >= 20000:
+					await message.channel.send("Your program must be under **20KB**.")
+					return
+
 				await message.attachments[0].save(f"Config/{message.id}.txt")
+
 			except Exception:
 				await message.channel.send("Include a valid program to run!")
 				return
