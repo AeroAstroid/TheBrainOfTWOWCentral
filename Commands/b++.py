@@ -60,7 +60,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				tag_leaderboard = True
 	
 		if tag_leaderboard:
-			beginning = f"```diff\nNew B++ Programs Page {page}\n\n"
+			beginning = f"```diff\nB++ Programs Page {page}\n\n"
 
 			for program in tag_list:
 				r = tag_list.index(program) + 1 + (page - 1) * 10
