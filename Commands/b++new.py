@@ -321,7 +321,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	if len(program_output) > 1950:
 		program_output = "⚠️ `Output too long! First 1900 characters:`\n\n" + program_output[:1900]
 	
-	if len(program_output) == 0: program_output = "\u200b"
+	if len(program_output).strip() == 0: program_output = "\u200b"
 	
 	await message.channel.send(program_output)
 	return

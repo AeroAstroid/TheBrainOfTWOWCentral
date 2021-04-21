@@ -37,6 +37,7 @@ def CONCAT(*a):
 	all_type = None
 	
 	for a1 in a:
+		if type(a1) in [int, float]: a1 = str(a1)
 		if all_type is None: all_type = type(a1)
 		elif type(a1) != all_type:
 			raise TypeError("CONCAT parameters must either be all arrays or all strings")
