@@ -145,6 +145,19 @@ def COMPARE(a, b, c):
 	if b == "!=": return int(a != c)
 	if b == "=": return int(a == c)
 
+def MOD(a, b):
+	if not is_number(a):
+		raise ValueError(f"First parameter of MOD function is not a number: {safe_cut(a)}")
+	if not is_number(b):
+		raise ValueError(f"First parameter of MOD function is not a number: {safe_cut(a)}")
+
+	a = int(a) if is_whole(a) else float(a)
+	b = int(b) if is_whole(b) else float(b)
+
+	if b == 0: raise ZeroDivisionError(f"Second parameter of MOD function cannot be zero")
+
+	return a % b
+
 def MATH(a, b, c):
 	operations = "+-*/^"
 	if not is_number(a):
@@ -241,5 +254,6 @@ FUNCTIONS = {
 	"ABS": ABS,
 	"#": COMMENT,
 	"GLOBAL DEFINE": GLOBALDEFINE,
-	"GLOBAL VAR": GLOBALVAR
+	"GLOBAL VAR": GLOBALVAR,
+	"MOD": MOD
 }
