@@ -1,6 +1,7 @@
 import discord, os
 from datetime import datetime, timezone
 
+WARNING_APP = os.getenv("WARNING_APP") # Link to warning sheet web app
 DB_LINK = os.getenv("BRAIN_DB") # Postgres DB link
 
 intents = discord.Intents.default()
