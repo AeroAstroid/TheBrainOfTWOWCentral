@@ -133,7 +133,7 @@ def run_bpp_program(code, p_args, author):
 	base_keys = [k for k in functions if is_whole(k)]
 
 	db = Database()
-	
+
 	type_list = [int, float, str, list]
 	def var_type(v):
 		try:
@@ -143,6 +143,12 @@ def run_bpp_program(code, p_args, author):
 	
 	def evaluate_result(k):
 		v = functions[k]
+
+		if type(v) == tuple:
+			k1 = v[0]
+			functions[k] = evaluate_result(k1)
+			return functions[k]
+		
 		args = v[1:]
 
 		for i, a in enumerate(args):
@@ -153,7 +159,7 @@ def run_bpp_program(code, p_args, author):
 				functions[k][i+1] = evaluate_result(k1)
 		
 		args = v[1:]
-		
+
 		result = FUNCTIONS[v[0]](*args)
 
 		# Tuples indicate special behavior necessary
@@ -213,6 +219,10 @@ def run_bpp_program(code, p_args, author):
 
 	for k in base_keys:
 		evaluate_result(k)
+	
+	for k in base_keys:
+		if type(functions[k]) == tuple:
+			evaluate_result(k)
 
 	results = []
 	for k, v in functions.items():

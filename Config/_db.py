@@ -1,7 +1,11 @@
 import psycopg2
 from psycopg2 import sql
-from Config._const import DB_LINK
-from Config._functions import grammar_list
+try:
+	from Config._const import DB_LINK
+	from Config._functions import grammar_list
+except ModuleNotFoundError:
+	from _const import DB_LINK
+	from _functions import grammar_list
 
 class Database:
 	def __init__(self):
