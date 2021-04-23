@@ -93,7 +93,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			l_args = line.split(" ")
 			l_args = [l for l in l_args if l != ""]
 
-			if l_args[0].startswith("count"):
+			if l_args[0].lower().startswith("count"):
 				for i in l_args[1:]:
 					if is_whole(i):
 						data["count"] = int(i)
@@ -102,10 +102,10 @@ async def MAIN(message, args, level, perms, SERVER):
 					await message.channel.send(f"Invalid warning count `{' '.join(l_args[1:])}`!")
 					return
 			
-			if l_args[0].startswith("desc"):
+			if l_args[0].lower().startswith("desc"):
 				data["desc"] = ' '.join(l_args[1:])
 			
-			if l_args[0].startswith("proof"):
+			if l_args[0].lower().startswith("proof"):
 				data["proof"] = ' '.join(l_args[1:])
 		
 		if data["count"] == None:
