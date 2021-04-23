@@ -2,3 +2,4 @@ discord.py==1.5.1
 numpy==1.19.2
 Pillow==8.1.1
 psycopg2==2.8.6
+requests==2.23.0
