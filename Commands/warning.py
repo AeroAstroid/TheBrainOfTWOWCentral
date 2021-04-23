@@ -186,6 +186,12 @@ async def MAIN(message, args, level, perms, SERVER):
 					await message.channel.send(f"**{data['name']}** will not be banned.")
 					return
 				
-				await SERVER["MAIN"].ban(matched, reason=f"Acquired a total of {new_count} warnings.")
-
+				try:
+					await SERVER["MAIN"].ban(matched, reason=f"Acquired a total of {new_count} warnings.",
+					delete_message_days=0)
+				except discord.Forbidden:
+					await message.channel.send(f"No permission to ban **{data['name']}**.")
+		
+		else:
+			await message.channel.send(start)
 		return
