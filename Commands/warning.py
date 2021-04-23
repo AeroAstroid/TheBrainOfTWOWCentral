@@ -1,4 +1,4 @@
-import discord, requests
+import discord, requests, asyncio
 from Config._functions import is_whole
 from Config._const import WARNING_APP, BRAIN
 
@@ -121,10 +121,10 @@ async def MAIN(message, args, level, perms, SERVER):
 		s = "" if data["count"] == 1 else "s"
 
 		embed = discord.Embed(color=0x31D8B1)
-		embed.title = f"<@{data['id']}>"
-		embed.description = f"{data['name']}\n{data['id']}"
+		embed.title = f"{data['count']} warning{s}"
+		embed.description = f"{data['name']}\n{data['id']}\n<@{data['id']}>"
 
-		embed.add_field(name=f"{data['count']} warning{s}", value=data['desc'])
+		embed.add_field(name="Description", value=data['desc'], inline=False)
 		embed.add_field(name="Proof", value=data['proof'])
 
 		embed.set_thumbnail(url=matched.avatar_url_as(static_format="png"))
@@ -135,7 +135,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		def check(r, u):
 			return (u == message.author
-			and str(reaction.emoji) in ["🇾","🇳"]
+			and str(r.emoji) in ["🇾","🇳"]
 			and r.message.id == msg.id)
 		
 		try:
@@ -171,7 +171,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			
 			def check(r, u):
 				return (u == message.author
-				and str(reaction.emoji) in ["🇾","🇳"]
+				and str(r.emoji) in ["🇾","🇳"]
 				and r.message.id == msg.id)
 			
 			try:
