@@ -29,7 +29,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send("Include a user to warn along with warning information!")
 			return
 		
-		user = " ".join(args[2:])
+		user = " ".join(args[2:]).strip()
 		if user.startswith("<@") and user.endswith(">"): user = user[2:-1]
 
 		memberbase = SERVER["MAIN"].members
@@ -46,34 +46,28 @@ async def MAIN(message, args, level, perms, SERVER):
 			m_l_names = [n.lower() for n in m_names]
 
 			if user in m_names:
-				print("user in m_names")
 				matched = memberbase[m_names.index(user)]
 			
 			if not matched and user.lower() in m_l_names:
-				print("user in m_l_names")
 				matched = memberbase[m_l_names.index(user.lower())]
 
 		if not matched:
 			start_match = [n for n in m_names if n.startswith(user)]
-			print(start_match)
 			if len(start_match) == 1:
 				matched = memberbase[m_names.index(start_match[0])]
 			
 			else:
 				start_match_l = [n for n in m_l_names if n.startswith(user.lower())]
-				print(start_match_l)
 				if len(start_match_l) == 1:
 					matched = memberbase[m_l_names.index(start_match_l[0])]
 		
 		if not matched:
 			mid_match = [n for n in m_names if user in n]
-			print(mid_match)
 			if len(mid_match) == 1:
 				matched = memberbase[m_names.index(mid_match[0])]
 			
 			else:
 				mid_match_l = [n for n in m_l_names if user.lower() in n]
-				print(mid_match_l)
 				if len(mid_match_l) == 1:
 					matched = memberbase[m_l_names.index(mid_match_l[0])]
 
@@ -83,7 +77,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 		added_info = message.content.split("\n")[1:]
 
-		if level == 3:
+		if len(added_info) == 0:
 			await message.channel.send("Include warning information!")
 			return
 
@@ -92,7 +86,8 @@ async def MAIN(message, args, level, perms, SERVER):
 			"id": str(matched.id),
 			"count": None,
 			"desc": None,
-			"proof": None
+			"proof": None,
+			"newcount": 0,
 		}
 
 		for line in added_info:
