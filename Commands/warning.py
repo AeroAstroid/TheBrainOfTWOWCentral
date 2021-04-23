@@ -21,12 +21,15 @@ async def MAIN(message, args, level, perms, SERVER):
 		await message.channel.send("Include a subcommand!")
 		return
 	
+	args = message.content.split("\n")[0].split(" ")
+	level = len(args)
+
 	if args[1].lower() == "add":
 		if level == 2:
 			await message.channel.send("Include a user to warn along with warning information!")
 			return
 		
-		user = args[2]
+		user = " ".join(args[2:])
 		if user.startswith("<@") and user.endswith(">"): user = user[2:-1]
 
 		memberbase = SERVER["MAIN"].members
@@ -118,6 +121,8 @@ async def MAIN(message, args, level, perms, SERVER):
 			return
 
 		x = requests.post(WARNING_APP, data=data)
+
+		console.log(x.text)
 
 		if not x.ok:
 			await message.channel.send("Something went wrong while sending the HTTP request!")
