@@ -46,42 +46,46 @@ async def MAIN(message, args, level, perms, SERVER):
 			m_l_names = [n.lower() for n in m_names]
 
 			if user in m_names:
+				print("user in m_names")
 				matched = memberbase[m_names.index(user)]
 			
 			if not matched and user.lower() in m_l_names:
+				print("user in m_l_names")
 				matched = memberbase[m_l_names.index(user.lower())]
 
 		if not matched:
 			start_match = [n for n in m_names if n.startswith(user)]
+			print(start_match)
 			if len(start_match) == 1:
 				matched = memberbase[m_names.index(start_match[0])]
 			
 			else:
 				start_match_l = [n for n in m_l_names if n.startswith(user.lower())]
-
+				print(start_match_l)
 				if len(start_match_l) == 1:
 					matched = memberbase[m_l_names.index(start_match_l[0])]
 		
 		if not matched:
 			mid_match = [n for n in m_names if user in n]
+			print(mid_match)
 			if len(mid_match) == 1:
 				matched = memberbase[m_names.index(mid_match[0])]
 			
 			else:
 				mid_match_l = [n for n in m_l_names if user.lower() in n]
-
+				print(mid_match_l)
 				if len(mid_match_l) == 1:
 					matched = memberbase[m_l_names.index(mid_match_l[0])]
 
 		if not matched:
 			await message.channel.send("Cannot recognize that user as someone in the server!")
 			return
+		
+		added_info = message.content.split("\n")[1:]
 
 		if level == 3:
 			await message.channel.send("Include warning information!")
 			return
-		
-		added_info = message.content.split("\n")[1:]
 
 		data = {
 			"name": f"{matched.name}#{matched.discriminator}",
@@ -122,7 +126,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		x = requests.post(WARNING_APP, data=data)
 
-		console.log(x.text)
+		print(x.text)
 
 		if not x.ok:
 			await message.channel.send("Something went wrong while sending the HTTP request!")
