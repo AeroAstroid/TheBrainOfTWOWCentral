@@ -1,6 +1,6 @@
 import discord, requests
 from Config._functions import is_whole
-from Config._const import WARNING_APP
+from Config._const import WARNING_APP, BRAIN
 
 def HELP(PREFIX):
 	return {
@@ -86,8 +86,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			"id": str(matched.id),
 			"count": None,
 			"desc": None,
-			"proof": None,
-			"newcount": 0,
+			"proof": None
 		}
 
 		for line in added_info:
@@ -119,14 +118,74 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send("Missing the warning proof!")
 			return
 
-		x = requests.post(WARNING_APP, data=data)
+		s = "" if data["count"] == 1 else "s"
 
-		print(x.text)
+		embed = discord.Embed(color=0x31D8B1)
+		embed.title = f"<@{data['id']}>"
+		embed.description = f"{data['name']}\n{data['id']}"
+
+		embed.add_field(name=f"{data['count']} warning{s}", value=data['desc'])
+		embed.add_field(name="Proof", value=data['proof'])
+
+		embed.set_thumbnail(url=matched.avatar_url_as(static_format="png"))
+
+		msg = await message.channel.send("**__Is this information correct?__**", embed=embed)
+		await msg.add_reaction("🇾")
+		await msg.add_reaction("🇳")
+
+		def check(r, u):
+			return (u == message.author
+			and str(reaction.emoji) in ["🇾","🇳"]
+			and r.message.id == msg.id)
+		
+		try:
+			r, _ = await BRAIN.wait_for('reaction_add', timeout=30, check=check)
+		
+		except asyncio.TimeoutError:
+			await message.channel.send("Warning command timed out.")
+			return
+
+		else:
+			if str(r.emoji) == "🇳":
+				await message.channel.send(f"Warning command cancelled.")
+				return
+
+		x = requests.post(WARNING_APP, data=data)
 
 		if not x.ok:
 			await message.channel.send("Something went wrong while sending the HTTP request!")
 			raise ConnectionError(x.text)
 		
-		s = "" if data["count"] == 1 else "s"
-		await message.channel.send(f"Successfully logged {data['count']} warning{s} for **{data['name']}**!")
+		new_count = int(x.text)
+		
+		start = f"Successfully logged **{data['count']}** warning{s} for **{data['name']}**!\n"
+		s = "" if new_count == 1 else "s"
+		start += f"They now have a total of **{new_count}** warning{s}.\n\n"
+
+		if new_count >= 6:
+			start += "__This user has passed the warning ban threshold! **Do you wish to ban them?**__"
+
+			msg = await message.channel.send(start)
+			await msg.add_reaction("🇾")
+			await msg.add_reaction("🇳")
+			
+			def check(r, u):
+				return (u == message.author
+				and str(reaction.emoji) in ["🇾","🇳"]
+				and r.message.id == msg.id)
+			
+			try:
+				r, _ = await BRAIN.wait_for('reaction_add', timeout=30, check=check)
+			
+			except asyncio.TimeoutError:
+				await message.channel.send("Ban function timed out.")
+				return
+			
+			else:
+				if str(r.emoji) == "🇳":
+					await message.channel.send(f"**{data['name']}** will not be banned.")
+					return
+				
+				await SERVER["MAIN"].ban(matched, reason=f"Acquired a total of {new_count} warnings.")
+
 		return
