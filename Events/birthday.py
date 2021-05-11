@@ -114,12 +114,13 @@ class EVENT:
 
 			# Find members whose birthdays just ended in that timezone (one day ago, same timezone = exactly 24h ago)
 			found = self.db.get_entries("birthday", columns=["id"], conditions={"birthday": l_d, "timezone": tz[0]})
+			print("No more birthday:", found)
 			for member in found: # Remove their birthday role, as their birthday just ended
 				await self.SERVER["MAIN"].get_member(int(member[0])).remove_roles(self.BIRTHDAY_ROLE)
 
 			# Now, search for members whose birthday just started (today, in the day-changing timezone = it's midnight)
 			found = self.db.get_entries("birthday", columns=["id"], conditions={"birthday": tz[1], "timezone": tz[0]})
-
+			print("More birthday:", found)
 			if len(found) == 0: # If there are none, return
 				return
 			
@@ -134,6 +135,8 @@ class EVENT:
 
 			found = [x for x in found if x != 0] # Remove those who already had their birthday counted to avoid
 			# birthday ping repeats.
+			
+			print("Actual birthday announcements:", found)
 
 			if len(found) == 0:
 				return # If nobody's birthday is supposed to be announced now, return
