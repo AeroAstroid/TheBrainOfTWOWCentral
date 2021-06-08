@@ -35,7 +35,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	
 	msg = await message.channel.send(f"""Found {len(member_list)} user{s}.
 	**{displayed_list}**
-	{'[...]' if len(member_list} > 5 else ''}""".replace("\t", ""))
+	{'[...]' if len(member_list) > 5 else ''}""".replace("\t", ""))
 																	
 	await msg.add_reaction("🇾")
 	await msg.add_reaction("🇳")
