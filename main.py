@@ -146,7 +146,15 @@ async def on_ready():
 	print(f"\nLogged in at {PARAMS['LOGIN_TIME']} ({PARAMS['LOGIN']})\n")
 
 	await MAIN_SERVER["LOGS"].send(f"> Logged in at {PARAMS['LOGIN_TIME']} ({PARAMS['LOGIN']})")
-
+	
+	@BRAIN.event
+	async def on_member_join(member):
+		if "twitter.com/h0nde" in member.name.lower():
+			try:
+				await member.ban(reason="Raid protection measure")
+			except discord.Forbidden:
+				pass
+	
 	@BRAIN.event
 	async def on_message(message):
 
