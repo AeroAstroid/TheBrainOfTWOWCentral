@@ -27,7 +27,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	search_key = search_key.lower() if ignore_case else search_key
 	
 	usernames = [(m.name.lower() if ignore_case else m.name) for m in SERVER['MAIN'].members]
-	member_list = [SERVER['MAIN'].members[i] for i in len(usernames) if search_key in usernames[i]]
+	member_list = [SERVER['MAIN'].members[i] for i in range(len(usernames)) if search_key in usernames[i]]
 	usernames = [n for n in usernames if search_key in n]
 	
 	displayed_list = '\n'.join(sorted(usernames[:5]))
