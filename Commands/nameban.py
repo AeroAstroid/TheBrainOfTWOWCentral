@@ -1,3 +1,5 @@
+import asyncio, discord
+
 def HELP(PREFIX):
 	return {
 		"COOLDOWN": 1,
