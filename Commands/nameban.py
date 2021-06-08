@@ -30,10 +30,12 @@ async def MAIN(message, args, level, perms, SERVER):
 	member_list = [SERVER['MAIN'].members[i] for i in len(usernames) if search_key in usernames[i]]
 	usernames = [n for n in usernames if search_key in n]
 	
-	
+	displayed_list = '\n'.join(sorted(usernames[:5]))
 	s = '' if len(usernames) == 1 else 's'
-	msg = await message.channel.send(
-	f"Found {len(member_list)} user{s}.\n{'\n'.join(sorted(usernames[:5]))}\n{'[...]' if len(member_list} > 5 else ''}")
+	
+	msg = await message.channel.send(f"""Found {len(member_list)} user{s}.
+	**{displayed_list}**
+	{'[...]' if len(member_list} > 5 else ''}""".replace("\t", ""))
 																	
 	await msg.add_reaction("🇾")
 	await msg.add_reaction("🇳")
