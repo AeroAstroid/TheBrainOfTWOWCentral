@@ -1,4 +1,5 @@
 import asyncio, discord
+from Config._const import BRAIN
 
 def HELP(PREFIX):
 	return {
