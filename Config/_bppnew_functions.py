@@ -135,7 +135,7 @@ def COMPARE(a, b, c):
 	if is_number(a): a = float(a)
 	if is_number(c): c = float(c)
 
-	if type(a) != type(c):
+	if operations.index(b) <= 3 and type(a) != type(c):
 		raise TypeError(f"Entries to compare in COMPARE function are not the same type")
 
 	if b == ">": return int(a > c)
