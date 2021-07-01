@@ -320,7 +320,7 @@ def smart_lookup(needle, haystack, case_ins=True, startofstr=True, substr=True):
 	
 	if case_ins:
 		l_needle = needle.lower()
-		l_needle = [hay.lower() for hay in haystack]
+		l_haystack = [hay.lower() for hay in haystack]
 
 		if l_needle in l_haystack:
 			l_ind = l_haystack.index(l_needle)
