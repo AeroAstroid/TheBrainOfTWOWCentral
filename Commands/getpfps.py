@@ -37,7 +37,7 @@ async def MAIN(message, args, level, perms, SERVER):
         
         ind, name = result
 
-        await message.channel.send(f"URL for **{name}**'s PFP:\n{s_members[ind].avatar_url_as('png')}")
+        await message.channel.send(f"URL for **{name}**'s PFP:\n{s_members[ind].avatar_url_as(format='png')}")
     
     if m == "role":
         role = " ".join(args[2:])
@@ -55,7 +55,7 @@ async def MAIN(message, args, level, perms, SERVER):
         csv_result = ""
         
         for m in s_roles[ind].members:
-            csv_result += f"{m.avatar_url_as('png')},{m.id}\n"
+            csv_result += f"{m.avatar_url_as(format='png')},{m.id}\n"
 
         with open("getpfps.csv", "w", encoding="utf-8") as f:
             f.write(csv_result)
