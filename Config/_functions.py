@@ -312,3 +312,48 @@ def uno_skip():
 		"config": {"0-7": False, "d-skip": True, "start": 7, "no-cards": True}
 	}
 	return uno_info
+
+# smart_lookup : Integrated lookup function that can look for substrings and altered case
+def smart_lookup(needle, haystack, case_ins=True, startofstr=True, substr=True):
+	if needle in haystack:
+		return [haystack.index(needle), needle]
+	
+	if case_ins:
+		l_needle = needle.lower()
+		l_needle = [hay.lower() for hay in haystack]
+
+		if l_needle in l_haystack:
+			l_ind = l_haystack.index(l_needle)
+			return [l_ind, haystack[l_ind]]
+	
+	if startofstr:
+		s_haystack = [hay for hay in haystack if hay.startswith(needle)]
+
+		if len(s_haystack) == 1:
+			s_ind = haystack.index(s_haystack[0])
+			return [s_ind, s_haystack[0]]
+	
+		elif len(s_haystack) == 0 and substr:
+			ss_haystack = [hay for hay in haystack if needle in haystack]
+
+			if len(ss_haystack) == 1:
+				ss_ind = haystack.index(ss_haystack[0])
+				return [ss_ind, ss_haystack[0]]
+	
+	if case_ins and startofstr:
+		sl_haystack = [hay for hay in l_haystack if hay.startswith(l_needle)]
+
+		if len(s_haystack) == 1:
+			sl_ind = l_haystack.index(sl_haystack[0])
+			return [sl_ind, haystack[sl_ind]]
+	
+		elif len(s_haystack) == 0 and substr:
+			ssl_haystack = [hay for hay in l_haystack if needle in haystack]
+
+			if len(ssl_haystack) == 1:
+				ssl_ind = l_haystack.index(ss_haystack[0])
+				return [ssl_ind, haystack[ssl_ind]]
+
+	return False
+	
+	

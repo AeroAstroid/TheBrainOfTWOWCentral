@@ -1,0 +1,54 @@
+import os
+import discord
+from Config._functions import smart_lookup
+
+def HELP(PREFIX):
+	return {
+		"COOLDOWN": 1,
+		"MAIN": "Easy mass-pfp-gathering command for staff use",
+		"FORMAT": "",
+		"CHANNEL": 0,
+		"USAGE": f"""W.I.P.
+		""".replace("\n", "").replace("\t", ""),
+		"CATEGORY" : "Fun"
+	}
+
+PERMS = 2 # Staff
+ALIASES = ["GETPFP", "PFPS", "PFP"]
+REQ = []
+
+async def MAIN(message, args, level, perms, SERVER):
+    if level == 1:
+        await message.channel.send("Include the method to get PFPs by!")
+        return
+    
+    m = args[1].lower()
+
+    if m == "user":
+        user = " ".join(args[2:])
+        s_members = SERVER["MAIN"].members
+        usernames = [m.name for m in s_members]
+
+        ind, name = smart_lookup(user, usernames)
+
+        await message.channel.send(f"URL for **{name}**'s PFP:\n{s_members[ind].avatar_url}")
+    
+    if m == "role":
+        role = " ".join(args[2:])
+        s_roles = SERVER["MAIN"].roles
+        role_names = [r.name for r in s_roles]
+
+        ind, role_name = smart_lookup(role, role_names)
+
+        csv_result = ""
+        
+        for m in s_roles[ind].members:
+            csv_result += f"{m.avatar_url},{m.id}\n"
+
+        with open("getpfps.csv", "w", encoding="utf-8") as f:
+            f.write(csv_result)
+
+        await message.channel.send(f"File containing PFPs of members with the {role_name} role:",
+        file=discord.File("getpfps.csv"))
+        
+        os.remove("getpfps.csv")
