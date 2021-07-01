@@ -29,12 +29,14 @@ async def MAIN(message, args, level, perms, SERVER):
         s_members = SERVER["MAIN"].members
         usernames = [m.name for m in s_members]
 
-        if not (smart_lookup(user, usernames) := result):
+        result = smart_lookup(user, usernames)
+
+        if not result:
             await message.channel.send("Could not narrow that name down to one user!")
             return
         
         ind, name = result
-        
+
         await message.channel.send(f"URL for **{name}**'s PFP:\n{s_members[ind].avatar_url_as('png')}")
     
     if m == "role":
@@ -42,7 +44,9 @@ async def MAIN(message, args, level, perms, SERVER):
         s_roles = SERVER["MAIN"].roles
         role_names = [r.name for r in s_roles]
 
-        if not (smart_lookup(role, role_names) := result):
+        result = smart_lookup(role, role_names)
+
+        if not result:
             await message.channel.send("Could not narrow that name down to one role!")
             return
         
