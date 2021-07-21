@@ -57,9 +57,13 @@ def run_bpp_program(code, p_args, author, runner):
 
 				for f_name in FUNCTIONS.keys():
 					try:
-						if ''.join(code[ind+1:ind+len(f_name)+2]).upper() == f_name + " ":
+						attempted_f = ''.join(code[ind+1:ind+len(f_name)+2]).upper()
+						if attempted_f == f_name + " ":
 							found_f = f_name
 							goto = ind + len(f_name) + 2
+						elif attempted_f == f_name + "]":
+							found_f = f_name
+							goto = ind + len(f_name) + 1
 					except IndexError: pass
 				
 				if found_f == "":
@@ -82,9 +86,13 @@ def run_bpp_program(code, p_args, author, runner):
 
 				for f_name in FUNCTIONS.keys():
 					try:
-						if ''.join(code[ind+1:ind+len(f_name)+2]).upper() == f_name + " ":
+						attempted_f = ''.join(code[ind+1:ind+len(f_name)+2]).upper()
+						if attempted_f == f_name + " ":
 							found_f = f_name
 							goto = ind + len(f_name) + 2
+						elif attempted_f == f_name + "]":
+							found_f = f_name
+							goto = ind + len(f_name) + 1
 					except IndexError: pass
 				
 				if found_f == "":

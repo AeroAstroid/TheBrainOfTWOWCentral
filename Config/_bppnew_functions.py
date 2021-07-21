@@ -61,6 +61,8 @@ def CONCAT(*a):
 	if all_type == list:
 		a = list(itertools.chain(*a))
 		return a
+	else:
+		raise IndexError("Cannot call CONCAT function with no arguments")
 
 def LENGTH(a):
 	if type(a) in [int, float]: a = str(a1)
