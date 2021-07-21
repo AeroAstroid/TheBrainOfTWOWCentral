@@ -17,6 +17,10 @@ def safe_cut(s):
 
 def COMMENT(*a): return ""
 
+def USERNAME(): return ("n", )
+
+def USERID(): return ("id", )
+
 def ABS(a):
 	if not is_number(a):
 		raise TypeError(f"Parameter of ABS function must be a number: {safe_cut(a)}")
@@ -29,6 +33,15 @@ def INDEX(a, b):
 	if not is_whole(b):
 		raise TypeError(f"Second parameter of INDEX function must be an integer: {safe_cut(b)}")
 	return a[int(b)]
+
+def SLICE(a, b, c):
+	if type(a) not in [list, str]:
+		raise TypeError(f"First parameter of SLICE function must be a string or an array: {safe_cut(a)}")
+	if not is_whole(b):
+		raise TypeError(f"Second parameter of SLICE function must be an integer: {safe_cut(b)}")
+	if not is_whole(c):
+		raise TypeError(f"Third parameter of SLICE function must be an integer: {safe_cut(c)}")
+	return a[int(b):int(c)]
 
 def ARRAY(*a):
 	return list(a)
@@ -48,6 +61,10 @@ def CONCAT(*a):
 	if all_type == list:
 		a = list(itertools.chain(*a))
 		return a
+
+def LENGTH(a):
+	if type(a) in [int, float]: a = str(a1)
+	return len(a)
 
 def ARGS(a):
 	if not is_whole(a):
@@ -255,5 +272,9 @@ FUNCTIONS = {
 	"#": COMMENT,
 	"GLOBAL DEFINE": GLOBALDEFINE,
 	"GLOBAL VAR": GLOBALVAR,
-	"MOD": MOD
+	"MOD": MOD,
+	"LENGTH": LENGTH,
+	"USERNAME": USERNAME,
+	"USERID": USERID,
+	"SLICE": SLICE
 }
