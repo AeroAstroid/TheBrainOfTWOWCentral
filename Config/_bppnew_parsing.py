@@ -7,7 +7,7 @@ except ModuleNotFoundError:
 	from _bppnew_functions import express_array, safe_cut, FUNCTIONS
 	from _db import Database
 
-def run_bpp_program(code, p_args, author):
+def run_bpp_program(code, p_args, author, runner):
 	# Pointers for tag and function organization
 	tag_level = 0
 	tag_code = []
@@ -57,9 +57,13 @@ def run_bpp_program(code, p_args, author):
 
 				for f_name in FUNCTIONS.keys():
 					try:
-						if ''.join(code[ind+1:ind+len(f_name)+2]).upper() == f_name + " ":
+						attempted_f = ''.join(code[ind+1:ind+len(f_name)+2]).upper()
+						if attempted_f == f_name + " ":
 							found_f = f_name
 							goto = ind + len(f_name) + 2
+						elif attempted_f == f_name + "]":
+							found_f = f_name
+							goto = ind + len(f_name) + 1
 					except IndexError: pass
 				
 				if found_f == "":
@@ -82,9 +86,13 @@ def run_bpp_program(code, p_args, author):
 
 				for f_name in FUNCTIONS.keys():
 					try:
-						if ''.join(code[ind+1:ind+len(f_name)+2]).upper() == f_name + " ":
+						attempted_f = ''.join(code[ind+1:ind+len(f_name)+2]).upper()
+						if attempted_f == f_name + " ":
 							found_f = f_name
 							goto = ind + len(f_name) + 2
+						elif attempted_f == f_name + "]":
+							found_f = f_name
+							goto = ind + len(f_name) + 1
 					except IndexError: pass
 				
 				if found_f == "":
@@ -213,6 +221,12 @@ def run_bpp_program(code, p_args, author):
 				v_value = type_list[v_type](v_value)
 
 				result = v_value
+
+			elif result[0] == "n":
+				result = runner.username
+
+			elif result[0] == "id":
+				result = runner.id
 		
 		functions[k] = result
 		return result
