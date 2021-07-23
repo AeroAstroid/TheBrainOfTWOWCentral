@@ -65,7 +65,7 @@ def CONCAT(*a):
 		raise IndexError("Cannot call CONCAT function with no arguments")
 
 def LENGTH(a):
-	if type(a) in [int, float]: a = str(a1)
+	if type(a) in [int, float]: a = str(a)
 	return len(a)
 
 def ARGS(a):
