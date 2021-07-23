@@ -223,7 +223,7 @@ def run_bpp_program(code, p_args, author, runner):
 				result = v_value
 
 			elif result[0] == "n":
-				result = runner.username
+				result = runner.name
 
 			elif result[0] == "id":
 				result = runner.id
