@@ -1,4 +1,2 @@
-# TheBrainOfTWOWCentral
-The Brain of TWOW Central
-
-wow this is public now cool
+# B*
+The B* Bot.
