@@ -1,4 +1,4 @@
-# imports
+# imports -- TODO: split this
 from src.interpreter.types.block import Block # import block structure
 import random # used in random and maybe randint?
 import math # used in math functions
@@ -36,7 +36,7 @@ def Expression(block: Block, codebase):
     elif block.function == "RANDINT":
         return random.randint(int(block.children[0].line), int(block.children[1].line)) #TODO: add seeds to these, maybe?
     elif block.function == "RANDOM":
-        return random.uniform(float(block.children[0].line), float(block.children[1].line)) 
+        return random.uniform(float(block.children[0].line), float(block.children[1].line))
     elif block.function == "FLOOR":
         return math.floor(float(block.children[0].line))
     elif block.function == "CEIL":
