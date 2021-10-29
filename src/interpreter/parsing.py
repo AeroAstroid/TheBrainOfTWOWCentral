@@ -5,7 +5,7 @@
 # [DEFINE hello Hello,]
 # [DEFINE world World!]
 # [CONCAT hello world]
-from src.interpreter.block import Block
+from src.interpreter.types.block import Block
 from src.interpreter.expression import Expression
 
 
@@ -31,7 +31,3 @@ def parseCode(code: str):
     print(codebase.variables)
     print(codebase.output)
     return codebase.output
-
-
-def isBlock(code: str):
-    return code[0] == "[" and code[-1] == "]"
