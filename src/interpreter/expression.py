@@ -1,63 +1,65 @@
 # imports -- TODO: split this
-from src.interpreter.types.block import Block # import block structure
-import random # used in random and maybe randint?
-import math # used in math functions
-import time # time
+from typing import List
+
+from src.interpreter.types.block import Block  # import block structure
+import random  # used in random and maybe randint?
+import math  # used in math functions
+import time  # time
+
+
 # expression defining
-def Expression(block: Block, codebase):
-    if block.function == "DEFINE":
-        print("DEFINE", block.debug_print_children())
-        codebase.variables[block.children[0].line] = block.children[1].line
-    elif block.function == "VAR":
-        print("VAR", block.debug_print_children())
-        return codebase.variables[block.children[0].line]
-    elif block.function == "MATH":
+def Expression(block: List, codebase):
+    if block[0] == "DEFINE":
+        codebase.variables[block[1]] = block[2]
         return None
-    elif block.function == "COMPARE":
+    elif block[0] == "VAR":
+        return codebase.variables[block[1]]
+    elif block[0] == "MATH":
         return None
-    elif block.function == "IF":
+    elif block[0] == "COMPARE":
         return None
-    elif block.function == "ARRAY":
+    elif block[0] == "IF":
         return None
-    elif block.function == "CHOOSE":
+    elif block[0] == "ARRAY":
         return None
-    elif block.function == "CHOOSECHAR":
+    elif block[0] == "CHOOSE":
         return None
-    elif block.function == "REPEAT":
+    elif block[0] == "CHOOSECHAR":
         return None
-    elif block.function == "CONCAT":
-        # UNFINISHED
-        print("CONCAT", block.children[0].line, block.children[1].line)
+    elif block[0] == "REPEAT":
+        return None
+    elif block[0] == "CONCAT":
         buffer = ""
-        for i in block.children:
-            print("CONCAT_i", i.line)
+        for i in block[1:]:
+            print("CONCAT_i", i)
             buffer += Expression(i, codebase)
         return buffer
-    elif block.function == "RANDINT":
-        return random.randint(int(block.children[0].line), int(block.children[1].line)) #TODO: add seeds to these, maybe?
-    elif block.function == "RANDOM":
-        return random.uniform(float(block.children[0].line), float(block.children[1].line))
-    elif block.function == "FLOOR":
-        return math.floor(float(block.children[0].line))
-    elif block.function == "CEIL":
-        return math.ceil(float(block.children[0].line))
-    elif block.function == "ROUND":
+    elif block[0] == "RANDINT":
+        return random.randint(int(block[1]), int(block[2]))  # TODO: add seeds to these, maybe?
+    elif block[0] == "RANDOM":
+        return random.uniform(float(block[1]), float(block[2]))
+    elif block[0] == "FLOOR":
+        return math.floor(float(block[1]))
+    elif block[0] == "CEIL":
+        return math.ceil(float(block[1]))
+    elif block[0] == "ROUND":
         return None
-    elif block.function == "INDEX":
+    elif block[0] == "INDEX":
         return None
-    elif block.function == "ABS":
-        return math.fabs(float(block.children[0].line))
-    elif block.function == "ARGS":
+    elif block[0] == "ABS":
+        return math.fabs(float(block[1]))
+    elif block[0] == "ARGS":
         return None
-    elif block.function == "GLOBAL" and block[1] == "DEFINE":
+    elif block[0] == "GLOBAL" and block[1] == "DEFINE":
         return None
-    elif block.function == "GLOBAL" and block[1] == "VAR":
+    elif block[0] == "GLOBAL" and block[1] == "VAR":
         return None
-    elif block.function == "#":
-        return None # this is comments
-    elif block.function == "MOD":
+    elif block[0] == "#":
+        return None  # this is comments
+    elif block[0] == "MOD":
         return None
-    elif block.function == "TIME":
-        return math.round(time.time() + (float(block.children[0].line) * 3600), int(block.children[1].line)) # miniDOCs: arg1 is hour offset, arg2 is decimals to round to
+    elif block[0] == "TIME":
+        return math.round(time.time() + (float(block[1]) * 3600),
+                          int(block[2]))  # miniDOCs: arg1 is hour offset, arg2 is decimals to round to
     else:
-        return block.function
+        return block[0]

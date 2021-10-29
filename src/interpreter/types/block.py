@@ -26,15 +26,15 @@ class Block:
             child_blocks = self.line.split(" ")
 
             print("cb|", child_blocks)
-            for i, child in enumerate(child_blocks):
-                if isBlock(child):
-                    # If opening bracket
-                    # If closing bracket
-                if isLiteral(child):
-                    # If opening bracket
-                    # If closing bracket
-                if isNumber(child):
-                    self.children.append(Number())
+            # for i, child in enumerate(child_blocks):
+            #     if isBlock(child):
+            #         # If opening bracket
+            #         # If closing bracket
+            #     if isLiteral(child):
+            #         # If opening bracket
+            #         # If closing bracket
+            #     if isNumber(child):
+                    # self.children.append(Number())
 
     def debug_print_children(self):
         return "".join(map(lambda child: child.line + " ", self.children))

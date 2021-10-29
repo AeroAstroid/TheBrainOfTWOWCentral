@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 import datetime, time #uptime
 
-from src.interpreter.parsing import parseCode
+from src.interpreter.parsing import runCode
 
 intents = discord.Intents.default()
 intents.members = True
@@ -23,7 +23,7 @@ async def on_ready():
 @bot.command()
 async def run(ctx, *, message):
     """Run B* code"""
-    output = parseCode(message)
+    output = runCode(message)
     await ctx.send(output)
 
 @bot.command()
