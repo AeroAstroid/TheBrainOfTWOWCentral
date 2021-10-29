@@ -35,7 +35,7 @@ async def ping(ctx):
 async def uptime(ctx):
     """Responds with uptime."""
     uptime = str(datetime.timedelta(seconds=int(round(time.time()-startTime))))
-    await ctx.send("Uptime: " + uptime)
+    await ctx.send("Uptime: " + str(uptime) + " ms")
 
 
 load_dotenv()
