@@ -29,13 +29,13 @@ async def run(ctx, *, message):
 @bot.command()
 async def ping(ctx):
     """Pings the bot"""
-    await ctx.send("pong! " + bot.latency)
+    await ctx.send("pong! " + str(round(bot.latency, 2)) + "ms")
 
 @bot.command()
 async def uptime(ctx):
     """Responds with uptime."""
     uptime = str(datetime.timedelta(seconds=int(round(time.time()-startTime))))
-    await ctx.send("Uptime: " + str(uptime) + " ms")
+    await ctx.send("Uptime: " + uptime)
 
 
 load_dotenv()
