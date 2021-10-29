@@ -18,7 +18,7 @@ def Expression(block: Block, codebase):
         return None
     elif block.function == "CHOOSE":
         return None
-    elif block.function == "CHOSECHAR":
+    elif block.function == "CHOOSECHAR":
         return None
     elif block.function == "REPEAT":
         return None
