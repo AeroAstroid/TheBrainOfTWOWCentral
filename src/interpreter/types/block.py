@@ -1,13 +1,11 @@
 from typing import List, Union
 
-from src.interpreter.type import isBlock, isLiteral, isNumber
 from src.interpreter.types.literal import Literal
 from src.interpreter.types.numeric import Numeric
 
 
 class Block:
     def __init__(self, line: str, depth):
-
         # Function name
         self.function = line.split(" ", 1)[0][1:]
 
@@ -34,8 +32,7 @@ class Block:
             #         # If opening bracket
             #         # If closing bracket
             #     if isNumber(child):
-                    # self.children.append(Number())
+            # self.children.append(Number())
 
     def debug_print_children(self):
         return "".join(map(lambda child: child.line + " ", self.children))
-
