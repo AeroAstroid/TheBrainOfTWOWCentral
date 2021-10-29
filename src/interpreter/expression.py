@@ -33,9 +33,9 @@ def Expression(block: Block, codebase):
             buffer += Expression(i, codebase)
         return buffer
     elif block.function == "RANDINT":
-        return None
+        return random.randint(int(block.children[0].line), int(block.children[1].line)) #TODO: add seeds to these, maybe?
     elif block.function == "RANDOM":
-        return random.uniform(float(block.children[0].line), float(block.children[1].line)) #should probably test this
+        return random.uniform(float(block.children[0].line), float(block.children[1].line)) 
     elif block.function == "FLOOR":
         return None
     elif block.function == "CEIL":
