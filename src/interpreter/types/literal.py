@@ -3,6 +3,3 @@ class Literal:
         self.value = ""
         print("WIP")
         # TODO: this is for stuff like "abc123"
-    def numericify():
-        print("WIP")
-        # todo
