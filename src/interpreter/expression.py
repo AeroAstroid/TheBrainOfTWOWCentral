@@ -1,7 +1,7 @@
 # imports
 from src.interpreter.block import Block # import block structure
 import random # used in random and maybe randint?
-
+import math # used in math functions
 # expression defining
 def Expression(block: Block, codebase):
     if block.function == "DEFINE":
@@ -37,15 +37,15 @@ def Expression(block: Block, codebase):
     elif block.function == "RANDOM":
         return random.uniform(float(block.children[0].line), float(block.children[1].line))
     elif block.function == "FLOOR":
-        return None
+        return math.floor(float(block.children[0].line))
     elif block.function == "CEIL":
-        return None
+        return math.ceil(float(block.children[0].line))
     elif block.function == "ROUND":
         return None
     elif block.function == "INDEX":
         return None
     elif block.function == "ABS":
-        return None
+        return math.fabs(float(block.children[0].line))
     elif block.function == "ARGS":
         return None
     elif block.function == "GLOBAL" and block[1] == "DEFINE":
