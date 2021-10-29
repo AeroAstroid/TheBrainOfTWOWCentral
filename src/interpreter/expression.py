@@ -17,7 +17,7 @@ def Expression(block: List, codebase):
     elif block[0] == "MATH":
         return None
     elif block[0] == "J":
-        return j * int(block[1]
+        return j * int(block[1])
     elif block[0] == "COMPARE":
         return None
     elif block[0] == "IF":
