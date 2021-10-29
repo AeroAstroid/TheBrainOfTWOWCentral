@@ -2,6 +2,7 @@
 from src.interpreter.block import Block # import block structure
 import random # used in random and maybe randint?
 import math # used in math functions
+import time # time
 # expression defining
 def Expression(block: Block, codebase):
     if block.function == "DEFINE":
@@ -56,5 +57,7 @@ def Expression(block: Block, codebase):
         return None # technically, comments already work by just returning none
     elif block.function == "MOD":
         return None
+    elif block.function == "TIME":
+        return math.round(time.time() + (float(block.children[0].line) * 3600), int(block.children[1].line)) # miniDOCs: arg1 is hour offset, arg2 is decimals to round to
     else:
         return block.function
