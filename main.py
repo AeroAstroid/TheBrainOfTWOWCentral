@@ -1,19 +1,24 @@
 import os
 from dotenv import load_dotenv
 import discord
+from discord.ext import commands
 
+intents = discord.Intents.default()
+intents.members = True
 
-class MyClient(discord.Client):
-    async def on_ready(self):
-        print("Logged on as {0}!".format(self.user))
+bot = commands.Bot(command_prefix="b/", description="B* bot!!", intents=intents)
 
-    async def on_message(self, message):
-        print("Message from {0.author}: {0.content}".format(message))
+@bot.event
+async def on_ready():
+    print('Logged in as')
+    print(bot.user.name)
+    print(bot.user.id)
+    print('------')
 
+@bot.command()
+async def run(ctx, message: str):
+    """Run B* code."""
+    await ctx.send(message)
 
-def main():
-    load_dotenv()
-    client = MyClient()
-    client.run(os.getenv("TOKEN"))
-
-main()
+load_dotenv()
+bot.run(os.getenv("TOKEN"))
