@@ -1,3 +1,3 @@
 # B*
 The B* Bot.
-It do thing. It cool
+It uses a system of coded tags to do things.
