@@ -35,7 +35,7 @@ def Expression(block: Block, codebase):
     elif block.function == "RANDINT":
         return None
     elif block.function == "RANDOM":
-        return random.uniform(block.children[0].line, block.children[1].line) #should probably test this
+        return random.uniform(float(block.children[0].line), float(block.children[1].line)) #should probably test this
     elif block.function == "FLOOR":
         return None
     elif block.function == "CEIL":
