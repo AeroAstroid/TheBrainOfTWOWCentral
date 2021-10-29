@@ -1,6 +1,8 @@
-from src.interpreter.block import Block
+# imports
+from src.interpreter.block import Block # import block structure
+import random # used in random and maybe randint?
 
-
+# expression defining
 def Expression(block: Block, codebase):
     if block.function == "DEFINE":
         print("DEFINE", block.debug_print_children())
@@ -51,8 +53,8 @@ def Expression(block: Block, codebase):
     elif block.function == "GLOBAL" and block[1] == "VAR":
         return None
     elif block.function == "#":
-        return None
+        return None # this is comments
     elif block.function == "MOD":
-        return None
+        return random.uniform(block.children[0].line, block.children[1].line) #should probably test this
     else:
         return block.function
