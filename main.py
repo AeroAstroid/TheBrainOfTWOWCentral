@@ -29,7 +29,7 @@ async def run(ctx, *, message):
 @bot.command()
 async def ping(ctx):
     """Pings the bot"""
-    await ctx.send("pong! " + str(round(bot.latency, 2)) + "ms")
+    await ctx.send("pong! " + str(round(bot.latency*1000, 2)) + "ms")
 
 @bot.command()
 async def uptime(ctx):
