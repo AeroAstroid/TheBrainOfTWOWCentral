@@ -1,5 +1,7 @@
 from typing import List
 
+from src.interpreter.expression import Expression
+
 
 def j(block: List, codebase):
-    return "j" * min(int(block[1]), 50)
+    return "j" * min(Expression(block[1], codebase), 50)
