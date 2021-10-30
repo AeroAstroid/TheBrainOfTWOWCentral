@@ -7,7 +7,7 @@ currently being supported with security updates.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| pre-1.0 | :white_check_mark: |
+| pre-1.0 | yeah, it is.       |
 
 ## Reporting a Vulnerability
 pm **Inferno#3671**
