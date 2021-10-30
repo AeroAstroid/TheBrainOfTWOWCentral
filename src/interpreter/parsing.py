@@ -76,7 +76,7 @@ def runCode(code: str):
         result = Expression(parsed_line, codebase)
         print(result)
         if result is not None:
-            codebase.output += result
+            codebase.output += str(result)
 
     # print(codebase.variables)
     # print(codebase.output)

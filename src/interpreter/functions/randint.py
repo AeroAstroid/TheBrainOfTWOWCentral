@@ -2,6 +2,9 @@ import random
 
 from typing import List
 
+from src.interpreter.expression import Expression
+
 
 def randint(block: List, codebase):
-    return random.randint(int(block[1]), int(block[2]))  # TODO: add seeds to these, maybe?
+    # TODO: add seeds to these, maybe?
+    return random.randint(Expression(block[1], codebase), Expression(block[2], codebase))
