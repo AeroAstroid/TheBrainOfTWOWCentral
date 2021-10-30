@@ -1,21 +1,26 @@
-from src.interpreter.functions.abs import abs_func
+from src.interpreter.functions.math.abs import abs_func
 from src.interpreter.functions.args import args
 from src.interpreter.functions.array import array
-from src.interpreter.functions.ceil import ceil
+from src.interpreter.functions.math.add import add
+from src.interpreter.functions.math.ceil import ceil
 from src.interpreter.functions.choose import choose
 from src.interpreter.functions.choosechar import choosechar
 from src.interpreter.functions.comment import comment
 from src.interpreter.functions.compare import compare
 from src.interpreter.functions.concat import concat
 from src.interpreter.functions.define import define
-from src.interpreter.functions.floor import floor
+from src.interpreter.functions.math.div import div
+from src.interpreter.functions.math.floor import floor
 from src.interpreter.functions.global_define import global_define
 from src.interpreter.functions.global_var import global_var
 from src.interpreter.functions.if_func import if_func
 from src.interpreter.functions.index import index
 from src.interpreter.functions.j import j
-from src.interpreter.functions.math import math
-from src.interpreter.functions.mod import mod
+from src.interpreter.functions.math.math import math
+from src.interpreter.functions.math.mod import mod
+from src.interpreter.functions.math.mul import mul
+from src.interpreter.functions.math.pow import pow_func
+from src.interpreter.functions.math.sub import sub
 from src.interpreter.functions.randint import randint
 from src.interpreter.functions.random_func import random_func
 from src.interpreter.functions.repeat import repeat
@@ -28,12 +33,13 @@ functions = {}
 
 def setupFunctions():
     addFunction("abs", abs_func)
+    addFunction("add", add)
     addFunction("args", args)
     addFunction("array", array)
     addFunction("ceil", ceil)
     addFunction("choose", choose)
     addFunction("choosechar", choosechar)
-    addFunction("#", comment)
+    addFunction("div", div)
     addFunction("compare", compare)
     addFunction("concat", concat)
     addFunction("define", define)
@@ -45,12 +51,16 @@ def setupFunctions():
     addFunction("j", j)
     addFunction("math", math)
     addFunction("mod", mod)
+    addFunction("mul", mul)
+    addFunction("pow", pow_func)
     addFunction("randint", randint)
     addFunction("random", random_func)
     addFunction("repeat", repeat)
     addFunction("round", round_func)
+    addFunction("sub", sub)
     addFunction("time", time)
     addFunction("var", var)
+    addFunction("#", comment)
 
 
 def addFunction(name: str, func):
