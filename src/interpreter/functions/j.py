@@ -4,4 +4,4 @@ from src.interpreter.expression import Expression
 
 
 def j(block: List, codebase):
-    return "j" * min(Expression(block[1], codebase), 250)
+    return "j" * max(min(Expression(block[1], codebase), 250), 1)
