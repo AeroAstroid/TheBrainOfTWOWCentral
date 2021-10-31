@@ -50,6 +50,7 @@ def setupFunctions():
     addFunction("index", index)
     addFunction("j", j)
     addFunction("math", math)
+    addFunction("map", map_func)
     addFunction("mod", mod)
     addFunction("mul", mul)
     addFunction("pow", pow_func)

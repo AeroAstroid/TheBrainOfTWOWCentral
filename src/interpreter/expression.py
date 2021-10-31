@@ -20,7 +20,7 @@ def Expression(block: Union[List, str], codebase):
     blockType = isType(block)
     if blockType == Type.FUNCTION:
         functionWanted = src.interpreter.function_deco.functions.get(block[0])
-        print(functionWanted)
+        # print(functionWanted)
         if functionWanted is not None:
             return functionWanted(block=block, codebase=codebase)
         else:
