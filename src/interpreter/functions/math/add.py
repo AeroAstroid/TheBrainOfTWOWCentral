@@ -8,8 +8,9 @@ def add(block: List, codebase):
     result = 0
 
     for num in items:
-        if type(num) == list:  # Array or String
-            items.extend(Expression(num, codebase))
-        else:
-            result += Expression(str(num), codebase)
+        # if type(num) == list:  # Array or String
+        #     print(Expression(num, codebase))
+        #     items.extend(Expression(num, codebase))
+        # else:
+        result += Expression(num, codebase)
     return result

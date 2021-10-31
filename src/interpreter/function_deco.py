@@ -18,6 +18,7 @@ from src.interpreter.functions.global_var import global_var
 from src.interpreter.functions.if_func import if_func
 from src.interpreter.functions.index import index
 from src.interpreter.functions.j import j
+from src.interpreter.functions.loop import loop
 from src.interpreter.functions.math.math import math
 from src.interpreter.functions.math.mod import mod
 from src.interpreter.functions.math.mul import mul
@@ -51,6 +52,7 @@ def setupFunctions():
     addFunction("if", if_func)
     addFunction("index", index)
     addFunction("j", j)
+    addFunction("loop", loop)
     addFunction("math", math)
     addFunction("map", map_func)
     addFunction("mod", mod)
