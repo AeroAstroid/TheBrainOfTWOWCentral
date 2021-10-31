@@ -69,17 +69,13 @@ def parseCode(program: str):
 def runCode(code: str):
     parsed_code = parseCode(code)
     codebase = Codebase(parsed_code)
-    
-    for statement in codebase.lines:
-        if type(statement) == str:
-            result = statement
-        else:
-            result = Expression(statement, codebase)
-
-        print(result)
+    try:
+        result = Expression(parsed_code[0], codebase)
         if result is not None:
-            codebase.output += str(result)
-
-    # print(codebase.variables)
-    # print(codebase.output)
-    return codebase.output
+            codebase.output = str(result)
+    except Exception as e:
+        codebase.output = "ERROR: " + str(e)
+    finally:
+        # print(codebase.variables)
+        print(codebase.output)
+        return codebase.output
