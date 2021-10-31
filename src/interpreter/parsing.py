@@ -67,13 +67,15 @@ def parseCode(program: str):
 
 
 def runCode(code: str):
-    lines = code.split("\n")
-    codebase = Codebase(lines)
+    parsed_code = parseCode(code)
+    codebase = Codebase(parsed_code)
+    
+    for statement in codebase.lines:
+        if type(statement) == str:
+            result = statement
+        else:
+            result = Expression(statement, codebase)
 
-    for line in codebase.lines:
-        parsed_line = parseCode(line)[0]
-        print(parsed_line)
-        result = Expression(parsed_line, codebase)
         print(result)
         if result is not None:
             codebase.output += str(result)
