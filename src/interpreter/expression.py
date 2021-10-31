@@ -24,12 +24,11 @@ class Type(Enum):
 
     # Special Type used for the elif spam: Its a combination of float and int.
     # 1e9, 5.3e+10
-    EXPONENT = 5
+    # EXPONENT = 5
 
 
 def Expression(block: Union[List, str], codebase):
     # TODO: try/except needed
-    #[
     if block[-1] == "":
         block = block[:-1]
 
@@ -51,8 +50,8 @@ def Expression(block: Union[List, str], codebase):
         return int(block)
     elif blockType == Type.FLOAT:
         return float(block)
-    elif blockType == Type.EXPONENT:
-        return int(float(block))
+    # elif blockType == Type.EXPONENT:
+    #     return int(float(block))
 
 
 def isType(block):
@@ -66,15 +65,15 @@ def isType(block):
         isFloat = False
         isExponent = False
         for char in block:
-            if char in ["e"]:
-                isExponent = True
-            if char in ["."]:
+            # if char in ["e"]:
+            #     isExponent = True
+            if char in [".", "e"]:
                 isFloat = True
             if char not in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "e", "+", "-", "."]:
                 return Type.STRING
 
-        if isExponent:
-            return Type.EXPONENT
+        # if isExponent:
+        #     return Type.EXPONENT
 
         if isFloat:
             return Type.FLOAT
