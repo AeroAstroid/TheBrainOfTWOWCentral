@@ -1,3 +1,5 @@
+# from src.interpreter.functions.func import func
+from src.interpreter.functions.map import map_func
 from src.interpreter.functions.math.abs import abs_func
 from src.interpreter.functions.args import args
 from src.interpreter.functions.array import array
