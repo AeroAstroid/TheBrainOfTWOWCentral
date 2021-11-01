@@ -70,6 +70,7 @@ def parseCode(program: str):
 
 
 def runCode(code: str):
+    # TODO: Trim up to three backticks from beginning and end of code
     parsed_code = parseCode(code)
     codebase = Codebase(parsed_code)
 
