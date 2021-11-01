@@ -4,12 +4,13 @@ from src.interpreter.expression import Expression
 
 
 def add(block: List, codebase):
-    
-    if type(block[1]) == list and block[1][0] == "ARRAY":
-        block = block[1]
-    
-    result = Expression(block[1], codebase)
+    items = block[1:]
+    result = 0
 
-    for num in block[2:]:
+    for num in items:
+        # if type(num) == list:  # Array or String
+        #     print(Expression(num, codebase))
+        #     items.extend(Expression(num, codebase))
+        # else:
         result += Expression(num, codebase)
     return result

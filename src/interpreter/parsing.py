@@ -1,3 +1,5 @@
+from traceback import format_exc
+
 from src.interpreter.expression import Expression
 
 
@@ -67,17 +69,27 @@ def parseCode(program: str):
 
 
 def runCode(code: str):
-    lines = code.split("\n")
-    codebase = Codebase(lines)
+    parsed_code = parseCode(code)
+    codebase = Codebase(parsed_code)
 
-    for line in codebase.lines:
-        parsed_line = parseCode(line)[0]
-        print(parsed_line)
-        result = Expression(parsed_line, codebase)
-        print(result)
-        if result is not None:
-            codebase.output += str(result)
+    for statement in parsed_code:
+        try:
+            if type(statement) == str:
+                result = statement
+            else:
+                result = Expression(statement, codebase)
+
+            print(result)
+            if result is not None:
+                codebase.output += str(result)
+
+        except Exception as e:
+            errmsg = f"ERROR at `{statement}`:\n{e}"
+            print(f"{errmsg}\n\n{format_exc()}") # print stack trace too
+            return errmsg
 
     # print(codebase.variables)
     # print(codebase.output)
+    if len(codebase.output) > 2000:
+        return "ERROR: Output too long!"
     return codebase.output
