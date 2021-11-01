@@ -1,4 +1,5 @@
 from enum import Enum
+from re import compile
 from typing import Union
 from typing import List
 
@@ -53,6 +54,9 @@ def Expression(block: Union[List, str], codebase):
     # elif blockType == Type.EXPONENT:
     #     return int(float(block))
 
+p_int = compile("^[+-]?[0-9]+$")
+p_float = compile("^[0-9]+[e\\.][0-9]+$")
+# p_exponent = compile("^[0-9]+e[0-9]+$")
 
 def isType(block):
     if type(block) == list:
@@ -62,20 +66,13 @@ def isType(block):
             return Type.FUNCTION
     else:
         # TODO: The bruteforce solution; Extremely inefficient
-        isFloat = False
-        isExponent = False
-        for char in block:
-            # if char in ["e"]:
-            #     isExponent = True
-            if char in [".", "e"]:
-                isFloat = True
-            if char not in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "e", "+", "-", "."]:
-                return Type.STRING
+        # Now updated with RegEx!
 
-        # if isExponent:
-        #     return Type.EXPONENT
-
-        if isFloat:
-            return Type.FLOAT
-        else:
+        if p_int.match(block):
             return Type.INTEGER
+        elif p_float.match(block):
+            return Type.FLOAT
+        # elif p_exponent.match(block):
+        #     return Type.EXPONENT
+        else:
+            return Type.STRING
