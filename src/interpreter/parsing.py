@@ -87,7 +87,7 @@ def runCode(code: str):
 
         except Exception as e:
             # dev only, delete these lines in production release (error messages contributed by LegitSi)
-            github_devs = ["Inferno", "Digin", "LegitSi", "Zelo101", "weee50", "woooowoooo"]
+            github_devs = ["Inferno", "Digin", "LegitSi", "Zelo101", "weee50", "woooowoooo"] # only counts people that have made a commit
             unfunny_errmsg = [
                 "GOD FUCKING DAMMIT! **crashing noises**",
                 "Whoops. You broke it.",
@@ -124,7 +124,22 @@ def runCode(code: str):
                 "Scream louder, I think it can hear you!",
                 "Disconnected?! Will attempt to reconnect...",
                 f"Have you considered asking {choice(github_devs)}?",
-                f"{choice(github_devs)} is to blame!"
+                f"{choice(github_devs)} is to blame!",
+                "Aha! I found a technical issue!",
+                "get rekt nerd cope skill issue",
+                "You're starting to look like that Angry German Kid, calm down!",
+                "Take a few deep breaths.. then SCREAM AT THE COMPUTER LOUDLY!",
+                "99% done.. so close!",
+                "It used to work five minutes ago!",
+                "Uhh.. this is awkward..",
+                "Day 527: I still haven't got the bot to work.",
+                "This bot's about as unstable as the Stonk Market.",
+                "[DEFINE broken \"It's broken..\"] [VAR broken]",
+                "You can do it, I believe in you!",
+                "I haven't seen an outage last since long since the Great ROBLOX Outage of 2021.",
+                "You just started working, why are you not working again?!",
+                f"{choice(github_devs)} needs to be fired for this! Or was it {choice(github_devs)} that did this? No, it was obviously {choice(github_devs)}! Wait.. no..",
+                f"{choice(github_devs)} sabotaged the code!"
             ]
             # errmsg = f"ERROR at `{statement}`:\n{e}"
             errmsg = f"{choice(unfunny_errmsg)}\n\nERROR at `{statement}`:\n{e}"
