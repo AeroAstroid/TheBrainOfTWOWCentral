@@ -12,6 +12,7 @@ db = boto3.client(
     "dynamodb",
     aws_access_key_id=os.getenv("DB_ACCESS_KEY"),
     aws_secret_access_key=os.getenv("DB_SECRET_KEY"),
+    region_name="eu-west-2"
 )
 
 # db = s3.Bucket(db_name)
