@@ -1,11 +1,18 @@
 import datetime
+import os
 from typing import Dict, Union
 
 import boto3
 import discord
+from dotenv import load_dotenv
 
+load_dotenv()
 db_name = "b-star"
-db = boto3.client("dynamodb")
+db = boto3.client(
+    "dynamodb",
+    aws_access_key_id=os.getenv("DB_ACCESS_KEY"),
+    aws_secret_access_key=os.getenv("DB_SECRET_KEY"),
+)
 
 # db = s3.Bucket(db_name)
 Response = Dict[str, any]
