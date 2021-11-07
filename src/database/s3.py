@@ -1,40 +1,97 @@
 import datetime
-from typing import Dict
+from typing import Dict, Union
 
 import boto3
 import discord
 
 db_name = "b-star"
-s3 = boto3.client("s3")
-
+db = boto3.client("dynamodb")
 
 # db = s3.Bucket(db_name)
 Response = Dict[str, any]
 
 
-def createTag(user: discord.User, name: str, code: str):
-    s3.put_object(
-        Bucket=db_name,
-        Key=name,
-        Body=code.encode(),
-        Metadata={
-            "ownerid": str(user.id),
-            "creationdate": str(datetime.datetime.utcnow()),
-            "updatedate": str(datetime.datetime.utcnow())
+def getTag(name: str) -> Union[Response, None]:
+    response = db.get_item(
+        TableName=db_name,
+        Key={
+            "name": {"S": name}
         }
     )
+    try:
+        response["Item"]
+    except KeyError:
+        return None
 
-
-def getTag(name: str) -> Response:
-    response = s3.get_object(Bucket=db_name, Key=name)
     return {
-        "body": response["Body"].read().decode(),
-        "meta": response["Metadata"]
+        "name": response["Item"]["name"]["S"],
+        "ownerID": response["Item"]["ownerID"]["N"],
+        "data": response["Item"]["data"]["B"].decode(),
+        "creationDate": response["Item"]["creationDate"]["S"],
+        "updateDate": response["Item"]["updateDate"]["S"],
+        "uses": response["Item"]["uses"]["N"],
     }
 
 
 def tagExists(name: str):
-    print("WIP")
+    return getTag(name) is not None
+
+
+def isOwner(name: str, id: Union[int, str]):
+    return getTag(name)["ownerID"] == str(id)
+
+
+def createTag(user: discord.User, name: str, code: str):
+    db.put_item(
+        TableName=db_name,
+        Item={
+            "name": {"S": name},
+            "ownerID": {"N": str(user.id)},
+            "data": {"B": code.encode()},
+            "creationDate": {"S": str(datetime.datetime.utcnow())},
+            "updateDate": {"S": str(datetime.datetime.utcnow())},
+            "uses": {"N": str(0)},
+        }
+    )
+
+
+def updateTag(name: str):
+    db.update_item(
+        TableName=db_name,
+        Key={
+            "name": {"S": name}
+        },
+        ExpressionAttributeValues={
+            ":inc": {"N": str(1)},
+        },
+        UpdateExpression="ADD uses :inc"
+    )
+
+
+def editTag(name: str, code: str):
+    db.update_item(
+        TableName=db_name,
+        Key={
+            "name": {"S": name}
+        },
+        ExpressionAttributeValues={
+            ":code": {"B": code.encode()},
+            ":newDate": {"S": str(datetime.datetime.utcnow())},
+        },
+        ExpressionAttributeNames={
+            "#data": "data"
+        },
+        UpdateExpression="SET #data = :code, updateDate = :newDate",
+    )
+
+
+def deleteTag(name: str):
+    db.delete_item(
+        TableName=db_name,
+        Key={
+            "name": {"S": name}
+        }
+    )
 
 
 def IDtoUser(message, id: str) -> discord.User:
@@ -43,9 +100,9 @@ def IDtoUser(message, id: str) -> discord.User:
 
 def infoTag(message, name: str):
     response = getTag(name)
-    print(response["meta"])
-    user = IDtoUser(message, response["meta"]["ownerid"])
-    return f"""**{name}** -- by {user.name} -- -999 uses
-Created on {response["meta"]["creationdate"]}```
-{response["body"]}
+    user = IDtoUser(message, response["ownerID"])
+    return f"""**{name}** -- by {user.name} -- {response["uses"]} uses
+Created on {response["creationDate"]}
+Updated on {response["updateDate"]}```
+{response["data"]}
 ```"""

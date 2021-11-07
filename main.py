@@ -7,7 +7,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 # from src.database.s3 import setupDatabaseConnection, createTag
-from src.database.s3 import createTag, getTag, infoTag
+from src.database.s3 import createTag, getTag, infoTag, updateTag, isOwner, editTag, deleteTag
 from src.interpreter.function_deco import setupFunctions
 from src.interpreter.parsing import runCode
 
@@ -40,9 +40,16 @@ async def run(ctx, *, message):
 @bot.command()
 async def tag(ctx, message):
     """Runs a B* tag"""
-    code = getTag(message)["body"]
-    output = runCode(code)
-    await ctx.send(output)
+    tagObject = getTag(message)
+    if tagObject is not None:
+        code = tagObject["data"]
+        output = runCode(code)
+        await ctx.send(output)
+
+        # If all goes well, then increment the use
+        updateTag(message)
+    else:
+        await ctx.send(f"There's no program under the name `{message}`!")
 
 
 @bot.command()
@@ -62,15 +69,23 @@ async def info(ctx, message):
 
 
 @bot.command()
-async def edit(ctx, *, message):
+async def edit(ctx, name, *, message):
     """Edit one of your B* tags"""
-    await ctx.send("WIP")
+    if isOwner(name, ctx.author.id):
+        editTag(name, message)
+        await ctx.send(f"Tag `{name}` edited!")
+    else:
+        await ctx.send("You aren't the owner of this tag!")
 
 
 @bot.command()
-async def delete(ctx, *, message):
+async def delete(ctx, name):
     """Delete one of your B* tags"""
-    await ctx.send("WIP")
+    if isOwner(name, ctx.author.id):
+        deleteTag(name)
+        await ctx.send(f"Tag `{name}` deleted!")
+    else:
+        await ctx.send("You aren't the owner of this tag!")
 
 
 @bot.command()
