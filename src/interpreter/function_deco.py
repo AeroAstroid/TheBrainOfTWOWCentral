@@ -12,6 +12,7 @@ from src.interpreter.functions.global_var import global_var
 from src.interpreter.functions.if_func import if_func
 from src.interpreter.functions.index import index
 from src.interpreter.functions.j import j
+from src.interpreter.functions.join import join
 from src.interpreter.functions.loop import loop
 from src.interpreter.functions.map import map_func
 from src.interpreter.functions.randint import randint
@@ -53,6 +54,7 @@ def setupFunctions():
     addFunction("if", if_func)
     addFunction("index", index)
     addFunction("j", j)
+    addFunction("join", join)
     addFunction("loop", loop)
     addFunction("map", map_func)
     addFunction("math", math)
