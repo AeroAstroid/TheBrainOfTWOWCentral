@@ -9,3 +9,4 @@ def join(block: List, codebase):
     for i in block[2:]:
         buffer.extend(Expression(i, codebase))
         buffer = "".join(buffer)
+    return buffer
