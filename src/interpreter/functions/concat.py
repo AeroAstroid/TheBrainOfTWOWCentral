@@ -16,7 +16,8 @@ def concat(block: List, codebase):
 
     for i in block[2:]:
         if is_array:
-            "".join(buffer.extend(Expression(i, codebase)))
+            buffer.extend(Expression(i, codebase))
+            buffer = "".join(buffer)
         else:
             buffer += str(Expression(i, codebase))
 
