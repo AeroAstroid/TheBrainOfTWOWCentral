@@ -5,20 +5,17 @@ from src.interpreter.expression import Expression
 
 def concat(block: List, codebase):
     # determine whether concat is concatenating strings or arrays
-    # string/array mix results in the first argument's data type
-    is_array = False
     first = Expression(block[1], codebase)
-    if type(first) == list:
-        is_array = True
-        buffer = first
-    else:
-        buffer = str(first)
+    is_array = (type(first) == list)
+    buffer = [] if is_array else ""
 
-    for i in block[2:]:
+    for i in block[1:]:
+        element = Expression(i, codebase)
+        if is_array != (type(element) == list):
+            raise TypeError("Cannot call CONCAT with a mix of arrays and other types")
         if is_array:
-            buffer.extend(Expression(i, codebase))
-            buffer = "".join(buffer)
+            buffer.extend(element)
         else:
-            buffer += str(Expression(i, codebase))
+            buffer += str(element)
 
     return buffer

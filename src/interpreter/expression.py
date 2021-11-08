@@ -1,5 +1,5 @@
 from enum import Enum
-from re import compile
+from re import fullmatch
 from typing import Union
 from typing import List
 
@@ -54,10 +54,6 @@ def Expression(block: Union[List, str], codebase):
     # elif blockType == Type.EXPONENT:
     #     return int(float(block))
 
-p_int = compile("^[+-]?[0-9]+$")
-p_float = compile("^[0-9]+[e\\.][0-9]+$")
-# p_exponent = compile("^[0-9]+e[0-9]+$")
-
 def isType(block):
     if type(block) == list:
         if block[0] == "ARRAY":
@@ -65,14 +61,11 @@ def isType(block):
         else:
             return Type.FUNCTION
     else:
-        # TODO: The bruteforce solution; Extremely inefficient
-        # Now updated with RegEx!
-
-        if p_int.match(block):
+        if fullmatch(r"^[+-]?\d+$", block):
             return Type.INTEGER
-        elif p_float.match(block):
+        elif fullmatch(r"^[+-]?\d+(.|([eE][+-]?)|)\d+$", block):
             return Type.FLOAT
-        # elif p_exponent.match(block):
+        # elif fullmatch(r"^[+-]?\d+[eE][+-]?\d+$", block):
         #     return Type.EXPONENT
         else:
             return Type.STRING
