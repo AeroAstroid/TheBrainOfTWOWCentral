@@ -1,43 +1,48 @@
 import datetime
 import os
+import time
+from decimal import Decimal
 from typing import Dict, Union
 
-import boto3
 import discord
+import psycopg2
 from dotenv import load_dotenv
+
+from bot import bot
 
 load_dotenv()
 db_name = "b-star"
-db = boto3.client(
-    "dynamodb",
-    aws_access_key_id=os.getenv("DB_ACCESS_KEY"),
-    aws_secret_access_key=os.getenv("DB_SECRET_KEY"),
-    region_name="eu-west-2"
+# replace with own
+conn = psycopg2.connect(
+    host="localhost",
+    database="b-star",
+    user="postgres",
+    password="password"
 )
 
-# db = s3.Bucket(db_name)
-Response = Dict[str, any]
+tag = Dict[str, Union[str, int]]
+
+table = conn.cursor()
 
 
-def getTag(name: str) -> Union[Response, None]:
-    response = db.get_item(
-        TableName=db_name,
-        Key={
-            "name": {"S": name}
-        }
-    )
-    try:
-        response["Item"]
-    except KeyError:
-        return None
+def getTag(name: str) -> Union[tag, None]:
+    table.execute("""
+    SELECT * FROM "b-star".public."b-star-dev"
+    WHERE name = (%s)
+    """,
+                  (name,))
+    item = table.fetchone()
+    if item is None:
+        return item
 
     return {
-        "name": response["Item"]["name"]["S"],
-        "ownerID": response["Item"]["ownerID"]["N"],
-        "data": response["Item"]["data"]["B"].decode(),
-        "creationDate": response["Item"]["creationDate"]["S"],
-        "updateDate": response["Item"]["updateDate"]["S"],
-        "uses": response["Item"]["uses"]["N"],
+        "name": item[0],
+        "program": item[1],
+        "author": item[2],
+        "uses": item[3],
+        "created": item[4],
+        "lastused": item[5],
+        "lastupdated": item[6],
     }
 
 
@@ -45,72 +50,90 @@ def tagExists(name: str):
     return getTag(name) is not None
 
 
-def isOwner(name: str, id: Union[int, str]):
-    return getTag(name)["ownerID"] == str(id)
+def isOwner(program_name: str, id: Union[int, str]):
+    table.execute("""
+    SELECT author FROM "b-star".public."b-star-dev"
+    WHERE name = %s;
+    """,
+                  (program_name,))
+    authorID = table.fetchone()
+    return str(authorID[0]) == str(id)
 
 
 def createTag(user: discord.User, name: str, code: str):
-    db.put_item(
-        TableName=db_name,
-        Item={
-            "name": {"S": name},
-            "ownerID": {"N": str(user.id)},
-            "data": {"B": code.encode()},
-            "creationDate": {"S": str(datetime.datetime.utcnow())},
-            "updateDate": {"S": str(datetime.datetime.utcnow())},
-            "uses": {"N": str(0)},
-        }
-    )
+    now = Decimal(time.time())
+    table.execute("""
+    INSERT INTO "b-star".public."b-star-dev" (name, program, author, uses, created, lastused, lastupdated)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """,
+                  (name, code, user.id, 0, now, now, now))
+    conn.commit()
 
 
 def updateTag(name: str):
-    db.update_item(
-        TableName=db_name,
-        Key={
-            "name": {"S": name}
-        },
-        ExpressionAttributeValues={
-            ":inc": {"N": str(1)},
-        },
-        UpdateExpression="ADD uses :inc"
-    )
+    # Assume "name" program exists
+    now = Decimal(time.time())
+    table.execute("""
+    UPDATE "b-star".public."b-star-dev"
+    SET uses = uses + 1,
+        lastused = %s
+    WHERE name = %s
+    """,
+                  (now, name))
 
 
 def editTag(name: str, code: str):
-    db.update_item(
-        TableName=db_name,
-        Key={
-            "name": {"S": name}
-        },
-        ExpressionAttributeValues={
-            ":code": {"B": code.encode()},
-            ":newDate": {"S": str(datetime.datetime.utcnow())},
-        },
-        ExpressionAttributeNames={
-            "#data": "data"
-        },
-        UpdateExpression="SET #data = :code, updateDate = :newDate",
-    )
+    now = Decimal(time.time())
+    table.execute("""
+    UPDATE "b-star".public."b-star-dev" 
+    SET program = %s,
+        lastupdated = %s
+    WHERE name = %s
+    """,
+                  (code, now, name))
 
 
 def deleteTag(name: str):
-    db.delete_item(
-        TableName=db_name,
-        Key={
-            "name": {"S": name}
-        }
-    )
+    table.execute("""
+    DELETE FROM "b-star".public."b-star-dev"
+    WHERE name = %s
+    """,
+                  (name,))
+    conn.commit()
 
 
-def IDtoUser(message, id: str) -> discord.User:
-    return message.guild.get_member(int(id))
+async def IDtoUser(id: int) -> discord.User:
+    return await bot.fetch_user(id)
+
+
+async def leaderboards(page: int):
+    table.execute("""
+    SELECT name,
+           uses,
+           author,
+           created
+    FROM "b-star".public."b-star-dev"
+    ORDER BY uses DESC
+    LIMIT 10
+    OFFSET (%s * 10)
+    """,
+                  (page,))
+
+    results = table.fetchall()
+    firststep = []
+    for index, tag in enumerate(results):
+        firststep.append(f"{index + 1} : {tag[0]} :: {tag[1]} uses (written by {(await IDtoUser(tag[2])).name} at {tag[3]} UTC)")
+    secondstep = "\n".join(firststep)
+    board = f"```{secondstep}```"
+    return board
 
 
 def infoTag(message, name: str):
     response = getTag(name)
-    user = IDtoUser(message, response["ownerID"])
+    user = IDtoUser(response["author"])
     return f"""**{name}** -- by {user.name} -- {response["uses"]} uses
-Created on {response["creationDate"]}
-Updated on {response["updateDate"]}```
-{response["data"]}
+Created on {response["created"]}
+Last used on {response["lastused"]}
+Updated on {response["lastupdated"]}```
+{response["program"]}
 ```"""

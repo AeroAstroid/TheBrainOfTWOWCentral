@@ -6,15 +6,10 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-# from src.database.s3 import setupDatabaseConnection, createTag
-from src.database.s3 import createTag, getTag, infoTag, updateTag, isOwner, editTag, deleteTag
+from bot import bot
+from src.database.s3 import createTag, getTag, infoTag, updateTag, isOwner, editTag, deleteTag, leaderboards
 from src.interpreter.function_deco import setupFunctions
 from src.interpreter.parsing import runCode
-
-intents = discord.Intents.default()
-intents.members = True
-
-bot = commands.Bot(command_prefix="b/", description="B* bot!!", intents=intents)
 
 load_dotenv()
 setupFunctions()
@@ -42,7 +37,7 @@ async def tag(ctx, message):
     """Runs a B* tag"""
     tagObject = getTag(message)
     if tagObject is not None:
-        code = tagObject["data"]
+        code = tagObject["program"]
         output = runCode(code)
         await ctx.send(output)
 
@@ -57,7 +52,7 @@ async def create(ctx, name, *, message):
     """Creates a B* tag with your code"""
     # try:
     createTag(ctx.author, name, message)
-    await ctx.send("Tag created!")
+    await ctx.send(f"Tag `{name}` created!")
     # except:
     #     await ctx.send("Tag creation failed")
 
@@ -69,13 +64,20 @@ async def info(ctx, message):
 
 
 @bot.command()
+async def leaderboard(ctx, page: int = 0):
+    """Shows the leaderboard of tags sorted by uses"""
+    await ctx.send(await leaderboards(page))
+
+
+
+@bot.command()
 async def edit(ctx, name, *, message):
     """Edit one of your B* tags"""
     if isOwner(name, ctx.author.id):
         editTag(name, message)
         await ctx.send(f"Tag `{name}` edited!")
     else:
-        await ctx.send("You aren't the owner of this tag!")
+        await ctx.send(f"You aren't the owner of tag `{name}`!")
 
 
 @bot.command()
@@ -85,7 +87,7 @@ async def delete(ctx, name):
         deleteTag(name)
         await ctx.send(f"Tag `{name}` deleted!")
     else:
-        await ctx.send("You aren't the owner of this tag!")
+        await ctx.send(f"You aren't the owner of tag `{name}`!")
 
 
 @bot.command()
