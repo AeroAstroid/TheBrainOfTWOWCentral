@@ -22,10 +22,16 @@ def USERNAME(): return ("n", )
 def USERID(): return ("id", )
 
 def ABS(a):
-	if not is_number(a):
+	if not isnumber(a):
 		raise TypeError(f"Parameter of ABS function must be a number: {safe_cut(a)}")
 
 	return abs(int(a) if is_whole(a) else float(a))
+
+def REPLACE(a,b,c):
+	if not type(a) == str():
+		raise TypeError(f"Parameter of REPLACE function must be a string: {safe_cut(a)}")
+
+	return a.replace(b,c)
 
 def INDEX(a, b):
 	if type(a) not in [list, str]:
@@ -279,4 +285,5 @@ FUNCTIONS = {
 	"USERNAME": USERNAME,
 	"USERID": USERID,
 	"SLICE": SLICE
+	"REPLACE": REPLACE
 }
