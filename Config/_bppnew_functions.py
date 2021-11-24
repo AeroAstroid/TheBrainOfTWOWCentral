@@ -28,7 +28,7 @@ def ABS(a):
 	return abs(int(a) if is_whole(a) else float(a))
 
 def REPLACE(a,b,c):
-	if not type(a) == str():
+	if type(a) != str:
 		raise TypeError(f"Parameter of REPLACE function must be a string: {safe_cut(a)}")
 
 	return a.replace(b,c)
