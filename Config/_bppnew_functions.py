@@ -27,6 +27,12 @@ def ABS(a):
 
 	return abs(int(a) if is_whole(a) else float(a))
 
+def REPLACE(a,b,c):
+	if not type(a) == str():
+		raise TypeError(f"Parameter of REPLACE function must be a string: {safe_cut(a)}")
+
+	return a.replace(b,c)
+
 def INDEX(a, b):
 	if type(a) not in [list, str]:
 		raise TypeError(f"First parameter of INDEX function must be a string or an array: {safe_cut(a)}")
@@ -278,5 +284,6 @@ FUNCTIONS = {
 	"LENGTH": LENGTH,
 	"USERNAME": USERNAME,
 	"USERID": USERID,
-	"SLICE": SLICE
+	"SLICE": SLICE,
+	"REPLACE": REPLACE
 }
