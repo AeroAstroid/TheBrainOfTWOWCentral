@@ -22,7 +22,7 @@ def USERNAME(): return ("n", )
 def USERID(): return ("id", )
 
 def ABS(a):
-	if not isnumber(a):
+	if not is_number(a):
 		raise TypeError(f"Parameter of ABS function must be a number: {safe_cut(a)}")
 
 	return abs(int(a) if is_whole(a) else float(a))
@@ -284,6 +284,6 @@ FUNCTIONS = {
 	"LENGTH": LENGTH,
 	"USERNAME": USERNAME,
 	"USERID": USERID,
-	"SLICE": SLICE
+	"SLICE": SLICE,
 	"REPLACE": REPLACE
 }
