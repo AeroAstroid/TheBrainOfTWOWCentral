@@ -1,7 +1,7 @@
 # B*
 The B* Bot.
 
-It uses a system of coded tags to do stuff similar to programs.
+This bot uses a system called tags, which are community made programs that can be run on the bot.
 
 A successor to both oldtag and newtag from TWOW Central.
 
