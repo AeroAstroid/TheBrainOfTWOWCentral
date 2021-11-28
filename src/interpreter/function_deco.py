@@ -7,8 +7,7 @@ from src.interpreter.functions.comment import comment
 from src.interpreter.functions.compare import compare
 from src.interpreter.functions.concat import concat
 from src.interpreter.functions.define import define
-from src.interpreter.functions.global_define import global_define
-from src.interpreter.functions.global_var import global_var
+from src.interpreter.functions.global_func import global_func
 from src.interpreter.functions.if_func import if_func
 from src.interpreter.functions.index import index
 from src.interpreter.functions.j import j
@@ -50,8 +49,7 @@ def setupFunctions():
     addFunction("define", define)
     addFunction("div", div)
     addFunction("floor", floor)
-    addFunction("global define", global_define)
-    addFunction("global var", global_var)
+    addFunction("global", global_func)
     addFunction("if", if_func)
     addFunction("index", index)
     addFunction("j", j)
