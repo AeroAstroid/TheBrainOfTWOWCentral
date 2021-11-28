@@ -20,12 +20,13 @@ conn = psycopg2.connect(
     password=os.getenv("PASSWORD")
 )
 
-tag = Dict[str, Union[str, int]]
+# tag or global
+item = Dict[str, Union[str, int]]
 
 table = conn.cursor()
 
 
-def getTag(name: str) -> Union[tag, None]:
+def getTag(name: str) -> Union[item, None]:
     table.execute("""
     SELECT * FROM "b-star".public."b-star-dev"
     WHERE name = (%s)
@@ -46,18 +47,50 @@ def getTag(name: str) -> Union[tag, None]:
     }
 
 
+def getGlobal(name: str) -> Union[item, None]:
+    table.execute("""
+    SELECT * FROM "b-star".public."b-star-dev-globals"
+    WHERE name = (%s)
+    """,
+                  (name,))
+    item = table.fetchone()
+    if item is None:
+        return item
+
+    return {
+        "name": item[0],
+        "value": item[1],
+        "type": item[2],
+        "owner": item[3],
+    }
+
+
 def tagExists(name: str):
     return getTag(name) is not None
 
 
-def isOwner(program_name: str, id: Union[int, str]):
+def globalExists(name: str):
+    return getGlobal(name) is not None
+
+
+def isOwnerProgram(program_name: str, user_id: Union[int, str]):
     table.execute("""
     SELECT author FROM "b-star".public."b-star-dev"
     WHERE name = %s;
     """,
                   (program_name,))
     authorID = table.fetchone()
-    return str(authorID[0]) == str(id)
+    return str(authorID[0]) == str(user_id)
+
+
+def isOwnerGlobal(program_name: str, user_id: Union[int, str]):
+    table.execute("""
+    SELECT owner FROM "b-star".public."b-star-dev-globals"
+    WHERE name = %s;
+    """,
+                  (program_name,))
+    authorID = table.fetchone()
+    return str(authorID[0]) == str(user_id)
 
 
 def createTag(user: discord.User, name: str, code: str):
@@ -102,8 +135,8 @@ def deleteTag(name: str):
     conn.commit()
 
 
-async def IDtoUser(id: int) -> discord.User:
-    return await bot.fetch_user(id)
+async def IDtoUser(user_id: int) -> discord.User:
+    return await bot.fetch_user(user_id)
 
 
 async def leaderboards(page: int):
@@ -138,3 +171,36 @@ Last used on {response["lastused"]}
 Updated on {response["lastupdated"]}```
 {response["program"]}
 ```"""
+
+
+def createGlobal(user: discord.User, name: str, code: str):
+    table.execute("""
+        INSERT INTO "b-star".public."b-star-dev-globals" (name, value, type, owner)
+        VALUES (%s, %s, %s, %s)
+        """,
+                  (name, code, 0, user.id))
+    conn.commit()
+
+
+def editGlobal(user: discord.User, name: str, code: str):
+    if not isOwnerGlobal(name, user.id):
+        return
+
+    table.execute("""
+        UPDATE "b-star".public."b-star-dev-globals"
+        SET value = %s
+        WHERE name = %s
+        """,
+                  (code, name))
+
+
+def deleteGlobal(user: discord.User, name: str):
+    if not isOwnerGlobal(name, user.id):
+        return
+
+    table.execute("""
+        DELETE FROM "b-star".public."b-star-dev"
+        WHERE name = %s
+        """,
+                  (name,))
+    conn.commit()

@@ -1,13 +1,20 @@
 from traceback import format_exc
 from random import choice
 
+from typing import List, Union
+
+import discord
+
 from src.interpreter.expression import Expression
 
 
+# the discord user property is used for global ownership checking
 class Codebase:
-    def __init__(self, lines):
+    def __init__(self, lines: List[str], user: Union[discord.User, None]):
         self.lines = lines
         self.variables = {}
+        self.functions = {}
+        self.user = user
         self.output = ""
 
 
@@ -69,10 +76,10 @@ def parseCode(program: str):
     return parseTree
 
 
-def runCode(code: str):
+def runCode(code: str, user: Union[discord.User, None] = None):
     # TODO: Trim up to three backticks from beginning and end of code
     parsed_code = parseCode(code)
-    codebase = Codebase(parsed_code)
+    codebase = Codebase(parsed_code, user)
 
     for statement in parsed_code:
         try:

@@ -7,7 +7,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 from bot import bot
-from src.database.s3 import createTag, getTag, infoTag, updateTag, isOwner, editTag, deleteTag, leaderboards
+from src.database.s3 import createTag, getTag, infoTag, updateTag, isOwnerProgram, editTag, deleteTag, leaderboards
 from src.interpreter.function_deco import setupFunctions
 from src.interpreter.parsing import runCode
 
@@ -28,7 +28,7 @@ async def on_ready():
 @bot.command()
 async def run(ctx, *, message):
     """Run B* code"""
-    output = runCode(message)
+    output = runCode(message, ctx.author)
     await ctx.send(output)
 
 
@@ -38,7 +38,7 @@ async def tag(ctx, message):
     tagObject = getTag(message)
     if tagObject is not None:
         code = tagObject["program"]
-        output = runCode(code)
+        output = runCode(code, ctx.author)
         await ctx.send(output)
 
         # If all goes well, then increment the use
@@ -60,7 +60,7 @@ async def create(ctx, name, *, message):
 @bot.command()
 async def info(ctx, message):
     """Gives infomation and source code about a B* tag"""
-    await ctx.send(infoTag(ctx, message))
+    await ctx.send(await infoTag(ctx, message))
 
 
 @bot.command()
@@ -73,7 +73,7 @@ async def leaderboard(ctx, page: int = 0):
 @bot.command()
 async def edit(ctx, name, *, message):
     """Edit one of your B* tags"""
-    if isOwner(name, ctx.author.id):
+    if isOwnerProgram(name, ctx.author.id):
         editTag(name, message)
         await ctx.send(f"Tag `{name}` edited!")
     else:
@@ -83,7 +83,7 @@ async def edit(ctx, name, *, message):
 @bot.command()
 async def delete(ctx, name):
     """Delete one of your B* tags"""
-    if isOwner(name, ctx.author.id):
+    if isOwnerProgram(name, ctx.author.id):
         deleteTag(name)
         await ctx.send(f"Tag `{name}` deleted!")
     else:
