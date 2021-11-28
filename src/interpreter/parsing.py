@@ -156,6 +156,8 @@ def runCode(code: str, user: Union[discord.User, None] = None):
 
     # print(codebase.variables)
     # print(codebase.output)
+    if len(codebase.output) == 0:
+        return "WARNING: This code has successfully ran, but returns nothing!"
     if len(codebase.output) > 2000:
         return "ERROR: Output too long!"
     return codebase.output
