@@ -14,8 +14,11 @@ def concat(block: List, codebase):
         if is_array != (type(element) == list):
             raise TypeError("Cannot call CONCAT with a mix of arrays and other types")
         if is_array:
-            buffer = ''.join(map(str, buffer))
+            buffer.extend(element)
         else:
             buffer += str(element)
+    
+    if is_array:
+        buffer = ''.join(map(str, buffer))
 
     return buffer
