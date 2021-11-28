@@ -14,10 +14,10 @@ load_dotenv()
 db_name = "b-star"
 # replace with own
 conn = psycopg2.connect(
-    host="localhost",
-    database="b-star",
-    user="postgres",
-    password="password"
+    host=os.getenv("HOST"),
+    database=os.getenv("DATABASE"),
+    user=os.getenv("USER"),
+    password=os.getenv("PASSWORD")
 )
 
 tag = Dict[str, Union[str, int]]
@@ -122,15 +122,16 @@ async def leaderboards(page: int):
     results = table.fetchall()
     firststep = []
     for index, tag in enumerate(results):
-        firststep.append(f"{index + 1} : {tag[0]} :: {tag[1]} uses (written by {(await IDtoUser(tag[2])).name} at {tag[3]} UTC)")
+        firststep.append(
+            f"{index + 1} : {tag[0]} :: {tag[1]} uses (written by {(await IDtoUser(tag[2])).name} at {tag[3]} UTC)")
     secondstep = "\n".join(firststep)
     board = f"```{secondstep}```"
     return board
 
 
-def infoTag(message, name: str):
+async def infoTag(message, name: str):
     response = getTag(name)
-    user = IDtoUser(response["author"])
+    user = await IDtoUser(response["author"])
     return f"""**{name}** -- by {user.name} -- {response["uses"]} uses
 Created on {response["created"]}
 Last used on {response["lastused"]}
