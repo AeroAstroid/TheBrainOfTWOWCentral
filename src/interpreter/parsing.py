@@ -87,6 +87,7 @@ def runCode(code: str):
 
         except Exception as e:
             # dev only, delete these lines in production release (error messages contributed by LegitSi)
+            # why though? it's funny -inferno 11/28/21
             github_devs = ["Inferno", "Digin", "LegitSi", "Zelo101", "weee50", "woooowoooo"] # only counts people that have made a commit
             unfunny_errmsg = [
                 "GOD FUCKING DAMMIT! **crashing noises**",

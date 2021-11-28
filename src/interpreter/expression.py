@@ -40,7 +40,7 @@ def Expression(block: Union[List, str], codebase):
         if functionWanted is not None:
             return functionWanted(block=block, codebase=codebase)
         else:
-            return block[0]
+            return f" !!! - - {block[0]} is not a block - - !!! "
     elif blockType == Type.STRING:
         return block
     elif blockType == Type.ARRAY:
