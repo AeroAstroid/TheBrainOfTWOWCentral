@@ -29,12 +29,12 @@ _(With 0% less bot! Coming soon™)_
 
 **_=== BASIC EXPLANATION ===_**
 
-This is a successor to new B++. Unlike the transition from oldtag to newtag, newtag to b*tag is much easier, as all of your code is already backwards compatible. This means that you can just paste in your old programs and they'll work fine. If you aren’t already familiar, tags are miniature programs, such as those made in B++ or B*, and generally ran through a Discord bot.
+This is a successor to new B++. Unlike the transition from oldtag to newtag, newtag to b\*tag is **much** easier, as all of your code is already backwards compatible. This means that you can just paste in your old programs and they'll work fine. If you aren’t already familiar, tags are miniature programs, such as those made in B++ or B\*, and generally ran through a Discord bot.
 
 **_=== TERMS ~~AND CONDITIONS~~ ===_**
 
 Some terms in this might not be clear.  \
-b*tag = b* tags. Usually used to differentiate from other versions. Third & latest version of tags..
+b\*tag = b\* tags. Usually used to differentiate from other versions. Third & latest version of tags.
 
 Oldtag = the first form of tags.
 
@@ -42,7 +42,7 @@ Newtag = the second form of tags.
 
 **_=== ALL FUNCTIONS ===_**
 
-The B* programming language is composed of functions. These functions have a variety of uses from defining to choosing to labeling. Here, every single function in the language is listed.
+The B\* programming language is composed of functions. These functions have a variety of uses from defining to choosing to labeling. Here, every single function in the language is listed.
 
 Short List (Current functions [some in progress] ):` DEFINE, VAR, MATH, COMPARE, IF, ARRAY, CHOOSE, CHOOSECHAR, REPEAT, CONCAT, RANDINT, RANDOM, FLOOR, CEIL, ROUND, INDEX, ABS, ARGS, GLOBAL DEFINE, GLOBAL VAR, MOD `
 
