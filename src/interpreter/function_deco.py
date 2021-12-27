@@ -38,7 +38,10 @@ functions = {}
 
 def setupFunctions():
     addFunction("abs", abs_func)
+
     addFunction("add", add)
+    addFunction("sum", add)
+
     addFunction("args", args)
     addFunction("array", array)
     addFunction("ceil", ceil)
@@ -47,6 +50,7 @@ def setupFunctions():
     addFunction("compare", compare)
     addFunction("concat", concat)
     addFunction("define", define)
+
     addFunction("div", div)
     addFunction("floor", floor)
     addFunction("global", global_func)
@@ -58,19 +62,28 @@ def setupFunctions():
     addFunction("map", map_func)
     addFunction("math", math)
     addFunction("mod", mod)
+
     addFunction("mul", mul)
+    addFunction("multiply", mul)
+    addFunction("product", mul)
+
     addFunction("pow", pow_func)
     addFunction("randint", randint)
     addFunction("random", random_func)
     addFunction("repeat", repeat)
     addFunction("round", round_func)
     addFunction("replace", replace_func)
+
     addFunction("sub", sub)
+    addFunction("subtract", sub)
+    addFunction("difference", sub)
+
     addFunction("time", time)
     addFunction("var", var)
     addFunction("#", comment)
 
 
 def addFunction(name: str, func):
-    print(name.upper(), func)
+    print([name.upper(), name.lower()], func)
     functions[name.upper()] = func
+    functions[name.lower()] = func
