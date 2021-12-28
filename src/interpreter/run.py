@@ -1,7 +1,7 @@
 from traceback import format_exc
 from random import choice
 
-from typing import List, Union
+from typing import List, Union, Dict
 
 import discord
 
@@ -9,77 +9,25 @@ from src.interpreter.expression import Expression
 
 
 # the discord user property is used for global ownership checking
+from src.interpreter.function_deco import functions
+from src.interpreter.parse import parseCode
+from src.interpreter.userfunction import UserFunction
+
+
 class Codebase:
-    def __init__(self, lines: List[str], user: Union[discord.User, None]):
-        self.lines = lines
-        self.variables = {}
-        self.functions = {}
-        self.user = user
-        self.output = ""
-
-
-def parseCode(program: str):
-    parseTree = []
-    activityStack = [parseTree]
-
-    newString = True
-    backslashed = False
-    inString = False
-
-    # parse the program!
-    for c in program:
-
-        if newString and c not in ["[", " ", "\n"]:
-            activityStack[-1].append("")
-            newString = False
-
-        if len(activityStack) == 1:
-            if c == "[":
-                activityStack[-1].append([])
-                activityStack.append(activityStack[-1][-1])
-                newString = True
-            else:
-                activityStack[-1][-1] += c
-
-        elif backslashed:
-            if c == "n":
-                activityStack[-1][-1] += "\n"
-            else:
-                activityStack[-1][-1] += c
-            backslashed = False
-
-        elif inString:
-            if c == "\\":
-                backslashed = True
-            elif c == "\"":
-                inString = False
-            else:
-                activityStack[-1][-1] += c
-
-        elif c == "\\":
-            backslashed = True
-        elif c == "\"":
-            inString = True
-        elif c in [" ", "\n"]:
-            newString = True
-        elif c == "[":
-            activityStack[-1].append([])
-            activityStack.append(activityStack[-1][-1])
-            newString = True
-        elif c == "]":
-            activityStack.pop()
-            if len(activityStack) == 1:
-                activityStack[-1].append("")
-        else:
-            activityStack[-1][-1] += c
-
-    return parseTree
+    def __init__(self, lines, user):
+        self.lines: List[str] = lines
+        self.variables: Dict[str, str] = {}
+        self.functions: Dict[str, UserFunction] = {}
+        self.user: Union[discord.User, None] = user
+        self.output: str = ""
 
 
 def runCode(code: str, user: Union[discord.User, None] = None):
     # TODO: Trim up to three backticks from beginning and end of code
     parsed_code = parseCode(code)
     codebase = Codebase(parsed_code, user)
+    codebase.functions = codebase.functions | functions
 
     for statement in parsed_code:
         try:
@@ -95,7 +43,8 @@ def runCode(code: str, user: Union[discord.User, None] = None):
         except Exception as e:
             # dev only, delete these lines in production release (error messages contributed by LegitSi)
             # why though? it's funny -inferno 11/28/21
-            github_devs = ["Inferno", "Digin", "LegitSi", "Zelo101", "weee50", "woooowoooo"] # only counts people that have made a commit
+            github_devs = ["Inferno", "Digin", "LegitSi", "Zelo101", "weee50",
+                           "woooowoooo"]  # only counts people that have made a commit
             unfunny_errmsg = [
                 "GOD FUCKING DAMMIT! **crashing noises**",
                 "Whoops. You broke it.",
@@ -151,13 +100,13 @@ def runCode(code: str, user: Union[discord.User, None] = None):
             ]
             # errmsg = f"ERROR at `{statement}`:\n{e}"
             errmsg = f"{choice(unfunny_errmsg)}\n\nERROR at `{statement}`:\n{e}"
-            print(f"{errmsg}\n\n{format_exc()}") # print stack trace too
+            print(f"{errmsg}\n\n{format_exc()}")  # print stack trace too
             return errmsg
 
     # print(codebase.variables)
     # print(codebase.output)
     if len(codebase.output) == 0:
-        return "WARNING: This code has successfully ran, but returns nothing!"
+        return "NOTICE: The code has successfully ran, but returned nothing!"
     if len(codebase.output) > 2000:
         return "ERROR: Output too long!"
     return codebase.output

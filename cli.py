@@ -1,5 +1,5 @@
 from src.interpreter.function_deco import setupFunctions
-from src.interpreter.parsing import runCode
+from src.interpreter.run import runCode
 
 empty = ""
 setupFunctions()

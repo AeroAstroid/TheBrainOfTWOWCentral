@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from bot import bot
 from src.database.s3 import createTag, getTag, infoTag, updateTag, isOwnerProgram, editTag, deleteTag, leaderboards
 from src.interpreter.function_deco import setupFunctions
-from src.interpreter.parsing import runCode
+from src.interpreter.run import runCode
 
 load_dotenv()
 setupFunctions()

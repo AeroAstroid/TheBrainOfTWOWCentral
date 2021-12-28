@@ -1,10 +1,8 @@
+import types
 from enum import Enum
 from re import fullmatch
-from typing import Union
+from typing import Union, Callable
 from typing import List
-
-# expression defining
-import src.interpreter.function_deco
 
 
 class Type(Enum):
@@ -28,19 +26,24 @@ class Type(Enum):
     # EXPONENT = 5
 
 
-def Expression(block: Union[List, str], codebase):
+def Expression(block: Union[List[str], str], codebase):
+    name = block[0]
     # TODO: try/except needed
     if block[-1] == "":
         block = block[:-1]
 
     blockType = isType(block)
     if blockType == Type.FUNCTION:
-        functionWanted = src.interpreter.function_deco.functions.get(block[0])
-        # print(functionWanted)
+        functionWanted = findFunction(name, codebase)
         if functionWanted is not None:
-            return functionWanted(block=block, codebase=codebase)
+            if isinstance(functionWanted, types.FunctionType):
+                # built-in functions (python)
+                return functionWanted(block=block, codebase=codebase)
+            else:
+                # user functions (b*)
+                return Expression(functionWanted.run(block[1:]), codebase)
         else:
-            return f" !!! - - {block[0]} is not a block - - !!! "
+            return f" !!! - - {name} is not a block - - !!! "
     elif blockType == Type.STRING:
         return block
     elif blockType == Type.ARRAY:
@@ -53,6 +56,14 @@ def Expression(block: Union[List, str], codebase):
         return float(block)
     # elif blockType == Type.EXPONENT:
     #     return int(float(block))
+
+
+def findFunction(name: str, codebase):  # -> Union[Callable[[List, Codebase], None], List[str]]:
+    # This tries to find a built-in function first, then tries the user-made ones.
+    functionWanted = codebase.functions.get(name)
+
+    return functionWanted
+
 
 def isType(block):
     if type(block) == list:
