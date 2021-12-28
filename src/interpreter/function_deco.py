@@ -23,6 +23,8 @@ from src.interpreter.functions.round import round_func
 from src.interpreter.functions.slice import slice_func
 from src.interpreter.functions.split import split
 from src.interpreter.functions.time import time
+from src.interpreter.functions.userid import userid
+from src.interpreter.functions.username import username
 from src.interpreter.functions.var import var
 
 from src.interpreter.functions.math.abs import abs_func
@@ -89,6 +91,8 @@ def setupFunctions():
     addFunction("difference", sub)
 
     addFunction("time", time)
+    addFunction("username", username)
+    addFunction("userid", userid)
     addFunction("var", var)
     addFunction("#", comment)
 

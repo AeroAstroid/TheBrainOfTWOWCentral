@@ -1,5 +1,4 @@
 from typing import List
-from src.interpreter.expression import Expression
 
 
 def slice_func(block: List, codebase):
