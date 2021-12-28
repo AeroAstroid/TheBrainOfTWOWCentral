@@ -20,6 +20,7 @@ from src.interpreter.functions.random_func import random_func
 from src.interpreter.functions.repeat import repeat
 from src.interpreter.functions.replace import replace_func
 from src.interpreter.functions.round import round_func
+from src.interpreter.functions.slice import slice_func
 from src.interpreter.functions.split import split
 from src.interpreter.functions.time import time
 from src.interpreter.functions.var import var
@@ -81,6 +82,7 @@ def setupFunctions():
     addFunction("round", round_func)
     addFunction("replace", replace_func)
 
+    addFunction("slice", slice_func)
     addFunction("split", split)
     addFunction("sub", sub)
     addFunction("subtract", sub)
