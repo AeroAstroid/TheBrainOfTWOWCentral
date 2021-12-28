@@ -20,4 +20,4 @@ def function(block: List, codebase):
     for i, argument in enumerate(Expression(block[2], codebase)):
         args[i] = argument
 
-    UserFunction(name, args, code, codebase)
+    UserFunction(name, args, code, True, codebase)
