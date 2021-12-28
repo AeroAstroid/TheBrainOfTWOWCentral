@@ -12,6 +12,7 @@ from src.interpreter.functions.if_func import if_func
 from src.interpreter.functions.index import index
 from src.interpreter.functions.j import j
 from src.interpreter.functions.join import join
+from src.interpreter.functions.length import length
 from src.interpreter.functions.loop import loop
 from src.interpreter.functions.map import map_func
 from src.interpreter.functions.randint import randint
@@ -19,6 +20,7 @@ from src.interpreter.functions.random_func import random_func
 from src.interpreter.functions.repeat import repeat
 from src.interpreter.functions.replace import replace_func
 from src.interpreter.functions.round import round_func
+from src.interpreter.functions.split import split
 from src.interpreter.functions.time import time
 from src.interpreter.functions.var import var
 
@@ -62,6 +64,7 @@ def setupFunctions():
     addFunction("index", index)
     addFunction("j", j)
     addFunction("join", join)
+    addFunction("length", length)
     addFunction("loop", loop)
     addFunction("map", map_func)
     addFunction("math", math)
@@ -78,6 +81,7 @@ def setupFunctions():
     addFunction("round", round_func)
     addFunction("replace", replace_func)
 
+    addFunction("split", split)
     addFunction("sub", sub)
     addFunction("subtract", sub)
     addFunction("difference", sub)
