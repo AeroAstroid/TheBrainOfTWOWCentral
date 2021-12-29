@@ -44,7 +44,9 @@ def runCode(code: str, user: Union[discord.User, None] = None):
             # dev only, delete these lines in production release (error messages contributed by LegitSi)
             # why though? it's funny -inferno 11/28/21
             github_devs = ["Inferno", "Digin", "LegitSi", "Zelo101", "weee50",
-                           "woooowoooo"]  # only counts people that have made a commit
+                           "woooowoooo", "BowlingPizzaBall"]  # only counts people that have made a commit
+            github_devs_uppercase = ["INFERNO", "DIGIN", "LEGITSI", "ZELO101", "WEEE50",
+                           "WOOOOWOOOO", "BOWLINGPIZZABALL"]  # yes this was made for only 1 error message
             unfunny_errmsg = [
                 "GOD FUCKING DAMMIT! **crashing noises**",
                 "Whoops. You broke it.",
@@ -96,7 +98,23 @@ def runCode(code: str, user: Union[discord.User, None] = None):
                 "I haven't seen an outage last since long since the Great ROBLOX Outage of 2021.",
                 "You just started working, why are you not working again?!",
                 f"{choice(github_devs)} needs to be fired for this! Or was it {choice(github_devs)} that did this? No, it was obviously {choice(github_devs)}! Wait.. no..",
-                f"{choice(github_devs)} sabotaged the code!"
+                f"{choice(github_devs)} sabotaged the code!",
+                "I have a good feeling your code is about as buggy as Windows ME.",
+                "Ok, so if you want to fix this, all you need to do is",
+                "take this L",
+                "Do you notice your code is not working? If so, good! Please proceed to the keyboard smashing station ahead of you.",
+                f"YOU CAUSED THIS, {choice(github_devs_uppercase)}!!",
+                "Better not make that code worse...",
+                "(insert message here)",
+                "that code be looking like the battle pass",
+                "If you're wondering why this \"unfunny\" error message is sooooo long, keep wondering. Yep, that's what I want you to do. You will never know why I randomly decided to make this error message this long, so keep wondering, and i'm out. See ya!",
+                "I think the code gave the interpreter a heart attack.",
+                "The unfunny happened.",
+                "The calm before the storm... but the storm already happened.",
+                "print(\"Code broke how sad...\")",
+                "You're a surgeon now, dissect the code!",
+                "Either the code broke or THE code broke.",
+                "Print out your code. Then throw it in the fire."
             ]
             # errmsg = f"ERROR at `{statement}`:\n{e}"
             errmsg = f"{choice(unfunny_errmsg)}\n\nERROR at `{statement}`:\n{e}"
