@@ -62,6 +62,7 @@ def getGlobal(name: str) -> Union[item, None]:
         "value": item[1],
         "type": item[2],
         "owner": item[3],
+        "version": item[4]
     }
 
 
@@ -175,10 +176,10 @@ Updated on {response["lastupdated"]}```
 
 def createGlobal(user: discord.User, name: str, code: str):
     table.execute("""
-        INSERT INTO "b-star".public."b-star-dev-globals" (name, value, type, owner)
-        VALUES (%s, %s, %s, %s)
+        INSERT INTO "b-star".public."b-star-dev-globals" (name, value, type, owner, version)
+        VALUES (%s, %s, %s, %s, %s)
         """,
-                  (name, code, 0, user.id))
+                  (name, code, 0, user.id, 1))
     conn.commit()
 
 
@@ -186,21 +187,11 @@ def editGlobal(user: discord.User, name: str, code: str):
     if not isOwnerGlobal(name, user.id):
         return
 
-    table.execute("""
-        UPDATE "b-star".public."b-star-dev-globals"
-        SET value = %s
-        WHERE name = %s
-        """,
-                  (code, name))
-
-
-def deleteGlobal(user: discord.User, name: str):
-    if not isOwnerGlobal(name, user.id):
-        return
+    global_to_edit = getGlobal(name)
+    new_version_number = global_to_edit["version"] + 1
 
     table.execute("""
-        DELETE FROM "b-star".public."b-star-dev"
-        WHERE name = %s
+        INSERT INTO "b-star".public."b-star-dev-globals" (name, value, type, owner, version)
+        VALUES (%s, %s, %s, %s, %s)
         """,
-                  (name,))
-    conn.commit()
+                  (name, code, 0, user.id, new_version_number))

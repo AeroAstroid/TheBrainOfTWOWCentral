@@ -7,8 +7,9 @@ class UserFunction:
         self.block = block
         self.codebase = codebase
 
-        if global_func:
-            codebase.functions[name] = self
+        codebase.functions[name] = self
+
+        # if global_func is True:
 
     def run(self, args: List[str]):
         print(f"{args} > {self.args} > {self.block} > {self.block[0]} > {self.block[0][0]}")
@@ -19,7 +20,7 @@ class UserFunction:
         # instead iterating through the entire code block
         # (interpreting within interpreting)
         # main_buffer = []
-        main_buffer = self.enumerateList(self.block, args)
+        main_buffer = self.enumerateList(*self.block, args)
         # if len(block_buffer) > 1:
         #     main_buffer.append(block_buffer)
         # else:
@@ -30,14 +31,14 @@ class UserFunction:
         block_buffer = []
         for part in block:
             # recursion moment
-            if isinstance(part, List):
+            if isinstance(part, list):
                 block_buffer.append(self.enumerateList(part, args))
 
             isarg = False
             for i, argument in self.args.items():
                 if part == argument:
                     isarg = True
-                    block_buffer.append(str(args[i]))
+                    block_buffer.append(args[i])
             if not isarg:
                 block_buffer.append(part)
         return block_buffer
