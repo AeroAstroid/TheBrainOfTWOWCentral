@@ -51,8 +51,11 @@ async def tag(ctx, message):
 async def create(ctx, name, *, message):
     """Creates a B* tag with your code"""
     # try:
-    createTag(ctx.author, name, message)
-    await ctx.send(f"Tag `{name}` created!")
+    if name.length < 50:
+        createTag(ctx.author, name, message)
+        await ctx.send(f"Tag `{name}` created!")
+    else:
+        await ctx.send(f"The name \"`{name}`\" is too long!")
     # except:
     #     await ctx.send("Tag creation failed")
 
