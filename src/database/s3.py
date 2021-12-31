@@ -169,7 +169,7 @@ async def infoTag(message, name: str):
     return f"""**{name}** -- by {user.name} -- {response["uses"]} uses
 Created on {response["created"]}
 Last used on {response["lastused"]}
-Updated on {response["lastupdated"]}```
+Updated on {response["lastupdated"]}```scala
 {response["program"]}
 ```"""
 
