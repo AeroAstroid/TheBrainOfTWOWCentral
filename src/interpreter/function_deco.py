@@ -69,7 +69,7 @@ def setupFunctions():
     addFunction("join", join)
     addFunction("length", length)
     addFunction("loop", loop)
-    addFunction("map", map_func)
+    # addFunction("map", map_func)
     addFunction("math", math)
     addFunction("mod", mod)
 
