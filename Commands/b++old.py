@@ -187,24 +187,6 @@ async def MAIN(message, args, level, perms, SERVER):
 			
 			program = " ".join(args[2:])
 		
-
-		if args[1].lower() == "create":
-			if level == 2:
-				await message.channel.send("Include the name of your new program!")
-				return
-			
-			if level == 3:
-				await message.channel.send("Include the code for your program!")
-				return
-		
-			tag_name = args[2]
-
-			if len(tag_name) > 30:
-				await message.channel.send("That tag name is too long. 30 characters maximum.")
-				return
-			
-			program = " ".join(args[3:])
-
 		if program.startswith("```") and program.endswith("```"):
 			program = program[3:-3]
 		if program.startswith("``") and program.endswith("``"):
@@ -213,12 +195,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			program = program[1:-1]
 
 		if args[1].lower() == "create":
-			if (tag_name,) in db.get_entries("b++programs", columns=["name"]):
-				await message.channel.send("There's already a program with that name!")
-				return
-			
-			db.add_entry("b++programs", [tag_name, program, message.author.id, 0])
-			await message.channel.send(f"Successfully created program `{tag_name}`!")
+			await message.channel.send("Creating oldb++ tags is disabled!")
 			return
 
 	semicolon_inds = find_all(program, ";")
