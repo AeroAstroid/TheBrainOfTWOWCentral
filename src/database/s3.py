@@ -1,6 +1,6 @@
-import datetime
 import os
 import time
+from datetime import datetime
 from decimal import Decimal
 from typing import Dict, Union
 
@@ -136,6 +136,10 @@ def deleteTag(name: str):
     conn.commit()
 
 
+def unixToReadable(unix: int):
+    return datetime.utcfromtimestamp(unix).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+
 async def IDtoUser(user_id: int) -> discord.User:
     return await bot.fetch_user(user_id)
 
@@ -157,7 +161,7 @@ async def leaderboards(page: int):
     firststep = []
     for index, tag in enumerate(results):
         firststep.append(
-            f"{index + 1} : {tag[0]} :: {tag[1]} uses (written by {(await IDtoUser(tag[2])).name} at {tag[3]} UTC)")
+            f"{index + 1} : {tag[0]} :: {tag[1]} uses (written by {(await IDtoUser(tag[2])).name} at {unixToReadable(tag[3])})")
     secondstep = "\n".join(firststep)
     board = f"```{secondstep}```"
     return board
@@ -167,9 +171,9 @@ async def infoTag(message, name: str):
     response = getTag(name)
     user = await IDtoUser(response["author"])
     return f"""**{name}** -- by {user.name} -- {response["uses"]} uses
-Created on {response["created"]}
-Last used on {response["lastused"]}
-Updated on {response["lastupdated"]}```scala
+Created on {unixToReadable(response["created"])}
+Last used on {unixToReadable(response["lastused"])}
+Updated on {unixToReadable(response["lastupdated"])}```scala
 {response["program"]}
 ```"""
 
