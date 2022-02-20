@@ -1,3 +1,4 @@
+import requests
 import datetime  # uptime
 import os
 import time
@@ -26,9 +27,15 @@ async def on_ready():
 
 
 @bot.command()
-async def run(ctx, *, message):
+async def run(ctx, *, message=None):
     """Run B* code"""
-    output = runCode(message, ctx.author)
+    # File or Message?
+    if len(ctx.message.attachments) > 0:
+        file = requests.get(ctx.message.attachments[0].url).text
+        output = runCode(file, ctx.author)
+    else:
+        output = runCode(message, ctx.author)
+
     await ctx.send(output)
 
 
@@ -70,7 +77,6 @@ async def info(ctx, message):
 async def leaderboard(ctx, page: int = 0):
     """Shows the leaderboard of tags sorted by uses"""
     await ctx.send(await leaderboards(page))
-
 
 
 @bot.command()
