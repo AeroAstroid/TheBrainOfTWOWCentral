@@ -43,7 +43,7 @@ def Expression(block: Union[List[str], str], codebase):
                 # user functions (b*)
                 return Expression(functionWanted.run(block[1:]), codebase)
         else:
-            return f" !!! - - {name} is not a block - - !!! "
+            raise NotImplementedError(f"Function not found: {name}")
     elif blockType == Type.STRING:
         return block
     elif blockType == Type.ARRAY:
