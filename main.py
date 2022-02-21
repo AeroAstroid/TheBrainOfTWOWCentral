@@ -31,8 +31,12 @@ async def run(ctx, *, message=None):
     """Run B* code"""
     # File or Message?
     if len(ctx.message.attachments) > 0:
+        attachment = ctx.message.attachments[0]
         file = requests.get(ctx.message.attachments[0].url).text
-        output = runCode(file, ctx.author)
+        if attachment.size > 100_000:
+            output = "File is too large! (100KB MAX)"
+        else:
+            output = runCode(file, ctx.author)
     else:
         output = runCode(message, ctx.author)
 
