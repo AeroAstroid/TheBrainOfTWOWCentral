@@ -29,9 +29,9 @@ def ABS(a):
 
 def SPLIT(a,b):
 	if type(a) != str:
-		raise TypeError(f"Parameter of STR function must be a number: {safe_cut(a)}")
+		raise TypeError(f"Parameter of STR function must be a string: {safe_cut(a)}")
 	if type(b) != str:
-		raise TypeError(f"Parameter of STR function must be a number: {safe_cut(b)}")
+		raise TypeError(f"Parameter of STR function must be a string: {safe_cut(b)}")
 	return a.split(b)
 
 def REPLACE(a,b,c):
