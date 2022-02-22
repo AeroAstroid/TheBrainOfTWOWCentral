@@ -27,6 +27,13 @@ def ABS(a):
 
 	return abs(int(a) if is_whole(a) else float(a))
 
+def SPLIT(a,b):
+	if type(a) != str:
+		raise TypeError(f"Parameter of SPLIT function must be a string: {safe_cut(a)}")
+	if type(b) != str:
+		raise TypeError(f"Parameter of SPLIT function must be a string: {safe_cut(b)}")
+	return a.split(b)
+
 def REPLACE(a,b,c):
 	if type(a) != str:
 		raise TypeError(f"Parameter of REPLACE function must be a string: {safe_cut(a)}")
@@ -285,5 +292,6 @@ FUNCTIONS = {
 	"USERNAME": USERNAME,
 	"USERID": USERID,
 	"SLICE": SLICE,
-	"REPLACE": REPLACE
+	"REPLACE": REPLACE,
+	"SPLIT": SPLIT
 }
