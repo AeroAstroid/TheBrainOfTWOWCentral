@@ -3,4 +3,4 @@ import time
 
 
 def time_func(block: List, codebase):
-    return time.time
+    return time.time()
