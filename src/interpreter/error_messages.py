@@ -72,5 +72,6 @@ unfunny_errmsg = [
     "print(\"Code broke how sad...\")",
     "You're a surgeon now, dissect the code!",
     "Either the code broke or THE code broke.",
-    "Print out your code. Then throw it in the fire."
-]
+    "Print out your code. Then throw it in the fire.",
+    "The time is <built-in function time>. Go to the gym already."
+    ]
