@@ -90,7 +90,7 @@ def setupFunctions():
     addFunction("subtract", sub)
     addFunction("difference", sub)
 
-    addFunction("time", time)
+    addFunction("time", time_func)
     addFunction("username", username)
     addFunction("userid", userid)
     addFunction("var", var)
