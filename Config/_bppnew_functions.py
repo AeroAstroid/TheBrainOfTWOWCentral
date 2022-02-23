@@ -17,7 +17,7 @@ def safe_cut(s):
 
 def COMMENT(*a): return ""
 
-def INDEXOF(a,b,*c,*d):
+def INDEXOF(a,b,c=None,d=None):
 	if not is_number(d) and c is not None:
 		raise TypeError(f"Optional parameter of INDEXOF function must be a number: {safe_cut(c)}")
 	if not is_number(d) and d is not None:
