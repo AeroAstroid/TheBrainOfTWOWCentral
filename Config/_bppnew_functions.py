@@ -22,7 +22,7 @@ def INDEXOF(a,b,c=None,d=None):
 		raise TypeError(f"Optional third parameter of INDEXOF function must be a number: {safe_cut(c)}")
 	if not is_number(d) and d is not None:
 		raise TypeError(f"Optional fourth parameter of INDEXOF function must be a number: {safe_cut(d)}")
-	if not isinstance(a,list):
+	if not isinstance(a,list) or type(a) == str:
 		raise TypeError(f"First parameter of INDEXOF function must be an array: {safe_cut(a)"}
 	if c is not None:
 		if d is not None:
