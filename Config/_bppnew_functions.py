@@ -17,6 +17,20 @@ def safe_cut(s):
 
 def COMMENT(*a): return ""
 
+def INDEXOF(a,b,*c,*d):
+	if not is_number(d) and c is not None:
+		raise TypeError(f"Optional parameter of INDEXOF function must be a number: {safe_cut(c)}")
+	if not is_number(d) and d is not None:
+		raise TypeError(f"Optional parameter of INDEXOF function must be a number: {safe_cut(d)}")
+	if a != list:
+		raise TypeError(f"Parameter of INDEXOF function must be an array: {safe_cut(a)"}
+	if c is not None:
+		if d is not None:
+			return a.indexof(b,c,d)
+		return a.indexof(b,c)
+	return a.indexof(b)
+	
+
 def USERNAME(): return ("n", )
 
 def USERID(): return ("id", )
@@ -282,6 +296,7 @@ FUNCTIONS = {
 	"CONCAT": CONCAT,
 	"ARRAY": ARRAY,
 	"INDEX": INDEX,
+	"INDEXOF": INDEXOF,
 	"ARGS": ARGS,
 	"ABS": ABS,
 	"#": COMMENT,
