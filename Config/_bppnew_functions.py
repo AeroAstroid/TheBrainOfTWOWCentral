@@ -26,9 +26,9 @@ def INDEXOF(a,b,c=None,d=None):
 		raise TypeError(f"First parameter of INDEXOF function must be an array: {safe_cut(a)"}
 	if c is not None:
 		if d is not None:
-			return a.indexof(b,c,d)
-		return a.indexof(b,c)
-	return a.indexof(b)
+			return a.index(b,c,d)
+		return a.index(b,c)
+	return a.index(b)
 	
 
 def USERNAME(): return ("n", )
