@@ -18,12 +18,12 @@ def safe_cut(s):
 def COMMENT(*a): return ""
 
 def INDEXOF(a,b,c=None,d=None):
-	if not is_number(d) and c is not None:
+	if not is_number(c) and c is not None:
 		raise TypeError(f"Optional third parameter of INDEXOF function must be a number: {safe_cut(c)}")
 	if not is_number(d) and d is not None:
 		raise TypeError(f"Optional fourth parameter of INDEXOF function must be a number: {safe_cut(d)}")
-	if not isinstance(a,list) or type(a) == str:
-		raise TypeError(f"First parameter of INDEXOF function must be an array: {safe_cut(a)}")
+	if type(a) != str and not isinstance(a,list):
+		raise TypeError(f"First parameter of INDEXOF function must be an array or string: {safe_cut(a)}")
 	if c is not None:
 		if d is not None:
 			return a.index(b,c,d)
