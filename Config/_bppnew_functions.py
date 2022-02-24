@@ -1,4 +1,4 @@
-import random, statistics, re, itertools
+import random, statistics, re, itertools, time
 import numpy as np
 
 try:
@@ -29,7 +29,8 @@ def INDEXOF(a,b,c=None,d=None):
 			return a.index(b,c,d)
 		return a.index(b,c)
 	return a.index(b)
-	
+
+def TIMEFUNC(): return time.time()
 
 def USERNAME(): return ("n", )
 
@@ -308,5 +309,6 @@ FUNCTIONS = {
 	"USERID": USERID,
 	"SLICE": SLICE,
 	"REPLACE": REPLACE,
-	"SPLIT": SPLIT
+	"SPLIT": SPLIT,
+	"TIME": TIMEFUNC
 }
