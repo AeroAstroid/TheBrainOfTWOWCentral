@@ -18,6 +18,8 @@ def parseCode(program: str):
                 activityStack[-1].append([])
                 activityStack.append(activityStack[-1][-1])
                 newString = True
+            elif c == "\\":
+                backslashed = True
             else:
                 activityStack[-1][-1] += c
 
