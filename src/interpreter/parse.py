@@ -12,8 +12,15 @@ def parseCode(program: str):
         if newString and c not in ["[", " ", "\n"]:
             activityStack[-1].append("")
             newString = False
+            
+        if backslashed:
+            if c == "n":
+                activityStack[-1][-1] += "\n"
+            else:
+                activityStack[-1][-1] += c
+            backslashed = False
 
-        if len(activityStack) == 1:
+        elif len(activityStack) == 1:
             if c == "[":
                 activityStack[-1].append([])
                 activityStack.append(activityStack[-1][-1])
@@ -22,13 +29,6 @@ def parseCode(program: str):
                 backslashed = True
             else:
                 activityStack[-1][-1] += c
-
-        elif backslashed:
-            if c == "n":
-                activityStack[-1][-1] += "\n"
-            else:
-                activityStack[-1][-1] += c
-            backslashed = False
 
         elif inString:
             if c == "\\":
