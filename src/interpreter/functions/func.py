@@ -4,7 +4,7 @@ from src.interpreter.expression import Expression
 from src.interpreter.userfunction import UserFunction
 
 
-def function(block: List, codebase):
+def func(block: List, codebase):
     name = Expression(block[1], codebase)
 
     # Assume block[2] is an array (it better be)

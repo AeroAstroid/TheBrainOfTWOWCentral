@@ -7,7 +7,7 @@ from src.interpreter.functions.compare import compare
 from src.interpreter.functions.concat import concat
 from src.interpreter.functions.define import define
 from src.interpreter.functions.find import find
-from src.interpreter.functions.function import function
+from src.interpreter.functions.func import func
 from src.interpreter.functions.global_func import global_func
 from src.interpreter.functions.if_func import if_func
 from src.interpreter.functions.index import index
@@ -63,8 +63,8 @@ def setupFunctions():
 
     addFunction("find", find)
     addFunction("floor", floor)
-    addFunction("func", function)
-    addFunction("function", function)
+    addFunction("func", func)
+    addFunction("function", func)
     addFunction("global", global_func)
     addFunction("if", if_func)
     addFunction("index", index)
