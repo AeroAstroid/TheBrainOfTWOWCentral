@@ -49,7 +49,8 @@ async def tag(ctx, message, *, arguments=None):
     tagObject = getTag(message)
     if tagObject is not None:
         code = tagObject["program"]
-        output = runCode(code, ctx.author, arguments)
+        argumentList = arguments.split(" ")
+        output = runCode(code, ctx.author, argumentList)
         await ctx.send(output)
 
         # If all goes well, then increment the use
