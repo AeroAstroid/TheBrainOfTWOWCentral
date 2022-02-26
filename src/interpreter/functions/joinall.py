@@ -4,10 +4,13 @@ from src.interpreter.expression import Expression
 
 
 def joinall(block: List, codebase):
-    first = Expression(block[1], codebase)
+    return recursive_join(block[1:], codebase)
+
+def recursive_join(block: List, codebase):
+    result = ""
     
-    buffer = first
-    for i in block[2:]:
-        buffer.extend(Expression(i, codebase))
-        buffer = "".join(buffer)
-    return buffer
+    for e in block:
+        if isinstance(e, List):
+            result += recursive_join(e)
+        else:
+            result += str(e)
