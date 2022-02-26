@@ -1,5 +1,6 @@
 from typing import List
 
+from src.interpreter.expression import Expression
 
 def find(block: List, codebase):
     try:
