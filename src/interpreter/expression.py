@@ -27,11 +27,12 @@ class Type(Enum):
 
 
 def Expression(block: Union[List[str], str], codebase):
-    name = block[0]
-    # TODO: try/except needed
+    # TODO(?): try/except needed
 
     blockType = isType(block)
+    
     if blockType == Type.FUNCTION:
+        name = block[0]
         functionWanted = findFunction(name, codebase)
         if functionWanted is not None:
             if isinstance(functionWanted, types.FunctionType):
