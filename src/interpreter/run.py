@@ -16,18 +16,19 @@ from src.interpreter.userfunction import UserFunction
 
 
 class Codebase:
-    def __init__(self, lines, user):
+    def __init__(self, lines, user, arguments):
         self.lines: List[str] = lines
         self.variables: Dict[str, str] = {}
         self.functions: Dict[str, UserFunction] = {}
         self.user: Union[discord.User, None] = user
+        self.arguments: Union[List[str], None] = arguments
         self.output: str = ""
 
 
-def runCode(code: str, user: Union[discord.User, None] = None):
+def runCode(code: str, user: Union[discord.User, None] = None, arguments: List[str] = None):
     # TODO: Trim up to three backticks from beginning and end of code
     parsed_code = parseCode(code)
-    codebase = Codebase(parsed_code, user)
+    codebase = Codebase(parsed_code, user, arguments)
     codebase.functions = codebase.functions | functions
 
     for statement in parsed_code:

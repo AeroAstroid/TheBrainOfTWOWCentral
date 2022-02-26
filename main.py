@@ -32,8 +32,8 @@ async def run(ctx, *, message=None):
     # File or Message?
     if len(ctx.message.attachments) > 0:
         attachment = ctx.message.attachments[0]
-        file = requests.get(ctx.message.attachments[0].url).text
-        if attachment.size > 100_000:
+        file = requests.get(attachment.url).text
+        if attachment.size >= 100_000:
             output = "File is too large! (100KB MAX)"
         else:
             output = runCode(file, ctx.author)
@@ -44,12 +44,12 @@ async def run(ctx, *, message=None):
 
 
 @bot.command()
-async def tag(ctx, message):
+async def tag(ctx, message, *, arguments=None):
     """Runs a B* tag"""
     tagObject = getTag(message)
     if tagObject is not None:
         code = tagObject["program"]
-        output = runCode(code, ctx.author)
+        output = runCode(code, ctx.author, arguments)
         await ctx.send(output)
 
         # If all goes well, then increment the use
@@ -62,7 +62,7 @@ async def tag(ctx, message):
 async def create(ctx, name, *, message):
     """Creates a B* tag with your code"""
     # try:
-    if name.length < 50:
+    if len(name) < 50:
         createTag(ctx.author, name, message)
         await ctx.send(f"Tag `{name}` created!")
     else:
