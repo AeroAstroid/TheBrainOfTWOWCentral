@@ -29,8 +29,6 @@ class Type(Enum):
 def Expression(block: Union[List[str], str], codebase):
     name = block[0]
     # TODO: try/except needed
-    if block[-1] == "":
-        block = block[:-1]
 
     blockType = isType(block)
     if blockType == Type.FUNCTION:
