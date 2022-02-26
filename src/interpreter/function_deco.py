@@ -6,6 +6,7 @@ from src.interpreter.functions.comment import comment
 from src.interpreter.functions.compare import compare
 from src.interpreter.functions.concat import concat
 from src.interpreter.functions.define import define
+from src.interpreter.functions.find import find
 from src.interpreter.functions.function import function
 from src.interpreter.functions.global_func import global_func
 from src.interpreter.functions.if_func import if_func
@@ -59,6 +60,7 @@ def setupFunctions():
     addFunction("div", div)
     addFunction("divide", div)
 
+    addFunction("find", find)
     addFunction("floor", floor)
     addFunction("func", function)
     addFunction("function", function)
