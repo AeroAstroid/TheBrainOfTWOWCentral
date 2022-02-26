@@ -3,7 +3,7 @@ from typing import List
 from src.interpreter.expression import Expression
 
 
-def join(block: List, codebase):
+def joinall(block: List, codebase):
     first = Expression(block[1], codebase)
     
     buffer = first
