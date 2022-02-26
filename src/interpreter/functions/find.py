@@ -1,7 +1,7 @@
 from typing import List
 
 
-def find_func(block: List, codebase):
+def find(block: List, codebase):
     try:
         if len(block) == 3:
             return Expression(block[1], codebase).index(Expression(block[2], codebase))
