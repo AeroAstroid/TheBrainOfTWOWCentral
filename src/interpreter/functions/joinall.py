@@ -10,7 +10,8 @@ def recursive_join(block: List, codebase):
     result = ""
     
     for e in block:
-        if isinstance(e, List):
-            result += recursive_join(e)
+        eval_e = Expression(e, codebase)
+        if isinstance(eval_e, List):
+            result += recursive_join(Expression(eval_e, codebase))
         else:
-            result += str(e)
+            result += str(eval_e)
