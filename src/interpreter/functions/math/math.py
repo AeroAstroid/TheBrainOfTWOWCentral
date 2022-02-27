@@ -6,7 +6,7 @@ from src.interpreter.functions.math.pow import pow_func
 from src.interpreter.functions.math.sub import sub
 
 
-def math(number, operator, by):
+def math_func(number, operator, by):
     if operator == "+":
         return add(number, by)
     elif operator == "-":
