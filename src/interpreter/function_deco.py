@@ -47,63 +47,47 @@ from src.interpreter.functions.math.sub import sub
 # functions: Dict[str, Function] = {}
 Infinite = math.inf
 
-def setupFunctionsNew():
-    Function("abs", {"number": None}, abs_func)
-    Function("add", {"number": None, "bys": Infinite}, add)
-    Function("ceil", {"number": None}, ceil)
-    Function("div", {"dividend": None, "divisors": Infinite}, div)
-    Function("floor", {"number": None}, floor)
-    Function("math", {"number": None, "operator": None, "by": None}, math_func)
-    Function("mod", {"number": None, "bys": Infinite}, mod)
-    Function("mul", {"number": None, "bys": Infinite}, mul)
-    Function("pow", {"number": None, "bys": Infinite}, pow_func)
-    Function("sub", {"number": None, "bys": Infinite}, sub)
 
-    Function("j", {"amount": 1}, j)
+def setupFunctionsNew():
+    Function(["abs"], {"number": None}, abs_func)
+    Function(["add", "sum"], {"number": None, "bys": Infinite}, add)
+    Function(["ceil"], {"number": None}, ceil)
+    Function(["div", "divide"], {"dividend": None, "divisors": Infinite}, div)
+    Function(["floor"], {"number": None}, floor)
+    Function(["math"], {"number": None, "operator": None, "by": None}, math_func)
+    Function(["mod"], {"number": None, "bys": Infinite}, mod)
+    Function(["mul", "multiply", "product"], {"number": None, "bys": Infinite}, mul)
+    Function(["pow"], {"number": None, "bys": Infinite}, pow_func)
+    Function(["sub", "subtract", "difference"], {"number": None, "bys": Infinite}, sub)
+
+    Function(["j"], {"amount": 1}, j)
 
 
 setupFunctionsNew()
 
 
 def setupFunctions():
-    addFunction("abs", abs_func)
-
-    addFunction("add", add)
-    addFunction("sum", add)
-
     addFunction("args", args)
     addFunction("array", array)
-    addFunction("ceil", ceil)
     addFunction("choose", choose)
     addFunction("choosechar", choosechar)
     addFunction("compare", compare)
     addFunction("concat", concat)
     addFunction("define", define)
 
-    addFunction("div", div)
-    addFunction("divide", div)
-
     addFunction("find", find)
-    addFunction("floor", floor)
     addFunction("func", func)
     addFunction("function", func)
     addFunction("global", global_func)
     addFunction("if", if_func)
     addFunction("index", index)
-    addFunction("j", j)
     addFunction("join", join)
     addFunction("joinall", joinall)
     addFunction("length", length)
     addFunction("loop", loop)
     # addFunction("map", map_func)
     addFunction("math", math_func)
-    addFunction("mod", mod)
 
-    addFunction("mul", mul)
-    addFunction("multiply", mul)
-    addFunction("product", mul)
-
-    addFunction("pow", pow_func)
     addFunction("randint", randint)
     addFunction("random", random_func)
     addFunction("repeat", repeat)
@@ -112,9 +96,6 @@ def setupFunctions():
 
     addFunction("slice", slice_func)
     addFunction("split", split)
-    addFunction("sub", sub)
-    addFunction("subtract", sub)
-    addFunction("difference", sub)
 
     addFunction("time", time_func)
     addFunction("try", try_func)
@@ -125,4 +106,4 @@ def setupFunctions():
 
 
 def addFunction(name: str, func):
-    print("Deprecated: Use Function Class instead")
+    print(f"{name} > Deprecated: Use Function Class instead")

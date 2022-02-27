@@ -12,15 +12,16 @@ def isUniqueValue(value: Any):
 
 
 class Function:
-    def __init__(self, name: str, args: Dict[str, Union[None, Union[int, float, str]]], runner: Callable):
-        self.name = name
+    def __init__(self, aliases: List[str], args: Dict[str, Union[None, Union[int, float, str]]], runner: Callable):
+        self.aliases = aliases
         self.args = args
         self.argumentsRequired = self.__getArgumentsRequired()
         self.runner = runner
 
-        print([name.upper(), name.lower()], self)
-        functions[self.name.upper()] = self
-        functions[self.name.lower()] = self
+        for alias in aliases:
+            print([alias.upper(), alias.lower()], self)
+            functions[alias.upper()] = self
+            functions[alias.lower()] = self
 
     def run(self, codebase: Codebase, args: List[Any]):
         parsedArgs = list(map(lambda arg: Expression(arg, codebase), args))
@@ -31,11 +32,11 @@ class Function:
 
         if parsedArgsLength < self.argumentsRequired:
             raise Exception(
-                f"Not enough arguments for function **{self.name.upper()}** (expected {len(self.args)}, got {len(parsedArgs)})")
+                f"Not enough arguments for function **{self.aliases.upper()}** (expected {len(self.args)}, got {len(parsedArgs)})")
 
         if parsedArgsLength > len(self.args) != math.inf:
             raise Exception(
-                f"Too many arguments for function **{self.name.upper()}** (expected {len(self.args)}, got {len(parsedArgs)})")
+                f"Too many arguments for function **{self.aliases.upper()}** (expected {len(self.args)}, got {len(parsedArgs)})")
 
         return self.runner(*parsedArgs)
 
