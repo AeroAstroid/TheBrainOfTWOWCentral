@@ -1,11 +1,6 @@
-from typing import List
+def div(dividend, *divisors):
+    result = dividend
 
-from src.interpreter.expression import Expression
-
-
-def div(block: List, codebase):
-    result = Expression(block[1], codebase)
-
-    for num in block[2:]:
-        result /= Expression(num, codebase)
+    for divisor in divisors:
+        result /= divisor
     return result

@@ -47,6 +47,17 @@ from src.interpreter.functions.math.sub import sub
 
 
 def setupFunctionsNew():
+    Function("abs", {"number": None}, abs_func)
+    Function("add", {"number": None, "bys": None}, add)
+    Function("ceil", {"number": None}, ceil)
+    Function("div", {"dividend": None, "divisors": None}, div)
+    Function("floor", {"number": None}, floor)
+    Function("math", {"number": None, "operator": None, "by": None}, math)
+    Function("mod", {"number": None, "bys": None}, mod)
+    Function("mul", {"number": None, "bys": None}, mul)
+    Function("pow", {"number": None, "bys": None}, pow_func)
+    Function("sub", {"number": None, "bys": None}, sub)
+
     Function("j", {"amount": 1}, j)
 
 
