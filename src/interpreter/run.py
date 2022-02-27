@@ -5,6 +5,7 @@ from typing import List, Union, Dict
 
 import discord
 
+from src.interpreter.Codebase import Codebase
 from src.interpreter.error_messages import unfunny_errmsg
 from src.interpreter.expression import Expression
 
@@ -12,17 +13,6 @@ from src.interpreter.expression import Expression
 # the discord user property is used for global ownership checking
 from src.interpreter.tempFunctionsFile import functions
 from src.interpreter.parse import parseCode
-from src.interpreter.userfunction import UserFunction
-
-
-class Codebase:
-    def __init__(self, lines, user, arguments):
-        self.lines: List[str] = lines
-        self.variables: Dict[str, str] = {}
-        self.functions: Dict[str, UserFunction] = {}
-        self.user: Union[discord.User, None] = user
-        self.arguments: Union[List[str], None] = arguments
-        self.output: str = ""
 
 
 def runCode(code: str, user: Union[discord.User, None] = None, arguments: List[str] = None):
