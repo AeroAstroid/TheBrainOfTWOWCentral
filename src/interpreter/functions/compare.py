@@ -17,5 +17,7 @@ def compare(block: List, codebase):
         return Expression(v1, codebase) <= Expression(v2, codebase)
     elif op == "=":
         return Expression(v1, codebase) == Expression(v2, codebase)
+    elif op == "==":
+        return Expression(v1, codebase) == Expression(v2, codebase)
     elif op == "!=":
         return Expression(v1, codebase) != Expression(v2, codebase)
