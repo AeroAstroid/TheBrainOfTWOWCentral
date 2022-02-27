@@ -1,3 +1,6 @@
+# from typing import Dict
+
+from src.interpreter.function import Function
 from src.interpreter.functions.args import args
 from src.interpreter.functions.array import array
 from src.interpreter.functions.choose import choose
@@ -16,7 +19,6 @@ from src.interpreter.functions.join import join
 from src.interpreter.functions.joinall import joinall
 from src.interpreter.functions.length import length
 from src.interpreter.functions.loop import loop
-from src.interpreter.functions.map import map_func
 from src.interpreter.functions.randint import randint
 from src.interpreter.functions.random_func import random_func
 from src.interpreter.functions.repeat import repeat
@@ -41,7 +43,14 @@ from src.interpreter.functions.math.mul import mul
 from src.interpreter.functions.math.pow import pow_func
 from src.interpreter.functions.math.sub import sub
 
-functions = {}
+# functions: Dict[str, Function] = {}
+
+
+def setupFunctionsNew():
+    Function("j", {"amount": 1}, j)
+
+
+setupFunctionsNew()
 
 
 def setupFunctions():
@@ -104,6 +113,4 @@ def setupFunctions():
 
 
 def addFunction(name: str, func):
-    print([name.upper(), name.lower()], func)
-    functions[name.upper()] = func
-    functions[name.lower()] = func
+    print("Deprecated: Use Function Class instead")

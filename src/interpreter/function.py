@@ -1,6 +1,7 @@
 from typing import Dict, Any, Union, Callable, List
 
 from src.interpreter.expression import Expression
+from src.interpreter.tempFunctionsFile import functions
 from src.interpreter.run import Codebase
 
 
@@ -10,6 +11,10 @@ class Function:
         self.args = args
         self.runner = runner
 
+        print([name.upper(), name.lower()], self)
+        functions[self.name.upper()] = self
+        functions[self.name.lower()] = self
+
     def run(self, codebase: Codebase, args: List[Any]):
-        parsedArgs = map(lambda arg: Expression(arg, codebase), args)
-        self.runner(*parsedArgs)
+        parsedArgs = list(map(lambda arg: Expression(arg, codebase), args))
+        return self.runner(*parsedArgs)

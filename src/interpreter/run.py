@@ -10,7 +10,7 @@ from src.interpreter.expression import Expression
 
 
 # the discord user property is used for global ownership checking
-from src.interpreter.function_deco import functions
+from src.interpreter.tempFunctionsFile import functions
 from src.interpreter.parse import parseCode
 from src.interpreter.userfunction import UserFunction
 
