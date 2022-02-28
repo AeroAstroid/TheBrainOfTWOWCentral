@@ -11,6 +11,7 @@ from bot import bot
 from src.database.s3 import createTag, getTag, infoTag, updateTag, isOwnerProgram, editTag, deleteTag, leaderboards
 from src.interpreter.function_deco import setupFunctions
 from src.interpreter.run import runCode
+prod = os.environ.get("IS_HEROKU", False)
 
 load_dotenv()
 setupFunctions()
@@ -116,5 +117,8 @@ async def uptime(ctx):
     uptime = str(datetime.timedelta(seconds=int(round(time.time() - startTime))))
     await ctx.send("Uptime: " + uptime)
 
+if prod:
+    bot.run(os.environ.get("TOKEN", None))
+else:
+    bot.run(os.getenv("TOKEN"))
 
-bot.run(os.getenv("TOKEN"))
