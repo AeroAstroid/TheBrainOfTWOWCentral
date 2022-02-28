@@ -14,10 +14,10 @@ load_dotenv()
 db_name = "b-star"
 # replace with own
 conn = psycopg2.connect(
-    host=os.getenv("HOST"),
-    database=os.getenv("DATABASE"),
-    user=os.getenv("USER"),
-    password=os.getenv("PASSWORD")
+    host=os.environ.get("HOST"),
+    database=os.environ.get("DATABASE"),
+    user=os.environ.get("USER"),
+    password=os.environ.get("PASSWORD")
 )
 
 # tag or global
