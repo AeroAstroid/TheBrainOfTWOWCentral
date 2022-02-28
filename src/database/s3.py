@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from bot import bot
 
 load_dotenv()
-db_name = "b-star"
+db_name = "\"" + os.environ.get("DATABASE") + "\""
 # replace with own
 conn = psycopg2.connect(
     host=os.environ.get("HOST"),
@@ -27,8 +27,8 @@ table = conn.cursor()
 
 
 def getTag(name: str) -> Union[item, None]:
-    table.execute("""
-    SELECT * FROM "b-star".public."b-star-dev"
+    table.execute(f"""
+    SELECT * FROM {db_name}.public."b-star-dev"
     WHERE name = (%s)
     """,
                   (name,))
@@ -48,8 +48,8 @@ def getTag(name: str) -> Union[item, None]:
 
 
 def getGlobal(name: str) -> Union[item, None]:
-    table.execute("""
-    SELECT * FROM "b-star".public."b-star-dev-globals"
+    table.execute(f"""
+    SELECT * FROM {db_name}.public."b-star-dev-globals"
     WHERE name = (%s)
     """,
                   (name,))
@@ -75,8 +75,8 @@ def globalExists(name: str):
 
 
 def isOwnerProgram(program_name: str, user_id: Union[int, str]):
-    table.execute("""
-    SELECT author FROM "b-star".public."b-star-dev"
+    table.execute(f"""
+    SELECT author FROM {db_name}.public."b-star-dev"
     WHERE name = %s;
     """,
                   (program_name,))
@@ -85,8 +85,8 @@ def isOwnerProgram(program_name: str, user_id: Union[int, str]):
 
 
 def isOwnerGlobal(program_name: str, user_id: Union[int, str]):
-    table.execute("""
-    SELECT owner FROM "b-star".public."b-star-dev-globals"
+    table.execute(f"""
+    SELECT owner FROM {db_name}.public."b-star-dev-globals"
     WHERE name = %s;
     """,
                   (program_name,))
@@ -96,8 +96,8 @@ def isOwnerGlobal(program_name: str, user_id: Union[int, str]):
 
 def createTag(user: discord.User, name: str, code: str):
     now = Decimal(time.time())
-    table.execute("""
-    INSERT INTO "b-star".public."b-star-dev" (name, program, author, uses, created, lastused, lastupdated)
+    table.execute(f"""
+    INSERT INTO {db_name}.public."b-star-dev" (name, program, author, uses, created, lastused, lastupdated)
     VALUES (%s, %s, %s, %s, %s, %s, %s)
     """,
                   (name, code, user.id, 0, now, now, now))
@@ -107,8 +107,8 @@ def createTag(user: discord.User, name: str, code: str):
 def updateTag(name: str):
     # Assume "name" program exists
     now = Decimal(time.time())
-    table.execute("""
-    UPDATE "b-star".public."b-star-dev"
+    table.execute(f"""
+    UPDATE {db_name}.public."b-star-dev"
     SET uses = uses + 1,
         lastused = %s
     WHERE name = %s
@@ -118,8 +118,8 @@ def updateTag(name: str):
 
 def editTag(name: str, code: str):
     now = Decimal(time.time())
-    table.execute("""
-    UPDATE "b-star".public."b-star-dev" 
+    table.execute(f"""
+    UPDATE {db_name}.public."b-star-dev" 
     SET program = %s,
         lastupdated = %s
     WHERE name = %s
@@ -128,8 +128,8 @@ def editTag(name: str, code: str):
 
 
 def deleteTag(name: str):
-    table.execute("""
-    DELETE FROM "b-star".public."b-star-dev"
+    table.execute(f"""
+    DELETE FROM {db_name}.public."b-star-dev"
     WHERE name = %s
     """,
                   (name,))
@@ -145,12 +145,12 @@ async def IDtoUser(user_id: int) -> discord.User:
 
 
 async def leaderboards(page: int):
-    table.execute("""
+    table.execute(f"""
     SELECT name,
            uses,
            author,
            created
-    FROM "b-star".public."b-star-dev"
+    FROM {db_name}.public."b-star-dev"
     ORDER BY uses DESC
     LIMIT 10
     OFFSET (%s * 10)
@@ -179,8 +179,8 @@ Updated on {unixToReadable(response["lastupdated"])}```scala
 
 
 def createGlobal(user: discord.User, name: str, code: str):
-    table.execute("""
-        INSERT INTO "b-star".public."b-star-dev-globals" (name, value, type, owner, version)
+    table.execute(f"""
+        INSERT INTO {db_name}.public."b-star-dev-globals" (name, value, type, owner, version)
         VALUES (%s, %s, %s, %s, %s)
         """,
                   (name, code, 0, user.id, 1))
@@ -194,8 +194,8 @@ def editGlobal(user: discord.User, name: str, code: str):
     global_to_edit = getGlobal(name)
     new_version_number = global_to_edit["version"] + 1
 
-    table.execute("""
-        INSERT INTO "b-star".public."b-star-dev-globals" (name, value, type, owner, version)
+    table.execute(f"""
+        INSERT INTO {db_name}.public."b-star-dev-globals" (name, value, type, owner, version)
         VALUES (%s, %s, %s, %s, %s)
         """,
                   (name, code, 0, user.id, new_version_number))
