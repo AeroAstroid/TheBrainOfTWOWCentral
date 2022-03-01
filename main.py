@@ -45,7 +45,7 @@ async def run(ctx, *, message=None):
 
 
 @bot.command()
-async def tag(ctx, message, *, arguments=None):
+async def tag(ctx, message, *, arguments=""):
     """Runs a B* tag"""
     tagObject = getTag(message)
     if tagObject is not None:
