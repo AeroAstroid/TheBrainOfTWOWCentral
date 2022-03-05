@@ -73,6 +73,5 @@ unfunny_errmsg = [
     "Either the code broke or THE code broke.",
     "Print out your code. Then throw it in the fire.",
     "The time is <built-in function time>. Go to the gym already.",
-    "hi my name is carmen winston im seventeen years old i am very similar to you did i mention to you that im dead a few years ago a group of girls pushed me down a sewer hole to try and embarrass me when i didnt come back up the poo",
     "Jeez, this code works just about as well as Sword Factory's databases!"
     ]
