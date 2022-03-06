@@ -63,6 +63,7 @@ def setupFunctions():
     addFunction("divide", div)
 
     addFunction("find", find)
+    addFunction("indexof", find)
     addFunction("floor", floor)
     addFunction("func", func)
     addFunction("function", func)
