@@ -164,8 +164,8 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		elif len(message.attachments) != 0:
 			try:
-				if message.attachments[0].size >= 20000:
-					await message.channel.send("Your program must be under **20KB**.")
+				if message.attachments[0].size >= 60000:
+					await message.channel.send("Your program must be under **60KB**.")
 					return
 				
 				await message.attachments[0].save(f"Config/{message.id}.txt")
@@ -217,8 +217,8 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		elif len(message.attachments) != 0:
 			try:
-				if message.attachments[0].size >= 20000:
-					await message.channel.send("Your program must be under **20KB**.")
+				if message.attachments[0].size >= 60000:
+					await message.channel.send("Your program must be under **60KB**.")
 					return
 				
 				await message.attachments[0].save(f"Config/{message.id}.txt")
@@ -273,8 +273,8 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		elif len(message.attachments) != 0:
 			try:
-				if message.attachments[0].size >= 20000:
-					await message.channel.send("Your program must be under **20KB**.")
+				if message.attachments[0].size >= 60000:
+					await message.channel.send("Your program must be under **60KB**.")
 					return
 
 				await message.attachments[0].save(f"Config/{message.id}.txt")
