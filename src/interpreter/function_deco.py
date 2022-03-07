@@ -48,7 +48,7 @@ from src.interpreter.functions.math.sub import sub
 Infinite = math.inf
 
 
-def setupFunctionsNew():
+def setupFunctions():
     Function(["abs"], {"number": None}, abs_func)
     Function(["add", "sum"], {"number": None, "bys": Infinite}, add)
     Function(["ceil"], {"number": None}, ceil)
@@ -98,47 +98,4 @@ def setupFunctionsNew():
     # Function(["#"], {"*": Infinite}, lambda x: None)
 
 
-setupFunctionsNew()
-
-
-def setupFunctions():
-    # addFunction("args", args)
-    # addFunction("array", array)
-    # addFunction("choose", choose)
-    # addFunction("choosechar", choosechar)
-    # addFunction("compare", compare)
-    # addFunction("concat", concat)
-    # addFunction("define", define)
-
-    # addFunction("find", find)
-    # addFunction("func", func)
-    # addFunction("function", func)
-    # addFunction("global", global_func)
-    # addFunction("if", if_func)
-    # addFunction("index", index)
-    # addFunction("join", join)
-    # addFunction("joinall", joinall)
-    # addFunction("length", length)
-    # addFunction("loop", loop)
-    # addFunction("map", map_func)
-    # addFunction("math", math_func)
-
-    # addFunction("randint", randint)
-    # addFunction("random", random_func)
-    # addFunction("repeat", repeat)
-    # addFunction("round", round_func)
-    # addFunction("replace", replace_func)
-
-    # addFunction("slice", slice_func)
-    # addFunction("split", split)
-
-    # addFunction("time", time_func)
-    # addFunction("try", try_func)
-    # addFunction("username", username)
-    # addFunction("userid", userid)
-    # addFunction("var", var)
-    # addFunction("#", comment)
-
-
-def addFunction(name: str, func):
-    print(f"{name} > Deprecated: Use Function Class instead")
+setupFunctions()
