@@ -34,17 +34,17 @@ def Expression(block: Union[List[str], str], codebase):
     blockType = isType(block)
 
     if blockType == Type.FUNCTION:
-        name = block[0]
-        functionWanted = findFunction(name, codebase)
+        alias = block[0]
+        functionWanted = findFunction(alias, codebase)
         if functionWanted is not None:
             # if functionWanted is Function:
             #     built-in functions (python)
-                return functionWanted.run(codebase, arguments)
+                return functionWanted.run(codebase, arguments, alias)
             # else:
                 # user functions (b*)
                 # return Expression(functionWanted.run(block[1:]), codebase)
         else:
-            raise NotImplementedError(f"Function not found: {name}")
+            raise NotImplementedError(f"Function not found: {alias}")
     elif blockType == Type.STRING:
         return block
     elif blockType == Type.ARRAY:
