@@ -1,7 +1,5 @@
-from typing import List
-
-from src.interpreter.expression import Expression
+import src.interpreter.globals as globals
 
 
-def args(block: List, codebase):
-    return codebase.arguments[Expression(block[1], codebase)]
+def args(index):
+    return globals.codebase.arguments[index]

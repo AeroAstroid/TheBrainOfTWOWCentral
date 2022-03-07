@@ -5,32 +5,34 @@ from typing import List, Union, Dict
 
 import discord
 
+from src.interpreter import tempFunctionsFile
 from src.interpreter.Codebase import Codebase
 from src.interpreter.error_messages import unfunny_errmsg
 from src.interpreter.expression import Expression
 
 
 # the discord user property is used for global ownership checking
-from src.interpreter.tempFunctionsFile import functions
+import src.interpreter.globals as globals
 from src.interpreter.parse import parseCode
+from src.interpreter.tempFunctionsFile import functions
 
 
 def runCode(code: str, user: Union[discord.User, None] = None, arguments: List[str] = None):
     # TODO: Trim up to three backticks from beginning and end of code
     parsed_code = parseCode(code)
-    codebase = Codebase(parsed_code, user, arguments)
-    codebase.functions = codebase.functions | functions
+    globals.codebase = Codebase(parsed_code, user, arguments)
+    globals.codebase.functions = globals.codebase.functions | functions
 
     for statement in parsed_code:
         try:
             if type(statement) == str:
                 result = statement
             else:
-                result = Expression(statement, codebase)
+                result = Expression(statement, globals.codebase)
 
             print(result)
             if result is not None:
-                codebase.output += str(result)
+                globals.codebase.output += str(result)
 
         except Exception as e:
             # errmsg = f"ERROR at `{statement}`:\n{e}"
@@ -40,8 +42,8 @@ def runCode(code: str, user: Union[discord.User, None] = None, arguments: List[s
 
     # print(codebase.variables)
     # print(codebase.output)
-    if len(codebase.output) == 0:
+    if len(globals.codebase.output) == 0:
         return "NOTICE: The code has successfully ran, but returned nothing!"
-    if len(codebase.output) > 2000:
+    if len(globals.codebase.output) > 2000:
         return "ERROR: Output too long!"
-    return codebase.output
+    return globals.codebase.output

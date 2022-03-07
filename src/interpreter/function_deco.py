@@ -60,16 +60,19 @@ def setupFunctionsNew():
     Function(["pow"], {"number": None, "bys": Infinite}, pow_func)
     Function(["sub", "subtract", "difference"], {"number": None, "bys": Infinite}, sub)
 
+    Function(["args"], {"index": None}, args)
     Function(["array"], {"arr": Infinite}, array)
     Function(["choose"], {"arr": Infinite}, choose)
     Function(["choosechar"], {"string": None}, choosechar)
     Function(["compare"], {"v1": None, "operator": None, "v2": None}, compare)
+    Function(["define"], {"name": None, "item": None}, define)
 
     Function(["find"], {"v1": None, "v2": None, "v3": None, "v4": None}, find)
     Function(["func", "function"], {"name": None, "args": None, "code": Infinite}, func)
 
     Function(["j"], {"amount": 1}, j)
 
+    Function(["var"], {"item": None}, var)
     Function(["#"], {"comments": Infinite}, comment)
     # Function(["#"], {"*": Infinite}, lambda x: None)
 
@@ -78,13 +81,13 @@ setupFunctionsNew()
 
 
 def setupFunctions():
-    addFunction("args", args)
+    # addFunction("args", args)
     # addFunction("array", array)
     # addFunction("choose", choose)
     # addFunction("choosechar", choosechar)
     # addFunction("compare", compare)
     addFunction("concat", concat)
-    addFunction("define", define)
+    # addFunction("define", define)
 
     # addFunction("find", find)
     addFunction("func", func)
@@ -112,7 +115,7 @@ def setupFunctions():
     addFunction("try", try_func)
     addFunction("username", username)
     addFunction("userid", userid)
-    addFunction("var", var)
+    # addFunction("var", var)
     # addFunction("#", comment)
 
 

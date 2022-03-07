@@ -1,3 +1,4 @@
+import src.interpreter.globals as globals
 from src.interpreter.userfunction import UserFunction
 
 
@@ -17,4 +18,4 @@ def func(name, args, code):
     for i, argument in enumerate(args):
         args[i] = argument
 
-    UserFunction(name, args, code, True, codebase)
+    UserFunction(name, args, code, True, globals.codebase)

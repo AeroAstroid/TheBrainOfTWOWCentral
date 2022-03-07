@@ -1,7 +1,5 @@
-from typing import List
-
-from src.interpreter.expression import Expression
+import src.interpreter.globals as globals
 
 
-def define(block: List, codebase):
-    codebase.variables[Expression(block[1], codebase)] = Expression(block[2], codebase)
+def define(name, item):
+    globals.codebase.variables[name] = item
