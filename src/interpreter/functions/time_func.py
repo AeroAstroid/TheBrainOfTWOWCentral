@@ -1,6 +1,5 @@
-from typing import List
 import time
 
 
-def time_func(block: List, codebase):
+def time_func():
     return time.time()

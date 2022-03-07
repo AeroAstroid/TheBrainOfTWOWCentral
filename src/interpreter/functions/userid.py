@@ -1,5 +1,5 @@
-from typing import List
+import src.interpreter.globals as globals
 
 
-def userid(block: List, codebase):
-    return codebase.user.id
+def userid():
+    return globals.codebase.user.id
