@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 from bot import bot
 from src.database.s3 import createTag, getTag, infoTag, updateTag, isOwnerProgram, editTag, deleteTag, leaderboards
+from src.interpreter.expression import isType, Type
 from src.interpreter.function_deco import setupFunctions
 from src.interpreter.run import runCode
 prod = os.environ.get("IS_HEROKU", False)
@@ -51,6 +52,15 @@ async def tag(ctx, message, *, arguments=""):
     if tagObject is not None:
         code = tagObject["program"]
         argumentList = arguments.split(" ")
+
+        # TODO: Find a way to remove the need for this
+        for i in range(len(argumentList)):
+            argType = isType(argumentList[i])
+            if argType is Type.FLOAT:
+                argumentList[i] = float(argumentList[i])
+            elif argType is Type.INTEGER:
+                argumentList[i] = int(argumentList[i])
+
         output = runCode(code, ctx.author, argumentList)
         await ctx.send(output)
 
