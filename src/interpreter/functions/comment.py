@@ -1,3 +1,3 @@
 # TODO: Delete file?
-def comment(comments):
+def comment(*comments):
     return None

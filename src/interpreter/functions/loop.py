@@ -1,4 +1,4 @@
-def loop(amount, functions):
+def loop(amount, *functions):
     results = []
     for i in range(amount):
         for func in functions:

@@ -3,7 +3,7 @@ from src.interpreter.expression import Expression
 
 
 # TODO: Refactor CONCAT
-def concat(item, items):
+def concat(item, *items):
     # determine whether concat is concatenating strings or arrays
     is_array = (type(item) == list)
     buffer = [] if is_array else ""

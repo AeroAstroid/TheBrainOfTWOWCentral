@@ -1,2 +1,2 @@
-def array(arr):
-    return ["ARRAY", *arr]
+def array(*arr):
+    return ["ARRAY", arr]
