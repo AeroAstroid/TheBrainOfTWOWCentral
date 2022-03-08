@@ -93,7 +93,7 @@ def setupFunctions():
     Function(["try"], {"attempt": None, "on_error": None}, try_func)
     Function(["username"], {}, username)
     Function(["userid"], {}, userid)
-    Function(["var"], {"item": None}, var)
+    Function(["var"], {"item": None, "index": ""}, var)
     Function(["#"], {"comments": Infinite}, comment)
     # Function(["#"], {"*": Infinite}, lambda x: None)
 
