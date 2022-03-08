@@ -2,4 +2,7 @@ import src.interpreter.globals as globals
 
 
 def args(index):
-    return globals.codebase.arguments[index]
+    if index == "":
+        return globals.codebase.arguments
+    else:
+        return globals.codebase.arguments[index]

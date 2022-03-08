@@ -60,7 +60,7 @@ def setupFunctions():
     Function(["pow"], {"number": None, "bys": Infinite}, pow_func)
     Function(["sub", "subtract", "difference"], {"number": None, "bys": Infinite}, sub)
 
-    Function(["args"], {"index": None}, args)
+    Function(["args"], {"index": ""}, args)
     Function(["array"], {"arr": Infinite}, array)
     Function(["choose"], {"arr": Infinite}, choose)
     Function(["choosechar"], {"string": None}, choosechar)
