@@ -1,3 +1,7 @@
+# from typing import Dict
+import math
+
+from src.interpreter.function import Function
 from src.interpreter.functions.args import args
 from src.interpreter.functions.array import array
 from src.interpreter.functions.choose import choose
@@ -16,7 +20,6 @@ from src.interpreter.functions.join import join
 from src.interpreter.functions.joinall import joinall
 from src.interpreter.functions.length import length
 from src.interpreter.functions.loop import loop
-from src.interpreter.functions.map import map_func
 from src.interpreter.functions.randint import randint
 from src.interpreter.functions.random_func import random_func
 from src.interpreter.functions.repeat import repeat
@@ -35,76 +38,64 @@ from src.interpreter.functions.math.add import add
 from src.interpreter.functions.math.ceil import ceil
 from src.interpreter.functions.math.div import div
 from src.interpreter.functions.math.floor import floor
-from src.interpreter.functions.math.math import math
+from src.interpreter.functions.math.math import math_func
 from src.interpreter.functions.math.mod import mod
 from src.interpreter.functions.math.mul import mul
 from src.interpreter.functions.math.pow import pow_func
 from src.interpreter.functions.math.sub import sub
 
-functions = {}
+# functions: Dict[str, Function] = {}
+Infinite = math.inf
 
 
 def setupFunctions():
-    addFunction("abs", abs_func)
+    Function(["abs"], {"number": None}, abs_func)
+    Function(["add", "sum"], {"number": None, "bys": Infinite}, add)
+    Function(["ceil"], {"number": None}, ceil)
+    Function(["div", "divide"], {"dividend": None, "divisors": Infinite}, div)
+    Function(["floor"], {"number": None}, floor)
+    Function(["math"], {"number": None, "operator": None, "by": None}, math_func)
+    Function(["mod"], {"number": None, "bys": Infinite}, mod)
+    Function(["mul", "multiply", "product"], {"number": None, "bys": Infinite}, mul)
+    Function(["pow"], {"number": None, "bys": Infinite}, pow_func)
+    Function(["sub", "subtract", "difference"], {"number": None, "bys": Infinite}, sub)
 
-    addFunction("add", add)
-    addFunction("sum", add)
+    Function(["args"], {"index": None}, args)
+    Function(["array"], {"arr": Infinite}, array)
+    Function(["choose"], {"arr": Infinite}, choose)
+    Function(["choosechar"], {"string": None}, choosechar)
+    Function(["compare"], {"v1": None, "operator": None, "v2": None}, compare)
+    Function(["concat"], {"item": None, "items": Infinite}, concat)
+    Function(["define"], {"name": None, "item": None}, define)
 
-    addFunction("args", args)
-    addFunction("array", array)
-    addFunction("ceil", ceil)
-    addFunction("choose", choose)
-    addFunction("choosechar", choosechar)
-    addFunction("compare", compare)
-    addFunction("concat", concat)
-    addFunction("define", define)
+    Function(["find", "indexof"], {"v1": None, "v2": None, "v3": None, "v4": None}, find)
+    Function(["func", "function"], {"name": None, "args": None, "code": Infinite}, func)
+    Function(["global"], {"use": None, "name": None, "value": None}, global_func)
+    Function(["if"], {"compare": None, "true": None, "false": None}, if_func)
+    Function(["index"], {"arr": None, "number": None}, index)
 
-    addFunction("div", div)
-    addFunction("divide", div)
+    Function(["length"], {"arr": None}, length)
+    Function(["loop"], {"amount": None, "functions": Infinite}, loop)
 
-    addFunction("find", find)
-    addFunction("indexof", find)
-    addFunction("floor", floor)
-    addFunction("func", func)
-    addFunction("function", func)
-    addFunction("global", global_func)
-    addFunction("if", if_func)
-    addFunction("index", index)
-    addFunction("j", j)
-    addFunction("join", join)
-    addFunction("joinall", joinall)
-    addFunction("length", length)
-    addFunction("loop", loop)
-    # addFunction("map", map_func)
-    addFunction("math", math)
-    addFunction("mod", mod)
+    Function(["j"], {"amount": 1}, j)
+    Function(["join"], {"array": None, "joiner": ""}, join)
+    Function(["joinall"], {"array": None}, joinall)
 
-    addFunction("mul", mul)
-    addFunction("multiply", mul)
-    addFunction("product", mul)
+    Function(["randint"], {"minimum": None, "maximum": None}, randint)
+    Function(["random"], {"minimum": 0, "maximum": 1}, random_func)
+    Function(["repeat"], {"item": None, "amount": None}, repeat)
+    Function(["round"], {"number": None}, round_func)
+    Function(["replace"], {"string": None, "match": None, "replace": None}, replace_func)
+    Function(["slice"], {"array": None, "index_start": None, "index_end": None}, slice_func)
+    Function(["split"], {"string": None, "seperator": " "}, split)
 
-    addFunction("pow", pow_func)
-    addFunction("randint", randint)
-    addFunction("random", random_func)
-    addFunction("repeat", repeat)
-    addFunction("round", round_func)
-    addFunction("replace", replace_func)
-
-    addFunction("slice", slice_func)
-    addFunction("split", split)
-    addFunction("sub", sub)
-    addFunction("subtract", sub)
-    addFunction("difference", sub)
-
-    addFunction("time", time_func)
-    addFunction("try", try_func)
-    addFunction("username", username)
-    addFunction("userid", userid)
-    addFunction("var", var)
-    addFunction("#", comment)
+    Function(["time"], {}, time_func)
+    Function(["try"], {"attempt": None, "on_error": None}, try_func)
+    Function(["username"], {}, username)
+    Function(["userid"], {}, userid)
+    Function(["var"], {"item": None}, var)
+    Function(["#"], {"comments": Infinite}, comment)
+    # Function(["#"], {"*": Infinite}, lambda x: None)
 
 
-def addFunction(name: str, func):
-    print([name.upper(), name.lower()], func)
-    functions[name.upper()] = func
-    functions[name.lower()] = func
+setupFunctions()
