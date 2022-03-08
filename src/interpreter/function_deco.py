@@ -68,7 +68,7 @@ def setupFunctions():
     Function(["concat"], {"item": None, "items": Infinite}, concat)
     Function(["define"], {"name": None, "item": None}, define)
 
-    Function(["find"], {"v1": None, "v2": None, "v3": None, "v4": None}, find)
+    Function(["find", "indexof"], {"v1": None, "v2": None, "v3": None, "v4": None}, find)
     Function(["func", "function"], {"name": None, "args": None, "code": Infinite}, func)
     Function(["global"], {"use": None, "name": None, "value": None}, global_func)
     Function(["if"], {"compare": None, "true": None, "false": None}, if_func)
