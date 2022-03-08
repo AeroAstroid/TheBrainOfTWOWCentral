@@ -1,16 +1,7 @@
-from typing import List
+# TODO: (Rename argument) Not necessarily just numbers, but also strings, etc.
+def add(number, *bys):
+    result = number
 
-from src.interpreter.expression import Expression
-
-
-def add(block: List, codebase):
-    items = block[1:]
-    result = 0
-
-    for num in items:
-        # if type(num) == list:  # Array or String
-        #     print(Expression(num, codebase))
-        #     items.extend(Expression(num, codebase))
-        # else:
-        result += Expression(num, codebase)
+    for num in bys:
+        result += num
     return result

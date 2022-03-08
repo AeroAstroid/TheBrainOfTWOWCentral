@@ -1,23 +1,21 @@
-from typing import List
-
-from src.interpreter.expression import Expression
+import src.interpreter.globals as globals
 from src.interpreter.userfunction import UserFunction
 
 
-def func(block: List, codebase):
-    name = Expression(block[1], codebase)
+def func(name, args, code):
+    # name = Expression(block[1], codebase)
 
     # Assume block[2] is an array (it better be)
     args = {}
 
     # Code
-    code = block[3:]
+    # code = block[3:]
 
     # Stop non-blocks from being treated as blocks
     # if len(block) == 1:
     #     block = block[0]
 
-    for i, argument in enumerate(Expression(block[2], codebase)):
+    for i, argument in enumerate(args):
         args[i] = argument
 
-    UserFunction(name, args, code, True, codebase)
+    UserFunction(name, args, code, True, globals.codebase)

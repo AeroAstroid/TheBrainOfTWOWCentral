@@ -1,16 +1,15 @@
-from typing import List
-
+import src.interpreter.globals as globals
 from src.interpreter.expression import Expression
 
 
-def concat(block: List, codebase):
+# TODO: Refactor CONCAT
+def concat(item, *items):
     # determine whether concat is concatenating strings or arrays
-    first = Expression(block[1], codebase)
-    is_array = (type(first) == list)
+    is_array = (type(item) == list)
     buffer = [] if is_array else ""
 
-    for i in block[1:]:
-        element = Expression(i, codebase)
+    for i in items:
+        element = Expression(i, globals.codebase)
         if is_array != (type(element) == list):
             raise TypeError("Cannot call CONCAT with a mix of arrays and other types")
         if is_array:

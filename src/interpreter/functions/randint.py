@@ -1,10 +1,6 @@
 import random
 
-from typing import List
 
-from src.interpreter.expression import Expression
-
-
-def randint(block: List, codebase):
+def randint(minimum, maximum):
     # TODO: add seeds to these, maybe?
-    return random.randint(Expression(block[1], codebase), Expression(block[2], codebase))
+    return random.randint(minimum, maximum)

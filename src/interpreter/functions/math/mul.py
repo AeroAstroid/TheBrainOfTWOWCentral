@@ -1,14 +1,10 @@
-from typing import List
-
-from src.interpreter.expression import Expression
-
-
-def mul(block: List, codebase):
-    if type(block[1]) == list and block[1][0] == "ARRAY":
-        block = block[1]
+def mul(number, *bys):
+    # TODO: block isn't used, debug this!
+    if type(number) == list and number[0] == "ARRAY":
+        block = number
     
-    result = Expression(block[1], codebase)
+    result = number
 
-    for num in block[2:]:
-        result *= Expression(num, codebase)
+    for num in bys:
+        result *= num
     return result

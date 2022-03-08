@@ -1,11 +1,6 @@
-from typing import List
+def sub(number, *bys):
+    result = number
 
-from src.interpreter.expression import Expression
-
-
-def sub(block: List, codebase):
-    result = Expression(block[1], codebase)
-
-    for num in block[2:]:
-        result -= Expression(num, codebase)
+    for num in bys:
+        result -= num
     return result

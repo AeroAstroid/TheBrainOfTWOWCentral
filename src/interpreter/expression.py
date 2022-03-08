@@ -1,8 +1,9 @@
 import types
 from enum import Enum
 from re import fullmatch
-from typing import Union, Callable
-from typing import List
+from typing import Union, List, Callable
+
+import src.interpreter.tempFunctionsFile
 
 
 class Type(Enum):
@@ -28,27 +29,26 @@ class Type(Enum):
 
 def Expression(block: Union[List[str], str], codebase):
     # TODO(?): try/except needed
+    arguments = block[1:]
 
     blockType = isType(block)
-    
+
     if blockType == Type.FUNCTION:
-        name = block[0]
-        functionWanted = findFunction(name, codebase)
+        alias = block[0]
+        functionWanted = findFunction(alias, codebase)
         if functionWanted is not None:
-            if isinstance(functionWanted, types.FunctionType):
-                # built-in functions (python)
-                return functionWanted(block=block, codebase=codebase)
-            else:
+            # if functionWanted is Function:
+            #     built-in functions (python)
+                return functionWanted.run(codebase, arguments, alias)
+            # else:
                 # user functions (b*)
-                return Expression(functionWanted.run(block[1:]), codebase)
+                # return Expression(functionWanted.run(block[1:]), codebase)
         else:
-            raise NotImplementedError(f"Function not found: {name}")
+            raise NotImplementedError(f"Function not found: {alias}")
     elif blockType == Type.STRING:
         return block
     elif blockType == Type.ARRAY:
-        array = block[1:]  # Get rid of ARRAY string
-
-        return list(map(lambda item: Expression(item, codebase), array))
+        return list(map(lambda item: Expression(item, codebase), arguments))
     elif blockType == Type.INTEGER:
         return int(block)
     elif blockType == Type.FLOAT:
@@ -59,7 +59,7 @@ def Expression(block: Union[List[str], str], codebase):
 
 def findFunction(name: str, codebase):  # -> Union[Callable[[List, Codebase], None], List[str]]:
     # This tries to find a built-in function first, then tries the user-made ones.
-    functionWanted = codebase.functions.get(name)
+    functionWanted = src.interpreter.tempFunctionsFile.functions.get(name)
 
     return functionWanted
 

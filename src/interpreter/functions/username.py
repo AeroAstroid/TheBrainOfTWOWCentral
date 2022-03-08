@@ -1,5 +1,5 @@
-from typing import List
+import src.interpreter.globals as globals
 
 
-def username(block: List, codebase):
-    return codebase.user.name
+def username():
+    return globals.codebase.user.name

@@ -1,11 +1,5 @@
-import random
-from typing import List
-
-from src.interpreter.expression import Expression
+from src.interpreter.functions.choose import choose
 
 
-def choosechar(block: List, codebase):
-    choices = Expression(block[1], codebase)
-    rand = random.randint(0, len(choices) - 1)
-
-    return Expression(choices[rand], codebase)
+def choosechar(string):
+    return choose(*string)

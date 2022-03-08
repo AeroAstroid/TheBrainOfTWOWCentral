@@ -1,19 +1,21 @@
-from typing import List
+from src.interpreter.functions.math.add import add
+from src.interpreter.functions.math.div import div
+from src.interpreter.functions.math.mod import mod
+from src.interpreter.functions.math.mul import mul
+from src.interpreter.functions.math.pow import pow_func
+from src.interpreter.functions.math.sub import sub
 
-from src.interpreter.expression import Expression
 
-
-def math(block: List, codebase):
-    if block[2] == "+":
-        return Expression(["ADD", block[1], block[3]], codebase)
-    elif block[2] == "-":
-        return Expression(["SUB", block[1], block[3]], codebase)
-    elif block[2] == "/":
-        return Expression(["DIV", block[1], block[3]], codebase)
-    elif block[2] == "*":
-        return Expression(["MUL", block[1], block[3]], codebase)
-    elif block[2] == "^":
-        return Expression(["POW", block[1], block[3]], codebase)
-    elif block[2] == "%":
-        return Expression(["MOD", block[1], block[3]], codebase)
-
+def math_func(number, operator, by):
+    if operator == "+":
+        return add(number, by)
+    elif operator == "-":
+        return sub(number, by)
+    elif operator == "/":
+        return div(number, by)
+    elif operator == "*":
+        return mul(number, by)
+    elif operator == "^":
+        return pow_func(number, by)
+    elif operator == "%":
+        return mod(number, by)

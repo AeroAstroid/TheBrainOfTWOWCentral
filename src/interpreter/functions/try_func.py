@@ -1,10 +1,5 @@
-from typing import List
-
-from src.interpreter.expression import Expression
-
-
-def try_func(block: List, codebase):
+def try_func(attempt, on_error):
     try:
-        return Expression(block[1], codebase)
+        return attempt
     except Exception:
-        return Expression(block[2], codebase)
+        return on_error
