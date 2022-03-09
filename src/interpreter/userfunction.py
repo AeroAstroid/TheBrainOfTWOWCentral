@@ -2,7 +2,6 @@ from typing import List, Dict
 
 import src.interpreter.globals as globals
 from src.interpreter.expression import Expression
-from src.interpreter.functions.define import define
 
 
 class UserFunction:

@@ -1,4 +1,3 @@
-import src.interpreter.globals as globals
 from src.interpreter.userfunction import UserFunction
 
 
