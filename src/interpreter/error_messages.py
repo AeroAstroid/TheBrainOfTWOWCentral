@@ -90,11 +90,6 @@ unfunny_errmsg = [
     "Watch as we witness this coder in his natural habitat get angry.",
     "It just HAD TO BREAK?!",
     "The amount of work you're putting into this is great, you just need a little fixation.",
-    "Ben?",
-    "Yes?",
-    "No.",
-    "Ho ho ho!",
-    "Eugh.",
     "Make sure to approach the code calmly.",
     "?!",
     ]
