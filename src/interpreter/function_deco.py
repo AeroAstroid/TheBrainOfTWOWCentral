@@ -14,6 +14,7 @@ from src.interpreter.functions.find import find
 from src.interpreter.functions.func import func
 from src.interpreter.functions.global_func import global_func
 from src.interpreter.functions.if_func import if_func
+from src.interpreter.functions.import_func import import_func
 from src.interpreter.functions.index import index
 from src.interpreter.functions.j import j
 from src.interpreter.functions.join import join
@@ -73,6 +74,7 @@ def setupFunctions():
     Function(["global"], {"use": None, "name": None, "value": None}, global_func)
     Function(["if"], {"compare": None, "true": None, "false": None}, if_func)
     Function(["index"], {"arr": None, "number": None}, index)
+    Function(["import"], {"name": None}, import_func)
 
     Function(["length"], {"arr": None}, length)
     Function(["loop"], {"amount": None, "functions": Infinite}, loop, parse_args=False)
