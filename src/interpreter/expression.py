@@ -1,8 +1,9 @@
 import types
 from enum import Enum
 from re import fullmatch
-from typing import Union, List, Callable
+from typing import Union, List
 
+import src.interpreter.globals as globals
 import src.interpreter.tempFunctionsFile
 
 
@@ -24,30 +25,33 @@ class Type(Enum):
 
     # Special Type used for the elif spam: Its a combination of float and int.
     # 1e9, 5.3e+10
-    # EXPONENT = 5
+    # EXPONENT = 6
 
 
 def Expression(block: Union[List[str], str], codebase):
     # TODO(?): try/except needed
-    arguments = block[1:]
 
     blockType = isType(block)
 
     if blockType == Type.FUNCTION:
+        arguments = block[1:]
         alias = block[0]
         functionWanted = findFunction(alias, codebase)
         if functionWanted is not None:
-            # if functionWanted is Function:
-            #     built-in functions (python)
+            try:  # if None then Function else UserFunction
+                # The variable creates an error if it's not a user function.
+                # TODO: Figure out how to remove this line
+                variable_that_does_not_need_to_exist = functionWanted.block
+
+                return Expression(functionWanted.run(arguments), codebase)
+            except AttributeError:
                 return functionWanted.run(codebase, arguments, alias)
-            # else:
-                # user functions (b*)
-                # return Expression(functionWanted.run(block[1:]), codebase)
         else:
             raise NotImplementedError(f"Function not found: {alias}")
     elif blockType == Type.STRING:
         return block
     elif blockType == Type.ARRAY:
+        arguments = block[1:]
         return list(map(lambda item: Expression(item, codebase), arguments))
     elif blockType == Type.INTEGER:
         return int(block)
@@ -58,8 +62,10 @@ def Expression(block: Union[List[str], str], codebase):
 
 
 def findFunction(name: str, codebase):  # -> Union[Callable[[List, Codebase], None], List[str]]:
-    # This tries to find a built-in function first, then tries the user-made ones.
-    functionWanted = src.interpreter.tempFunctionsFile.functions.get(name)
+    # This tries to find a user-made function first, then tries the built-in ones.
+    functionWanted = globals.codebase.functions[name]
+    if functionWanted is None:
+        functionWanted = src.interpreter.tempFunctionsFile.functions.get(name)
 
     return functionWanted
 
@@ -71,9 +77,9 @@ def isType(block):
         else:
             return Type.FUNCTION
     else:
-        if fullmatch(r"^[+-]?\d+$", block):
+        if fullmatch(r"^[+-]?\d+$", str(block)):
             return Type.INTEGER
-        elif fullmatch(r"^[+-]?\d+(.|([eE][+-]?)|)\d+$", block):
+        elif fullmatch(r"^[+-]?\d+(.|([eE][+-]?)|)\d+$", str(block)):
             return Type.FLOAT
         # elif fullmatch(r"^[+-]?\d+[eE][+-]?\d+$", block):
         #     return Type.EXPONENT
