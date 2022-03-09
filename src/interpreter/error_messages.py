@@ -92,4 +92,5 @@ unfunny_errmsg = [
     "The amount of work you're putting into this is great, you just need a little fixation.",
     "Make sure to approach the code calmly.",
     "?!",
+    "'number'"
     ]
