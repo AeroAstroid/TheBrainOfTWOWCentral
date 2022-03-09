@@ -1,3 +1,5 @@
+quotes = ["\"", "“", "”"]
+
 def parseCode(program: str):
     parseTree = []
     activityStack = [parseTree]
@@ -33,14 +35,14 @@ def parseCode(program: str):
         elif inString:
             if c == "\\":
                 backslashed = True
-            elif c == "\"":
+            elif c in quotes:
                 inString = False
             else:
                 activityStack[-1][-1] += c
 
         elif c == "\\":
             backslashed = True
-        elif c == "\"":
+        elif c in quotes:
             inString = True
         elif c in [" ", "\n"]:
             newString = True
