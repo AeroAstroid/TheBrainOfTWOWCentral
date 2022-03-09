@@ -75,7 +75,7 @@ def setupFunctions():
     Function(["index"], {"arr": None, "number": None}, index)
 
     Function(["length"], {"arr": None}, length)
-    Function(["loop"], {"amount": None, "functions": Infinite}, loop)
+    Function(["loop"], {"amount": None, "functions": Infinite}, loop, parse_args=False)
 
     Function(["j"], {"amount": 1}, j)
     Function(["join"], {"array": None, "joiner": ""}, join)
