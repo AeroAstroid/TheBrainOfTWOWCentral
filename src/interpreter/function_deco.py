@@ -99,6 +99,10 @@ def setupFunctions():
     Function(["var"], {"item": None, "index": ""}, var)
     Function(["while"], {"condition": None, "code": Infinite}, while_func, parse_args=False)
     Function(["#"], {"comments": Infinite}, comment)
+
+    Function(["str"], {"item": None}, str)
+    Function(["int"], {"item": None}, int)
+    Function(["float"], {"item": None}, float)
     # Function(["#"], {"*": Infinite}, lambda x: None)
 
 
