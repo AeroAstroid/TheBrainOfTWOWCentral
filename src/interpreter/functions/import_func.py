@@ -10,4 +10,13 @@ def import_func(name):
         raise Exception(f"Tag **{name}** not found!")
     else:
         # Add it to the codebase functions
-        Expression(parseCode(tag["program"])[0], globals.codebase)
+        # TODO: Remove this hack (by adding a FUNCS row to the tag database)
+        code = parseCode(tag["program"])
+        funcLines = []
+        for line in code:
+            if type(line) is list:
+                if line[0] == "func" or "FUNC" or "function" or "FUNCTION":
+                    funcLines.append(line)
+
+        for func in funcLines:
+            Expression(func, globals.codebase)
