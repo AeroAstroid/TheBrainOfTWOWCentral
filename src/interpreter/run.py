@@ -18,7 +18,7 @@ from src.interpreter.tempFunctionsFile import functions
 
 def runCode(code: str, user: Union[discord.User, None] = None, arguments: List[str] = None):
     try:
-        func_timeout(30, runCodeReal, args=(code, user, arguments))
+        return func_timeout(30, runCodeReal, args=(code, user, arguments))
     except FunctionTimedOut:
         return returnError("RUNTIME", "Timed out! (More than 30 seconds)")
     except Exception as error:
@@ -41,7 +41,7 @@ def runCodeReal(code: str, user: Union[discord.User, None] = None, arguments: Li
     # print(codebase.variables)
     # print(codebase.output)
     if len(globals.codebase.output) == 0:
-        return "NOTICE: The code has successfully ran, but returned nothing!"
+        return "⚠️: The code has successfully ran, but returned nothing!"
     if len(globals.codebase.output) > 2000:
         return "ERROR: Output too long!"
     return globals.codebase.output
