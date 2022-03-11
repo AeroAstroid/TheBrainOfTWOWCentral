@@ -41,9 +41,9 @@ def runCodeReal(code: str, user: Union[discord.User, None] = None, arguments: Li
     # print(codebase.variables)
     # print(codebase.output)
     if len(globals.codebase.output) == 0:
-        return "⚠️: The code has successfully ran, but returned nothing!"
+        return "⚠️: The code has ran successfully, but returned nothing!"
     if len(globals.codebase.output) > 2000:
-        return "ERROR: Output too long!"
+        return f"⚠️: Output too long, only showing the first 1000 characters:\n\n```{globals.codebase.output[:1000]}```"
     return globals.codebase.output
 
 
