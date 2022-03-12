@@ -1,6 +1,6 @@
 discord.py==1.5.1
 numpy==1.21.5
-Pillow==9.0.0
+Pillow==9.0.1
 psycopg2==2.9.2
 requests==2.23.0
 python-dotenv==0.19.1
