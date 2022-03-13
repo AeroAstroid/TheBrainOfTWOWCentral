@@ -33,6 +33,7 @@ def getTag(name: str) -> Union[item, None]:
     """,
                   (name,))
     item = table.fetchone()
+    conn.commit()
     if item is None:
         return item
 
@@ -54,6 +55,7 @@ def getGlobal(name: str) -> Union[item, None]:
     """,
                   (name,))
     item = table.fetchone()
+    conn.commit()
     if item is None:
         return item
 
