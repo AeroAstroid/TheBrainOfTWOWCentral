@@ -20,7 +20,7 @@ def global_func(use, name, value):
 
 
 def check_filesize(value):
-    if len(value) > 150_000:
+    if len(str(value)) > 150_000:
         raise ValueError("Global Input is too large! (150KB MAX)")
     else:
         return value
