@@ -93,7 +93,7 @@ def setupFunctions():
     Function(["split"], {"string": None, "seperator": " "}, split)
 
     Function(["time"], {}, time_func)
-    Function(["try"], {"attempt": None, "on_error": None}, try_func)
+    Function(["try"], {"attempt": None, "on_error": None}, try_func, parse_args=False)
     Function(["username"], {}, username)
     Function(["userid"], {}, userid)
     Function(["var"], {"item": None, "index": ""}, var)
