@@ -19,6 +19,7 @@ conn = psycopg2.connect(
     user=os.environ.get("USER"),
     password=os.environ.get("PASSWORD")
 )
+conn.autocommit = True
 
 # tag or global
 item = Dict[str, Union[str, int]]
