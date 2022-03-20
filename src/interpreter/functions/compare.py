@@ -7,7 +7,7 @@ def compare(v1, operator, v2):
         return v1 >= v2
     elif operator == "<=":
         return v1 <= v2
-    elif operator == ["=", "=="]:
+    elif operator == "=" or "==":
         return v1 == v2
     elif operator == "!=":
         return v1 != v2

@@ -14,6 +14,7 @@ from src.interpreter.functions.find import find
 from src.interpreter.functions.func import func
 from src.interpreter.functions.global_func import global_func
 from src.interpreter.functions.if_func import if_func
+from src.interpreter.functions.import_func import import_func
 from src.interpreter.functions.index import index
 from src.interpreter.functions.j import j
 from src.interpreter.functions.join import join
@@ -32,6 +33,7 @@ from src.interpreter.functions.try_func import try_func
 from src.interpreter.functions.userid import userid
 from src.interpreter.functions.username import username
 from src.interpreter.functions.var import var
+from src.interpreter.functions.while_func import while_func
 
 from src.interpreter.functions.math.abs import abs_func
 from src.interpreter.functions.math.add import add
@@ -69,13 +71,14 @@ def setupFunctions():
     Function(["define"], {"name": None, "item": None}, define)
 
     Function(["find", "indexof"], {"v1": None, "v2": None, "v3": None, "v4": None}, find)
-    Function(["func", "function"], {"name": None, "args": None, "code": Infinite}, func)
-    Function(["global"], {"use": None, "name": None, "value": None}, global_func)
+    Function(["func", "function"], {"name": None, "args": None, "code": Infinite}, func, parse_args=False)
+    Function(["global"], {"use": None, "name": None, "value": 0}, global_func)
     Function(["if"], {"compare": None, "true": None, "false": None}, if_func)
     Function(["index"], {"arr": None, "number": None}, index)
+    Function(["import"], {"name": None}, import_func)
 
     Function(["length"], {"arr": None}, length)
-    Function(["loop"], {"amount": None, "functions": Infinite}, loop)
+    Function(["loop"], {"amount": None, "functions": Infinite}, loop, parse_args=False)
 
     Function(["j"], {"amount": 1}, j)
     Function(["join"], {"array": None, "joiner": ""}, join)
@@ -90,11 +93,16 @@ def setupFunctions():
     Function(["split"], {"string": None, "seperator": " "}, split)
 
     Function(["time"], {}, time_func)
-    Function(["try"], {"attempt": None, "on_error": None}, try_func)
+    Function(["try"], {"attempt": None, "on_error": None}, try_func, parse_args=False)
     Function(["username"], {}, username)
     Function(["userid"], {}, userid)
     Function(["var"], {"item": None, "index": ""}, var)
+    Function(["while"], {"condition": None, "code": Infinite}, while_func, parse_args=False)
     Function(["#"], {"comments": Infinite}, comment)
+
+    Function(["str"], {"item": None}, str)
+    Function(["int"], {"item": None}, int)
+    Function(["float"], {"item": None}, float)
     # Function(["#"], {"*": Infinite}, lambda x: None)
 
 

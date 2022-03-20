@@ -12,12 +12,13 @@ def isUniqueValue(value: Any):
 
 
 class Function:
-    def __init__(self, aliases: List[str], args: Dict[str, Union[None, Union[int, float, str]]], runner: Callable):
+    def __init__(self, aliases: List[str], args: Dict[str, Union[None, Union[int, float, str]]], runner: Callable, parse_args: bool = True):
         self.aliases = aliases
         self.args = args
         self.infiniteArgs = False
         self.argumentsRequired = self.__getArgumentsRequired()
         self.runner = runner
+        self.parse_args = parse_args
 
         for alias in aliases:
             print([alias.upper(), alias.lower()], self)
@@ -25,7 +26,11 @@ class Function:
             functions[alias.lower()] = self
 
     def run(self, codebase: Codebase, args: List[Any], alias_used: str):
-        parsedArgs = list(map(lambda arg: Expression(arg, codebase), args))
+        if self.parse_args:
+            parsedArgs = list(map(lambda arg: Expression(arg, codebase), args))
+        else:
+            parsedArgs = args
+
         parsedArgsLength = len(parsedArgs)
 
         # TODO: Make it so that it doesnt change the original list (parsedArgs)

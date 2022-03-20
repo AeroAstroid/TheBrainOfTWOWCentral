@@ -28,21 +28,26 @@ async def on_ready():
     startTime = time.time()  # snapshot of time when listener sends on_ready
 
 
-@bot.command()
-async def run(ctx, *, message=None):
-    """Run B* code"""
-    # File or Message?
+def accept_file_or_message(ctx, message):
     if len(ctx.message.attachments) > 0:
         attachment = ctx.message.attachments[0]
         file = requests.get(attachment.url).text
-        if attachment.size >= 100_000:
-            output = "File is too large! (100KB MAX)"
+        if attachment.size >= 150_000:
+            raise "File is too large! (150KB MAX)"
         else:
-            output = runCode(file, ctx.author)
+            return file
     else:
-        output = runCode(message, ctx.author)
+        return message
 
-    await ctx.send(output)
+
+@bot.command()
+async def run(ctx, *, message=None):
+    """Run B* code"""
+    try:
+        output = runCode(accept_file_or_message(ctx, message), ctx.author)
+        await ctx.send(output)
+    except Exception as e:
+        await ctx.send(e)
 
 
 @bot.command()
@@ -75,8 +80,11 @@ async def create(ctx, name, *, message):
     """Creates a B* tag with your code"""
     # try:
     if len(name) < 50:
-        createTag(ctx.author, name, message)
-        await ctx.send(f"Tag `{name}` created!")
+        try:
+            createTag(ctx.author, name, accept_file_or_message(ctx, message))
+            await ctx.send(f"Tag `{name}` created!")
+        except Exception as e:
+            await ctx.send(e)
     else:
         await ctx.send(f"The name \"`{name}`\" is too long!")
     # except:
@@ -99,8 +107,11 @@ async def leaderboard(ctx, page: int = 0):
 async def edit(ctx, name, *, message):
     """Edit one of your B* tags"""
     if isOwnerProgram(name, ctx.author.id):
-        editTag(name, message)
-        await ctx.send(f"Tag `{name}` edited!")
+        try:
+            editTag(name, accept_file_or_message(ctx, message))
+            await ctx.send(f"Tag `{name}` edited!")
+        except Exception as e:
+            await ctx.send(e)
     else:
         await ctx.send(f"You aren't the owner of tag `{name}`!")
 
@@ -131,4 +142,3 @@ if prod:
     bot.run(os.environ.get("TOKEN", None))
 else:
     bot.run(os.getenv("TOKEN"))
-

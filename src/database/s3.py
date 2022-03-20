@@ -19,6 +19,7 @@ conn = psycopg2.connect(
     user=os.environ.get("USER"),
     password=os.environ.get("PASSWORD")
 )
+conn.autocommit = True
 
 # tag or global
 item = Dict[str, Union[str, int]]
@@ -33,6 +34,7 @@ def getTag(name: str) -> Union[item, None]:
     """,
                   (name,))
     item = table.fetchone()
+    conn.commit()
     if item is None:
         return item
 
@@ -54,6 +56,7 @@ def getGlobal(name: str) -> Union[item, None]:
     """,
                   (name,))
     item = table.fetchone()
+    conn.commit()
     if item is None:
         return item
 
@@ -114,6 +117,7 @@ def updateTag(name: str):
     WHERE name = %s
     """,
                   (now, name))
+    conn.commit()
 
 
 def editTag(name: str, code: str):
@@ -125,6 +129,7 @@ def editTag(name: str, code: str):
     WHERE name = %s
     """,
                   (code, now, name))
+    conn.commit()
 
 
 def deleteTag(name: str):
@@ -195,7 +200,14 @@ def editGlobal(user: discord.User, name: str, code: str):
     new_version_number = global_to_edit["version"] + 1
 
     table.execute(f"""
-        INSERT INTO {db_name}.public."b-star-dev-globals" (name, value, type, owner, version)
-        VALUES (%s, %s, %s, %s, %s)
+        UPDATE {db_name}.public."b-star-dev-globals"
+        SET value = %s,
+            version = %s
+        WHERE name = %s
         """,
-                  (name, code, 0, user.id, new_version_number))
+                  (code, new_version_number, name))
+    conn.commit()
+
+
+def fileLimitCheck(file):
+    return len(file) > 150_000  # 150kb
