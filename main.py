@@ -18,6 +18,7 @@ async def event_task(): # This is an event handler for the time-based functions 
 	global SERVERS
 	await BRAIN.wait_until_ready()
 	await asyncio.sleep(2)
+	print("TESTING TASK")
 
 	while not BRAIN.is_closed():
 		loop_start = time.time()
@@ -75,6 +76,8 @@ async def on_ready():
 	global SERVERS
 
 	open("Config/_tr_gen.txt", "w").close()
+
+	BRAIN.loop.create_task(event_task())
 
 	from Config._servers import SERVERS, MAIN_SERVER
 
@@ -189,7 +192,7 @@ async def on_ready():
 				if message.guild is None:
 					msg_guild = SERVERS[server]
 					break
-				
+
 				elif message.guild.id == int(server):
 					msg_guild = SERVERS[server]
 					break

@@ -6,7 +6,7 @@ DB_LINK = os.getenv("BRAIN_DB") # Postgres DB link
 
 intents = discord.Intents.default()
 intents.members = True
-intents.message_content = True
+#intents.message_content = True
 
 
 BRAIN = discord.Client(intents=intents) # The bot object
