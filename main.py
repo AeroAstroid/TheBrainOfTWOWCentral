@@ -324,4 +324,4 @@ async def on_ready():
 			except:
 				pass
 	
-await BRAIN.run(TOKEN)
+BRAIN.run(TOKEN)
