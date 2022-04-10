@@ -81,6 +81,8 @@ async def on_ready():
 	from Commands._commands import COMMANDS
 	from Events._events import EVENTS
 
+	BRAIN.loop.create_task(event_task())
+
 	COOLDOWN = {}
 
 	PARAMS["EVENT_TASK"] = False
@@ -321,13 +323,5 @@ async def on_ready():
 					f"**Error occured in {msg_guild['MAIN'].name}!**```python\n{traceback.format_exc()}```")
 			except:
 				pass
-
-
-async def main():
-    async with BRAIN:
-        BRAIN.loop.create_task(event_task())
-        await BRAIN.run(TOKEN)
-
-async_loop = asyncio.get_event_loop()
-coroutine = main()
-async_loop.run_until_complete(coroutine)
+	
+await BRAIN.run(TOKEN)
