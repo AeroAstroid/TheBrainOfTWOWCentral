@@ -159,9 +159,7 @@ async def on_ready():
 	
 	@BRAIN.event
 	async def on_message(message):
-
-		print("MESSAGE!!!!!!!!!!!")
-
+		
 		# Ignore bot messages
 		if message.author == BRAIN.user: return
 		
