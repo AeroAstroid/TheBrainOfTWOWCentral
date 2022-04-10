@@ -175,6 +175,8 @@ async def on_ready():
 						await msg_guild["EVENTS"][event].on_message(message)
 					except:
 						pass
+
+			print("CHECK 1")
 			
 			# Not bother with non-commands from here on
 			msg_guild = None
@@ -192,6 +194,8 @@ async def on_ready():
 			if msg_guild is None: return
 
 			msg_PREFIX = msg_guild["PREFIX"]
+
+			print("CHECK 2")
 
 			# Define the user's permissions: 3 = Developer; 2 = Staff; 1 = Member; 0 = Non-member
 			if message.author.id in [184768535107469314, 183331874670641152, 179686717534502913]: perms = 3
@@ -225,7 +229,7 @@ async def on_ready():
 			command = args[0].upper() # The top-level command used
 			level = len(args) # The number of arguments used in the command
 
-			print("checking command")
+			print("CHECK 3")
 
 			# If the command is not found, it checks if it's just an alias of any actual command
 			if command not in PARAMS["COMMANDS"].keys():
