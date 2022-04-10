@@ -322,5 +322,10 @@ async def on_ready():
 			except:
 				pass
 
-BRAIN.loop.create_task(event_task()) # This is an event handler for the time-based functions of various events
-BRAIN.run(TOKEN)
+
+async def main():
+    async with BRAIN:
+        BRAIN.loop.create_task(event_task())
+        await BRAIN.run(TOKEN)
+
+asyncio.run(main())
