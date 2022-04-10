@@ -182,14 +182,19 @@ async def on_ready():
 			msg_guild = None
 			for server in SERVERS:
 				if not message.content.startswith(SERVERS[server]["PREFIX"]):
+					print(SERVERS[server]["PREFIX"])
+					print(message.content)
 					continue
 				
 				if message.guild is None:
 					msg_guild = SERVERS[server]
 					break
+				
 				elif message.guild.id == int(server):
 					msg_guild = SERVERS[server]
 					break
+
+			print(msg_guild)
 			
 			if msg_guild is None: return
 
