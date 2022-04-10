@@ -67,6 +67,9 @@ async def MAIN(message, args, level, perms, SERVER):
 		if success < 10 or len(typed_words) > count + 10:
 			await message.channel.send("Typing test cancelled.") # cancel if there was no attempt
 			return
+		elif wpm >= 200:
+			await message.channel.send(f"Don't you think it's a bit obvious, with you going at {round(wpm, 2)} wpm?") # wr is generally said to be 216
+			return
 		else:
 			player_best = float(db.get_entries("typingtest", limit=50, columns=["best"],
 				conditions={"id" : str(message.author.id)})[0][0])

@@ -1,4 +1,4 @@
-import random, statistics, re, itertools
+import random, statistics, re, itertools, time
 import numpy as np
 
 try:
@@ -17,11 +17,54 @@ def safe_cut(s):
 
 def COMMENT(*a): return ""
 
+def INDEXOF(a,b,c=None,d=None):
+	if not is_number(c) and c is not None and not isinstance(c,str):
+		raise TypeError(f"Optional third parameter of INDEXOF function must be a number: {safe_cut(c)}")
+	if not is_number(d) and d is not None and not isinstance(d,str):
+		raise TypeError(f"Optional fourth parameter of INDEXOF function must be a number: {safe_cut(d)}")
+	if isinstance(c,str):
+		try:
+			c = int(c)
+		except:
+			raise TypeError(f"Optional third parameter of INDEXOF function must be a number: {safe_cut(c)}")
+
+	if isinstance(d,str):
+		try:
+			d = int(d)
+		except:
+			raise TypeError(f"Optional third parameter of INDEXOF function must be a number: {safe_cut(d)}")
+	if type(a) != str and not isinstance(a,list):
+		raise TypeError(f"First parameter of INDEXOF function must be an array or string: {safe_cut(a)}")
+	if c is not None:
+		if d is not None:
+			return a.index(b,c,d)
+		return a.index(b,c)
+	return a.index(b)
+
+def TIMEFUNC(): return time.time()
+
+def USERNAME(): return ("n", )
+
+def USERID(): return ("id", )
+
 def ABS(a):
 	if not is_number(a):
 		raise TypeError(f"Parameter of ABS function must be a number: {safe_cut(a)}")
 
 	return abs(int(a) if is_whole(a) else float(a))
+
+def SPLIT(a,b):
+	if type(a) != str:
+		raise TypeError(f"Parameter of SPLIT function must be a string: {safe_cut(a)}")
+	if type(b) != str:
+		raise TypeError(f"Parameter of SPLIT function must be a string: {safe_cut(b)}")
+	return a.split(b)
+
+def REPLACE(a,b,c):
+	if type(a) != str:
+		raise TypeError(f"Parameter of REPLACE function must be a string: {safe_cut(a)}")
+
+	return a.replace(b,c)
 
 def INDEX(a, b):
 	if type(a) not in [list, str]:
@@ -29,6 +72,15 @@ def INDEX(a, b):
 	if not is_whole(b):
 		raise TypeError(f"Second parameter of INDEX function must be an integer: {safe_cut(b)}")
 	return a[int(b)]
+
+def SLICE(a, b, c):
+	if type(a) not in [list, str]:
+		raise TypeError(f"First parameter of SLICE function must be a string or an array: {safe_cut(a)}")
+	if not is_whole(b):
+		raise TypeError(f"Second parameter of SLICE function must be an integer: {safe_cut(b)}")
+	if not is_whole(c):
+		raise TypeError(f"Third parameter of SLICE function must be an integer: {safe_cut(c)}")
+	return a[int(b):int(c)]
 
 def ARRAY(*a):
 	return list(a)
@@ -48,6 +100,12 @@ def CONCAT(*a):
 	if all_type == list:
 		a = list(itertools.chain(*a))
 		return a
+	else:
+		raise IndexError("Cannot call CONCAT function with no arguments")
+
+def LENGTH(a):
+	if type(a) in [int, float]: a = str(a)
+	return len(a)
 
 def ARGS(a):
 	if not is_whole(a):
@@ -250,10 +308,18 @@ FUNCTIONS = {
 	"CONCAT": CONCAT,
 	"ARRAY": ARRAY,
 	"INDEX": INDEX,
+	"INDEXOF": INDEXOF,
 	"ARGS": ARGS,
 	"ABS": ABS,
 	"#": COMMENT,
 	"GLOBAL DEFINE": GLOBALDEFINE,
 	"GLOBAL VAR": GLOBALVAR,
-	"MOD": MOD
+	"MOD": MOD,
+	"LENGTH": LENGTH,
+	"USERNAME": USERNAME,
+	"USERID": USERID,
+	"SLICE": SLICE,
+	"REPLACE": REPLACE,
+	"SPLIT": SPLIT,
+	"TIME": TIMEFUNC
 }

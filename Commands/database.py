@@ -116,7 +116,8 @@ async def MAIN(message, args, level, perms, SERVER):
 			entries = db.get_entries(name, limit=limit)
 
 			if "return_file" in [x.lower() for x in args]:
-				all_entries = "\n".join(["\t".join([str(h) for h in e]) for e in entries])
+				entry_str_list = ["\t".join([str(h).replace("\n", "\\n") for h in e]) for e in entries]
+				all_entries = "\n".join(entry_str_list)
 				open(f"{name}_{message.id}.txt", "w", encoding="utf-8").write(all_entries)
 
 				await message.channel.send("Here's a file containing the database entries.",

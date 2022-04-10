@@ -164,8 +164,8 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		elif len(message.attachments) != 0:
 			try:
-				if message.attachments[0].size >= 20000:
-					await message.channel.send("Your program must be under **20KB**.")
+				if message.attachments[0].size >= 60000:
+					await message.channel.send("Your program must be under **60KB**.")
 					return
 				
 				await message.attachments[0].save(f"Config/{message.id}.txt")
@@ -217,8 +217,8 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		elif len(message.attachments) != 0:
 			try:
-				if message.attachments[0].size >= 20000:
-					await message.channel.send("Your program must be under **20KB**.")
+				if message.attachments[0].size >= 60000:
+					await message.channel.send("Your program must be under **60KB**.")
 					return
 				
 				await message.attachments[0].save(f"Config/{message.id}.txt")
@@ -273,8 +273,8 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		elif len(message.attachments) != 0:
 			try:
-				if message.attachments[0].size >= 20000:
-					await message.channel.send("Your program must be under **20KB**.")
+				if message.attachments[0].size >= 60000:
+					await message.channel.send("Your program must be under **60KB**.")
 					return
 
 				await message.attachments[0].save(f"Config/{message.id}.txt")
@@ -298,6 +298,8 @@ async def MAIN(message, args, level, perms, SERVER):
 		program_args = []
 
 		author = message.author.id
+
+		runner = message.author
 	
 	else:
 		tag_name = args[1]
@@ -317,9 +319,11 @@ async def MAIN(message, args, level, perms, SERVER):
 		program_args = args[2:]
 
 		author = tag_info[2]
+
+		runner = message.author
 		
 	try:
-		program_output = run_bpp_program(program, program_args, author)
+		program_output = run_bpp_program(program, program_args, author, runner)
 		program_output = program_output.replace("<@", "<\\@")
 	except Exception as e:
 		await message.channel.send(f'{type(e).__name__}:\n```{e}```')
