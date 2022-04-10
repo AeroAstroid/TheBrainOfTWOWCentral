@@ -328,4 +328,5 @@ async def main():
         BRAIN.loop.create_task(event_task())
         await BRAIN.run(TOKEN)
 
-asyncio.run(main())
+async_loop = asyncio.get_event_loop()
+async_loop.run_until_complete(main)
