@@ -225,6 +225,8 @@ async def on_ready():
 			command = args[0].upper() # The top-level command used
 			level = len(args) # The number of arguments used in the command
 
+			print("checking command")
+
 			# If the command is not found, it checks if it's just an alias of any actual command
 			if command not in PARAMS["COMMANDS"].keys():
 				alias = None
@@ -323,5 +325,6 @@ async def on_ready():
 					f"**Error occured in {msg_guild['MAIN'].name}!**```python\n{traceback.format_exc()}```")
 			except:
 				pass
+	
 	
 BRAIN.run(TOKEN)
