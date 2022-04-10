@@ -329,4 +329,5 @@ async def main():
         await BRAIN.run(TOKEN)
 
 async_loop = asyncio.get_event_loop()
-async_loop.run_until_complete(main)
+coroutine = main()
+async_loop.run_until_complete(coroutine)
