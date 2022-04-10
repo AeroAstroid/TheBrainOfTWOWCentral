@@ -81,8 +81,6 @@ async def on_ready():
 	from Commands._commands import COMMANDS
 	from Events._events import EVENTS
 
-	BRAIN.loop.create_task(event_task())
-
 	COOLDOWN = {}
 
 	PARAMS["EVENT_TASK"] = False
