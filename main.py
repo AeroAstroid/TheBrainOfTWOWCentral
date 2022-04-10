@@ -18,7 +18,6 @@ async def event_task(): # This is an event handler for the time-based functions 
 	global SERVERS
 	await BRAIN.wait_until_ready()
 	await asyncio.sleep(2)
-	print("TESTING TASK")
 
 	while not BRAIN.is_closed():
 		loop_start = time.time()
@@ -69,7 +68,6 @@ async def event_task(): # This is an event handler for the time-based functions 
 
 		# This results in more accurate intervals than using asyncio.sleep(2)
 		await asyncio.sleep(loop_start + 2 - time.time())
-		print("TESTING TASK")
 
 
 @BRAIN.event
