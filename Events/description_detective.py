@@ -37,7 +37,7 @@ class EVENT:
 			"ROUND_NUMBER": 0,
 			"TOTAL_ROUNDS": 0,
 
-			"ROUND_IN_PROGRESS": False
+			"ROUND_IN_PROGRESS": False,
 
 			# Holds the current round's data
 			"CURRENT_ROUND": {
