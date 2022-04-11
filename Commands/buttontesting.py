@@ -47,9 +47,9 @@ async def MAIN(message, args, level, perms, SERVER):
 		button_user = interaction.user
 
 		if button_user in list(list_of_reactions.keys()):
-			list_of_reactions[button_user] == EMOJIS[0]
+			list_of_reactions[button_user] = EMOJIS[0]
 		elif len(list(list_of_reactions.keys())) < 10:
-			list_of_reactions[button_user] == EMOJIS[0]
+			list_of_reactions[button_user] = EMOJIS[0]
 		await edit_original_message(msg_to_edit, list_of_reactions)
 
 	async def sob_emoji(interaction):
@@ -58,9 +58,9 @@ async def MAIN(message, args, level, perms, SERVER):
 		button_user = interaction.user
 
 		if button_user in list(list_of_reactions.keys()):
-			list_of_reactions[button_user] == EMOJIS[1]
+			list_of_reactions[button_user] = EMOJIS[1]
 		elif len(list(list_of_reactions.keys())) < 10:
-			list_of_reactions[button_user] == EMOJIS[1]
+			list_of_reactions[button_user] = EMOJIS[1]
 		await edit_original_message(msg_to_edit, list_of_reactions)
 
 	async def sunglasses_emoji(interaction):
@@ -69,9 +69,9 @@ async def MAIN(message, args, level, perms, SERVER):
 		button_user = interaction.user
 		
 		if button_user in list(list_of_reactions.keys()):
-			list_of_reactions[button_user] == EMOJIS[2]
+			list_of_reactions[button_user] = EMOJIS[2]
 		elif len(list(list_of_reactions.keys())) < 10:
-			list_of_reactions[button_user] == EMOJIS[2]
+			list_of_reactions[button_user] = EMOJIS[2]
 		await edit_original_message(msg_to_edit, list_of_reactions)
 
 	async def flushed_emoji(interaction):
@@ -80,9 +80,9 @@ async def MAIN(message, args, level, perms, SERVER):
 		button_user = interaction.user
 		
 		if button_user in list(list_of_reactions.keys()):
-			list_of_reactions[button_user] == EMOJIS[3]
+			list_of_reactions[button_user] = EMOJIS[3]
 		elif len(list(list_of_reactions.keys())) < 10:
-			list_of_reactions[button_user] == EMOJIS[3]
+			list_of_reactions[button_user] = EMOJIS[3]
 		await edit_original_message(msg_to_edit, list_of_reactions)
 
 	# Create first button - smiley emoji button
