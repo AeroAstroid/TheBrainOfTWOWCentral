@@ -51,6 +51,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] = EMOJIS[0]
 		await edit_original_message(msg_to_edit, list_of_reactions)
+		return
 
 	async def sob_emoji(interaction):
 
@@ -62,6 +63,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] = EMOJIS[1]
 		await edit_original_message(msg_to_edit, list_of_reactions)
+		return
 
 	async def sunglasses_emoji(interaction):
 
@@ -73,6 +75,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] = EMOJIS[2]
 		await edit_original_message(msg_to_edit, list_of_reactions)
+		return
 
 	async def flushed_emoji(interaction):
 
@@ -84,6 +87,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] = EMOJIS[3]
 		await edit_original_message(msg_to_edit, list_of_reactions)
+		return
 
 	# Create first button - smiley emoji button
 	button_1 = Button(label = "", style = discord.ButtonStyle.secondary, emoji = EMOJIS[0])
