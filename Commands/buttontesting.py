@@ -1,5 +1,10 @@
 import random
 
+# Import discord buttons
+import discord
+from discord.ui import Button, View
+
+
 def HELP(PREFIX):
 	return {
 		"COOLDOWN": 1,
