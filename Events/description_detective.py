@@ -11,7 +11,7 @@ NORMAL_POINTS = [60, 50, 40, 30, 20, 10]
 class DDPlayer:
     def __init__(self, user):
 
-        self. 
+		pass
 
 class EVENT:
 
