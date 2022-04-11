@@ -30,13 +30,13 @@ async def edit_original_message(msg_to_edit, reaction_dict):
 
 async def MAIN(message, args, level, perms, SERVER):
 
-    # Create buttons for changing things
+	# Create buttons for changing things
 	button_view = View()
 	msg_to_edit = None
 	list_of_reactions = {}
 
 	# Functions for button pressing
-    async def smiley_emoji(interaction):
+	async def smiley_emoji(interaction):
 
 		# Set button user
 		button_user = interaction.user
@@ -81,22 +81,22 @@ async def MAIN(message, args, level, perms, SERVER):
 		await edit_original_message(msg_to_edit, list_of_reactions)
 
 	# Create first button - smiley emoji button
-    button_1 = Button(label = "", style = discord.ButtonStyle.secondary, emoji = EMOJIS[0])
+	button_1 = Button(label = "", style = discord.ButtonStyle.secondary, emoji = EMOJIS[0])
 	button_1.callback = smiley_emoji
 	button_view.add_item(button_1)
 
 	# Create second button - smiley emoji button
-    button_2 = Button(label = "", style = discord.ButtonStyle.secondary, emoji = EMOJIS[1])
+	button_2 = Button(label = "", style = discord.ButtonStyle.secondary, emoji = EMOJIS[1])
 	button_2.callback = smiley_emoji
 	button_view.add_item(button_2)
 
 	# Create third button - smiley emoji button
-    button_3 = Button(label = "", style = discord.ButtonStyle.secondary, emoji = EMOJIS[2])
+	button_3 = Button(label = "", style = discord.ButtonStyle.secondary, emoji = EMOJIS[2])
 	button_3.callback = smiley_emoji
 	button_view.add_item(button_3)
 
 	# Create fourth button - smiley emoji button
-    button_4 = Button(label = "", style = discord.ButtonStyle.secondary, emoji = EMOJIS[3])
+	button_4 = Button(label = "", style = discord.ButtonStyle.secondary, emoji = EMOJIS[3])
 	button_4.callback = smiley_emoji
 	button_view.add_item(button_4)
 
