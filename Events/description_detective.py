@@ -6,6 +6,8 @@ import time, discord, random, statistics
 from Config._functions import grammar_list, word_count, elim_prize
 from Config._const import ALPHABET, BRAIN
 
+CSV_MSG_ID = 963026403236925481
+
 NORMAL_POINTS = [60, 50, 40, 30, 20, 10]
 
 class DDPlayer:
@@ -29,6 +31,8 @@ class EVENT:
 	# Executes when loaded
 	def __init__(self):
 		self.RUNNING = False
+
+		self.GAME_STARTED = False
 
 		self.info = { # Define all the game parameters
 
@@ -60,8 +64,7 @@ class EVENT:
 		self.param = { # Define all the parameters necessary that could be changed
 			"CLUE_TIME": 20,
 			"CLUE_POSTING": 0,
-			"ROLE": 0,
-			"CSV_MESSAGE_ID": ""
+			"ROLE": 0
 		}
 
 
