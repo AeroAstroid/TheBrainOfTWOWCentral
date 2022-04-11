@@ -9,9 +9,20 @@ from Config._const import ALPHABET, BRAIN
 NORMAL_POINTS = [60, 50, 40, 30, 20, 10]
 
 class DDPlayer:
-    def __init__(self, user):
+	def __init__(self, user):
 
-		pass
+		self.user = user
+		self.score = 0
+
+		self.round_scores = []
+		self.guesses = [
+			None,
+			None,
+			None,
+			None,
+			None,
+			None
+		]
 
 class EVENT:
 
@@ -23,34 +34,34 @@ class EVENT:
 
 			"PLAYERS": {},
 
-            "ROUND_NUMBER": 0,
-            "TOTAL_ROUNDS": 0,
+			"ROUND_NUMBER": 0,
+			"TOTAL_ROUNDS": 0,
 
-            "ROUND_IN_PROGRESS": False
+			"ROUND_IN_PROGRESS": False
 
-            # Holds the current round's data
-            "CURRENT_ROUND": {
-                "START_TIME": 0,
-                "ANSWERS": [],
-                "CATEGORY": "",
-                "CLUE_1": "",
-                "CLUE_2": "",
-                "CLUE_3": "",
-                "CLUE_4": "",
-                "CLUE_5": "",
-                "CLUE_6": "",
-            },
-            
-            # Holds all the game rounds
-            "GAME_ROUNDS": []
+			# Holds the current round's data
+			"CURRENT_ROUND": {
+				"START_TIME": 0,
+				"ANSWERS": [],
+				"CATEGORY": "",
+				"CLUE_1": "",
+				"CLUE_2": "",
+				"CLUE_3": "",
+				"CLUE_4": "",
+				"CLUE_5": "",
+				"CLUE_6": "",
+			},
+			
+			# Holds all the game rounds
+			"GAME_ROUNDS": []
 
 		}
 
 		self.param = { # Define all the parameters necessary that could be changed
 			"CLUE_TIME": 20,
-            "CLUE_POSTING": 0,
-            "ROLE": 0,
-            "CSV_MESSAGE_ID": ""
+			"CLUE_POSTING": 0,
+			"ROLE": 0,
+			"CSV_MESSAGE_ID": ""
 		}
 
 
@@ -83,9 +94,9 @@ class EVENT:
 			csv_list = []
 
 			with open("Events/descriptiondetective.csv", 'r', encoding='UTF-8') as csv_file:
-                reader = csv.reader(csv_file)
-                for row in list(reader):
-                    csv_list.append(row)
+				reader = csv.reader(csv_file)
+				for row in list(reader):
+					csv_list.append(row)
 
 			# Remove first row from CSV list
 			csv_list.pop(0)
@@ -114,8 +125,8 @@ class EVENT:
 
 		pass
 
-        # This function is used for time checking
-        # Only runs if the time 
+		# This function is used for time checking
+		# Only runs if the time 
 		
 	# Change a parameter of the event
 	async def edit_event(self, message, new_params):
