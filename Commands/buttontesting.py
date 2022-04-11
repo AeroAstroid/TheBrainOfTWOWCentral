@@ -26,7 +26,7 @@ async def edit_original_message(msg_to_edit, reaction_dict):
 
 	msg_list = ["**How do you feel about Neonic?**\n"]
 
-	for user_in_dict in list(list_of_reactions.keys()):
+	for user_in_dict in list(reaction_dict.keys()):
 
 		msg_list.append(f"**{user_in_dict.name}**: {reaction_dict[user_in_dict]}")
 
