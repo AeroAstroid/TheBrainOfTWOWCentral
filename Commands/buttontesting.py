@@ -22,7 +22,7 @@ REQ = []
 
 EMOJIS = ["😃", "😭", "😎", "😳"]
 
-async def edit_original_message(msg_to_edit, reaction_dict):
+async def edit_original_message(interaction, reaction_dict):
 
 	msg_list = ["**How do you feel about Neonic?**\n"]
 
@@ -30,7 +30,7 @@ async def edit_original_message(msg_to_edit, reaction_dict):
 
 		msg_list.append(f"**{user_in_dict.name}**: {reaction_dict[user_in_dict]}")
 
-	await msg_to_edit.edit(content = "\n".join(msg_list))
+	await interaction.response.edit_message(content = "\n".join(msg_list))
 
 	return
 
@@ -52,8 +52,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			list_of_reactions[button_user] = EMOJIS[0]
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] = EMOJIS[0]
-		await edit_original_message(msg_to_edit, list_of_reactions)
-		print("yooooo")
+		await edit_original_message(interaction, list_of_reactions)
 		return
 
 	async def sob_emoji(interaction):
@@ -65,7 +64,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			list_of_reactions[button_user] = EMOJIS[1]
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] = EMOJIS[1]
-		await edit_original_message(msg_to_edit, list_of_reactions)
+		await edit_original_message(interaction, list_of_reactions)
 		return
 
 	async def sunglasses_emoji(interaction):
@@ -77,7 +76,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			list_of_reactions[button_user] = EMOJIS[2]
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] = EMOJIS[2]
-		await edit_original_message(msg_to_edit, list_of_reactions)
+		await edit_original_message(interaction, list_of_reactions)
 		return
 
 	async def flushed_emoji(interaction):
@@ -89,7 +88,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			list_of_reactions[button_user] = EMOJIS[3]
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] = EMOJIS[3]
-		await edit_original_message(msg_to_edit, list_of_reactions)
+		await edit_original_message(interaction, list_of_reactions)
 		return
 
 	# Create first button - smiley emoji button
