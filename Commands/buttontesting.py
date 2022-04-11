@@ -105,5 +105,5 @@ async def MAIN(message, args, level, perms, SERVER):
 	button_4.callback = smiley_emoji
 	button_view.add_item(button_4)
 
-	msg_to_edit = await channel.send("**How do you feel about Neonic?**", view = button_view)
+	msg_to_edit = await message.channel.send("**How do you feel about Neonic?**", view = button_view)
 	return
