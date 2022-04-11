@@ -92,17 +92,17 @@ async def MAIN(message, args, level, perms, SERVER):
 
 	# Create second button - smiley emoji button
 	button_2 = Button(label = "", style = discord.ButtonStyle.secondary, emoji = EMOJIS[1])
-	button_2.callback = smiley_emoji
+	button_2.callback = sob_emoji
 	button_view.add_item(button_2)
 
 	# Create third button - smiley emoji button
 	button_3 = Button(label = "", style = discord.ButtonStyle.secondary, emoji = EMOJIS[2])
-	button_3.callback = smiley_emoji
+	button_3.callback = sunglasses_emoji
 	button_view.add_item(button_3)
 
 	# Create fourth button - smiley emoji button
 	button_4 = Button(label = "", style = discord.ButtonStyle.secondary, emoji = EMOJIS[3])
-	button_4.callback = smiley_emoji
+	button_4.callback = flushed_emoji
 	button_view.add_item(button_4)
 
 	msg_to_edit = await message.channel.send("**How do you feel about Neonic?**", view = button_view)
