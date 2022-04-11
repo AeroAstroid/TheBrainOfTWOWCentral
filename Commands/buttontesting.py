@@ -46,7 +46,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		# Set button user
 		button_user = interaction.user
 
-		if button_user in list_of_reactions:
+		if button_user in list(list_of_reactions.keys()):
 			list_of_reactions[button_user] == EMOJIS[0]
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] == EMOJIS[0]
@@ -57,7 +57,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		# Set button user
 		button_user = interaction.user
 
-		if button_user in list_of_reactions:
+		if button_user in list(list_of_reactions.keys()):
 			list_of_reactions[button_user] == EMOJIS[1]
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] == EMOJIS[1]
@@ -68,7 +68,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		# Set button user
 		button_user = interaction.user
 		
-		if button_user in list_of_reactions:
+		if button_user in list(list_of_reactions.keys()):
 			list_of_reactions[button_user] == EMOJIS[2]
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] == EMOJIS[2]
@@ -79,7 +79,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		# Set button user
 		button_user = interaction.user
 		
-		if button_user in list_of_reactions:
+		if button_user in list(list_of_reactions.keys()):
 			list_of_reactions[button_user] == EMOJIS[3]
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] == EMOJIS[3]
