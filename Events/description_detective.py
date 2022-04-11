@@ -74,9 +74,9 @@ class EVENT:
 		# ATTEMPT TO DOWNLOAD CSV FILE FROM MESSAGE
 		try:
 
-			staff_channel = discord.utils.get(SERVER["MAIN"].channels, name="staff•events")
+			staff_channel = discord.utils.get(SERVER["MAIN"].channels, name="bot-test-channel")
 
-			csv_message = await staff_channel.fetch_message(CSV_MSG_ID)
+			csv_message = staff_channel.last_message
 
 			# Find csv file
 			if len(csv_message.attachments) == 0:
