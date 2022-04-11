@@ -48,7 +48,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		if button_user in list_of_reactions:
 			list_of_reactions[button_user] == EMOJIS[0]
-		elif list(list_of_reactions.keys()) < 10:
+		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] == EMOJIS[0]
 		await edit_original_message(msg_to_edit, list_of_reactions)
 
@@ -59,7 +59,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		if button_user in list_of_reactions:
 			list_of_reactions[button_user] == EMOJIS[1]
-		elif list(list_of_reactions.keys()) < 10:
+		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] == EMOJIS[1]
 		await edit_original_message(msg_to_edit, list_of_reactions)
 
@@ -70,7 +70,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 		if button_user in list_of_reactions:
 			list_of_reactions[button_user] == EMOJIS[2]
-		elif list(list_of_reactions.keys()) < 10:
+		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] == EMOJIS[2]
 		await edit_original_message(msg_to_edit, list_of_reactions)
 
@@ -81,7 +81,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 		if button_user in list_of_reactions:
 			list_of_reactions[button_user] == EMOJIS[3]
-		elif list(list_of_reactions.keys()) < 10:
+		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] == EMOJIS[3]
 		await edit_original_message(msg_to_edit, list_of_reactions)
 
