@@ -73,9 +73,10 @@ class EVENT:
 
 		# ATTEMPT TO DOWNLOAD CSV FILE FROM MESSAGE
 		try:
-			
-			# Get message with csv file attached
-			csv_message = BRAIN.get_message(int(self.param["CSV_MESSAGE_ID"]))
+
+			staff_channel = discord.utils.get(SERVER["MAIN"].channels, name="staff•events")
+
+			csv_message = await staff_channel.fetch_message(CSV_MSG_ID)
 
 			# Find csv file
 			if len(csv_message.attachments) == 0:
