@@ -226,6 +226,8 @@ The game will start in ten seconds."""
 	# End guessing
 	async def end_guessing(self):
 
+		clue_posting_channel = self.param["GAME_CHANNEL"]
+
 		self.info["CLUE_NUM"] = 0
 
 		self.info["GUESSING_OPEN"] = False
@@ -248,6 +250,8 @@ The game will start in ten seconds."""
 		for player in list(self.info["PLAYERS"].values()):
 
 			player.round_scores.append(player.score_this_round)
+
+		await self.sort_leaderboard()
 
 		# Wait a few seconds until prompting the host to start the next round
 		await asyncio.sleep(5)
