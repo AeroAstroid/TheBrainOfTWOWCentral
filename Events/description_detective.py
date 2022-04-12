@@ -145,15 +145,23 @@ class EVENT:
 				# Check for four conditions for message
 				if message.channel != self.param["ADMINISTRATION_CHANNEL"]: return
 
+				print("test 1")
+
 				if len(message.attachments) == 0: return
 
+				print("test 2")
+
 				if message.content != "DESCRIPTION DETECTIVE CSV": return
+
+				print("test 3")
 
 				attachment = csv_message.attachments[0]
 
 				# Check if attachment is actually a csv file
 				attachment_url = attachment.url
 				if not attachment_url.endswith(".csv"): return
+
+				print("test 4")
 
 				# This is a CSV file, now attempt to read it and if any errors come up just return
 				try:
@@ -179,7 +187,9 @@ class EVENT:
 
 					raise Exception
 
-				except: return
+				except Exception as e: 
+					print(e)
+					return
 					
 				# If the command has not yet returned, a valid CSV file has been sent!
 				# Send message allowing player to start game
