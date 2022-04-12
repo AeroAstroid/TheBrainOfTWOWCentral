@@ -2,7 +2,7 @@
 # Created for description detective event
 ###################################################################################
 
-import time, discord, random, statistics
+import time, discord, random, statistics, csv
 from Config._functions import grammar_list, word_count, elim_prize
 from Config._const import ALPHABET, BRAIN
 
