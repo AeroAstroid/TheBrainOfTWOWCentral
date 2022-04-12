@@ -204,8 +204,8 @@ class EVENT:
 					await interaction.response.edit_message(content = "Data reset. To get this message again, submit another CSV file.", view = None)
 
 				# Set up buttons
-				start_button = Button(label = "", style = discord.ButtonStyle.green, label = "Start")
-				reset_button = Button(label = "", style = discord.ButtonStyle.red, label = "Reset")
+				start_button = Button(style = discord.ButtonStyle.green, label = "Start")
+				reset_button = Button(style = discord.ButtonStyle.red, label = "Reset")
 
 				start_button.callback = start_button_pressed
 				reset_button.callback = reset_button_pressed
