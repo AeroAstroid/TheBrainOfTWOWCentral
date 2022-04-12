@@ -175,6 +175,17 @@ async def on_ready():
 						await msg_guild["EVENTS"][event].on_message(message)
 					except:
 						pass
+
+			elif message.guild is None:
+
+				msg_guild = PARAMS["MAIN_SERVER"]
+
+				for event in msg_guild["EVENTS"].keys():
+					if event == "DESCRIPTION_DETECTIVE" and msg_guild["EVENTS"][event].RUNNING:
+						try:
+							await msg_guild["EVENTS"][event].on_message(message)
+						except:
+							pass
 			
 			# Not bother with non-commands from here on
 			msg_guild = None
