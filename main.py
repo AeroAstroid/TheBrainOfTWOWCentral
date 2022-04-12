@@ -181,13 +181,10 @@ async def on_ready():
 				# Made for events in TWOW Central that are ran in DMs 
 				tc_guild = None
 				for server in list(SERVERS.keys()):
-					print(SERVERS[server]["MAIN"].id)
-					print(PARAMS["MAIN_SERVER"]["ID"])
 					if SERVERS[server]["MAIN"].id == PARAMS["MAIN_SERVER"]["ID"]: tc_guild = SERVERS[server]
 
 				if tc_guild:
 					for event in tc_guild["EVENTS"].keys():
-						print(event)
 						if event == "DESCRIPTION_DETECTIVE" and tc_guild["EVENTS"][event].RUNNING:
 							try:
 								await tc_guild["EVENTS"][event].on_message(message)
