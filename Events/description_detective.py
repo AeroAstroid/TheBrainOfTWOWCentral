@@ -139,6 +139,9 @@ class EVENT:
 			# Check if no CSV message has been sent
 			if self.param["CSV_MESSAGE"] == None:
 
+				print(message.content)
+				print(self.param["ADMINISTRATION_CHANNEL"])
+
 				# Check for four conditions for message
 				if message.channel != self.param["ADMINISTRATION_CHANNEL"]: return
 
