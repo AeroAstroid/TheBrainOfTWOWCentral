@@ -401,41 +401,47 @@ The game will start in ten seconds."""
 			# CODE FOR PLAYERS GUESSING IN DMS
 			# Check if game is currently in guessing
 			if self.info["GUESSING_OPEN"] == True:
-				# Check if user's message is in DMs and if not, return
-				if message.guild: return
 
-				# Check if user is in players, and if not, return
-				if not message.author.id in self.info["USER_IDS"]: return
+				try:
+					# Check if user's message is in DMs and if not, return
+					if message.guild: return
 
-				# Get member from message.author.id
-				player = self.SERVER["MAIN"].get_member(message.author.id)
-				# Get player object
-				player_object = self.info["PLAYERS"][player]
+					# Check if user is in players, and if not, return
+					if not message.author.id in self.info["USER_IDS"]: return
 
-				# Check if player has already guessed this clue and if not, return
-				if player_object.guesses[self.info["CLUE_NUM"] - 1]: return
+					# Get member from message.author.id
+					player = self.SERVER["MAIN"].get_member(message.author.id)
+					# Get player object
+					player_object = self.info["PLAYERS"][player]
 
-				# Check if player has already guessed correctly this round and return if so
-				if player_object.correct == True: return
+					# Check if player has already guessed this clue and if not, return
+					if player_object.guesses[self.info["CLUE_NUM"] - 1]: return
 
-				# Get player's guess from the content of the message and strip it of whitespace + lowercase it
-				player_guess = message.content.strip().lower()
+					# Check if player has already guessed correctly this round and return if so
+					if player_object.correct == True: return
 
-				# Log player's guess
-				player_object.guesses[self.info["CLUE_NUM"] - 1] = player_guess
+					# Get player's guess from the content of the message and strip it of whitespace + lowercase it
+					player_guess = message.content.strip().lower()
 
-				# Check if player guess is correct
-				if player_guess in self.info["CURRENT_ROUND"]["ANSWERS"]:
+					# Log player's guess
+					player_object.guesses[self.info["CLUE_NUM"] - 1] = player_guess
 
-					# Give player points
-					points_gained = NORMAL_POINTS[self.info["CLUE_NUM"] - 1]
+					# Check if player guess is correct
+					if player_guess in self.info["CURRENT_ROUND"]["ANSWERS"]:
 
-					player_object.correct = True
-					player_object.score_this_round = points_gained
-					player_object.score += points_gained
+						# Give player points
+						points_gained = NORMAL_POINTS[self.info["CLUE_NUM"] - 1]
 
-					# Send message to user
-					await message.reply("☑ **You got it correct on Clue {}!** ☑\nYou gain **{}** points this round!".format(self.info["CLUE_NUM"], points_gained))
+						player_object.correct = True
+						player_object.score_this_round = points_gained
+						player_object.score += points_gained
+
+						# Send message to user
+						await message.reply("☑ **You got it correct on Clue {}!** ☑\nYou gain **{}** points this round!".format(self.info["CLUE_NUM"], points_gained))
+
+				except Exception as e:
+					# Print exception
+					print(e)
 		
 	# Change a parameter of the event
 	async def edit_event(self, message, new_params):
