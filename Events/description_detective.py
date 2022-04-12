@@ -269,7 +269,7 @@ The game will start in ten seconds."""
 					await interaction.response.edit_message(content = f"**Next round started by {interaction.user}!**", view = None)
 
 					# Start game
-					await self.start_game()
+					await self.begin_round()
 
 				else:
 
