@@ -79,7 +79,6 @@ class EVENT:
 			"PLAYERS": {},
 
 			"ROUND_NUMBER": 0,
-			"TOTAL_ROUNDS": 0,
 
 			"ROUND_IN_PROGRESS": False,
 
@@ -121,6 +120,10 @@ class EVENT:
 		self.param["CLUE_POSTING"] = discord.utils.get(SERVER["MAIN"].channels, name="dawthons-lair") # Post messages in here
 		self.param["ADMINISTRATION_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff•commands")
 
+	# Begin round
+	async def start_game(self):
+		pass
+
 	# Function that runs every two seconds
 	async def on_two_second(self):
 
@@ -139,21 +142,12 @@ class EVENT:
 			# Check if no CSV message has been sent
 			if self.param["CSV_MESSAGE"] == 0:
 
-				print(message.content)
-				print(self.param["ADMINISTRATION_CHANNEL"])
-
 				# Check for four conditions for message
 				if message.channel != self.param["ADMINISTRATION_CHANNEL"]: return
 
-				print("test 1")
-
 				if len(message.attachments) == 0: return
 
-				print("test 2")
-
 				if message.content != "DESCRIPTION DETECTIVE CSV": return
-
-				print("test 3")
 
 				attachment = message.attachments[0]
 
@@ -162,8 +156,6 @@ class EVENT:
 				print(attachment_url)
 					
 				if not attachment_url.endswith(".csv"): return
-
-				print("test 4")
 
 				# This is a CSV file, now attempt to read it and if any errors come up just return
 				try:
@@ -187,19 +179,42 @@ class EVENT:
 
 					print(self.info["GAME_ROUNDS"])
 
-					raise Exception
+					self.param["CSV_MESSAGE"] = message
 
 				except Exception as e: 
-					print(e)
 					return
 					
 				# If the command has not yet returned, a valid CSV file has been sent!
 				# Send message allowing player to start game
 
+				button_view = View()
+
+				# BUTTON FUNCTIONS
+				async def start_button_pressed(interaction):
+
+					self.GAME_STARTED = True
+					await interaction.response.edit_message(content = "**Game of Description Detective starting!**", view = None)
+
+					# Start game
+					await self.start_game()
+
+				async def reset_button_pressed(interaction):
+
+					self.param["CSV_MESSAGE"] = 0
+					await interaction.response.edit_message(content = "Data reset. To get this message again, submit another CSV file.", view = None)
+
+				# Set up buttons
+				start_button = Button(label = "", style = discord.ButtonStyle.green, label = "Start")
+				reset_button = Button(label = "", style = discord.ButtonStyle.red, label = "Reset")
+
+				start_button.callback = start_button_pressed
+				reset_button.callback = reset_button_pressed
 				
+				button_view.add_item(start_button)
+				button_view.add_item(reset_button)
 
-
-
+				# Send message
+				await message.channel.send("The CSV for Description Detective has been set up!\nThere are **{}** rounds.\nTo start the game or reset the CSV, just press the corresponding button on the message.".format(len(self.info["GAME_ROUNDS"])), view = button_view)
 		
 	# Change a parameter of the event
 	async def edit_event(self, message, new_params):
