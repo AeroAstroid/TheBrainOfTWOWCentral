@@ -178,7 +178,7 @@ async def on_ready():
 
 			elif message.guild is None:
 
-				msg_guild = PARAMS["MAIN_SERVER"]
+				msg_guild = SERVERS[PARAMS["MAIN_SERVER"]["MAIN"].name]
 
 				for event in msg_guild["EVENTS"].keys():
 					if event == "DESCRIPTION_DETECTIVE" and msg_guild["EVENTS"][event].RUNNING:
