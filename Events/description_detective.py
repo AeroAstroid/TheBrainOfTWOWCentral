@@ -300,7 +300,7 @@ The game will start in ten seconds."""
 			sorted_player_list = sorted(player_list, reverse = True, key = get_player_score)
 
 			# Write to CSV
-			with open("Events/ddscores_R{}".format(self.info["ROUND_NUMBER"]), 'w', encoding='UTF-8', newline='') as f:
+			with open("Events/ddscores_R{}.csv".format(self.info["ROUND_NUMBER"]), 'w', encoding='UTF-8', newline='') as f:
 
 				writer = csv.writer(f)
 
@@ -319,7 +319,7 @@ The game will start in ten seconds."""
 					writer.writerow([player.user.name, player.user.id, player.score] + player.round_scores)
 
 			# Send leaderboard to administration channel
-			await self.param["ADMINISTRATION_CHANNEL"].send(content = "**Description Detective - Leaderboard after Round {}**".format(self.info["ROUND_NUMBER"]), file = discord.File("Events/ddscores_R{}".format(self.info["ROUND_NUMBER"])))
+			await self.param["ADMINISTRATION_CHANNEL"].send(content = "**Description Detective - Leaderboard after Round {}**".format(self.info["ROUND_NUMBER"]), file = discord.File("Events/ddscores_R{}.csv".format(self.info["ROUND_NUMBER"])))
 		except Exception as e:
 			print(e)
 
