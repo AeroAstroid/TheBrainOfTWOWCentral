@@ -155,16 +155,12 @@ class EVENT:
 
 				print("test 3")
 
-				try:
+				attachment = message.attachments[0]
 
-					attachment = csv_message.attachments[0]
-
-					# Check if attachment is actually a csv file
-					attachment_url = attachment.url
-					print(attachment_url)
-				except Exception as e:
-					print(e)
-				
+				# Check if attachment is actually a csv file
+				attachment_url = attachment.url
+				print(attachment_url)
+					
 				if not attachment_url.endswith(".csv"): return
 
 				print("test 4")
