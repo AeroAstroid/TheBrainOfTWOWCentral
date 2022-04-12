@@ -3,6 +3,7 @@
 ###################################################################################
 
 import time, discord, random, statistics, csv
+from discord.ui import Button, View
 from Config._functions import grammar_list, word_count, elim_prize
 from Config._const import ALPHABET, BRAIN
 
@@ -179,7 +180,7 @@ class EVENT:
 
 					print(self.info["GAME_ROUNDS"])
 
-					self.param["CSV_MESSAGE"] = message
+					self.param["CSV_MESSAGE"] = 1
 
 				except Exception as e: 
 					return
