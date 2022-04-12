@@ -169,7 +169,7 @@ class EVENT:
 				try:
 
 					# Save the attachment
-					attachment.save("Events/descriptiondetective.csv")
+					await attachment.save("Events/descriptiondetective.csv")
 
 					# Read CSV and get dictionary
 					csv_list = []
