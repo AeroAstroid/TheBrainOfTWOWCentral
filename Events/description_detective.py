@@ -42,6 +42,7 @@ class EVENT:
 		self.info = { # Define all the game parameters
 
 			"PLAYERS": {},
+			"USER_IDS": [],
 
 			"ROUND_NUMBER": 0,
 
@@ -83,6 +84,7 @@ class EVENT:
 		self.info = { # Define all the game parameters
 
 			"PLAYERS": {},
+			"USER_IDS": [],
 
 			"ROUND_NUMBER": 0,
 
@@ -142,6 +144,7 @@ class EVENT:
 			# Create player object
 			player_object = DDPlayer(user)
 			self.info["PLAYERS"][user] = player_object
+			self.info["USER_IDS"].append(user.id)
 
 		# Send introduction to game
 		await clue_posting_channel.send(
@@ -304,8 +307,10 @@ The game will start in ten seconds."""
 						await interaction.response.defer()
 
 				next_round_button = Button(style = discord.ButtonStyle.blurple, label = "Start next round!")
+				next_round_button.callback = next_round_pressed				
+				button_view.add_item(start_button)
 
-				await clue_posting_channel.send("Next round will start soon.", view = next_round_button)
+				await clue_posting_channel.send("Next round will start soon!", view = button_view)
 
 	# Function that runs on each message
 	async def on_message(self, message):
@@ -389,6 +394,48 @@ The game will start in ten seconds."""
 
 				# Send message
 				await message.channel.send("The CSV for Description Detective has been set up!\nThere are **{}** rounds.\nTo start the game or reset the CSV, just press the corresponding button on the message.".format(len(self.info["GAME_ROUNDS"])), view = button_view)
+
+		else:
+
+			# GAME HAS STARTED
+			# CODE FOR PLAYERS GUESSING IN DMS
+			# Check if game is currently in guessing
+			if self.info["GUESSING_OPEN"] == True:
+				# Check if user's message is in DMs and if not, return
+				if message.guild: return
+
+				# Check if user is in players, and if not, return
+				if not message.author.id in self.info["USER_IDS"]: return
+
+				# Get member from message.author.id
+				player = self.SERVER["MAIN"].get_member(message.author.id)
+				# Get player object
+				player_object = self.info["PLAYERS"][player]
+
+				# Check if player has already guessed this clue and if not, return
+				if player_object.guesses[self.info["CLUE_NUM"] - 1]: return
+
+				# Check if player has already guessed correctly this round and return if so
+				if player_object.correct == True: return
+
+				# Get player's guess from the content of the message and strip it of whitespace + lowercase it
+				player_guess = message.content.strip().lower()
+
+				# Log player's guess
+				player_object.guesses[self.info["CLUE_NUM"] - 1] = player_guess
+
+				# Check if player guess is correct
+				if player_guess in self.info["CURRENT_ROUND"]["ANSWERS"]:
+
+					# Give player points
+					points_gained = NORMAL_POINTS[self.info["CLUE_NUM"] - 1]
+
+					player_object.correct = True
+					player_object.score_this_round = points_gained
+					player_object.score += points_gained
+
+					# Send message to user
+					await message.reply("☑ **You got it correct on Clue {}!** ☑\nYou gain **{}** points this round!".format(self.info["CLUE_NUM"], points_gained))
 		
 	# Change a parameter of the event
 	async def edit_event(self, message, new_params):
