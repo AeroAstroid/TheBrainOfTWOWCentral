@@ -317,6 +317,8 @@ The game will start in ten seconds."""
 
 		# Game has not started, meaning that messages are just for set up
 		if self.GAME_STARTED == False:
+
+			print("Check 1")
 			
 			# Check if no CSV message has been sent
 			if self.param["CSV_MESSAGE"] == 0:
@@ -396,6 +398,8 @@ The game will start in ten seconds."""
 				await message.channel.send("The CSV for Description Detective has been set up!\nThere are **{}** rounds.\nTo start the game or reset the CSV, just press the corresponding button on the message.".format(len(self.info["GAME_ROUNDS"])), view = button_view)
 
 		else:
+
+			print("Check 2")
 
 			# GAME HAS STARTED
 			# CODE FOR PLAYERS GUESSING IN DMS
