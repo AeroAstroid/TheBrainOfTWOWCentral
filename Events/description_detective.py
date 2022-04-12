@@ -145,20 +145,22 @@ class EVENT:
 		# Send introduction to game
 		await clue_posting_channel.send(
 			f"""{event_role.mention}
-			**Welcome to Description Detective!**
+**Welcome to Description Detective!**
 		
-			Each round, you have **20** seconds after each clue is posted in this channel to guess something in {BRAIN.user.mention}'s DMs. 
-			Note that there is no prefix to guessing - you just need to type the answer in DMs!
-			You only have one guess per clue, so make it count (and don't misspell anything!)
-			If you do not receive a reply from the bot, it means that your answer was incorrect.
-			You will receive points depending on the amount of clues posted at the time you answer correctly. (Less clues means more points.)
+Each round, you have **20** seconds after each clue is posted in this channel to guess something in {BRAIN.user.mention}'s DMs. 
+Note that there is no prefix to guessing - you just need to type the answer in DMs!
+You only have one guess per clue, so make it count (and don't misspell anything!)
+If you do not receive a reply from the bot, it means that your answer was incorrect.
+You will receive points depending on the amount of clues posted at the time you answer correctly. (Less clues means more points.)
 			
-			The game will start in ten seconds."""
+The game will start in ten seconds."""
 		)
 
 		print("Description Detective game starting!")
 
 		await asyncio.sleep(10)
+
+		await self.begin_round()
 
 	# Begin each round
 	async def begin_round(self):
@@ -205,9 +207,7 @@ class EVENT:
 				break
 
 		# Send message
-		await clue_posting_channel.send("""```ROUND {}```
-		{} The category is **{}**.
-		Clues will begin to be sent in {} seconds.""".format(self.info["ROUND_NUMBER"], event_role.mention, self.info["CURRENT_ROUND"]["CATEGORY"], TIME_START_ROUND))
+		await clue_posting_channel.send("```ROUND {}```\n{} The category is **{}**.\nClues will begin to be sent in {} seconds.".format(self.info["ROUND_NUMBER"], event_role.mention, self.info["CURRENT_ROUND"]["CATEGORY"], TIME_START_ROUND))
 
 		# Start round in 10 seconds
 		await asyncio.sleep(TIME_START_ROUND)
