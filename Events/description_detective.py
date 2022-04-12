@@ -308,7 +308,7 @@ The game will start in ten seconds."""
 
 				next_round_button = Button(style = discord.ButtonStyle.blurple, label = "Start next round!")
 				next_round_button.callback = next_round_pressed				
-				button_view.add_item(start_button)
+				button_view.add_item(next_round_button)
 
 				await clue_posting_channel.send("Next round will start soon!", view = button_view)
 
@@ -402,12 +402,21 @@ The game will start in ten seconds."""
 			# Check if game is currently in guessing
 			if self.info["GUESSING_OPEN"] == True:
 
+				print(f"Message sent by {message.author.name}: {message.content}")
+
 				try:
+					
+					print("TEST 1")
+
 					# Check if user's message is in DMs and if not, return
 					if message.guild: return
 
+					print("TEST 2")
+
 					# Check if user is in players, and if not, return
 					if not message.author.id in self.info["USER_IDS"]: return
+
+					print("TEST 3")
 
 					# Get member from message.author.id
 					player = self.SERVER["MAIN"].get_member(message.author.id)
@@ -417,8 +426,12 @@ The game will start in ten seconds."""
 					# Check if player has already guessed this clue and if not, return
 					if player_object.guesses[self.info["CLUE_NUM"] - 1]: return
 
+					print("TEST 4")
+
 					# Check if player has already guessed correctly this round and return if so
 					if player_object.correct == True: return
+
+					print("TEST 5")
 
 					# Get player's guess from the content of the message and strip it of whitespace + lowercase it
 					player_guess = message.content.strip().lower()
