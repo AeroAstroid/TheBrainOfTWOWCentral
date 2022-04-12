@@ -106,7 +106,7 @@ class EVENT:
 			"CLUE_POSTING": 0,
 			"ADMINISTRATION_CHANNEL": 0,
 			"ROLE": 0,
-			"CSV_MESSAGE": None
+			"CSV_MESSAGE": 0
 		}
 		self.RUNNING = False
 
@@ -133,15 +133,11 @@ class EVENT:
 	# Function that runs on each message
 	async def on_message(self, message):
 
-		print('test 0')
-
 		# Game has not started, meaning that messages are just for set up
 		if self.GAME_STARTED == False:
-
-			print('test 1')
 			
 			# Check if no CSV message has been sent
-			if self.param["CSV_MESSAGE"] == None:
+			if self.param["CSV_MESSAGE"] == 0:
 
 				print(message.content)
 				print(self.param["ADMINISTRATION_CHANNEL"])
