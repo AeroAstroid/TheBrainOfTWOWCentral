@@ -64,73 +64,127 @@ class EVENT:
 		self.param = { # Define all the parameters necessary that could be changed
 			"CLUE_TIME": 20,
 			"CLUE_POSTING": 0,
-			"ROLE": 0
+			"ADMINISTRATION_CHANNEL": 0,
+			"ROLE": 0,
+			"CSV_MESSAGE": 0
 		}
 
+	# Executes when deactivated
+	def end(self): # Reset the parameters
+
+		self.GAME_STARTED = False
+
+		self.info = { # Define all the game parameters
+
+			"PLAYERS": {},
+
+			"ROUND_NUMBER": 0,
+			"TOTAL_ROUNDS": 0,
+
+			"ROUND_IN_PROGRESS": False,
+
+			# Holds the current round's data
+			"CURRENT_ROUND": {
+				"START_TIME": 0,
+				"ANSWERS": [],
+				"CATEGORY": "",
+				"CLUE_1": "",
+				"CLUE_2": "",
+				"CLUE_3": "",
+				"CLUE_4": "",
+				"CLUE_5": "",
+				"CLUE_6": "",
+			},
+			
+			# Holds all the game rounds
+			"GAME_ROUNDS": []
+
+		}
+
+		self.param = { # Define all the parameters necessary that could be changed
+			"CLUE_TIME": 20,
+			"CLUE_POSTING": 0,
+			"ADMINISTRATION_CHANNEL": 0,
+			"ROLE": 0,
+			"CSV_MESSAGE": None
+		}
+		self.RUNNING = False
 
 	# Executes when activated
 	def start(self, SERVER): # Set the parameters
-
-		# ATTEMPT TO DOWNLOAD CSV FILE FROM MESSAGE
-		try:
-
-			staff_channel = discord.utils.get(SERVER["MAIN"].channels, name="bot-test-channel")
-
-			csv_message = staff_channel.last_message
-
-			# Find csv file
-			if len(csv_message.attachments) == 0:
-				print("This message does not have any attachments.")
-				raise Exception
-
-			attachment = csv_message.attachments[0]
-
-			# Check if attachment is actually a csv file
-			attachment_url = attachment.url
-			if not attachment_url.endswith(".csv"):
-				print("This message has an attachment that is not a CSV file.")
-				raise Exception
-
-			# Save the attachment
-			attachment.save("Events/descriptiondetective.csv")
-
-			# Read CSV and get dictionary
-			csv_list = []
-
-			with open("Events/descriptiondetective.csv", 'r', encoding='UTF-8') as csv_file:
-				reader = csv.reader(csv_file)
-				for row in list(reader):
-					csv_list.append(row)
-
-			# Remove first row from CSV list
-			csv_list.pop(0)
-
-			# Set self.info's GAME_ROUNDS to the CSV list
-			self.info["GAME_ROUNDS"] = csv_list
-
-			print(self.info["GAME_ROUNDS"])
-			raise Exception
-
-		except Exception as e:
-			# Print exception and send message
-			print(e)
-			# Do not let the event start running
-			return
-
+		
 		self.RUNNING = True
 
 		self.SERVER = SERVER
 		self.EVENT_ROLE = 498254150044352514 # Event participant role
 		self.param["ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ROLE)
 		self.param["CLUE_POSTING"] = discord.utils.get(SERVER["MAIN"].channels, name="dawthons-lair") # Post messages in here
+		self.param["ADMINISTRATION_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff•commands")
 
 	# Function that runs every two seconds
 	async def on_two_second(self):
 
+		# Wait for game to start from initiation
 		pass
 
-		# This function is used for time checking
+		# This function is used for time checking when the game is running
 		# Only runs if the time 
+
+	# Function that runs on each message
+	async def on_message(self, message):
+
+		# Game has not started, meaning that messages are just for set up
+		if self.GAME_STARTED == False:
+			
+			# Check if no CSV message has been sent
+			if self.param["CSV_MESSAGE"] == None:
+
+				# Check for four conditions for message
+				if message.channel != self.param["ADMINISTRATION_CHANNEL"]: return
+
+				if len(message.attachments) == 0: return
+
+				if message.content != "DESCRIPTION DETECTIVE CSV": return
+
+				attachment = csv_message.attachments[0]
+
+				# Check if attachment is actually a csv file
+				attachment_url = attachment.url
+				if not attachment_url.endswith(".csv"): return
+
+				# This is a CSV file, now attempt to read it and if any errors come up just return
+				try:
+
+					# Save the attachment
+					attachment.save("Events/descriptiondetective.csv")
+
+					# Read CSV and get dictionary
+					csv_list = []
+
+					with open("Events/descriptiondetective.csv", 'r', encoding='UTF-8') as csv_file:
+						reader = csv.reader(csv_file)
+						for row in list(reader):
+							csv_list.append(row)
+
+					# Remove first row from CSV list
+					csv_list.pop(0)
+
+					# Set self.info's GAME_ROUNDS to the CSV list
+					self.info["GAME_ROUNDS"] = csv_list
+
+					print(self.info["GAME_ROUNDS"])
+
+					raise Exception
+
+				except: return
+					
+				# If the command has not yet returned, a valid CSV file has been sent!
+				# Send message allowing player to start game
+
+				
+
+
+
 		
 	# Change a parameter of the event
 	async def edit_event(self, message, new_params):
@@ -149,3 +203,4 @@ class EVENT:
 			await message.channel.send(f"The following parameters are invalid: {grammar_list(incorrect)}")
 		
 		return
+
