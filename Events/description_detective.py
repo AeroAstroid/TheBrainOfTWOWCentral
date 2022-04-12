@@ -44,9 +44,9 @@ class EVENT:
 			"PLAYERS": {},
 
 			"ROUND_NUMBER": 0,
-			"TOTAL_ROUNDS": 0,
 
-			"ROUND_IN_PROGRESS": False,
+			"GUESSING_OPEN": False,
+			"CLUE_NUM": 0,
 
 			# Holds the current round's data
 			"CURRENT_ROUND": {
