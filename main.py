@@ -185,6 +185,7 @@ async def on_ready():
 
 				if tc_guild:
 					for event in tc_guild["EVENTS"].keys():
+						print(event)
 						if event == "DESCRIPTION_DETECTIVE" and tc_guild["EVENTS"][event].RUNNING:
 							try:
 								await tc_guild["EVENTS"][event].on_message(message)
