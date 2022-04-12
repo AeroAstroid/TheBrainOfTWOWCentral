@@ -11,6 +11,8 @@ CSV_MSG_ID = 963026403236925481
 
 NORMAL_POINTS = [60, 50, 40, 30, 20, 10]
 
+TIME_START_ROUND = 10
+
 class DDPlayer:
 	def __init__(self, user):
 
@@ -26,6 +28,8 @@ class DDPlayer:
 			None,
 			None
 		]
+		self.score_this_round = 0
+		self.correct = False
 
 class EVENT:
 
@@ -81,7 +85,8 @@ class EVENT:
 
 			"ROUND_NUMBER": 0,
 
-			"ROUND_IN_PROGRESS": False,
+			"GUESSING_OPEN": False,
+			"CLUE_NUM": 0,
 
 			# Holds the current round's data
 			"CURRENT_ROUND": {
@@ -103,6 +108,7 @@ class EVENT:
 
 		self.param = { # Define all the parameters necessary that could be changed
 			"CLUE_TIME": 20,
+			"FINAL_GUESS_TIME": 30,
 			"CLUE_POSTING": 0,
 			"ADMINISTRATION_CHANNEL": 0,
 			"ROLE": 0,
@@ -117,22 +123,190 @@ class EVENT:
 
 		self.SERVER = SERVER
 		self.EVENT_ROLE = 498254150044352514 # Event participant role
+		self.EVENT_ADMIN_ROLE = 959155078844010546 # Event participant role
 		self.param["ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ROLE)
-		self.param["CLUE_POSTING"] = discord.utils.get(SERVER["MAIN"].channels, name="dawthons-lair") # Post messages in here
+		self.param["ADMIN_ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ADMIN_ROLE)
+		self.param["GAME_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff-event-time") # Post messages in here
 		self.param["ADMINISTRATION_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff•commands")
 
-	# Begin round
+	# Begin the game
 	async def start_game(self):
-		pass
+
+		event_role = self.param["ROLE"]
+		clue_posting_channel = self.param["GAME_CHANNEL"]
+		
+		# Set up all players
+		for user in event_role.members:
+
+			# Create player object
+			player_object = DDPlayer(user)
+			self.info["PLAYERS"][user] = player_object
+
+		# Send introduction to game
+		await clue_posting_channel.send(
+			f"""{event_role.mention}
+			**Welcome to Description Detective!**
+		
+			Each round, you have **20** seconds after each clue is posted in this channel to guess something in {BRAIN.user.mention}'s DMs. 
+			Note that there is no prefix to guessing - you just need to type the answer in DMs!
+			You only have one guess per clue, so make it count (and don't misspell anything!)
+			If you do not receive a reply from the bot, it means that your answer was incorrect.
+			You will receive points depending on the amount of clues posted at the time you answer correctly. (Less clues means more points.)
+			
+			The game will start in ten seconds."""
+		)
+
+		print("Description Detective game starting!")
+
+		await asyncio.sleep(10)
+
+	# Begin each round
+	async def begin_round(self):
+
+		event_role = self.param["ROLE"]
+		clue_posting_channel = self.param["GAME_CHANNEL"]
+
+		# Reset all players' guesses
+		for player in list(self.info["PLAYERS"].values()):
+			player.guesses = [None, None, None, None, None, None]
+			player.score_this_round = 0
+			player.correct = False
+
+		# Increment the round number
+		self.info["ROUND_NUMBER"] += 1
+
+		# Get the game round in GAME_ROUNDS
+		game_round = self.info["GAME_ROUNDS"][self.info["ROUND_NUMBER"] - 1]
+
+		# Reset clue num
+		self.info["CLUE_NUM"] = 0
+
+		# Input the data into CURRENT_ROUND
+		self.info["CURRENT_ROUND"]["CATEGORY"] = game_round[1]
+		self.info["CURRENT_ROUND"]["CLUE_1"] = game_round[2]
+		self.info["CURRENT_ROUND"]["CLUE_2"] = game_round[3]
+		self.info["CURRENT_ROUND"]["CLUE_3"] = game_round[4]
+		self.info["CURRENT_ROUND"]["CLUE_4"] = game_round[5]
+		self.info["CURRENT_ROUND"]["CLUE_5"] = game_round[6]
+		self.info["CURRENT_ROUND"]["CLUE_6"] = game_round[7]
+		self.info["CURRENT_ROUND"]["ANSWERS"] = []
+
+		# Get the valid answers
+		index_num = 7
+		while True:
+
+			try:
+				index_num += 1
+				if game_round[index_num] != "":
+					self.info["CURRENT_ROUND"]["ANSWERS"].append(game_round[index_num])
+				else:
+					break
+			except:
+				break
+
+		# Send message
+		await clue_posting_channel.send("""```ROUND {}```
+		{} The category is **{}**.
+		Clues will begin to be sent in {} seconds.""".format(self.info["ROUND_NUMBER"], event_role.mention, self.info["CURRENT_ROUND"]["CATEGORY"], TIME_START_ROUND))
+
+		# Start round in 10 seconds
+		await asyncio.sleep(TIME_START_ROUND)
+
+		# STARTING ROUND
+		self.info["START_TIME"] = time.time()
+		self.info["GUESSING_OPEN"] = True
+		self.info["CLUE_NUM"] = 1
+
+		# Send first clue
+		await clue_posting_channel.send("1️⃣ " + self.info["CURRENT_ROUND"]["CLUE_1"])
+		
 
 	# Function that runs every two seconds
 	async def on_two_second(self):
 
-		# Wait for game to start from initiation
-		pass
+		clue_posting_channel = self.param["GAME_CHANNEL"]
 
 		# This function is used for time checking when the game is running
-		# Only runs if the time 
+		if self.info["GUESSING_OPEN"] == True:
+
+			# Time passed since start of guessing
+			time_passed = time.time() - self.info["START_TIME"] 
+
+			# Sending clue #2
+			if self.info["CLUE_NUM"] == 1 and time_passed >= self.param["CLUE_TIME"]:
+
+				await clue_posting_channel.send("2️⃣ " + self.info["CURRENT_ROUND"]["CLUE_2"])
+				self.info["CLUE_NUM"] = 2
+
+			# Sending clue #3
+			elif self.info["CLUE_NUM"] == 2 and time_passed >= self.param["CLUE_TIME"] * 2:
+
+				await clue_posting_channel.send("3️⃣ " + self.info["CURRENT_ROUND"]["CLUE_3"])
+				self.info["CLUE_NUM"] = 3
+
+			# Sending clue #4
+			elif self.info["CLUE_NUM"] == 3 and time_passed >= self.param["CLUE_TIME"] * 3:
+
+				await clue_posting_channel.send("4️⃣ " + self.info["CURRENT_ROUND"]["CLUE_4"])
+				self.info["CLUE_NUM"] = 4
+
+			# Sending clue #5
+			elif self.info["CLUE_NUM"] == 4 and time_passed >= self.param["CLUE_TIME"] * 4:
+
+				await clue_posting_channel.send("5️⃣ " + self.info["CURRENT_ROUND"]["CLUE_5"])
+				self.info["CLUE_NUM"] = 5
+
+			# Sending clue #6 -- FINAL CLUE
+			elif self.info["CLUE_NUM"] == 5 and time_passed >= self.param["CLUE_TIME"] * 5:
+
+				await clue_posting_channel.send("6️⃣ " + self.info["CURRENT_ROUND"]["CLUE_6"])
+				await clue_posting_channel.send("You have **{}** to get in your final guess!".format(self.param["FINAL_GUESS_TIME"]))
+				self.info["CLUE_NUM"] = 6
+
+			# Ending guessing
+			elif self.info["CLUE_NUM"] == 6 and time_passed >= self.param["CLUE_TIME"] * 5 + self.param["FINAL_GUESS_TIME"]:
+
+				self.info["CLUE_NUM"] = 0
+
+				self.info["GUESSING_OPEN"] = False
+				await clue_posting_channel.send("**Round over!**\nThe answer this round was **`{}`**.".format(self.info["CURRENT_ROUND"]["ANSWERS"][0]))
+
+				# Count how many players got it right	
+				total_players = 0
+				players_correct = 0
+
+				for player in list(self.info["PLAYERS"].values()):
+
+					total_players += 1
+					# Player was correct, increment player count by 1
+					if player.correct == True:
+						players_correct += 1
+
+				await clue_posting_channel.send(f"**{players_correct}/{total_players}** answered correctly.")
+
+				# Wait a few seconds until prompting the host to start the next round
+				await asyncio.sleep(5)
+
+				# Create buttons to prompt user to start next round
+				button_view = View()
+
+				async def next_round_pressed(interaction):
+
+					if interaction.user in self.param["ADMIN_ROLE"].members:
+
+						self.GAME_STARTED = True
+						await interaction.response.edit_message(content = f"**Next round started by {interaction.user}!**", view = None)
+
+						# Start game
+						await self.start_game()
+
+					else:
+
+						await interaction.response.defer()
+
+				next_round_button = Button(style = discord.ButtonStyle.blurple, label = "Start next round!")
+
+				await clue_posting_channel.send("Next round will start soon.", view = next_round_button)
 
 	# Function that runs on each message
 	async def on_message(self, message):
