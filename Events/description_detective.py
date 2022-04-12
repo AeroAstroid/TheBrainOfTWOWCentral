@@ -316,7 +316,7 @@ The game will start in ten seconds."""
 				for player in sorted_player_list:
 
 					# Get player list and write it onto csv
-					writer.writerow([player.user.name, player.user.id, player.user.score] + player.round_scores)
+					writer.writerow([player.user.name, player.user.id, player.score] + player.round_scores)
 
 			# Send leaderboard to administration channel
 			await self.param["ADMINISTRATION_CHANNEL"].send(content = "**Description Detective - Leaderboard after Round {}**".format(self.info["ROUND_NUMBER"]), file = discord.File("Events/ddscores_R{}".format(self.info["ROUND_NUMBER"])))
