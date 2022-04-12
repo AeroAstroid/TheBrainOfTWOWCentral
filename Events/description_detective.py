@@ -68,6 +68,7 @@ class EVENT:
 
 		self.param = { # Define all the parameters necessary that could be changed
 			"CLUE_TIME": 20,
+			"FINAL_GUESS_TIME": 30,
 			"CLUE_POSTING": 0,
 			"ADMINISTRATION_CHANNEL": 0,
 			"ROLE": 0,
@@ -144,8 +145,7 @@ class EVENT:
 
 		# Send introduction to game
 		await clue_posting_channel.send(
-			f"""{event_role.mention}
-**Welcome to Description Detective!**
+			f"""**Welcome to Description Detective!**
 		
 Each round, you have **20** seconds after each clue is posted in this channel to guess something in {BRAIN.user.mention}'s DMs. 
 Note that there is no prefix to guessing - you just need to type the answer in DMs!
@@ -207,7 +207,7 @@ The game will start in ten seconds."""
 				break
 
 		# Send message
-		await clue_posting_channel.send("```ROUND {}```\n{} The category is **{}**.\nClues will begin to be sent in {} seconds.".format(self.info["ROUND_NUMBER"], event_role.mention, self.info["CURRENT_ROUND"]["CATEGORY"], TIME_START_ROUND))
+		await clue_posting_channel.send("```ROUND {}```\nThe category is **{}**.\nClues will begin to be sent in {} seconds.".format(self.info["ROUND_NUMBER"], self.info["CURRENT_ROUND"]["CATEGORY"], TIME_START_ROUND))
 
 		# Start round in 10 seconds
 		await asyncio.sleep(TIME_START_ROUND)
@@ -219,7 +219,6 @@ The game will start in ten seconds."""
 
 		# Send first clue
 		await clue_posting_channel.send("1️⃣ " + self.info["CURRENT_ROUND"]["CLUE_1"])
-		
 
 	# Function that runs every two seconds
 	async def on_two_second(self):
@@ -260,7 +259,7 @@ The game will start in ten seconds."""
 			elif self.info["CLUE_NUM"] == 5 and time_passed >= self.param["CLUE_TIME"] * 5:
 
 				await clue_posting_channel.send("6️⃣ " + self.info["CURRENT_ROUND"]["CLUE_6"])
-				await clue_posting_channel.send("You have **{}** to get in your final guess!".format(self.param["FINAL_GUESS_TIME"]))
+				await clue_posting_channel.send("You have **{} seconds** to get in your final guess!".format(self.param["FINAL_GUESS_TIME"]))
 				self.info["CLUE_NUM"] = 6
 
 			# Ending guessing
