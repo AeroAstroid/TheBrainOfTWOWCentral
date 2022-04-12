@@ -223,6 +223,98 @@ The game will start in ten seconds."""
 		# Send first clue
 		await clue_posting_channel.send("1️⃣ " + self.info["CURRENT_ROUND"]["CLUE_1"])
 
+	# End guessing
+	async def end_guessing(self):
+
+		self.info["CLUE_NUM"] = 0
+
+		self.info["GUESSING_OPEN"] = False
+		await clue_posting_channel.send("**Round over!**\nThe answer this round was **`{}`**.".format(self.info["CURRENT_ROUND"]["ANSWERS"][0]))
+
+		# Count how many players got it right	
+		total_players = 0
+		players_correct = 0
+
+		for player in list(self.info["PLAYERS"].values()):
+
+			total_players += 1
+			# Player was correct, increment player count by 1
+			if player.correct == True:
+				players_correct += 1
+
+		await clue_posting_channel.send(f"**{players_correct}/{total_players}** answered correctly.")
+
+		# For every player, append their round score to round scores
+		for player in list(self.info["PLAYERS"].values()):
+
+			player.round_scores.append(player.score_this_round)
+
+		# Wait a few seconds until prompting the host to start the next round
+		await asyncio.sleep(5)
+
+		# Check if there is a next round
+		if self.info["ROUND_NUMBER"] != len(self.info["GAME_ROUNDS"]):
+			# Create buttons to prompt user to start next round
+			button_view = View()
+
+			async def next_round_pressed(interaction):
+
+				if interaction.user in self.param["ADMIN_ROLE"].members:
+
+					self.GAME_STARTED = True
+					await interaction.response.edit_message(content = f"**Next round started by {interaction.user}!**", view = None)
+
+					# Start game
+					await self.start_game()
+
+				else:
+
+					await interaction.response.defer()
+
+			next_round_button = Button(style = discord.ButtonStyle.blurple, label = "Start next round!")
+			next_round_button.callback = next_round_pressed				
+			button_view.add_item(next_round_button)
+
+			await clue_posting_channel.send("Next round will start soon!", view = button_view)
+		# If there is no next round, then end game
+		else:
+
+			await clue_posting_channel.send("**All rounds have been completed!**\nThe host will post the final results shortly.\nThanks for playing!")
+
+	# Function that sorts leaderboard and writes CSV
+	async def sort_leaderboard(self):
+
+		# Creating list of all players
+		player_list = list(self.info["PLAYERS"].values())
+
+		# Function that the sorted() method uses to sort the players
+		def get_player_score(player):
+			return player.score
+
+		sorted_player_list = sorted(player_list, reverse = True, key = get_player_score)
+
+		# Write to CSV
+		with open("Events/ddscores_R{}".format(self.info["ROUND_NUMBER"]), 'w', encoding='UTF-8', newline='') as f:
+
+			writer = csv.writer(f)
+
+			# Write first row of titles
+			title_row = ["Name", "UserId", "Total"]
+
+			# Write each individual round title
+			for i in range(self.info["ROUND_NUMBER"]):
+				title_row.append(str(i + 1))
+
+			writer.writerow(title_row)
+
+			for player in sorted_player_list:
+
+				# Get player list and write it onto csv
+				writer.writerow([player.user.name, player.user.id, player.user.score] + player.round_scores)
+
+		# Send leaderboard to administration channel
+		await self.param["ADMINISTRATION_CHANNEL"].send(content = "**Description Detective - Leaderboard after Round {}**".format(self.info["ROUND_NUMBER"]), file = discord.File("Events/ddscores_R{}".format(self.info["ROUND_NUMBER"])))
+
 	# Function that runs every two seconds
 	async def on_two_second(self):
 
@@ -268,49 +360,7 @@ The game will start in ten seconds."""
 			# Ending guessing
 			elif self.info["CLUE_NUM"] == 6 and time_passed >= self.param["CLUE_TIME"] * 5 + self.param["FINAL_GUESS_TIME"]:
 
-				self.info["CLUE_NUM"] = 0
-
-				self.info["GUESSING_OPEN"] = False
-				await clue_posting_channel.send("**Round over!**\nThe answer this round was **`{}`**.".format(self.info["CURRENT_ROUND"]["ANSWERS"][0]))
-
-				# Count how many players got it right	
-				total_players = 0
-				players_correct = 0
-
-				for player in list(self.info["PLAYERS"].values()):
-
-					total_players += 1
-					# Player was correct, increment player count by 1
-					if player.correct == True:
-						players_correct += 1
-
-				await clue_posting_channel.send(f"**{players_correct}/{total_players}** answered correctly.")
-
-				# Wait a few seconds until prompting the host to start the next round
-				await asyncio.sleep(5)
-
-				# Create buttons to prompt user to start next round
-				button_view = View()
-
-				async def next_round_pressed(interaction):
-
-					if interaction.user in self.param["ADMIN_ROLE"].members:
-
-						self.GAME_STARTED = True
-						await interaction.response.edit_message(content = f"**Next round started by {interaction.user}!**", view = None)
-
-						# Start game
-						await self.start_game()
-
-					else:
-
-						await interaction.response.defer()
-
-				next_round_button = Button(style = discord.ButtonStyle.blurple, label = "Start next round!")
-				next_round_button.callback = next_round_pressed				
-				button_view.add_item(next_round_button)
-
-				await clue_posting_channel.send("Next round will start soon!", view = button_view)
+				await self.end_guessing()
 
 	# Function that runs on each message
 	async def on_message(self, message):
