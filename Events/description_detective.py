@@ -222,8 +222,6 @@ The game will start in ten seconds."""
 
 		clue_posting_channel = self.param["GAME_CHANNEL"]
 
-		self.info["CLUE_NUM"] = 0
-
 		self.info["GUESSING_OPEN"] = False
 		await clue_posting_channel.send("**Round over!**\nThe answer this round was **`{}`**.".format(self.info["CURRENT_ROUND"]["ANSWERS"][0]))
 
@@ -238,7 +236,19 @@ The game will start in ten seconds."""
 			if player.correct == True:
 				players_correct += 1
 
-		await clue_posting_channel.send(f"**{players_correct}/{total_players}** answered correctly.")
+		await clue_posting_channel.send("Waiting for verification from event administrators...")
+
+		while True:
+			msg = await BRAIN.wait_for('message', check=lambda m: (m.author in self.param["ADMIN_ROLE"].members and m.channel == self.param["ADMINISTRATION_CHANNEL"]))
+
+			try:
+				if msg.content.strip().lower() == "verify": break
+			except:
+				pass
+
+			await self.param["ADMINISTRATION_CHANNEL"].send("Round results verified.")
+
+		self.info["CLUE_NUM"] = 0
 
 		# For every player, append their round score to round scores
 		for player in list(self.info["PLAYERS"].values()):
@@ -247,6 +257,8 @@ The game will start in ten seconds."""
 			player.score += player.score_this_round
 
 		await self.sort_leaderboard()
+
+		await clue_posting_channel.send(f"**{players_correct}/{total_players}** answered correctly.")
 
 		# Wait a few seconds until prompting the host to start the next round
 		await asyncio.sleep(5)
@@ -350,30 +362,35 @@ The game will start in ten seconds."""
 			# Sending clue #2
 			if self.info["CLUE_NUM"] == 1 and time_passed >= self.param["CLUE_TIME"]:
 
+				await self.post_guesses()
 				await clue_posting_channel.send("2️⃣ " + self.info["CURRENT_ROUND"]["CLUE_2"])
 				self.info["CLUE_NUM"] = 2
 
 			# Sending clue #3
 			elif self.info["CLUE_NUM"] == 2 and time_passed >= self.param["CLUE_TIME"] * 2:
 
+				await self.post_guesses()
 				await clue_posting_channel.send("3️⃣ " + self.info["CURRENT_ROUND"]["CLUE_3"])
 				self.info["CLUE_NUM"] = 3
 
 			# Sending clue #4
 			elif self.info["CLUE_NUM"] == 3 and time_passed >= self.param["CLUE_TIME"] * 3:
 
+				await self.post_guesses()
 				await clue_posting_channel.send("4️⃣ " + self.info["CURRENT_ROUND"]["CLUE_4"])
 				self.info["CLUE_NUM"] = 4
 
 			# Sending clue #5
 			elif self.info["CLUE_NUM"] == 4 and time_passed >= self.param["CLUE_TIME"] * 4:
 
+				await self.post_guesses()
 				await clue_posting_channel.send("5️⃣ " + self.info["CURRENT_ROUND"]["CLUE_5"])
 				self.info["CLUE_NUM"] = 5
 
 			# Sending clue #6 -- FINAL CLUE
 			elif self.info["CLUE_NUM"] == 5 and time_passed >= self.param["CLUE_TIME"] * 5:
 
+				await self.post_guesses()
 				await clue_posting_channel.send("6️⃣ " + self.info["CURRENT_ROUND"]["CLUE_6"])
 				await clue_posting_channel.send("You have **{} seconds** to get in your final guess!".format(self.param["FINAL_GUESS_TIME"]))
 				self.info["CLUE_NUM"] = 6
@@ -381,6 +398,7 @@ The game will start in ten seconds."""
 			# Ending guessing
 			elif self.info["CLUE_NUM"] == 6 and time_passed >= self.param["CLUE_TIME"] * 5 + self.param["FINAL_GUESS_TIME"]:
 
+				await self.post_guesses()
 				await self.end_guessing()
 
 	# Function that runs on each message
@@ -516,17 +534,26 @@ The game will start in ten seconds."""
 
 			# ADMIN COMMANDS
 			# Check if message from event admin
-			if not message.author in self.param["ADMIN_ROLE"].members:
+			if message.author in self.param["ADMIN_ROLE"].members:
+
+				print("TEST 1")
 
 				# Check if message starts with "dd/"
 				if not message.content.startswith("dd/"): return
+
+				print("TEST 1.5")
 
 				# Check if message starts with
 				args = message.content[len("dd/"):].split(" ")
 				command = args[0].upper()
 				level = len(args)
 
+				print(args)
+				print(message.content)
+
 				if command == "MARKCORRECT":
+
+					print("TEST 2")
 
 					# Marking someone's answer correct
 					if level == 1:
@@ -538,6 +565,8 @@ The game will start in ten seconds."""
 						return
 
 					if level == 3:
+
+						print("TEST 3")
 						
 						# Both arguments have been given
 						# Attempt to get the user
