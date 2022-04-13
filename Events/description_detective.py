@@ -338,7 +338,7 @@ The game will start in ten seconds."""
 			# Post the current clue's guesses
 			player_guess_strings = []
 
-			for player in list(self.info["PLAYERS"].keys()):
+			for player in list(self.info["PLAYERS"].values()):
 
 				player_name = player.user.name
 				player_id = player.user.id
