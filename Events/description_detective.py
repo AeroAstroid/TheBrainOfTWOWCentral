@@ -333,20 +333,26 @@ The game will start in ten seconds."""
 	# Function to post all the players' guesses
 	async def post_guesses(self):
 
-		# Post the current clue's guesses
-		player_guess_strings = []
+		try:
 
-		for player in list(self.info["PLAYERS"].keys()):
+			# Post the current clue's guesses
+			player_guess_strings = []
 
-			player_name = player.user.name
-			player_id = player.user.id
-			player_guess = player.guesses[self.info["CLUE_NUM"] - 1]
+			for player in list(self.info["PLAYERS"].keys()):
 
-			if player_guess:
-				player_guess_strings.append(f"{player_id} ({player_name}) - **`{player_guess}`**")
+				player_name = player.user.name
+				player_id = player.user.id
+				player_guess = player.guesses[self.info["CLUE_NUM"] - 1]
 
-		player_guess_string = "\n".join(player_guess_strings)
-		await self.param["ADMINISTRATION_CHANNEL"].send("__**ROUND #{} CLUE #{} GUESSES**__\n\n".format(self.info["ROUND_NUMBER"], self.info["CLUE_NUM"]) + player_guess_string)
+				if player_guess:
+					player_guess_strings.append(f"{player_id} ({player_name}) - **`{player_guess}`**")
+
+			player_guess_string = "\n".join(player_guess_strings)
+			await self.param["ADMINISTRATION_CHANNEL"].send("__**ROUND #{} CLUE #{} GUESSES**__\n\n".format(self.info["ROUND_NUMBER"], self.info["CLUE_NUM"]) + player_guess_string)
+
+		except Exception as e:
+
+			print(e)
 
 	# Function that runs every two seconds
 	async def on_two_second(self):
