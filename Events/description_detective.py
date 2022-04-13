@@ -345,7 +345,10 @@ The game will start in ten seconds."""
 				player_guess = player.guesses[self.info["CLUE_NUM"] - 1]
 
 				if player_guess:
-					player_guess_strings.append(f"{player_id} ({player_name}) - **`{player_guess}`**")
+					if player.correct == True:
+						player_guess_strings.append(f"{player_id} ({player_name}) - **`{player_guess}`** ☑")
+					else:
+						player_guess_strings.append(f"{player_id} ({player_name}) - **`{player_guess}`**")
 
 			player_guess_string = "\n".join(player_guess_strings)
 			await self.param["ADMINISTRATION_CHANNEL"].send("__**ROUND #{} CLUE #{} GUESSES**__\n\n".format(self.info["ROUND_NUMBER"], self.info["CLUE_NUM"]) + player_guess_string)
@@ -545,7 +548,10 @@ The game will start in ten seconds."""
 				print("TEST 1")
 
 				# Check if message starts with "dd/"
-				if not message.content.startswith("dd/"): return
+				print(message.content)
+				print(message.content.strip().lower().startswith("dd/"))
+
+				if not message.content.strip().lower().startswith("dd/"): return
 
 				print("TEST 1.5")
 
