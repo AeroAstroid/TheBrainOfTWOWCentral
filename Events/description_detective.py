@@ -545,27 +545,14 @@ The game will start in ten seconds."""
 			# Check if message from event admin
 			if message.author in self.param["ADMIN_ROLE"].members:
 
-				print("TEST 1")
-
-				# Check if message starts with "dd/"
-				print(message.content)
-				print(message.content.strip().lower().startswith("dd/"))
-
 				if message.content.strip().lower().startswith("dd/"):
-
-					print("TEST 1.5")
 
 					# Check if message starts with
 					args = message.content[len("dd/"):].split(" ")
 					command = args[0].upper()
 					level = len(args)
 
-					print(args)
-					print(message.content)
-
 					if command == "MARKCORRECT":
-
-						print("TEST 2")
 
 						# Marking someone's answer correct
 						if level == 1:
@@ -575,8 +562,6 @@ The game will start in ten seconds."""
 							await message.channel.send("You must include the number of the guess (what clue they guessed at) that you want to mark correctly!")
 
 						if level == 3:
-
-							print("TEST 3")
 							
 							# Both arguments have been given
 							# Attempt to get the user
@@ -614,7 +599,8 @@ The game will start in ten seconds."""
 							player_object.score_this_round = points_gained
 
 							# Send message to user
-							await player_object.guess_msg[guess_clue - 1].reply("☑ **Your guess for Clue {} was marked manually correct (not by a bot)!** ☑\nYou gain **{}** points this round!".format(self.info["CLUE_NUM"], points_gained))
+							await player_object.guess_msg[guess_clue - 1].reply("☑ **Your guess for Clue {} was marked manually correct (not by a bot)!** ☑\nYou gain **{}** points this round!".format(guess_clue, points_gained))
+							await self.param["ADMINISTRATION_CHANNEL"].send(f"☑ Guess on **Clue #{guess_clue}** ({player_object.guesses[guess_clue - 1]}) marked correct for player {player_object.user.mention}! (Marked correct by {message.author.mention})")
 		
 	# Change a parameter of the event
 	async def edit_event(self, message, new_params):
