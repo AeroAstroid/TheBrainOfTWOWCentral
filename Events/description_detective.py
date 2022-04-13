@@ -218,12 +218,15 @@ The game will start in ten seconds."""
 		await clue_posting_channel.send("1️⃣ " + self.info["CURRENT_ROUND"]["CLUE_1"])
 
 	# End guessing
-	async def end_guessing(self):
+	async def end_guessing(self, all_correct = False):
 
 		clue_posting_channel = self.param["GAME_CHANNEL"]
 
 		self.info["GUESSING_OPEN"] = False
-		await clue_posting_channel.send("**Round over!**\nThe answer this round was **`{}`**.".format(self.info["CURRENT_ROUND"]["ANSWERS"][0]))
+		if all_correct == False:
+			await clue_posting_channel.send("**Round over!**\nThe answer this round was **`{}`**.".format(self.info["CURRENT_ROUND"]["ANSWERS"][0]))
+		else:
+			await clue_posting_channel.send("**Everyone guessed it!**\nThe answer this round was **`{}`**.".format(self.info["CURRENT_ROUND"]["ANSWERS"][0]))
 
 		# Count how many players got it right	
 		total_players = 0
@@ -364,6 +367,18 @@ The game will start in ten seconds."""
 
 		# This function is used for time checking when the game is running
 		if self.info["GUESSING_OPEN"] == True:
+
+			# Check if all players have guessed correctly
+			all_players_correct = True
+			for player in list(self.info["PLAYERS"].values()):
+				if player.correct == False:
+					all_players_correct = False
+					break
+
+			if all_players_correct == True:
+				
+				await self.end_guessing(all_correct = True)
+				return
 
 			# Time passed since start of guessing
 			time_passed = time.time() - self.info["START_TIME"] 
@@ -591,6 +606,7 @@ The game will start in ten seconds."""
 							player_object = self.info["PLAYERS"][player_to_mark]
 							if not player_object.guess_msg[guess_clue - 1]:
 								await message.channel.send(f"The player with ID {args[1]} did not send a guess at Clue #{guess_clue}!")
+								return
 
 							# Give player points
 							points_gained = NORMAL_POINTS[guess_clue - 1]
