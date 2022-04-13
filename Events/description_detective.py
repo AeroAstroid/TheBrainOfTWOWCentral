@@ -516,7 +516,7 @@ The game will start in ten seconds."""
 							if not player_object.guesses[self.info["CLUE_NUM"] - 1]:
 
 								# Check if player has already guessed correctly this round and return if so
-								if player_object.correct == True: 
+								if player_object.correct == False: 
 
 									# Get player's guess from the content of the message and strip it of whitespace + lowercase it
 									player_guess = message.content.strip().lower()
