@@ -77,7 +77,7 @@ class EVENT:
 				new_announcement_list.append(f"`(<1 hour ago)` : Removed **{x}** from the signup list")
 
 			print(old_twow_names)
-			print(self.ANNOUNCe.id)
+			print(self.ANNOUNCE.id)
 			
 			if self.ANNOUNCE.content != "\u200b":
 
