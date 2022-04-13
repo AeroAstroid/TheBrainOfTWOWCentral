@@ -246,7 +246,7 @@ The game will start in ten seconds."""
 			except:
 				pass
 
-			await self.param["ADMINISTRATION_CHANNEL"].send("Round results verified.")
+		await self.param["ADMINISTRATION_CHANNEL"].send("Round results verified.")
 
 		self.info["CLUE_NUM"] = 0
 
@@ -502,40 +502,40 @@ The game will start in ten seconds."""
 				try:
 					
 					# Check if user's message is in DMs and if not, return
-					if message.guild: return
+					if not message.guild:
 
-					# Check if user is in players, and if not, return
-					if not message.author.id in self.info["USER_IDS"]: return
+						# Check if user is in players, and if not, return
+						if message.author.id in self.info["USER_IDS"]: 
 
-					# Get member from message.author.id
-					player = self.SERVER["MAIN"].get_member(message.author.id)
-					# Get player object
-					player_object = self.info["PLAYERS"][player]
+							# Get member from message.author.id
+							player = self.SERVER["MAIN"].get_member(message.author.id)
+							# Get player object
+							player_object = self.info["PLAYERS"][player]
 
-					# Check if player has already guessed this clue and if not, return
-					if player_object.guesses[self.info["CLUE_NUM"] - 1]: return
+							# Check if player has already guessed this clue and if not, return
+							if not player_object.guesses[self.info["CLUE_NUM"] - 1]:
 
-					# Check if player has already guessed correctly this round and return if so
-					if player_object.correct == True: return
+								# Check if player has already guessed correctly this round and return if so
+								if player_object.correct == True: 
 
-					# Get player's guess from the content of the message and strip it of whitespace + lowercase it
-					player_guess = message.content.strip().lower()
+									# Get player's guess from the content of the message and strip it of whitespace + lowercase it
+									player_guess = message.content.strip().lower()
 
-					# Log player's guess
-					player_object.guess_msg[self.info["CLUE_NUM"] - 1] = message
-					player_object.guesses[self.info["CLUE_NUM"] - 1] = player_guess
+									# Log player's guess
+									player_object.guess_msg[self.info["CLUE_NUM"] - 1] = message
+									player_object.guesses[self.info["CLUE_NUM"] - 1] = player_guess
 
-					# Check if player guess is correct
-					if player_guess in self.info["CURRENT_ROUND"]["ANSWERS"]:
+									# Check if player guess is correct
+									if player_guess in self.info["CURRENT_ROUND"]["ANSWERS"]:
 
-						# Give player points
-						points_gained = NORMAL_POINTS[self.info["CLUE_NUM"] - 1]
+										# Give player points
+										points_gained = NORMAL_POINTS[self.info["CLUE_NUM"] - 1]
 
-						player_object.correct = True
-						player_object.score_this_round = points_gained
+										player_object.correct = True
+										player_object.score_this_round = points_gained
 
-						# Send message to user
-						await message.reply("☑ **You got it correct on Clue {}!** ☑\nYou gain **{}** points this round!".format(self.info["CLUE_NUM"], points_gained))
+										# Send message to user
+										await message.reply("☑ **You got it correct on Clue {}!** ☑\nYou gain **{}** points this round!".format(self.info["CLUE_NUM"], points_gained))
 
 				except Exception as e:
 					# Print exception
@@ -551,72 +551,70 @@ The game will start in ten seconds."""
 				print(message.content)
 				print(message.content.strip().lower().startswith("dd/"))
 
-				if not message.content.strip().lower().startswith("dd/"): return
+				if message.content.strip().lower().startswith("dd/"):
 
-				print("TEST 1.5")
+					print("TEST 1.5")
 
-				# Check if message starts with
-				args = message.content[len("dd/"):].split(" ")
-				command = args[0].upper()
-				level = len(args)
+					# Check if message starts with
+					args = message.content[len("dd/"):].split(" ")
+					command = args[0].upper()
+					level = len(args)
 
-				print(args)
-				print(message.content)
+					print(args)
+					print(message.content)
 
-				if command == "MARKCORRECT":
+					if command == "MARKCORRECT":
 
-					print("TEST 2")
+						print("TEST 2")
 
-					# Marking someone's answer correct
-					if level == 1:
-						await message.channel.send("You must include the user ID of a player, and the number of the guess you want to mark correctly!")
-						return
+						# Marking someone's answer correct
+						if level == 1:
+							await message.channel.send("You must include the user ID of a player, and the number of the guess you want to mark correctly!")
 
-					if level == 2:
-						await message.channel.send("You must include the number of the guess (what clue they guessed at) that you want to mark correctly!")
-						return
+						if level == 2:
+							await message.channel.send("You must include the number of the guess (what clue they guessed at) that you want to mark correctly!")
 
-					if level == 3:
+						if level == 3:
 
-						print("TEST 3")
-						
-						# Both arguments have been given
-						# Attempt to get the user
-						player_to_mark = None
-						try:
-							player_to_mark = self.SERVER["MAIN"].get_member(int(args[1]))
-						except:
-							await message.channel.send(f"Could not get player with ID {args[1]}!")
-							return
+							print("TEST 3")
+							
+							# Both arguments have been given
+							# Attempt to get the user
+							player_to_mark = None
+							try:
+								player_to_mark = self.SERVER["MAIN"].get_member(int(args[1]))
+							except:
+								await message.channel.send(f"Could not get player with ID {args[1]}!")
+								return
 
-						# Check if player to mark is in PLAYERS keys
-						if not player_to_mark in list(self.info["PLAYERS"].keys()): 
-							await message.channel.send(f"Player with ID {args[1]} is not participating in event!")
-							return
+							# Check if player to mark is in PLAYERS keys
+							if not player_to_mark in list(self.info["PLAYERS"].keys()): 
+								await message.channel.send(f"Player with ID {args[1]} is not participating in event!")
+								return
 
-						# Check if number guess is an integer
-						guess_clue = None
-						try:
-							guess_clue = int(args[2])
-							if guess_clue < 1 or guess_clue > 6:
-								raise Exception
-						except:
-							await message.channel.send("The clue guess must be an integer from 1-6!")
-							return
+							# Check if number guess is an integer
+							guess_clue = None
+							try:
+								guess_clue = int(args[2])
+								if guess_clue < 1 or guess_clue > 6:
+									raise Exception
+							except:
+								await message.channel.send("The clue guess must be an integer from 1-6!")
+								return
 
-						# Check if user sent guess or not
-						player_object = self.info["PLAYERS"][player_to_mark]
-						if not player_object.guess_msg[guess_clue - 1]:
-							await message.channel.send(f"The player with ID {args[1]} did not send a guess at Clue #{guess_clue}!")
+							# Check if user sent guess or not
+							player_object = self.info["PLAYERS"][player_to_mark]
+							if not player_object.guess_msg[guess_clue - 1]:
+								await message.channel.send(f"The player with ID {args[1]} did not send a guess at Clue #{guess_clue}!")
 
-						# Give player points
-						points_gained = NORMAL_POINTS[guess_clue - 1]
+							# Give player points
+							points_gained = NORMAL_POINTS[guess_clue - 1]
 
-						player_object.correct = True
-						player_object.score_this_round = points_gained
+							player_object.correct = True
+							player_object.score_this_round = points_gained
 
-						# Send message to user
-						await player_object.guess_msg[guess_clue - 1].reply("☑ **Your guess for Clue {} was marked manually correct (not by a bot)!** ☑\nYou gain **{}** points this round!".format(self.info["CLUE_NUM"], points_gained))
+							# Send message to user
+							await player_object.guess_msg[guess_clue - 1].reply("☑ **Your guess for Clue {} was marked manually correct (not by a bot)!** ☑\nYou gain **{}** points this round!".format(self.info["CLUE_NUM"], points_gained))
 		
 	# Change a parameter of the event
 	async def edit_event(self, message, new_params):
