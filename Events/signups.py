@@ -75,13 +75,24 @@ class EVENT:
 				new_announcement_list.append(f"`(<1 hour ago)` : Added **{x}** to the signup list")
 			for x in just_removed:
 				new_announcement_list.append(f"`(<1 hour ago)` : Removed **{x}** from the signup list")
+
+			print(old_twow_names)
+			print(self.ANNOUNCe.id)
 			
 			if self.ANNOUNCE.content != "\u200b":
+
+				print("TEST 1")
 				old_announcement_list = self.ANNOUNCE.content.split("\n")[2:]
 
+				print(old_announcement_list)
+
 				if hour:
+
+					print ("TEST 2")
 					for z in range(len(old_announcement_list)):
+
 						halves = old_announcement_list[z].split(" : ")
+
 						halves[0] = halves[0].split(" ")
 						if halves[0][0][2:] == "<1":
 							halves[0] = "`(1 hour ago)`"
@@ -93,6 +104,8 @@ class EVENT:
 							old_announcement_list[z] = ""
 				
 				old_announcement_list = [x for x in old_announcement_list if x != ""]
+
+				print(old_announcement_list)
 
 				if new_announcement_list != []:
 					old_announcement_list += new_announcement_list
@@ -107,9 +120,11 @@ class EVENT:
 			for x in just_added:
 				verif = twow_list[new_twow_names.index(x)][-1]
 				if verif == 1:
-					msg = await self.CHANNEL.send("<@&488451010319220766> <@&723946317839073370>")
+					print("Pinging for featured TWOW!")
+					#msg = await self.CHANNEL.send("<@&488451010319220766> <@&723946317839073370>")
 				else:
-					msg = await self.CHANNEL.send("<@&723946317839073370>")
+					#msg = await self.CHANNEL.send("<@&723946317839073370>")
+					print("Pinging for TWOW!")
 				
 				await msg.delete()
 
