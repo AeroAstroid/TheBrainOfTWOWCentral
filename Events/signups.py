@@ -110,8 +110,11 @@ class EVENT:
 				if new_announcement_list != []:
 					old_announcement_list += new_announcement_list
 
+				print(old_announcement_list)
 				announce_msg = f"__**Recent list changes:**__\n\n" + "\n".join(old_announcement_list)
+				print(announce_msg)
 				await self.ANNOUNCE.edit(content=announce_msg)
+				print(self.ANNOUNCE.content)
 			
 			else:
 				announce_msg = f"__**Recent list changes:**__\n\n" + "\n".join(new_announcement_list)
