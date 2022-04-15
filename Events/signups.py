@@ -3,6 +3,9 @@ import numpy as np
 from Config._functions import grammar_list
 from Config._db import Database
 
+UPDATES_MSG_ID = 913191494159044609
+SIGNUPS_CHANNEL = "twows-in-signups"
+
 class EVENT:
 	# Executes when loaded
 	def __init__(self):
@@ -42,6 +45,9 @@ class EVENT:
 						self.MESSAGES[msgs.index(msg.id) - 1] = msg
 					else:
 						self.ANNOUNCE = msg
+			
+		self.CHANNEL = discord.utils.get(self.SERVER["MAIN"].channels, name=SIGNUPS_CHANNEL)
+		self.ANNOUNCE = await signups_channel.fetch_message(UPDATES_MSG_ID)
 		
 		twow_list = self.db.get_entries("signuptwows")
 		twow_list = sorted(twow_list, key=lambda m: self.param["TIME_ORDER"] * m[4])
