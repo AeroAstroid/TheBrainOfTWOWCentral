@@ -7,10 +7,7 @@ from discord.ui import Button, View
 from Config._functions import grammar_list, word_count, elim_prize
 from Config._const import ALPHABET, BRAIN
 
-CSV_MSG_ID = 963026403236925481
-
 NORMAL_POINTS = [60, 50, 40, 30, 20, 10]
-
 TIME_START_ROUND = 10
 
 class DDPlayer:
