@@ -78,6 +78,7 @@ class EVENT:
 
 			print(old_twow_names)
 			print(self.ANNOUNCE.id)
+			print(self.ANNOUNCE.content)
 			
 			if self.ANNOUNCE.content != "\u200b":
 
