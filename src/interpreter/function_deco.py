@@ -67,7 +67,7 @@ def setupFunctions():
     Function(["choose"], {"arr": Infinite}, choose)
     Function(["choosechar"], {"string": None}, choosechar)
     Function(["compare"], {"v1": None, "operator": None, "v2": None}, compare)
-    Function(["concat"], {"item": None, "items": Infinite}, concat)
+    Function(["concat"], {"items": Infinite}, concat)
     Function(["define"], {"name": None, "item": None}, define)
 
     Function(["find", "indexof"], {"v1": None, "v2": None, "v3": None, "v4": None}, find)
