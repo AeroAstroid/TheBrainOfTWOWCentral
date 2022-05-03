@@ -33,18 +33,17 @@ class EVENT:
 
 	# Exclusive to this event, updates the list of TWOWs in signups
 	async def update_list(self, hour=False, announce=True, update_channel=False):
-		if len(self.MESSAGES) == 0 or update_channel:
-			msgs = [int(x) for x in self.db.get_entries("signupmessages")[0][0].split(" ")]
-			self.CHANNEL = discord.utils.get(self.SERVER["MAIN"].channels, id=msgs[0])
-			self.MESSAGES = [""] * (len(msgs) - 2)
-			self.ANNOUNCE = ""
+		msgs = [int(x) for x in self.db.get_entries("signupmessages")[0][0].split(" ")]
+		self.CHANNEL = discord.utils.get(self.SERVER["MAIN"].channels, id=msgs[0])
+		self.MESSAGES = [""] * (len(msgs) - 2)
+		self.ANNOUNCE = ""
 
-			async for msg in self.CHANNEL.history(limit=100):
-				if msg.id in msgs:
-					if msgs.index(msg.id) != len(msgs) - 1:
-						self.MESSAGES[msgs.index(msg.id) - 1] = msg
-					else:
-						self.ANNOUNCE = msg
+		async for msg in self.CHANNEL.history(limit=100):
+			if msg.id in msgs:
+				if msgs.index(msg.id) != len(msgs) - 1:
+					self.MESSAGES[msgs.index(msg.id) - 1] = msg
+				else:
+					self.ANNOUNCE = msg
 			
 		self.CHANNEL = discord.utils.get(self.SERVER["MAIN"].channels, name=SIGNUPS_CHANNEL)
 		self.ANNOUNCE = await self.CHANNEL.fetch_message(UPDATES_MSG_ID)
