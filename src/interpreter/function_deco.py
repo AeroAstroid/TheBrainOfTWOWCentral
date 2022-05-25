@@ -73,7 +73,7 @@ def setupFunctions():
     Function(["find", "indexof"], {"v1": None, "v2": None, "v3": None, "v4": None}, find)
     Function(["func", "function"], {"name": None, "args": None, "code": Infinite}, func, parse_args=False)
     Function(["global"], {"use": None, "name": None, "value": 0}, global_func)
-    Function(["if"], {"compare": None, "true": None, "false": None}, if_func)
+    Function(["if"], {"compare": None, "true": None, "false": None}, if_func, parse_args=False)
     Function(["index"], {"arr": None, "number": None}, index)
     Function(["import"], {"name": None}, import_func)
 
