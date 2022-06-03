@@ -135,7 +135,7 @@ class EVENT:
 			for role in self.param["ROLES_IN_RESPONDING"]:
 				roles_mention = role.mention
 			users_mention = []
-			for user in self.param["USER_IN_RESPONDING"]:
+			for user in self.param["USERS_IN_RESPONDING"]:
 				users_mention = user.mention
 			admin_embed.add_field(name="✏️ Roles + members that can respond", value="\n".join(roles_mention) + "\n" + "\n".join(users_mention), inline=False)
 
