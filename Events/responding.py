@@ -112,9 +112,9 @@ class EVENT:
 			limits_description += "No word limit"
 
 		if self.param["CHARACTER_LIMIT"] > 0:
-			limits_description += "Character limit: **{}**".format(self.param["CHARACTER_LIMIT"])
+			limits_description += "\nCharacter limit: **{}**".format(self.param["CHARACTER_LIMIT"])
 		else:
-			limits_description += "No character limit"
+			limits_description += "\nNo character limit"
 		admin_embed.add_field(name="❗ Responding limits", value=limits_description, inline=False)
 
 		# Add fields listing the responding deadline
@@ -133,10 +133,10 @@ class EVENT:
 		else:
 			roles_mention = []
 			for role in self.param["ROLES_IN_RESPONDING"]:
-				roles_mention = role.mention
+				roles_mention.append(role.mention)
 			users_mention = []
 			for user in self.param["USERS_IN_RESPONDING"]:
-				users_mention = user.mention
+				users_mention.append(user.mention)
 			admin_embed.add_field(name="✏️ Roles + members that can respond", value="\n".join(roles_mention) + "\n" + "\n".join(users_mention), inline=False)
 
 		# Add fields listing the active technicals
@@ -168,7 +168,8 @@ class EVENT:
 				# Check what option is selected
 				try:
 					option_selected = modification_menu.values[0]
-				except:
+				except Exception as e:
+					print(e)
 					await interaction.response.defer()
 					return
 
@@ -190,7 +191,7 @@ class EVENT:
 				
 					await self.admin_modify()
 
-				if option_selected == "wordlimit":
+				elif option_selected == "characterlimit":
 					# CHARACTER LIMIT - Get user to select character limit
 					await self.param["ADMIN_CHANNEL"].send("Set a character limit by typing an integer amount of characters that players are limited to or say `cancel` to go back.")
 					admin_input = await get_positive_integer(interaction.user, self.param["ADMIN_CHANNEL"])
