@@ -153,7 +153,7 @@ class EVENT:
 			discord.SelectOption(label = "Modify character limit", value = "characterlimit", emoji = "❗"),
 			discord.SelectOption(label = "Modify responding deadline", value = "deadline", emoji = "⌛"),
 			discord.SelectOption(label = "Modify active technicals", value = "technicals", emoji = "⚙️"),
-			discord.SelectOption(label = "Confirm", value = "technicals", emoji = "✅"),
+			discord.SelectOption(label = "Confirm", value = "confirm", emoji = "✅"),
 		]
 
 		modification_menu = Select(custom_id = "MOD_MENU", placeholder = "Choose an option...", options = options_list)
