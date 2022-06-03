@@ -261,7 +261,7 @@ The game will start in ten seconds."""
 		await clue_posting_channel.send(f"**{players_correct}/{total_players}** answered correctly.")
 
 		# Wait a few seconds until prompting the host to start the next round
-		await asyncio.sleep(5)
+		await asyncio.sleep(3)
 
 		# Check if there is a next round
 		if self.info["ROUND_NUMBER"] != len(self.info["GAME_ROUNDS"]):
