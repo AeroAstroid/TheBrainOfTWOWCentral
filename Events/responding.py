@@ -74,7 +74,7 @@ class EVENT:
 		self.param = copy.deepcopy(DEFAULT_PARAM)
 
 		# End the event
-        self.RUNNING = False
+		self.RUNNING = False
 
 	# Executes when activated
 	def start(self, SERVER): # Set the parameters
@@ -103,7 +103,7 @@ class EVENT:
 
 		# Create embed
 		admin_embed = discord.Embed(title="Responding - Modify Parameters", description="Select a parameter to change in the dropdown menu, or select `Confirm` to confirm the parameters.", color=0x31d8b1)
-        
+		
 		# Add fields listing the word/character limits
 		limits_description = ""
 		if self.param["WORD_LIMIT"] > 0:
@@ -160,11 +160,11 @@ class EVENT:
 			if interaction.user in self.param["ADMIN_ROLE"].members:
 
 				# Check what option is selected
-                try:
-                    option_selected = modification_menu.values[0]
-                except:
-                    await interaction.response.defer()
-                    return
+				try:
+					option_selected = modification_menu.values[0]
+				except:
+					await interaction.response.defer()
+					return
 
 				await interaction.response.edit_message(embed = interaction.message.embeds[0], view = None)
 
@@ -242,20 +242,20 @@ class EVENT:
 	async def begin_responding(self):
 
 		# Set up all players in a role that is in ROLES_IN_RESPONDING
-        for role in self.param["ROLES_IN_RESPONDING"]:
-            for member in role.members:
-                if not member.id in self.info["USER_IDS"]:
-                    # If user not found in user ids list, add their id to the to the list
-                    self.info["USER_IDS"].append(member.id)
+		for role in self.param["ROLES_IN_RESPONDING"]:
+			for member in role.members:
+				if not member.id in self.info["USER_IDS"]:
+					# If user not found in user ids list, add their id to the to the list
+					self.info["USER_IDS"].append(member.id)
 
 		# Set up all players in the USERS_IN_RESPONDING list
-        for member in self.param["USERS_IN_RESPONDING"]:
-            if not member.id in self.info["USER_IDS"]:
-                # If user not found in user ids list, add their id to the to the list
-                self.info["USER_IDS"].append(member.id)
+		for member in self.param["USERS_IN_RESPONDING"]:
+			if not member.id in self.info["USER_IDS"]:
+				# If user not found in user ids list, add their id to the to the list
+				self.info["USER_IDS"].append(member.id)
 
 		# Set starting time
-        self.info["RESPONDING_START_TIME"] = time.time()
+		self.info["RESPONDING_START_TIME"] = time.time()
 
 		# Find the timestamp of the deadline by adding the RESPOND_LENGTH parameter to the start time
 		self.info["RESPONDING_END_TIME"] = round(self.info["RESPONDING_START_TIME"]) + self.param["RESPOND_LENGTH"]
