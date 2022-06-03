@@ -326,7 +326,11 @@ You have until **{deadline_time_string}** which is **{deadline_relative_string}*
 
 			# Check if the message "modify" has been sent
 			if message.content.strip().lower() == "modify" and user in self.param["ADMIN_ROLE"].members and channel == self.param["ADMIN_CHANNEL"]:
-				await self.admin_modify()
+
+				try:
+					await self.admin_modify()
+				except Exception as e:
+					print(e)
 
 		# Responding is open, anyone can respond
 		elif self.info["RESPONDING_OPEN"] == True:
