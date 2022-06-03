@@ -321,8 +321,12 @@ You have until **{deadline_time_string}** which is **{deadline_relative_string}*
 		user = message.author
 		channel = message.channel 
 
+		print("hello1")
+
 		# Responding has not started and admins are still able to modify the parameters
 		if self.info["MODIFICATION_OPEN"] == True:
+
+			print("hello2")
 			
 			# Check if the message "modify" has been sent
 			if message.content == "modify" and message.user in self.param["ADMIN_ROLE"].members and message.channel == self.param["ADMIN_CHANNEL"]:
