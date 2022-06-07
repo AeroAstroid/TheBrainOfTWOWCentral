@@ -2,8 +2,7 @@ from random import choice
 
 
 # ive decided that these are gonna be part of the final product
-github_devs = ["Inferno", "Digin", "LegitSi", "Zelo101", "weee50",
-               "woooowoooo", "BowlingPizzaBall", "pepsi"]  # only counts people that have made a commit
+github_devs = ["Infernity", "Digin", "LegitSi", "Zelo101", "weee50", "woooowoooo", "BowlingPizzaBall", "pepsi"]  # only counts people that have made a commit
 unfunny_errmsg = [
     "GOD FUCKING DAMMIT! **crashing noises**",
     "Whoops. You broke it.",
