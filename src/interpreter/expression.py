@@ -43,7 +43,7 @@ def Expression(block: Union[List[str], str], codebase):
                 # TODO: Figure out how to remove this line
                 variable_that_does_not_need_to_exist = functionWanted.block
 
-                return Expression(functionWanted.run(arguments), codebase)
+                return Expression(functionWanted.run(codebase, arguments, alias), codebase)
             except AttributeError:
                 return functionWanted.run(codebase, arguments, alias)
         else:
