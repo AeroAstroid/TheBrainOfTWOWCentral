@@ -452,7 +452,7 @@ class EVENT:
 			print("TEST 1: Responding is open")
 
 			# Check if in DMs or not
-			if isinstance(ctx.channel, discord.channel.DMChannel):
+			if isinstance(channel, discord.channel.DMChannel):
 
 				print("TEST 2: In a DM channel")
 				

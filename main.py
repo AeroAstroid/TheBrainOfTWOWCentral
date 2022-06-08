@@ -243,7 +243,7 @@ async def on_ready():
 
 			# Check if command is either "respond" or "edit" and if so stop
 			# This is for the RESPONDING event
-			if command == "respond" or command == "edit": return
+			if command == "RESPOND" or command == "EDIT": return
 
 			# If the command is not found, it checks if it's just an alias of any actual command
 			if command not in PARAMS["COMMANDS"].keys():
