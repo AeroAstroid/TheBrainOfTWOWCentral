@@ -457,7 +457,7 @@ class EVENT:
 				print("TEST 2: In a DM channel")
 				
 				# Is in DMs, split the content of the message
-				message_words = message.split(" ")
+				message_words = message.content.split(" ")
 
 				# Check if user is responding
 				if message_words[0].lower() == "tc/respond":
