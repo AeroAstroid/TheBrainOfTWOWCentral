@@ -448,8 +448,12 @@ class EVENT:
 		# Responding is open, anyone can respond
 		elif self.info["RESPONDING_OPEN"] == True:
 
+			print("TEST 1: Responding is open")
+
 			# Check if in DMs or not
 			if isinstance(ctx.channel, discord.channel.DMChannel):
+
+				print("TEST 2: In a DM channel")
 				
 				# Is in DMs, split the content of the message
 				message_words = message.split(" ")
@@ -457,9 +461,13 @@ class EVENT:
 				# Check if user is responding
 				if message_words[0].lower() == "tc/respond":
 
+					print("TEST 3: Bot detects command correctly")
+
 					# Check if user is able to respond, and if not return and send message
 					if user not in self.info["USERS_RESPONDING"]:
 						await channel.send("❌ You are not allowed to use this command!")
+
+					print("TEST 4: Bot detects user in responding")
 
 					# Check if user has already submitted all their responses
 					response_list = self.info["RESPONSES"][user]
@@ -470,10 +478,14 @@ class EVENT:
 							await channel.send("❌ You've already sent a response! If you want to edit, use `tc/edit` followed by your new response.")
 						return
 
+					print("TEST 5: User has not already sent response")
+
 					# Check if user actually sent a response
 					if len(message_words) == 1:
 						await channel.send("❌ You need to send your response after the `tc/respond` command!")
 						return
+
+					print("TEST 6: Response has more than 0 words")
 
 					# Get user's response and put it together
 					try:
@@ -509,7 +521,7 @@ class EVENT:
 							if responses_to_send == 0: resp_to_send_str = "You've submitted all your responses!"
 							else: resp_to_send_str = f"You have {responses_to_send} response(s) left to submit." 
 
-							await message.reply(content = f"""\
+							await message.reply(content = f"""
 								☑️ **Response recorded!** ☑️
 								
 								Your response was recorded as: `{response}`
