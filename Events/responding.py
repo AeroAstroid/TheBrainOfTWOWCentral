@@ -516,11 +516,15 @@ class EVENT:
 							user_response_strings = ["**`{}:`**`{}`".format(num + 1, self.info["RESPONSES"][user][num]) for num in range(len(self.info["RESPONSES"][user])) if self.info["RESPONSES"][user][num] != None]
 
 							# If user still has more responses to send in, tell them to do so
-							# Find the amount of None's in t
+							# Find the amount of None's in the user's response list
 							responses_to_send = self.info["RESPONSES"][user].count(None)
 							if responses_to_send == 0: resp_to_send_str = "You've submitted all your responses!"
 							else: resp_to_send_str = f"You have {responses_to_send} response(s) left to submit." 
 
+							# User response string - showing the user's current responses
+							user_resp_string = "\n".join(user_response_strings)
+
+							# Send message
 							await message.reply(content = f"""
 								☑️ **Response recorded!** ☑️
 								
@@ -531,7 +535,7 @@ class EVENT:
 								To edit your response, use the command `tc/edit` followed by the number of the response you want to edit, followed by your new response.
 								
 								Your current responses are:
-								{"\n".join(user_response_strings)}
+								{user_resp_string}
 							""", mention_author=False)
 						
 					except Exception as e:
