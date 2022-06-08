@@ -382,7 +382,8 @@ class EVENT:
 
 		await self.param["ANNOUNCE_CHANNEL"].send(announcement_str)
 
-		# Open responding
+		# Open responding and close admin modification
+		self.info["MODIFICATION_OPEN"] = False
 		self.info["RESPONDING_OPEN"] = True
 
 	# Function that sorts leaderboard and writes CSV

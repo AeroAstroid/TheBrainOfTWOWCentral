@@ -185,7 +185,7 @@ async def on_ready():
 
 				if tc_guild:
 					for event in tc_guild["EVENTS"].keys():
-						if event == "DESCRIPTION_DETECTIVE" and tc_guild["EVENTS"][event].RUNNING:
+						if event in ["DESCRIPTION_DETECTIVE", "RESPONDING"] and tc_guild["EVENTS"][event].RUNNING:
 							try:
 								await tc_guild["EVENTS"][event].on_message(message)
 							except:
@@ -220,7 +220,7 @@ async def on_ready():
 				return
 
 			if perms < 2 and (message.guild is not None and message.channel not in msg_guild["BOT_CHANNELS"]):
-				return # Ignore commands from non-staff that are not in bot channels
+				return # Ignore commands from non-staff that are not in bot channels'
 			
 			if message.author.id == 382925349144494080:
 				await message.channel.send("Nice one, Bazboomer.")
@@ -240,6 +240,10 @@ async def on_ready():
 			args = message.content[len(msg_PREFIX):].split(" ") # The arguments passed in the command
 			command = args[0].upper() # The top-level command used
 			level = len(args) # The number of arguments used in the command
+
+			# Check if command is either "respond" or "edit" and if so stop
+			# This is for the RESPONDING event
+			if command == "respond" or command == "edit": return
 
 			# If the command is not found, it checks if it's just an alias of any actual command
 			if command not in PARAMS["COMMANDS"].keys():
