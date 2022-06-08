@@ -581,7 +581,7 @@ class EVENT:
 	async def response_valid(self, original_response, channel):
 
 		# Run the formatting_fix function, remove characters that might cause issues and strip unnecessary whitespace
-		response = formatting_fix(response.replace("`", "").replace("\t", "").replace("\n", "")).strip()
+		response = formatting_fix(original_response.replace("`", "").replace("\t", "").replace("\n", "")).strip()
 
 		# Convert response to UTF-8 only characters
 		response = original_response.encode('UTF-8', 'ignore').decode("UTF-8")
