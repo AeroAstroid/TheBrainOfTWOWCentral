@@ -378,7 +378,7 @@ class EVENT:
 				announcement_str += "".join(x.mention for x in contestants) + f" get to send in **{respamount}** responses!\n"
 
 		# Add deadline to announcement string
-		announcement_str.append(f"\nYou have until **{deadline_time_string}** which is **{deadline_relative_string}**.")
+		announcement_str += (f"\nYou have until **{deadline_time_string}** which is **{deadline_relative_string}**.")
 
 		await self.param["ANNOUNCE_CHANNEL"].send(announcement_str)
 
