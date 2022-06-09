@@ -549,7 +549,7 @@ class EVENT:
 		info_list = []
 
 		# Count the amount of words and characters in the response
-		word_count = word_count(response)
+		wc = word_count(response)
 		character_count = len(response)
 
 		word_limit = self.param["WORD_LIMIT"]
@@ -558,21 +558,17 @@ class EVENT:
 		# Check if a word limit exists
 		if word_limit > 0:
 			# Check if response is under that word limit
-			if word_limit <= word_count: 
-				valid_word_count = True
+			if word_limit <= wc: 
 				info_list.append("Your response follows the word limit!")
 			else:
-				valid_word_count = False
-				info_list.append(f"**Your response does NOT follow the {word_limit} word limit, as your response is {word_count} words long.**")
+				info_list.append(f"**Your response does NOT follow the {word_limit} word limit, as your response is {wc} words long.**")
 
 		# Check if a character limit exists
 		if character_limit > 0:
 			# Check if response is under that character limit
 			if character_limit <= character_count: 
-				valid_chr_count = True
 				info_list.append("Your response follows the character limit!")
 			else:
-				valid_chr_count = False
 				info_list.append(f"**Your response does NOT follow the {character_limit} character limit, as your response is {character_count} characters long.**")
 
 		return "\n".append(info_list)
@@ -594,7 +590,7 @@ class EVENT:
 
 		# Convert response's quotes to curly quotes
 		try:
-			for i in range(response.count('"') / 2 + 1):
+			for i in range(math.floor(response.count('"') / 2)):
 				response = text.replace('"', '“', 1)
 				response = text.replace('"', '”', 1)
 
