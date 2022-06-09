@@ -449,12 +449,8 @@ class EVENT:
 		# Responding is open, anyone can respond
 		elif self.info["RESPONDING_OPEN"] == True:
 
-			print("TEST 1: Responding is open")
-
 			# Check if in DMs or not
 			if isinstance(channel, discord.channel.DMChannel):
-
-				print("TEST 2: In a DM channel")
 				
 				# Is in DMs, split the content of the message
 				message_words = message.content.split(" ")
@@ -462,31 +458,24 @@ class EVENT:
 				# Check if user is responding
 				if message_words[0].lower() == "tc/respond":
 
-					print("TEST 3: Bot detects command correctly")
-
 					# Check if user is able to respond, and if not return and send message
 					if user not in self.info["USERS_RESPONDING"]:
 						await channel.send("❌ You are not allowed to use this command!")
-
-					print("TEST 4: Bot detects user in responding")
+						return
 
 					# Check if user has already submitted all their responses
 					response_list = self.info["RESPONSES"][user]
 					if not None in response_list:
-						if len(response_list >= 2):
+						if len(response_list) >= 2:
 							await channel.send("❌ You've already sent your responses! If you want to edit, use `tc/edit` followed by the number of the response you want to edit, followed by your new response.")
 						else:
 							await channel.send("❌ You've already sent a response! If you want to edit, use `tc/edit` followed by your new response.")
 						return
 
-					print("TEST 5: User has not already sent response")
-
 					# Check if user actually sent a response
 					if len(message_words) == 1:
 						await channel.send("❌ You need to send your response after the `tc/respond` command!")
 						return
-
-					print("TEST 6: Response has more than 0 words")
 
 					# Get user's response and put it together
 					try:
@@ -502,7 +491,8 @@ class EVENT:
 						# Record response by replacing the earliest NoneType inside the user's response list
 						for i, responseobj in enumerate(self.info["RESPONSES"][user]):
 							if responseobj == None:
-								self.info["RESPONSES"][user][i] = response
+								# Recording response information - response and the timestamp of the message
+								self.info["RESPONSES"][user][i] = [response, message.created_at.timestamp()]
 								break
 
 						# Get response information
@@ -514,7 +504,7 @@ class EVENT:
 						# Send response recorded message if the user has two or more responses
 						else:
 							# Add a list of the user's responses
-							user_response_strings = ["**`{}:`**`{}`".format(num + 1, self.info["RESPONSES"][user][num]) for num in range(len(self.info["RESPONSES"][user])) if self.info["RESPONSES"][user][num] != None]
+							user_response_strings = ["**`{}:`**`{}`".format(num + 1, self.info["RESPONSES"][user][num][0]) for num in range(len(self.info["RESPONSES"][user])) if self.info["RESPONSES"][user][num] != None]
 
 							# If user still has more responses to send in, tell them to do so
 							# Find the amount of None's in the user's response list
@@ -543,6 +533,109 @@ class EVENT:
 						print(e)
 						await channel.send("❌ An error occured while trying to record your response.")
 
+				# Check if user is editing response
+				if message_words[0].lower() == "tc/edit":
+
+					message_words.pop(0)
+
+					# Check if user is able to respond, and if not return and send message
+					if user not in self.info["USERS_RESPONDING"]:
+						await channel.send("❌ You are not allowed to use this command!")
+						return
+
+					# Check if user only has one response
+					if len(self.info["RESPONSES"][user]) == 1:
+
+						# Check if user has a response in this slot
+						if self.info["RESPONSES"][user][0] == None:
+							await channel.send("❌ You haven't submitted a response yet! To submit your response, use `tc/respond` followed by your response.")
+							return
+
+						response_to_edit = 1
+
+					# User has more than one response, therefore their second word in their command will be an integer
+					else:
+
+						# Check if user sent the number of the response they want to edit
+						if len(message_words) == 0:
+							await channel.send("❌ You need to specify which response you want to edit by using `tc/edit [response number]`!")
+							return
+
+						try:
+							response_to_edit = int(message_words[0])
+							# Check if the number is not within range
+							if response_to_edit <= 0 or response_to_edit > len(self.info["RESPONSES"][user]):
+								await channel.send("❌ No response of yours matches with this number. To look at which number represents which of your responses, look at your last response recorded message.")
+								return
+
+							# Check if user has a response in this slot
+							if self.info["RESPONSES"][user][response_to_edit - 1] == None:
+								await channel.send("❌ No response currently in this number slot!")
+								return
+
+						except ValueError:
+							await channel.send("❌ You need to specify what response you want to edit using a number. To look at which number represents which of your responses, look at your last response recorded message.")
+							return
+
+					# Check if user actually sent their response
+					if len(message_words) == 0:
+						await channel.send("❌ You need to send your response after the `tc/edit [response number]` command!")
+						return
+						
+					# Check response for validity and send response
+					try:
+				
+						response = " ".join(message_words)
+
+						# Do actions to response to ensure validity of it
+						response = await self.response_valid(response, channel)
+
+						if response == False: return
+
+						# Get response information
+						response_info_string = self.response_info(response)
+
+						# Record edited response
+						# Recording response information - response and the timestamp of the message
+						self.info["RESPONSES"][user][response_to_edit - 1] = [response, message.created_at.timestamp()]
+
+						# Send response recorded message if the user only has one response
+						if len(self.info["RESPONSES"][user]) == 1:
+							await message.reply(content = f"☑️ **Response edited!** ☑️\n\nYour new response is recorded as: `{response}`\n{response_info_string}\n\nTo edit your response again, use the command `tc/edit` followed by your new response.", mention_author=False)
+						# Send response recorded message if the user has two or more responses
+						else:
+							# Add a list of the user's responses
+							user_response_strings = ["**`{}:`**`{}`".format(num + 1, self.info["RESPONSES"][user][num][0]) for num in range(len(self.info["RESPONSES"][user])) if self.info["RESPONSES"][user][num] != None]
+
+							# If user still has more responses to send in, tell them to do so
+							# Find the amount of None's in the user's response list
+							responses_to_send = self.info["RESPONSES"][user].count(None)
+							if responses_to_send == 0: resp_to_send_str = "You've submitted all your responses!"
+							else: resp_to_send_str = f"You have {responses_to_send} response(s) left to submit." 
+
+							# User response string - showing the user's current responses
+							user_resp_string = "\n".join(user_response_strings)
+
+							# Send message
+							await message.reply(content = f"""
+								☑️ **Response edit!** ☑️
+								
+								Your new response is recorded as: `{response}`
+								{response_info_string}
+								{resp_to_send_str}
+
+								To edit your response again, use the command `tc/edit` followed by the number of the response you want to edit, followed by your new response.
+								
+								Your current responses are:
+								{user_resp_string}
+							""", mention_author=False)
+						
+					except Exception as e:
+						print(e)
+						await channel.send("❌ An error occured while trying to record your edit.")
+
+
+
 	# Function that creates information for a response recorded message
 	def response_info(self, response):
 
@@ -558,7 +651,7 @@ class EVENT:
 		# Check if a word limit exists
 		if word_limit > 0:
 			# Check if response is under that word limit
-			if word_limit <= wc: 
+			if word_limit >= wc: 
 				info_list.append("Your response follows the word limit!")
 			else:
 				info_list.append(f"**Your response does NOT follow the {word_limit} word limit, as your response is {wc} words long.**")
@@ -566,7 +659,7 @@ class EVENT:
 		# Check if a character limit exists
 		if character_limit > 0:
 			# Check if response is under that character limit
-			if character_limit <= character_count: 
+			if character_limit >= character_count: 
 				info_list.append("Your response follows the character limit!")
 			else:
 				info_list.append(f"**Your response does NOT follow the {character_limit} character limit, as your response is {character_count} characters long.**")
