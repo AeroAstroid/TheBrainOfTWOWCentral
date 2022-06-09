@@ -571,7 +571,7 @@ class EVENT:
 			else:
 				info_list.append(f"**Your response does NOT follow the {character_limit} character limit, as your response is {character_count} characters long.**")
 
-		return "\n".append(info_list)
+		return "\n".join(info_list)
 
 	# Function that checks response's validity
 	async def response_valid(self, original_response, channel):
