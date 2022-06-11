@@ -485,7 +485,7 @@ class EVENT:
 			writer.writerow(title_row)
 
 			# Go through each user and go through each of their responses
-			for user in list(self.info["RESPONSES"].keys())
+			for user in list(self.info["RESPONSES"].keys()):
 
 				response_list = self.info["RESPONSES"][user]
 				for response in response_list:
@@ -517,7 +517,7 @@ class EVENT:
 			response_id = 0
 
 			# Go through each user and go through each of their responses
-			for user in list(self.info["RESPONSES"].keys())
+			for user in list(self.info["RESPONSES"].keys()):
 
 				response_list = self.info["RESPONSES"][user]
 				for response in response_list:
