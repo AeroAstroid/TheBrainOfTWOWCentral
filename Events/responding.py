@@ -454,6 +454,8 @@ class EVENT:
 				response_list = self.info["RESPONSES"][user]
 				for response in response_list:
 
+					if response == None: continue
+
 					# Add each response to the CSV
 					resp_csv_list = []
 					resp_csv_list.append(str(user.id)) # User's ID
@@ -487,6 +489,8 @@ class EVENT:
 
 				response_list = self.info["RESPONSES"][user]
 				for response in response_list:
+
+					if response == None: continue
 
 					response_id += 1
 
@@ -723,7 +727,7 @@ class EVENT:
 
 							await self.param["ADMIN_CHANNEL"].send(textwrap.dedent("""
 								{} **({}/{})** sent in a response after the deadline: `{}`
-								The total response count is now **{}/{}**.""".format(user.mention, user_total_responses, user_responses_submitted, response, self.info["RESPONSES_RECEIVED"], self.info["TOTAL_RESPONSES"])))
+								The total response count is now **{}/{}**.""".format(user.mention, user_responses_submitted, user_total_responses, response, self.info["RESPONSES_RECEIVED"], self.info["TOTAL_RESPONSES"])))
 						
 					except Exception as e:
 						print(e)
