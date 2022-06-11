@@ -537,13 +537,11 @@ class EVENT:
 						await interaction.response.defer()
 						return
 
-
-
 					# END RESPONDING PERIOD
-					await interaction.response.edit_message(content = "**Responding has ended!**", view = None)
+					await interaction.response.edit_message(content = "**Responding has been ended!**", view = None)
 
 					# Start game
-					await self.begin_responding()
+					await self.end_responding()
 
 				# Creating button objects
 				end_responding_button = Button(style = discord.ButtonStyle.blurple, label = "End responding")
