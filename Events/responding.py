@@ -437,7 +437,9 @@ class EVENT:
 		# Creating the Response Information CSV file
 		resp_info_file_name = "Events/" + file_name + "_INFO.csv"
 		# Write to CSV
-		with open(resp_info_file_name, 'w', encoding='UTF-8', newline='') as f:
+		with open(resp_info_file_name, 'w', encoding="UTF-8", newline='') as f:
+
+			f.write('\ufeff')
 
 			writer = csv.writer(f)
 
@@ -469,7 +471,9 @@ class EVENT:
 		# Creating the Voting Generation CSV file
 		voting_gen_file_name = "Events/" + file_name + "_VOTING.csv"
 		# Write to CSV
-		with open(voting_gen_file_name, 'w', encoding='UTF-8', newline='') as f: 
+		with open(voting_gen_file_name, 'w', encoding="UTF-8", newline='') as f: 
+
+			f.write('\ufeff')
 
 			writer = csv.writer(f)
 
@@ -709,8 +713,7 @@ class EVENT:
 								To edit your response, use the command `tc/edit` followed by the number of the response you want to edit, followed by your new response.
 								
 								Your current responses are:
-								{user_resp_string}
-							"""), mention_author=False)
+								{user_resp_string}"""), mention_author=False)
 
 						# Send message in admin channel that they submitted a response if it is after the deadline
 						if self.info["DEADLINE_PASSED"] == True:
@@ -720,8 +723,7 @@ class EVENT:
 
 							await self.param["ADMIN_CHANNEL"].send(textwrap.dedent("""
 								{} **({}/{})** sent in a response after the deadline: `{}`
-								The total response count is now **{}/{}**.
-							""".format(user.mention, user_total_responses, user_responses_submitted, response, self.info["RESPONSES_RECEIVED"], self.info["TOTAL_RESPONSES"])))
+								The total response count is now **{}/{}**.""".format(user.mention, user_total_responses, user_responses_submitted, response, self.info["RESPONSES_RECEIVED"], self.info["TOTAL_RESPONSES"])))
 						
 					except Exception as e:
 						print(e)
@@ -823,8 +825,7 @@ class EVENT:
 								To edit your response again, use the command `tc/edit` followed by the number of the response you want to edit, followed by your new response.
 								
 								Your current responses are:
-								{user_resp_string}
-							"""), mention_author=False)
+								{user_resp_string}"""), mention_author=False)
 						
 					except Exception as e:
 						print(e)
