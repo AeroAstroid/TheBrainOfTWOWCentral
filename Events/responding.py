@@ -2,7 +2,7 @@
 # Used and can be activated when collecting responses for a speed TWOW, TWOW Roulette, etc.
 ###################################################################################
 
-import time, discord, random, statistics, csv, asyncio, copy, math
+import time, discord, random, statistics, csv, asyncio, copy, math, textwrap 
 from discord.ui import Button, View, Select
 from Config._functions import grammar_list, word_count, formatting_fix
 from Config._const import ALPHABET, BRAIN
@@ -16,7 +16,10 @@ DEFAULT_INFO = { # Define all the game information - This dictionary will be cop
 	"RESPONSES": {}, # The responses of players - key is user object, value is list of their responses
 	"RESPONDING_OPEN": False, # Whether responding is open or not
 	"RESPONDING_START_TIME": 0, # Timestamp of responding beginning
-	"RESPONDING_END_TIME": 0 # Timestamp of responding ending
+	"RESPONDING_END_TIME": 0, # Timestamp of responding ending
+	"DEADLINE_PASSED": False, # Whether the deadline has passed or not
+	"RESPONSES_RECEIVED": 0,
+	"TOTAL_RESPONSES": 0,
 }
 
 DEFAULT_PARAM = { # Define all the parameters necessary that could be changed
@@ -263,7 +266,7 @@ class EVENT:
 					# CONFIRM - Admin is confirming
 
 					# Create start and cancel buttons
-					button_view = View()
+					button_view = View(timeout = None)
 
 					# BUTTON FUNCTIONS - START AND CANCEL
 					########################################################
@@ -340,11 +343,13 @@ class EVENT:
 			for contestant in contestants:
 				special_amount_contestants.append(contestant)
 				# Set the amount of responses they get to the response amount they are assigned to
+				self.info["TOTAL_RESPONSES"] += respamount
 				self.info["RESPONSES"][contestant] = [None] * respamount
 
 		# For contestants who don't get a special amount of responses, give them the default amount
 		for contestant in self.info["USERS_RESPONDING"]:
 			if contestant in special_amount_contestants: continue
+			self.info["TOTAL_RESPONSES"] += self.param["DEFAULT_RESPONSE_AMOUNT"]
 			self.info["RESPONSES"][contestant] = [None] * self.param["DEFAULT_RESPONSE_AMOUNT"]
 
 		# Set starting time
@@ -424,10 +429,138 @@ class EVENT:
 		except Exception as e:
 			print(e)
 
+	# Function that ends responding
+	async def end_responding(self):
+
+		# Set responding open to off
+		self.info["RESPONDING_OPEN"] = False
+
+		# Send announcement that responding has ended
+		# Find the people who DNPed
+		dnped_list = []
+		for user in list(self.info["RESPONSES"].keys()):
+			response_list = self.info["RESPONSES"][user]
+			# If the entire response list is full of "None", that means they did not send in any responses
+			if response_list.count(None) == len(response_list):
+				dnped_list.append(user)
+
+		# Mention people in the DNP list
+		dnp_list_mention_str = "".join([user.mention for user in dnped_list])
+
+		# Get statistics for responding
+		total_responses = self.info["TOTAL_RESPONSES"]
+		responses_recorded = self.info["RESPONSES_RECORDED"]
+
+		# Send message
+		await self.param["ANNOUNCE_CHANNEL"].send("__**Responding has closed!**__\nWe received **{}/{}** responses.\nThe DNPers were (sent in no responses): {}".format(responses_recorded, total_responses, dnp_list_mention_str))
+
 	# Function that runs every two seconds
 	async def on_two_second(self):
 
-		pass
+		# Check if responding is open
+		if self.info["RESPONDING_OPEN"] == True:
+
+			# Get current time
+			current_timestamp = time.time()
+
+			# Check if the deadline has passed - only run this once
+			if current_timestamp > self.info["RESPONDING_END_TIME"] and self.info["DEADLINE_PASSED"] == False:
+
+				# Make sure this only runs once
+				self.info["DEADLINE_PASSED"] = True
+
+				# Check which people have not sent responses yet - check how many None's are in a player's list
+				# Dictionary: key is the amount of responses they have to send, value is a list of players who need to send that amount of responses
+				players_to_respond = {}
+				players_to_respond_list = []
+
+				for user in list(self.info["RESPONSES"].keys()):
+					response_list = self.info["RESPONSES"][user]
+					if None in response_list:
+						# Record how many responses the player has not sent
+						responses_left = response_list.count(None)
+						# If the amount of responses left already exists as a key in the players to respond dict, add the player to the list
+						if responses_left in list(players_to_respond.keys()):
+							players_to_respond[responses_left].append(user)
+						# If the amount of responses left does not exist as a key in the players to respond dict, make it a key 
+						else:
+							players_to_respond[responses_left] = [user]
+						# Append them to the players_to_respond_list (to be used later when sending a message in the admin channel)
+						players_to_respond_list.append(user)
+
+				# Turn the players to respond dict into a string that can be sent with the deadline message
+				still_to_respond_strings = []
+				for responses_left in list(players_to_respond.keys()):
+
+					players_with_amount = players_to_respond[responses_left]
+					player_mentions_str = "".join([user.mention for user in players_with_amount])
+					if len(players_with_amount) == 1:
+						if responses_left == 1: 
+							still_to_respond_strings.append(f"{player_mentions_str} has 1 response left to submit.")
+						else:
+							still_to_respond_strings.append(f"{player_mentions_str} has {responses_left} responses left to submit.")
+					else:
+						if responses_left == 1: 
+							still_to_respond_strings.append(f"{player_mentions_str} have 1 response left to submit.")
+						else:
+							still_to_respond_strings.append(f"{player_mentions_str} have {responses_left} responses left to submit.")
+
+				# Put together all the strings in the still_to_respond_strings list
+				still_to_respond_str = "\n".join(still_to_respond_strings)
+				
+				# Send a message saying deadline passed
+				if len(still_to_respond_strings) > 0:
+					deadline_passed_str = f"__**The deadline has passed!**__\n\n{still_to_respond_str}\n\nYou are still able to respond and edit responses. If you are still responding, please let anyone running the event know. The grace period will close soon."
+				else:
+					deadline_passed_str = f"__**The deadline has passed!**__\n\nYou are still able to respond and edit responses. If you are still responding, please let anyone running the event know. The grace period will close soon."
+
+				# Send a message in the admin channel about the responding period after the deadline
+				# Check what users have not sent responses yet
+				players_left_to_respond_strings = []
+				for user in players_to_respond_list:
+					# Check how many responses they have submitted and how many they have in total
+					user_total_responses = len(self.info["RESPONSES"][user])
+					user_responses_submitted = user_total_responses - self.info["RESPONSES"][user].count(None)
+
+					players_left_to_respond_strings.append(f"{user.mention} ({user_responses_submitted}/{user_total_responses})")
+
+				players_left_to_respond_str = "\n".join(players_left_to_respond_strings)
+
+				await self.param["ANNOUNCE_CHANNEL"].send(deadline_passed_str)
+
+				# Create button for closing responding
+				button_view = View(timeout = None)
+				########################################################
+				async def responding_end_pressed(interaction):
+
+					if interaction.user not in self.param["ADMIN_ROLE"].members:
+						await interaction.response.defer()
+						return
+
+
+
+					# END RESPONDING PERIOD
+					await interaction.response.edit_message(content = "**Responding has ended!**", view = None)
+
+					# Start game
+					await self.begin_responding()
+
+				# Creating button objects
+				end_responding_button = Button(style = discord.ButtonStyle.blurple, label = "End responding")
+				end_responding_button.callback = responding_end_pressed				
+				button_view.add_item(end_responding_button)
+
+				# Sending message
+				await self.param["ADMIN_CHANNEL"].send(content = textwrap.dedent("""
+					**The deadline has passed!**
+
+					Responses received before the deadline: **{}/{}**
+					__Users left to respond:__
+					{}
+
+					Any further responses sent after the deadline will be sent here.
+					Press the button to end responding.
+				""".format(self.info["RESPONSES_RECORDED"], self.info["TOTAL_RESPONSES"], players_left_to_respond_str)), view = button_view)
 
 	# Function that runs on each message
 	async def on_message(self, message):
@@ -435,6 +568,7 @@ class EVENT:
 		user = message.author
 		channel = message.channel 
 
+		###############################################################################
 		# Responding has not started and admins are still able to modify the parameters
 		if self.info["MODIFICATION_OPEN"] == True:
 
@@ -446,7 +580,8 @@ class EVENT:
 				except Exception as e:
 					print(e)
 
-		# Responding is open, anyone can respond
+		###############################################################################
+		# Responding is open, anyone can respond or edit as long as they are allowed to
 		elif self.info["RESPONDING_OPEN"] == True:
 
 			# Check if in DMs or not
@@ -455,7 +590,8 @@ class EVENT:
 				# Is in DMs, split the content of the message
 				message_words = message.content.split(" ")
 
-				# Check if user is responding
+				###############################################################################
+				# RESPONDING COMMAND
 				if message_words[0].lower() == "tc/respond":
 
 					# Check if user is able to respond, and if not return and send message
@@ -498,6 +634,9 @@ class EVENT:
 						# Get response information
 						response_info_string = self.response_info(response)
 
+						# Add 1 to the recorded response amount
+						self.info["RESPONSES_RECORDED"] += 1
+
 						# Send response recorded message if the user only has one response
 						if len(self.info["RESPONSES"][user]) == 1:
 							await message.reply(content = f"☑️ **Response recorded!** ☑️\n\nYour response was recorded as: `{response}`\n{response_info_string}\n\nTo edit your response, use the command `tc/edit` followed by your new response.", mention_author=False)
@@ -516,7 +655,7 @@ class EVENT:
 							user_resp_string = "\n".join(user_response_strings)
 
 							# Send message
-							await message.reply(content = f"""
+							await message.reply(content = textwrap.dedent(f"""
 								☑️ **Response recorded!** ☑️
 								
 								Your response was recorded as: `{response}`
@@ -527,13 +666,25 @@ class EVENT:
 								
 								Your current responses are:
 								{user_resp_string}
-							""", mention_author=False)
+							"""), mention_author=False)
+
+						# Send message in admin channel that they submitted a response if it is after the deadline
+						if self.info["DEADLINE_PASSED"] == True:
+
+							user_total_responses = len(self.info["RESPONSES"][user])
+							user_responses_submitted = user_total_responses - self.info["RESPONSES"][user].count(None)
+
+							await self.param["ADMIN_CHANNEL"].send(textwrap.dedent("""
+								{} **({}/{})** sent in a response after the deadline: `{}`
+								The total response count is now **{}/{}**.
+							""".format(user.mention, user_total_responses, user_responses_submitted, response, self.info["RESPONSES_RECEIVED"], self.info["TOTAL_RESPONSES"])))
 						
 					except Exception as e:
 						print(e)
 						await channel.send("❌ An error occured while trying to record your response.")
 
-				# Check if user is editing response
+				###############################################################################
+				# EDITING RESPONSE COMMAND
 				if message_words[0].lower() == "tc/edit":
 
 					message_words.pop(0)
@@ -563,6 +714,7 @@ class EVENT:
 
 						try:
 							response_to_edit = int(message_words[0])
+							message_words.pop(0)
 							# Check if the number is not within range
 							if response_to_edit <= 0 or response_to_edit > len(self.info["RESPONSES"][user]):
 								await channel.send("❌ No response of yours matches with this number. To look at which number represents which of your responses, look at your last response recorded message.")
@@ -617,7 +769,7 @@ class EVENT:
 							user_resp_string = "\n".join(user_response_strings)
 
 							# Send message
-							await message.reply(content = f"""
+							await message.reply(content = textwrap.dedent(f"""
 								☑️ **Response edit!** ☑️
 								
 								Your new response is recorded as: `{response}`
@@ -628,7 +780,7 @@ class EVENT:
 								
 								Your current responses are:
 								{user_resp_string}
-							""", mention_author=False)
+							"""), mention_author=False)
 						
 					except Exception as e:
 						print(e)
@@ -684,8 +836,8 @@ class EVENT:
 		# Convert response's quotes to curly quotes
 		try:
 			for i in range(math.floor(response.count('"') / 2)):
-				response = text.replace('"', '“', 1)
-				response = text.replace('"', '”', 1)
+				response = response.replace('"', '“', 1)
+				response = response.replace('"', '”', 1)
 
 		except Exception as e:
 			print("\n[ERROR] Exception whilst converting response to curly quotes")
