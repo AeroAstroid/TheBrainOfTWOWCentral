@@ -713,7 +713,7 @@ class EVENT:
 								To edit your response, use the command `tc/edit` followed by the number of the response you want to edit, followed by your new response.
 								
 								Your current responses are:
-								{user_resp_string}"""), mention_author=False)
+								""") + user_resp_string, mention_author=False)
 
 						# Send message in admin channel that they submitted a response if it is after the deadline
 						if self.info["DEADLINE_PASSED"] == True:
@@ -816,7 +816,7 @@ class EVENT:
 
 							# Send message
 							await message.reply(content = textwrap.dedent(f"""
-								☑️ **Response edit!** ☑️
+								☑️ **Response edited!** ☑️
 								
 								Your new response is recorded as: `{response}`
 								{response_info_string}
@@ -825,7 +825,7 @@ class EVENT:
 								To edit your response again, use the command `tc/edit` followed by the number of the response you want to edit, followed by your new response.
 								
 								Your current responses are:
-								{user_resp_string}"""), mention_author=False)
+								""") + user_resp_string, mention_author=False)
 						
 					except Exception as e:
 						print(e)
@@ -879,7 +879,7 @@ class EVENT:
 		response = formatting_fix(original_response.replace("`", "").replace("\t", "").replace("\n", "")).strip()
 
 		# Convert response to UTF-8 only characters
-		response = original_response.encode('UTF-8', 'ignore').decode("UTF-8")
+		response = response.encode('UTF-8', 'ignore').decode("UTF-8")
 
 		# Check if user is over the character cap
 		if len(response) > CHARACTER_CAP:
