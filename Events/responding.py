@@ -392,44 +392,6 @@ class EVENT:
 		self.info["MODIFICATION_OPEN"] = False
 		self.info["RESPONDING_OPEN"] = True
 
-	# Function that sorts leaderboard and writes CSV
-	async def sort_leaderboard(self):
-
-		try:
-
-			# Creating list of all players
-			player_list = list(self.info["PLAYERS"].values())
-
-			# Function that the sorted() method uses to sort the players
-			def get_player_score(player):
-				return player.score
-
-			sorted_player_list = sorted(player_list, reverse = True, key = get_player_score)
-
-			# Write to CSV
-			with open("Events/ddscores_R{}.csv".format(self.info["ROUND_NUMBER"]), 'w', encoding='UTF-8', newline='') as f:
-
-				writer = csv.writer(f)
-
-				# Write first row of titles
-				title_row = ["Name", "UserId", "Total"]
-
-				# Write each individual round title
-				for i in range(self.info["ROUND_NUMBER"]):
-					title_row.append(str(i + 1))
-
-				writer.writerow(title_row)
-
-				for player in sorted_player_list:
-
-					# Get player list and write it onto csv
-					writer.writerow([player.user.name, player.user.id, player.score] + player.round_scores)
-
-			# Send leaderboard to administration channel
-			await self.param["ADMIN_CHANNEL"].send(content = "**Description Detective - Leaderboard after Round {}**".format(self.info["ROUND_NUMBER"]), file = discord.File("Events/ddscores_R{}.csv".format(self.info["ROUND_NUMBER"])))
-		except Exception as e:
-			print(e)
-
 	# Function that ends responding
 	async def end_responding(self):
 
