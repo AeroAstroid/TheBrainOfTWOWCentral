@@ -827,11 +827,11 @@ class EVENT:
 						if response == False: return
 
 						# Get response information
-						response_info_string = self.response_info(response)
+						response_is_valid, misc_response_info, response_info_string = self.response_info(response)
 
 						# Record edited response
 						# Recording response information - response and the timestamp of the message
-						self.info["RESPONSES"][user][response_to_edit - 1] = [response, message.created_at.timestamp()]
+						self.info["RESPONSES"][user][response_to_edit - 1] = [response, response_is_valid, message.created_at.timestamp()] + misc_response_info
 
 						# Send response recorded message if the user only has one response
 						if len(self.info["RESPONSES"][user]) == 1:
