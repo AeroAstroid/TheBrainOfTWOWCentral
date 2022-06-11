@@ -475,7 +475,7 @@ class EVENT:
 		# Creating the Response Information CSV file
 		resp_info_file_name = "Events/" + file_name + "_INFO.csv"
 		# Write to CSV
-		with open(resp_info_file_name), 'w', encoding='UTF-8', newline='') as f:
+		with open(resp_info_file_name, 'w', encoding='UTF-8', newline='') as f:
 
 			writer = csv.writer(f)
 
@@ -507,7 +507,7 @@ class EVENT:
 		# Creating the Voting Generation CSV file
 		voting_gen_file_name = "Events/" + file_name + "_VOTING.csv"
 		# Write to CSV
-		with open(voting_gen_file_name), 'w', encoding='UTF-8', newline='') as f: 
+		with open(voting_gen_file_name, 'w', encoding='UTF-8', newline='') as f: 
 
 			writer = csv.writer(f)
 
