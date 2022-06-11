@@ -449,7 +449,7 @@ class EVENT:
 
 		# Get statistics for responding
 		total_responses = self.info["TOTAL_RESPONSES"]
-		responses_recorded = self.info["RESPONSES_RECORDED"]
+		responses_recorded = self.info["RESPONSES_RECEIVED"]
 
 		# Send message
 		await self.param["ANNOUNCE_CHANNEL"].send("__**Responding has closed!**__\nWe received **{}/{}** responses.\nThe DNPers were (sent in no responses): {}".format(responses_recorded, total_responses, dnp_list_mention_str))
@@ -560,7 +560,7 @@ class EVENT:
 
 					Any further responses sent after the deadline will be sent here.
 					Press the button to end responding.
-				""".format(self.info["RESPONSES_RECORDED"], self.info["TOTAL_RESPONSES"], players_left_to_respond_str)), view = button_view)
+				""".format(self.info["RESPONSES_RECEIVED"], self.info["TOTAL_RESPONSES"], players_left_to_respond_str)), view = button_view)
 
 	# Function that runs on each message
 	async def on_message(self, message):
@@ -635,7 +635,7 @@ class EVENT:
 						response_info_string = self.response_info(response)
 
 						# Add 1 to the recorded response amount
-						self.info["RESPONSES_RECORDED"] += 1
+						self.info["RESPONSES_RECEIVED"] += 1
 
 						# Send response recorded message if the user only has one response
 						if len(self.info["RESPONSES"][user]) == 1:
