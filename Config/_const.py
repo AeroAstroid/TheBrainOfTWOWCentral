@@ -16,6 +16,9 @@ CURRENT_HOUR = datetime.now(timezone.utc).hour # For event handler purposes
 # For MMT purposes
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
+ALPHANUM_UNDERSCORE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
+
+
 ORIGINAL_DECK = [
 	"10", "20", "30", "40", "11", "21", "31", "41", "12", "22", "32", "42", "13", "23", "33", "43",
 	"14", "24", "34", "44", "15", "25", "35", "45", "16", "26", "36", "46", "17", "27", "37", "47",

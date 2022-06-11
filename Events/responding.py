@@ -5,7 +5,7 @@
 import time, discord, random, statistics, csv, asyncio, copy, math, textwrap 
 from discord.ui import Button, View, Select
 from Config._functions import grammar_list, word_count, formatting_fix
-from Config._const import ALPHABET, BRAIN
+from Config._const import ALPHABET, BRAIN, ALPHANUM_UNDERSCORE
 
 EVENT_ANNOUNCE_CHANNEL = "staff-event-time"
 EVENT_ADMIN_CHANNEL = "staff•commands"
@@ -18,8 +18,9 @@ DEFAULT_INFO = { # Define all the game information - This dictionary will be cop
 	"RESPONDING_START_TIME": 0, # Timestamp of responding beginning
 	"RESPONDING_END_TIME": 0, # Timestamp of responding ending
 	"DEADLINE_PASSED": False, # Whether the deadline has passed or not
-	"RESPONSES_RECEIVED": 0,
-	"TOTAL_RESPONSES": 0,
+	"RESPONSES_RECEIVED": 0, # The amount of responses that have been sent by users
+	"TOTAL_RESPONSES": 0, # The amount of total responses that the bot expects to get by the end of the responding period
+	"CSV_TITLE_ROWS": ["ID", "Username", "Response", "Timestamp", "Relative Timestamp"] # The title rows for the information CSV file to be produced
 }
 
 DEFAULT_PARAM = { # Define all the parameters necessary that could be changed
@@ -454,6 +455,89 @@ class EVENT:
 		# Send message
 		await self.param["ANNOUNCE_CHANNEL"].send("__**Responding has closed!**__\nWe received **{}/{}** responses.\nThe DNPers were (sent in no responses): {}".format(responses_recorded, total_responses, dnp_list_mention_str))
 
+		# CREATING CSV FILES
+		################################################
+		# Ask user for file names for CSV file
+		await self.param["ADMIN_CHANNEL"].send("Set the file name of the CSV files by typing in the chat. It must be only letters, numbers or an underscore. (Don't include the filetype)")
+		file_name = None
+		while True:
+
+			msg = await BRAIN.wait_for('message', check=lambda m: (m.author in self.param["ADMIN_ROLE"].members and m.channel == self.param["ADMIN_CHANNEL"]))
+			# Check if alphanumeric or underscore
+			if all([character in list(ALPHANUM_UNDERSCORE) for character in msg.content]):
+				# Break out of loop
+				file_name = msg.content
+				break
+			else:
+				# Tell admin that there is invalid input
+				await self.param["ADMIN_CHANNEL"].send("Invalid input. Please try again.")
+
+		# Creating the Response Information CSV file
+		resp_info_file_name = "Events/" + file_name + "_INFO.csv"
+		# Write to CSV
+		with open(resp_info_file_name), 'w', encoding='UTF-8', newline='') as f:
+
+			writer = csv.writer(f)
+
+			# Write first row of titles
+			title_row = self.info["CSV_TITLE_ROWS"]
+
+			writer.writerow(title_row)
+
+			# Go through each user and go through each of their responses
+			for user in list(self.info["RESPONSES"].keys())
+
+				response_list = self.info["RESPONSES"][user]
+				for response in response_list:
+
+					# Add each response to the CSV
+					resp_csv_list = []
+					resp_csv_list.append(str(user.id)) # User's ID
+					resp_csv_list.append(user.name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
+					resp_csv_list.append(response[0]) # The user's actual response
+					resp_csv_list.append(str(round(response[2], 2))) # The timestamp of the user's response - when it was sent
+					resp_csv_list.append(str(round(response[2] - self.info["RESPONDING_START_TIME"], 2))) # The relative timestamp of the user's response - how long ago they sent a response
+					# If any special information was passed onto the response
+					if len(response) > 3:
+						resp_csv_list + response[3:] # Add any special information and write it in the CSV
+
+					# Write to CSV
+					writer.writerow(resp_csv_list)
+
+		# Creating the Voting Generation CSV file
+		voting_gen_file_name = "Events/" + file_name + "_VOTING.csv"
+		# Write to CSV
+		with open(voting_gen_file_name), 'w', encoding='UTF-8', newline='') as f: 
+
+			writer = csv.writer(f)
+
+			# Write first row of titles
+			writer.writerow(["RESPONSE ID", "NAME", "RESPONSE", "VALIDITY"])
+
+			response_id = 0
+
+			# Go through each user and go through each of their responses
+			for user in list(self.info["RESPONSES"].keys())
+
+				response_list = self.info["RESPONSES"][user]
+				for response in response_list:
+
+					response_id += 1
+
+					# Add each response to the CSV
+					resp_csv_list = []
+					resp_csv_list.append(str(response_id)) # The number of the response
+					resp_csv_list.append(user.name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
+					resp_csv_list.append(response[0]) # The user's actual response
+					resp_csv_list.append(str(response[1])) # Whether or not the user's response was valid or not (in limits), either True or False
+					# Write to CSV
+					writer.writerow(resp_csv_list)
+
+		# Send CSV's to user and end event
+		resp_info_file = discord.File(resp_info_file_name)
+		voting_gen_file = discord.File(voting_gen_file_name)
+		await self.param["ADMIN_CHANNEL"].send(content = "Here are the CSV files from this Responding event.", files = [resp_info_file, voting_gen_file])
+
 	# Function that runs every two seconds
 	async def on_two_second(self):
 
@@ -622,15 +706,15 @@ class EVENT:
 
 						if response == False: return
 
+						# Get response information
+						response_is_valid, misc_response_info, response_info_string = self.response_info(response)
+
 						# Record response by replacing the earliest NoneType inside the user's response list
 						for i, responseobj in enumerate(self.info["RESPONSES"][user]):
 							if responseobj == None:
-								# Recording response information - response and the timestamp of the message
-								self.info["RESPONSES"][user][i] = [response, message.created_at.timestamp()]
+								# Recording response information - response, whether or not it is valid, or the timestamp of the message and some other response info if given
+								self.info["RESPONSES"][user][i] = [response, response_is_valid, message.created_at.timestamp()] + misc_response_info
 								break
-
-						# Get response information
-						response_info_string = self.response_info(response)
 
 						# Add 1 to the recorded response amount
 						self.info["RESPONSES_RECEIVED"] += 1
@@ -798,6 +882,13 @@ class EVENT:
 		word_limit = self.param["WORD_LIMIT"]
 		character_limit = self.param["CHARACTER_LIMIT"]
 
+		# This response info function also checks whether or not their response is within limits or not
+		# This variable is set to True but will be set to false if it does not follow a limit
+		response_is_valid = True
+
+		# This response gets miscellaneous response info that is added depending on the technical
+		misc_response_info = []
+
 		# Check if a word limit exists
 		if word_limit > 0:
 			# Check if response is under that word limit
@@ -805,6 +896,7 @@ class EVENT:
 				info_list.append("Your response follows the word limit!")
 			else:
 				info_list.append(f"**Your response does NOT follow the {word_limit} word limit, as your response is {wc} words long.**")
+				response_is_valid = False
 
 		# Check if a character limit exists
 		if character_limit > 0:
@@ -813,8 +905,9 @@ class EVENT:
 				info_list.append("Your response follows the character limit!")
 			else:
 				info_list.append(f"**Your response does NOT follow the {character_limit} character limit, as your response is {character_count} characters long.**")
+				response_is_valid = False
 
-		return "\n".join(info_list)
+		return response_is_valid, misc_response_info, "\n".join(info_list)
 
 	# Function that checks response's validity
 	async def response_valid(self, original_response, channel):
