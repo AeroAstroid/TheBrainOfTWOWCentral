@@ -53,7 +53,8 @@ def readLine(statement):
     else:
         result = Expression(statement, globals.codebase)
 
-    print(result)
+    # this prints the result code if you need it
+    # print(result)
     if result is not None:
         globals.codebase.output += str(result)
 
