@@ -95,7 +95,7 @@ def setupFunctions():
 
     Function(["time"], {}, time_func)
     Function(["try"], {"attempt": None, "on_error": None}, try_func, parse_args=False)
-    Function(["user"], {}, user_func)
+    Function(["user"], {"userItemToGet": None}, user_func)
     Function(["username"], {}, username)
     Function(["userid"], {}, userid)
     Function(["var"], {"item": None, "index": ""}, var)
