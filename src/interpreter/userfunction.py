@@ -24,10 +24,12 @@ class UserFunction:
 
         # Temporary variables for use in function (lexical scope)
         func_arg_name = self.args.values()
+        globals.codebase.variables.append({})
         for i, arg in enumerate(func_arg_name):
             Expression(["DEFINE", arg, run_args[i]], globals.codebase)
 
         result = Expression(self.block, globals.codebase)
+        globals.codebase.variables.pop()
 
         # for arg in func_arg_name:
         #     Expression(["DEFINE", arg, 0], globals.codebase)

@@ -2,7 +2,11 @@ import src.interpreter.globals as globals
 
 
 def var(item, index):
-    if index == "":
-        return globals.codebase.variables[item]
-    else:
-        return globals.codebase.variables[item][index]
+    for val in reversed(globals.codebase.variables):
+        if item in val:
+            if index == "":
+                return val[item]
+            else:
+                return val[item][index]
+    
+    raise KeyError(f"variable not found: {item}")

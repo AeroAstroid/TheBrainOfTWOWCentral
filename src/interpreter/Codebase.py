@@ -8,7 +8,7 @@ from src.interpreter.userfunction import UserFunction
 class Codebase:
     def __init__(self, lines, user, arguments):
         self.lines: List[str] = lines
-        self.variables: Dict[str, str] = {}
+        self.variables: List[Dict[str, str]] = [{}]
         self.functions: Dict[str, UserFunction] = {}
         self.user: Union[discord.User, None] = user
         self.arguments: Union[List[str], None] = arguments
