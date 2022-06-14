@@ -38,13 +38,9 @@ def Expression(block: Union[List[str], str], codebase):
         alias = block[0]
         functionWanted = findFunction(alias, codebase)
         if functionWanted is not None:
-            try:  # if None then Function else UserFunction
-                # The variable creates an error if it's not a user function.
-                # TODO: Figure out how to remove this line
-                variable_that_does_not_need_to_exist = functionWanted.block
-
-                return Expression(functionWanted.run(arguments), codebase)
-            except AttributeError:
+            if hasattr(functionWanted, "block"):
+                return functionWanted.run(arguments)
+            else:
                 return functionWanted.run(codebase, arguments, alias)
         else:
             raise NotImplementedError(f"Function not found: {alias}")
