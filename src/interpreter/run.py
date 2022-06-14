@@ -60,6 +60,6 @@ def readLine(statement):
 
 
 def returnError(statement, error):
-    errmsg = f"{choice(unfunny_errmsg)}\n\nERROR at `{statement}`:\n{error}"
+    errmsg = f"{choice(unfunny_errmsg)}\n\nError of type {type(error).__name__} at `{statement}`:\n{error}"
     print(f"{errmsg}\n\n{format_exc()}")  # print stack trace too
     return errmsg
