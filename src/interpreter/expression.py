@@ -23,9 +23,11 @@ class Type(Enum):
     # 3.1415926
     FLOAT = 4
 
-    # Special Type used for the elif spam: Its a combination of float and int.
-    # 1e9, 5.3e+10
-    # EXPONENT = 6
+    # [FUNC FACTORIAL [ARRAY "num"]
+    #   [DEFINE prev [FACTORIAl [MATH [VAR num] - 1]]]
+    #   [RETURN [MATH [VAR prev] * [VAR num]]]
+    # ]
+    USERFUNCTION = 5
 
 
 def Expression(block: Union[List[str], str], codebase):
