@@ -12,19 +12,26 @@ from bot import bot
 
 load_dotenv()
 db_name = "\"" + os.environ.get("DATABASE") + "\""
+# global conn: psycopg2.connect
+# global table: psycopg2._psycopg.connection
+
+
 # replace with own
-conn = psycopg2.connect(
-    host=os.environ.get("HOST"),
-    database=os.environ.get("DATABASE"),
-    user=os.environ.get("USER"),
-    password=os.environ.get("PASSWORD")
-)
-conn.autocommit = True
+def connectToDatabase():
+    global conn, table
+    conn = psycopg2.connect(
+        host=os.environ.get("HOST"),
+        database=os.environ.get("DATABASE"),
+        user=os.environ.get("USER"),
+        password=os.environ.get("PASSWORD")
+    )
+    conn.autocommit = True
+    table = conn.cursor()
+
 
 # tag or global
 item = Dict[str, Union[str, int]]
 
-table = conn.cursor()
 
 
 def getTag(name: str) -> Union[item, None]:

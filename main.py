@@ -8,7 +8,8 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 from bot import bot
-from src.database.s3 import createTag, getTag, infoTag, updateTag, isOwnerProgram, editTag, deleteTag, leaderboards
+from src.database.s3 import createTag, getTag, infoTag, updateTag, isOwnerProgram, editTag, deleteTag, leaderboards, \
+    connectToDatabase
 from src.interpreter.expression import isType, Type
 from src.interpreter.function_deco import setupFunctions
 from src.interpreter.run import runCode
@@ -20,6 +21,7 @@ setupFunctions()
 
 @bot.event
 async def on_ready():
+    connectToDatabase()
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
