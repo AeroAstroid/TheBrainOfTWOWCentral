@@ -4,7 +4,7 @@
 ###################################################################################
 
 # Importing modules
-import time, discord, random, statistics, csv, asyncio, copy
+import time, discord, random, statistics, csv, asyncio, copy, traceback
 from discord.ui import Button, View
 
 # Importing from other scripts within the repo
@@ -276,7 +276,10 @@ class EVENT:
 		# Allow for admin modification of Round 1
 		self.info["ROUND_NUMBER"] += 1
 
-		await self.admin_modify()
+		try:
+			await self.admin_modify()
+		except Exception: # Detect errors when commands are used
+			traceback.print_exc() # Print the error
 
 	# Function that starts a round
 	async def start_round(self):
