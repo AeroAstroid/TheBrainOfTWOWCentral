@@ -177,22 +177,14 @@ class EVENT:
 		# Game has started
 		else:
 
-			print("TEST 1 - Game started is True")
-
 			# Check if guessing is open for contestants
 			if self.info["GUESSING_OPEN"] == True:
 				
-				print("TEST 2 - Guessing is open")
-
 				# Check if message occured in DMs
 				if isinstance(channel, discord.channel.DMChannel):
 
-					print("TEST 3 - Message is in DMs")
-
 					# Only users who are current contestants
 					if user in self.info["CONTESTANTS"].keys():
-
-						print("TEST 4 - User is considered a player")
 
 						# Check if this is a guess from the player (check if content of message is integer)
 						user_answer = None
@@ -203,20 +195,14 @@ class EVENT:
 
 						if user_answer:
 
-							print("TEST 5 - Able to convert user's answer into integer")
-
 							# This is an answer from the user
 							# Get user's player object
 							player_object = self.info["CONTESTANTS"][user]
 							# Check if user has already used up all guesses
 							if player_object.guesses_left == 0: return
 
-							print("TEST 6 - User still has guesses left")
-
 							# Check if user has already answered correctly before
 							if player_object.correct == True: return
-
-							print("TEST 7 - User has not answered correctly yet")
 
 							# User is able to answer, so add their answers to the guess list
 							player_object.set_guesses.append(user_answer)
@@ -241,7 +227,7 @@ class EVENT:
 
 								# Send message with reply, saying they got it correct
 								if penalty_amount == 0:
-									await message.reply(content = "☑️ **Correct!** ☑️\nYou answered in **`{0:.2f}`** seconds.")
+									await message.reply(content = "☑️ **Correct!** ☑️\nYou answered in **`{0:.2f}`** seconds.".format(final_guess_time))
 								elif penalty_amount == 1:
 									await message.reply(content = "☑️ **Correct!** ☑️\nYou answered in **`{0:.2f}`** seconds (including **`{1}`** penalty worth **`{2}`** extra seconds).".format(final_guess_time, penalty_amount, penalty_total))
 								else:
@@ -451,26 +437,33 @@ class EVENT:
 	# Function that ends the set
 	async def end_set(self):
 
-		set_number = self.info["ROUND_INFO"]["SET_NUMBER"]
-		set_total = self.param["SETS_PER_ROUND"]
+		try:
 
-		# Close guessing
-		self.info["GUESSING_OPEN"] = False
+			set_number = self.info["ROUND_INFO"]["SET_NUMBER"]
+			set_total = self.param["SETS_PER_ROUND"]
 
-		# Send message saying that set has ended
-		self.param["GAME_CHANNEL"].send("**Set #{}/{} has ended!**\nThe correct answer was `**{}**`.".format(set_number, set_total, self.info["SET_INFO"]["CORRECT_ANSWER"]))
+			# Close guessing
+			self.info["GUESSING_OPEN"] = False
 
-		await asyncio.sleep(5)
+			# Send message saying that set has ended
+			self.param["GAME_CHANNEL"].send("**Set #{}/{} has ended!**\nThe correct answer was `**{}**`.".format(set_number, set_total, self.info["SET_INFO"]["CORRECT_ANSWER"]))
 
-		# Check if that was the final set
-		if set_number == set_total:
+			await asyncio.sleep(5)
 
-			# End round
-			await self.end_round()
+			# Check if that was the final set
+			if set_number == set_total:
 
-		else:
-			# That was not the final set, so do not end round and start new set
-			await self.setup_set()
+				# End round
+				await self.end_round()
+
+			else:
+				# That was not the final set, so do not end round and start new set
+				await self.setup_set()
+		
+		except Exception:
+			traceback.print_exc()
+
+
 
 	# Function that ends the round
 	async def end_round(self):
