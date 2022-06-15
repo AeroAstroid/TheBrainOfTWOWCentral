@@ -389,6 +389,7 @@ class EVENT:
 
 			# Get a random emoji from the emojis in set list
 			random_emoji = random.choice(emojis_in_set)
+			emoji_str += random_emoji
 
 			# Check if emoji is in the counting list, and add it to the correct emoji counter if so
 			if random_emoji in emojis_counting:
