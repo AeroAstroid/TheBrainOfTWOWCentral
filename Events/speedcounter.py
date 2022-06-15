@@ -48,8 +48,8 @@ DEFAULT_PARAM = {
 	"EMOJI_COUNTING_RANGE": [1, 1], # The range of the amount of emojis that players must count
 	"EMOJI_TYPE_RANGE": [3, 5], # The range of the amount of different types of emojis that will be shown
 	"ELIMINATIONS": 0, # The amount of eliminations in the round
-	"PENALTY": 2, # 
-	"MAX_TIME": 15, 
+	"PENALTY": 3, # 
+	"MAX_TIME": 25, 
 
 }
 
@@ -452,7 +452,7 @@ class EVENT:
 			self.info["GUESSING_OPEN"] = False
 
 			# Send message saying that set has ended
-			await self.param["GAME_CHANNEL"].send("**Set #{}/{} has ended!**\nThe correct answer was `**{}**`.".format(set_number, set_total, self.info["SET_INFO"]["CORRECT_ANSWER"]))
+			await self.param["GAME_CHANNEL"].send("**Set #{}/{} has ended!**\nThe correct answer was **`{}`**.".format(set_number, set_total, self.info["SET_INFO"]["CORRECT_ANSWER"]))
 
 			await asyncio.sleep(5)
 
