@@ -185,7 +185,7 @@ async def on_ready():
 
 				if tc_guild:
 					for event in tc_guild["EVENTS"].keys():
-						if event in ["DESCRIPTION_DETECTIVE", "RESPONDING"] and tc_guild["EVENTS"][event].RUNNING:
+						if event in ["DESCRIPTION_DETECTIVE", "RESPONDING", "SPEEDCOUNTER"] and tc_guild["EVENTS"][event].RUNNING:
 							try:
 								await tc_guild["EVENTS"][event].on_message(message)
 							except:

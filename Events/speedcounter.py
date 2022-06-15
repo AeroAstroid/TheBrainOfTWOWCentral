@@ -396,7 +396,7 @@ class EVENT:
 
 		# Make emoji strings into list - only max of 100 emojis per message
 
-		chunks = [str[i:i + MAX_EMOJIS_PER_MESSAGE] for i in range(0, len(emoji_str), MAX_EMOJIS_PER_MESSAGE)]
+		chunks = [emoji_str[i:i + MAX_EMOJIS_PER_MESSAGE] for i in range(0, len(emoji_str), MAX_EMOJIS_PER_MESSAGE)]
 		################################################################
 
 		# Send set title to discord, along with what emoji they are counting
@@ -405,6 +405,8 @@ class EVENT:
 			set_string += "You are counting the emojis " + " ".join(emojis_counting) + ". Your answer should be the sum of these."
 		elif emoji_counting_types == 1:
 			set_string += f"You are counting the emoji {emojis_counting[0]}."
+
+		await self.param["GAME_CHANNEL"].send(set_string)
 
 		# Wait a few seconds
 		await asyncio.sleep(3)
