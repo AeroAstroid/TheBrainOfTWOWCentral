@@ -433,11 +433,12 @@ class EVENT:
 		# Set timestamps
 		self.info["SET_INFO"]["START_TIME"] = latest_emoji_msg.created_at.timestamp()
 		self.info["SET_INFO"]["END_TIME"] = latest_emoji_msg.created_at.timestamp() + self.param["MAX_TIME"]
+		
 
 		# Wait a certain amount of time and then close guessing if it is not already closed
-		await asyncio.sleep(self.param["MAX_TIME"])
+		await asyncio.sleep(self.param["MAX_TIME"] + 1)
 
-		if self.info["GUESSING_OPEN"] == True:
+		if self.info["GUESSING_OPEN"] == True and self.info["ROUND_INFO"]["SET_NUMBER"] == set_number:
 			await self.end_set()
 
 	# Function that ends the set
