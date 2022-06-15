@@ -177,14 +177,22 @@ class EVENT:
 		# Game has started
 		else:
 
+			print("TEST 1 - Game started is True")
+
 			# Check if guessing is open for contestants
 			if self.info["GUESSING_OPEN"] == True:
+				
+				print("TEST 2 - Guessing is open")
 
 				# Check if message occured in DMs
 				if isinstance(channel, discord.channel.DMChannel):
 
+					print("TEST 3 - Message is in DMs")
+
 					# Only users who are current contestants
 					if user in self.info["CONTESTANTS"].keys():
+
+						print("TEST 4 - User is considered a player")
 
 						# Check if this is a guess from the player (check if content of message is integer)
 						user_answer = None
@@ -195,14 +203,20 @@ class EVENT:
 
 						if user_answer:
 
+							print("TEST 5 - Able to convert user's answer into integer")
+
 							# This is an answer from the user
 							# Get user's player object
 							player_object = self.info["CONTESTANTS"][user]
 							# Check if user has already used up all guesses
 							if player_object.guesses_left == 0: return
 
+							print("TEST 6 - User still has guesses left")
+
 							# Check if user has already answered correctly before
 							if player_object.correct == True: return
+
+							print("TEST 7 - User has not answered correctly yet")
 
 							# User is able to answer, so add their answers to the guess list
 							player_object.set_guesses.append(user_answer)
@@ -398,7 +412,6 @@ class EVENT:
 		# Make emoji strings into list - only max of 100 emojis per message
 
 		chunks = [emoji_str[i:i + MAX_EMOJIS_PER_MESSAGE] for i in range(0, len(emoji_str), MAX_EMOJIS_PER_MESSAGE)]
-		print(chunks)
 		################################################################
 
 		# Send set title to discord, along with what emoji they are counting
