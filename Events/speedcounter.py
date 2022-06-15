@@ -247,17 +247,13 @@ class EVENT:
 
 							# Check if all contestants have answered correctly or have run out of guesses
 							set_finished = True
-							for contestant in list(self.info["CONTESTANT"].values()):
-
-								print(contestant.correct)
-								print(contestant.guesses_left)
+							for contestant in list(self.info["CONTESTANTS"].values()):
 
 								if contestant.correct == False and contestant.guesses_left > 0:
 									set_finished = False
 
 							# If set finished is true, end set
 							if set_finished == True:
-								print("Ending set!")
 								await self.end_set()
 
 	# Function that starts the game
@@ -437,6 +433,12 @@ class EVENT:
 		# Set timestamps
 		self.info["SET_INFO"]["START_TIME"] = latest_emoji_msg.created_at.timestamp()
 		self.info["SET_INFO"]["END_TIME"] = latest_emoji_msg.created_at.timestamp() + self.param["MAX_TIME"]
+
+		# Wait a certain amount of time and then close guessing if it is not already closed
+		await asyncio.sleep(self.param["MAX_TIME"])
+
+		if self.info["GUESSING_OPEN"] == True:
+			await self.end_set()
 
 	# Function that ends the set
 	async def end_set(self):
