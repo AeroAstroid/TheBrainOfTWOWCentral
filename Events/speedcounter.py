@@ -249,11 +249,15 @@ class EVENT:
 							set_finished = True
 							for contestant in list(self.info["CONTESTANT"].values()):
 
+								print(contestant.correct)
+								print(contestant.guesses_left)
+
 								if contestant.correct == False and contestant.guesses_left > 0:
 									set_finished = False
 
 							# If set finished is true, end set
 							if set_finished == True:
+								print("Ending set!")
 								await self.end_set()
 
 	# Function that starts the game
