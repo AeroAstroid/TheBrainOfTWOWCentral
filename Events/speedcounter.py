@@ -38,7 +38,7 @@ DEFAULT_INFO = { # Define all the game information - This dictionary will be cop
 DEFAULT_PARAM = {
 
 	"EMOJI_SETS": [
-		["😎", "🤩", "😀", "😡". "🥶", "🤢", "😈", "💩", "😷"],
+		["😎", "🤩", "😀", "😡", "🥶", "🤢", "😈", "💩", "😷"],
 		["❤️", "⚠️", "🎶", "🟢", "🔊", "🟧", "🔕", "♀️", "⚧"],
 		["⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🏉", "🎱", "🏓"],
 		["🌧️", "🌍", "🌈", "🌕", "🌺", "🦜", "🐬", "⛸️", "🔥"],
@@ -356,7 +356,7 @@ class EVENT:
 		emoji_set = copy.deepcopy(random.choice(self.param["EMOJI_SETS"]))
 
 		# Set amounts depending on ranges
-	 	emoji_count = random.randint(self.param["EMOJI_COUNT_RANGE"][0], self.param["EMOJI_COUNT_RANGE"][1])
+		emoji_count = random.randint(self.param["EMOJI_COUNT_RANGE"][0], self.param["EMOJI_COUNT_RANGE"][1])
 		emoji_type_amount = random.randint(self.param["EMOJI_TYPE_RANGE"][0], self.param["EMOJI_TYPE_RANGE"][1])
 		
 		# Randomize which emojis to use
