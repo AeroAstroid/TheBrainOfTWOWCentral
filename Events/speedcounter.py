@@ -18,7 +18,7 @@ EVENT_ADMIN_CHANNEL = "staff•commands"
 DEFAULT_INFO = { # Define all the game information - This dictionary will be copied whenever there is a reset
 
 	"CONTESTANTS": {}, # Key is user object, value is SC_Contestant object
-	"DEAD_CONTESTANTS": {}, # Key is user object, value is SC_Contestant object
+	"ELIMINATED_CONTESTANTS": {}, # Key is user object, value is SC_Contestant object
 	"ROUND_INFO": {}, # Round information
 	"SET_INFO": { # Information of the set
 
@@ -48,7 +48,7 @@ DEFAULT_PARAM = {
 	"EMOJI_COUNTING_RANGE": [1, 1], # The range of the amount of emojis that players must count
 	"EMOJI_TYPE_RANGE": [3, 5], # The range of the amount of different types of emojis that will be shown
 	"ELIMINATIONS": 0, # The amount of eliminations in the round
-	"PENALTY": 3, # 
+	"PENALTY": 2, # 
 	"MAX_TIME": 25, 
 
 }
@@ -66,7 +66,7 @@ class SC_Contestant:
 
 		self.user = user
 		self.alive = True
-		self.rank = None
+		self.current_rank = None
 
 		# Information for a round
 		self.round_times = []
@@ -480,7 +480,90 @@ class EVENT:
 
 		# Sort players in a list from fastest total time to lowest time
 		contestant_list = list(self.info["CONTESTANTS"].keys())
-		sorted_contestant_list = sorted(contestant_list, key=lambda userobj: (self.info["CONTESTANTS"][userobj].total_round_time))
+		sorted_contestant_list = sorted(contestant_list, key=lambda userobj: (self.info["CONTESTANTS"][userobj].total_round_time, min(self.info["CONTESTANTS"][userobj].round_times)))
+
+		# Rank all the players
+		for rank_minus_one, contestant in enumerate(sorted_contestant_list):
+
+			contestant_obj = self.info["CONTESTANTS"][contestant]
+			contestant_obj.current_rank = rank_minus_one + 1
+
+		# Create round CSV
+		csv_filename = "Events/speedcounter_R{}.csv".format(self.info["ROUND_NUMBER"])
+		with open(csv_filename, 'w', encoding='UTF-8', newline='') as f:
+
+			f.write('\ufeff')
+
+			writer = csv.writer(f)
+
+			# Write first row of titles
+			title_row = ["ID", "NAME", "TOTAL"]
+
+			# Write each individual round title
+			for i in range(self.param["SETS_PER_ROUND"]):
+				title_row.append("SET " + str(i + 1))
+
+			writer.writerow(title_row)
+
+			for contestant in sorted_contestant_list:
+
+				contestant_row = []
+				# Get user's contestant object
+				contestant_obj = self.info["CONTESTANTS"][contestant]
+				# Get player information and write it on CSV
+				contestant_row.append(contestant.id) # Adding user's ID
+				contestant_row.append(contestant.name.encode('UTF-8', 'ignore').decode("UTF-8")) # Adding user's name (make sure it only includes UTF-8 characters)
+				contestant_row.append(str(contestant_obj.total_round_time))
+
+				# Go through each time in the contestant's round times
+				for i in range(self.param["SETS_PER_ROUND"]):
+					try:
+						contestant_row.append(str(contestant_obj.round_times[i]))
+					except:
+						contestant_row.append("")
+
+				# Write row
+				writer.writerow(contestant_row)
+
+		# Send leaderboard to administration channel
+		await self.param["ADMIN_CHANNEL"].send(content = "**Speed Counter - Round {} Leaderboard**".format(self.info["ROUND_NUMBER"]), file = discord.File(csv_filename))
+
+		# If there are any eliminations, send which contestants are eliminated in admin channel
+		if self.param["ELIMINATIONS"] > 0:
+
+			# Find the people in last that are going to be eliminated
+			eliminated_contestants = a[-1 * self.param["ELIMINATIONS"]:]
+			
+			# Create a string of contestants who are eliminated (this string will be sent in a message)
+			elim_contestants_str = ""
+			for elim_contestant in eliminated_contestants:
+
+				contestant_obj = self.info["CONTESTANTS"][elim_contestant]
+				rank = contestant_obj.current_rank
+				round_time = contestant_obj.total_round_time
+				elim_contestants_str += f"\n**#{0}:** {1} - **`{2:.2f}`**".format(rank, elim_contestant.mention, round_time)
+
+			# Send string in admin channel
+			await self.param["ADMIN_CHANNEL"].send("__**Round {} Eliminations**__\n".format(self.info["ROUND_NUMBER"]) + elim_contestants_str)
+
+			# Send message in game channel saying that the round has ended
+			await self.param["GAME_CHANNEL"].send("```ROUND {} COMPLETE```\n".format(self.info["ROUND_NUMBER"]) + "__**Round {} Eliminations**__\n".format(self.info["ROUND_NUMBER"]) + elim_contestants_str)
+
+			# Remove eliminated contestants from CONTESTANTS list
+			for elim_contestant in eliminated_contestants:
+
+				contestant_obj = self.info["CONTESTANTS"][elim_contestant]
+				self.info["ELIMINATED_CONTESTANTS"][elim_contestant] = contestant_obj
+				self.info["CONTESTANTS"].pop(elim_contestant)
+
+		else:
+
+			# Send message in game channel saying that the round has ended
+			await self.param["GAME_CHANNEL"].send("```ROUND {} COMPLETE```\n".format(self.info["ROUND_NUMBER"]))
+
+		# Wait for admin to start next round
+		self.info["ROUND_NUMBER"] += 1
+		await self.admin_modify()
 
 	# Function that allows user to modify parameters
 	async def admin_modify(self):
