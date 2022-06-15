@@ -397,6 +397,7 @@ class EVENT:
 		# Make emoji strings into list - only max of 100 emojis per message
 
 		chunks = [emoji_str[i:i + MAX_EMOJIS_PER_MESSAGE] for i in range(0, len(emoji_str), MAX_EMOJIS_PER_MESSAGE)]
+		print(chunks)
 		################################################################
 
 		# Send set title to discord, along with what emoji they are counting
