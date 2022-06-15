@@ -452,7 +452,7 @@ class EVENT:
 			self.info["GUESSING_OPEN"] = False
 
 			# Send message saying that set has ended
-			self.param["GAME_CHANNEL"].send("**Set #{}/{} has ended!**\nThe correct answer was `**{}**`.".format(set_number, set_total, self.info["SET_INFO"]["CORRECT_ANSWER"]))
+			await self.param["GAME_CHANNEL"].send("**Set #{}/{} has ended!**\nThe correct answer was `**{}**`.".format(set_number, set_total, self.info["SET_INFO"]["CORRECT_ANSWER"]))
 
 			await asyncio.sleep(5)
 
