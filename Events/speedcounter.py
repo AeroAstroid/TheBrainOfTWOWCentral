@@ -571,6 +571,7 @@ class EVENT:
 					admin_input = await get_positive_integer(interaction.user, self.param["ADMIN_CHANNEL"])
 					if admin_input != "cancel":
 						self.param["SETS_PER_ROUND"] = admin_input
+					await self.admin_modify()
 
 				elif option_selected == "guess_amount":
 					# GUESS_AMOUNT - Ask user for amount of guesses user has before automatically being given the lowest possible score
@@ -578,6 +579,7 @@ class EVENT:
 					admin_input = await get_positive_integer(interaction.user, self.param["ADMIN_CHANNEL"])
 					if admin_input != "cancel":
 						self.param["GUESS_AMOUNT"] = admin_input
+					await self.admin_modify()
 
 				elif option_selected == "penalty":
 					# PENALTY - Ask user for the time penalty contestants are given for each wrong guess
@@ -585,6 +587,7 @@ class EVENT:
 					admin_input = await get_positive_integer(interaction.user, self.param["ADMIN_CHANNEL"])
 					if admin_input != "cancel":
 						self.param["PENALTY"] = admin_input
+					await self.admin_modify()
 
 				elif option_selected == "max_time":
 					# MAX_TIME - Ask user for the time in seconds that users have to guess correctly
@@ -592,6 +595,7 @@ class EVENT:
 					admin_input = await get_positive_integer(interaction.user, self.param["ADMIN_CHANNEL"])
 					if admin_input != "cancel":
 						self.param["MAX_TIME"] = admin_input
+					await self.admin_modify()
 
 				elif option_selected == "eliminations":
 					# ELIMINATIONS - Ask user for the amount of contestants to eliminate this round
@@ -599,6 +603,7 @@ class EVENT:
 					admin_input = await get_positive_integer(interaction.user, self.param["ADMIN_CHANNEL"])
 					if admin_input != "cancel":
 						self.param["ELIMINATIONS"] = admin_input
+					await self.admin_modify()
 			
 				elif option_selected == "confirm":
 					# CONFIRM - Admin is confirming
@@ -615,7 +620,7 @@ class EVENT:
 							return
 
 						# BEGIN THE ROUND
-						await interaction.response.edit_message(content = "**Round {} will begin in 15 seconds!**".format(self.info["ROUND_NUMBER"]), view = None)
+						await interaction.response.edit_message(content = "**Round {} will begin now!**".format(self.info["ROUND_NUMBER"]), view = None)
 
 						# Start game
 						await self.start_round()
