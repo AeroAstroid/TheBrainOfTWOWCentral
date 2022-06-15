@@ -4,11 +4,10 @@
 ###################################################################################
 
 # Importing modules
-import time, discord, random, statistics, csv, asyncio, copy, traceback
-from discord.ui import Button, View
+import time, discord, random, csv, asyncio, copy, traceback, math, textwrap
+from discord.ui import Select, Button, View
 
 # Importing from other scripts within the repo
-from Config._functions import grammar_list, word_count, elim_prize
 from Config._const import ALPHABET, BRAIN
 
 # The announcement channel (where the game is hosted) and the admin channel (where the game is customisable)
