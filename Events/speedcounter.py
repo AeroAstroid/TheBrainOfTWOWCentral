@@ -218,7 +218,7 @@ class EVENT:
 								# Add any penalties
 								penalty_amount = len(player_object.set_guesses) - 1
 								penalty_total = penalty_amount * self.param["PENALTY"]
-								final_guess_time = round(guess_time + penalty_total), 2)
+								final_guess_time = round(guess_time + penalty_total, 2)
 								# Make sure final guess time does not go over max
 								if final_guess_time > self.param["MAX_TIME"]:
 									final_guess_time = self.param["MAX_TIME"]
