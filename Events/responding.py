@@ -1,5 +1,6 @@
 # RESPONDING EVENT
 # Used and can be activated when collecting responses for a speed TWOW, TWOW Roulette, etc.
+# Written by Neonic - ask him if you have any questions about how the code works
 ###################################################################################
 
 import time, discord, random, statistics, csv, asyncio, copy, math, textwrap 
@@ -880,7 +881,7 @@ class EVENT:
 	async def response_valid(self, original_response, channel):
 
 		# Run the formatting_fix function, remove characters that might cause issues and strip unnecessary whitespace
-		response = formatting_fix(original_response.replace("`", "").replace("\t", "").replace("\n", "")).strip()
+		response = formatting_fix(original_response.replace("`", "").replace("\t", "").replace("\n", "").replace("\u200b")).strip()
 
 		# Convert response to UTF-8 only characters
 		response = response.encode('UTF-8', 'ignore').decode("UTF-8")

@@ -1,5 +1,6 @@
 # DESCRIPTION DETECTIVE GAME
 # Created for description detective event
+# Written by Neonic - ask him if you have any questions about how the code works
 ###################################################################################
 
 import time, discord, random, statistics, csv, asyncio

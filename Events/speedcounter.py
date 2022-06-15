@@ -533,7 +533,7 @@ class EVENT:
 		if self.param["ELIMINATIONS"] > 0:
 
 			# Find the people in last that are going to be eliminated
-			eliminated_contestants = a[-1 * self.param["ELIMINATIONS"]:]
+			eliminated_contestants = sorted_contestant_list[-1 * self.param["ELIMINATIONS"]:]
 			
 			# Create a string of contestants who are eliminated (this string will be sent in a message)
 			elim_contestants_str = ""
