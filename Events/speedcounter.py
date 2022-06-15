@@ -331,9 +331,9 @@ class EVENT:
 
 		# Reset current player set data
 		for player_object in self.info["CONTESTANTS"].values():
-			self.set_guesses = [] # The guesses that they've used in the set
-			self.correct = False
-			self.guesses_left = self.param["GUESS_AMOUNT"] # The amount of guesses they have left
+			player_object.set_guesses = [] # The guesses that they've used in the set
+			player_object.correct = False
+			player_object.guesses_left = self.param["GUESS_AMOUNT"] # The amount of guesses they have left
 
 		# Wait for user to start the set
 		# Create start button
