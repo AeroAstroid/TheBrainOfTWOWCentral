@@ -35,7 +35,7 @@ from src.interpreter.functions.username import username
 from src.interpreter.functions.var import var
 from src.interpreter.functions.while_func import while_func
 from src.interpreter.functions.block import block
-from interpreter.functions.return_func import return_func
+from src.interpreter.functions.return_func import return_func
 
 from src.interpreter.functions.math.abs import abs_func
 from src.interpreter.functions.math.add import add
