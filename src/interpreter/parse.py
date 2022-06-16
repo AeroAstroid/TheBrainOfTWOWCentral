@@ -1,48 +1,60 @@
-from lark import Lark
+quotes = ["\"", "“", "”"]
 
-bstargrammar = r"""
-start: arg*
+def parseCode(program: str):
+    parseTree = []
+    activityStack = [parseTree]
 
-?arg:
-    | "true" -> true
-    | "false" -> false
-    | string
-    | SIGNED_NUMBER -> number
-    | function
-    | array
-    | unescaped_string
+    newString = True
+    backslashed = False
+    inString = False
 
-string: ESCAPED_STRING
+    # parse the program!
+    for c in program:
 
-block: ALPHANUMERIC
-args: arg*
+        if newString and c not in ["[", " ", "\n"]:
+            activityStack[-1].append("")
+            newString = False
+            
+        if backslashed:
+            if c == "n":
+                activityStack[-1][-1] += "\n"
+            else:
+                activityStack[-1][-1] += c
+            backslashed = False
 
-array: "{" [arg ("," arg)*] "}"
+        elif len(activityStack) == 1:
+            if c == "[":
+                activityStack[-1].append([])
+                activityStack.append(activityStack[-1][-1])
+                newString = True
+            elif c == "\\":
+                backslashed = True
+            else:
+                activityStack[-1][-1] += c
 
-function: ("[") block args ("]")
+        elif inString:
+            if c == "\\":
+                backslashed = True
+            elif c in quotes:
+                inString = False
+            else:
+                activityStack[-1][-1] += c
 
-unescaped_string: (SUPERALPHANUMERIC | EVERYTHING)
-nonalphanumeric: EVERYTHING
+        elif c == "\\":
+            backslashed = True
+        elif c in quotes:
+            inString = True
+        elif c in [" ", "\n"]:
+            newString = True
+        elif c == "[":
+            activityStack[-1].append([])
+            activityStack.append(activityStack[-1][-1])
+            newString = True
+        elif c == "]":
+            activityStack.pop()
+            if len(activityStack) == 1:
+                activityStack[-1].append("")
+        else:
+            activityStack[-1][-1] += c
 
-DIGIT: "0".."9"
-LCASE_LETTER: "a".."z"
-UCASE_LETTER: "A".."Z"
-LETTER: UCASE_LETTER | LCASE_LETTER
-ALPHANUMERIC: ("_" | "." | LETTER | DIGIT)+
-SUPERALPHANUMERIC: (ALPHANUMERIC | "+" | "*" | "-" | "/" | "^" | "=" | "!")+
-EVERYTHING: /.^\s/+
-
-// imports from common library my beloved
-%import common.WORD
-%import common.ESCAPED_STRING
-%import common.SIGNED_NUMBER
-
-%import common.C_COMMENT
-%import common.WS
-%ignore WS
-%ignore C_COMMENT"""
-parser = Lark(bstargrammar)
-
-
-def parseCode(code):
-    return parser.parse(code)
+    return parseTree
