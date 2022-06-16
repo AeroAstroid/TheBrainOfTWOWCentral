@@ -542,7 +542,7 @@ class EVENT:
 				contestant_obj = self.info["CONTESTANTS"][elim_contestant]
 				rank = contestant_obj.current_rank
 				round_time = contestant_obj.total_round_time
-				elim_contestants_str += f"\n**#{0}:** {1} - **`{2:.2f}`**".format(rank, elim_contestant.mention, round_time)
+				elim_contestants_str += "\n**#{0}:** {1} - **`{2:.2f}`**".format(rank, elim_contestant.mention, round_time)
 
 			# Send string in admin channel
 			await self.param["ADMIN_CHANNEL"].send("__**Round {} Eliminations**__\n".format(self.info["ROUND_NUMBER"]) + elim_contestants_str)
