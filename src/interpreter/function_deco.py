@@ -80,7 +80,7 @@ def setupFunctions():
     Function(["import"], {"name": None}, import_func)
 
     Function(["length"], {"arr": None}, length)
-    Function(["loop"], {"amount": None, "functions": Infinite}, loop, parse_args=False)
+    Function(["loop"], {"amount": None, "body": None}, loop, parse_args=False)
 
     Function(["j"], {"amount": 1}, j)
     Function(["join"], {"array": None, "joiner": ""}, join)
@@ -100,7 +100,7 @@ def setupFunctions():
     Function(["username"], {}, username)
     Function(["userid"], {}, userid)
     Function(["var"], {"item": None, "index": ""}, var)
-    Function(["while"], {"condition": None, "code": Infinite}, while_func, parse_args=False)
+    Function(["while"], {"condition": None, "body": None}, while_func, parse_args=False)
     Function(["block"], {"body": Infinite}, block, parse_args=False)
     Function(["#"], {"comments": Infinite}, comment)
 
