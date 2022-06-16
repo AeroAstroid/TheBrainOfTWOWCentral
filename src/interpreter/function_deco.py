@@ -35,6 +35,7 @@ from src.interpreter.functions.userid import userid
 from src.interpreter.functions.username import username
 from src.interpreter.functions.var import var
 from src.interpreter.functions.while_func import while_func
+from src.interpreter.functions.block import block
 
 from src.interpreter.functions.math.abs import abs_func
 from src.interpreter.functions.math.add import add
@@ -100,6 +101,7 @@ def setupFunctions():
     Function(["userid"], {}, userid)
     Function(["var"], {"item": None, "index": ""}, var)
     Function(["while"], {"condition": None, "code": Infinite}, while_func, parse_args=False)
+    Function(["block"], {"body": Infinite}, block, parse_args=False)
     Function(["#"], {"comments": Infinite}, comment)
 
     Function(["str"], {"item": None}, str)
