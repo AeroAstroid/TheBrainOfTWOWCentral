@@ -21,7 +21,7 @@ array: "{" [arg ("," arg)*] "}"
 
 function: ("[") block args ("]")
 
-unescaped_string: (SUPERALPHANUMERIC | nonalphanumeric)
+unescaped_string: (SUPERALPHANUMERIC | EVERYTHING)
 nonalphanumeric: EVERYTHING
 
 DIGIT: "0".."9"
@@ -29,8 +29,8 @@ LCASE_LETTER: "a".."z"
 UCASE_LETTER: "A".."Z"
 LETTER: UCASE_LETTER | LCASE_LETTER
 ALPHANUMERIC: ("_" | "." | LETTER | DIGIT)+
-SUPERALPHANUMERIC: (ALPHANUMERIC | "+" | "*" | "-" | "/" | "^")+
-EVERYTHING: /./
+SUPERALPHANUMERIC: (ALPHANUMERIC | "+" | "*" | "-" | "/" | "^" | "=" | "!")+
+EVERYTHING: /.^\s/+
 
 // imports from common library my beloved
 %import common.WORD
