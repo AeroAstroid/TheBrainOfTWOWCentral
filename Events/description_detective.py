@@ -10,6 +10,7 @@ from Config._const import ALPHABET, BRAIN
 
 NORMAL_POINTS = [60, 50, 40, 30, 20, 10]
 TIME_START_ROUND = 10
+NUMBER_EMOJIS = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"]
 
 class DDPlayer:
 	def __init__(self, user):
@@ -63,7 +64,7 @@ class EVENT:
 			"CLUE_TIME": 20,
 			"FINAL_GUESS_TIME": 30,
 			"CLUE_POSTING": 0,
-			"ADMINISTRATION_CHANNEL": 0,
+			"ADMIN_CHANNEL": 0,
 			"ROLE": 0,
 			"CSV_MESSAGE": 0
 		}
@@ -105,7 +106,7 @@ class EVENT:
 			"CLUE_TIME": 20,
 			"FINAL_GUESS_TIME": 30,
 			"CLUE_POSTING": 0,
-			"ADMINISTRATION_CHANNEL": 0,
+			"ADMIN_CHANNEL": 0,
 			"ROLE": 0,
 			"CSV_MESSAGE": 0
 		}
@@ -122,7 +123,7 @@ class EVENT:
 		self.param["ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ROLE)
 		self.param["ADMIN_ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ADMIN_ROLE)
 		self.param["GAME_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff-event-time") # Post messages in here
-		self.param["ADMINISTRATION_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff•commands")
+		self.param["ADMIN_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff•commands")
 
 	# Begin the game
 	async def start_game(self):
@@ -226,6 +227,18 @@ The game will start in ten seconds."""
 		else:
 			await clue_posting_channel.send("**Everyone guessed it!**\nThe answer this round was **`{}`**.".format(self.info["CURRENT_ROUND"]["ANSWERS"][0]))
 
+		await clue_posting_channel.send("Waiting for verification from event administrators...")
+
+		while True:
+			msg = await BRAIN.wait_for('message', check=lambda m: (m.author in self.param["ADMIN_ROLE"].members and m.channel == self.param["ADMIN_CHANNEL"]))
+
+			try:
+				if msg.content.strip().lower() == "verify": break
+			except:
+				pass
+
+		await self.param["ADMIN_CHANNEL"].send("Round results verified.")
+
 		# Count how many players got it right	
 		total_players = 0
 		players_correct = 0
@@ -236,18 +249,6 @@ The game will start in ten seconds."""
 			# Player was correct, increment player count by 1
 			if player.correct == True:
 				players_correct += 1
-
-		await clue_posting_channel.send("Waiting for verification from event administrators...")
-
-		while True:
-			msg = await BRAIN.wait_for('message', check=lambda m: (m.author in self.param["ADMIN_ROLE"].members and m.channel == self.param["ADMINISTRATION_CHANNEL"]))
-
-			try:
-				if msg.content.strip().lower() == "verify": break
-			except:
-				pass
-
-		await self.param["ADMINISTRATION_CHANNEL"].send("Round results verified.")
 
 		self.info["CLUE_NUM"] = 0
 
@@ -327,7 +328,7 @@ The game will start in ten seconds."""
 					writer.writerow([player.user.name, player.user.id, player.score] + player.round_scores)
 
 			# Send leaderboard to administration channel
-			await self.param["ADMINISTRATION_CHANNEL"].send(content = "**Description Detective - Leaderboard after Round {}**".format(self.info["ROUND_NUMBER"]), file = discord.File("Events/ddscores_R{}.csv".format(self.info["ROUND_NUMBER"])))
+			await self.param["ADMIN_CHANNEL"].send(content = "**Description Detective - Leaderboard after Round {}**".format(self.info["ROUND_NUMBER"]), file = discord.File("Events/ddscores_R{}.csv".format(self.info["ROUND_NUMBER"])))
 		except Exception as e:
 			print(e)
 
@@ -337,7 +338,7 @@ The game will start in ten seconds."""
 		try:
 
 			# Post the current clue's guesses
-			player_guess_strings = []
+			player_guess_strings = ["__**ROUND #{} CLUE #{} GUESSES**__\n\n".format(self.info["ROUND_NUMBER"], self.info["CLUE_NUM"])]
 
 			for player in list(self.info["PLAYERS"].values()):
 
@@ -346,13 +347,21 @@ The game will start in ten seconds."""
 				player_guess = player.guesses[self.info["CLUE_NUM"] - 1]
 
 				if player_guess:
+					player_string = ""
 					if player.correct == True:
-						player_guess_strings.append(f"{player_id} ({player_name}) - **`{player_guess}`** ☑")
+						player_string = f"{player_id} ({player_name}) - **`{player_guess}`** ☑\n"
 					else:
-						player_guess_strings.append(f"{player_id} ({player_name}) - **`{player_guess}`**")
+						player_string = f"{player_id} ({player_name}) - **`{player_guess}`**\n"
 
-			player_guess_string = "\n".join(player_guess_strings)
-			await self.param["ADMINISTRATION_CHANNEL"].send("__**ROUND #{} CLUE #{} GUESSES**__\n\n".format(self.info["ROUND_NUMBER"], self.info["CLUE_NUM"]) + player_guess_string)
+					# Check if string will go over 2000 characters
+					if len(player_guess_strings[-1]) + len(player_string) > 2000:
+						player_guess_strings.append("")
+						
+					player_guess_strings[-1] += player_string
+
+			# Message has been split into chunks
+			for string in player_guess_strings:
+				await self.param["ADMIN_CHANNEL"].send(string)
 
 		except Exception as e:
 
@@ -433,7 +442,7 @@ The game will start in ten seconds."""
 			if self.param["CSV_MESSAGE"] == 0:
 
 				# Check for four conditions for message
-				if message.channel != self.param["ADMINISTRATION_CHANNEL"]: return
+				if message.channel != self.param["ADMIN_CHANNEL"]: return
 
 				if len(message.attachments) == 0: return
 
@@ -550,6 +559,11 @@ The game will start in ten seconds."""
 										# Send message to user
 										await message.reply("☑ **You got it correct on Clue {}!** ☑\nYou gain **{}** points this round!".format(self.info["CLUE_NUM"], points_gained))
 
+									# If user did not get it correct, react with emoji
+									else:
+
+										await message.add_reaction(NUMBER_EMOJIS[self.info["CLUE_NUM"] - 1])
+
 				except Exception as e:
 					# Print exception
 					print(e)
@@ -614,7 +628,7 @@ The game will start in ten seconds."""
 
 							# Send message to user
 							await player_object.guess_msg[guess_clue - 1].reply("☑ **Your guess for Clue {} was marked manually correct (not by a bot)!** ☑\nYou gain **{}** points this round!".format(guess_clue, points_gained))
-							await self.param["ADMINISTRATION_CHANNEL"].send(f"☑ Guess on **Clue #{guess_clue}** ({player_object.guesses[guess_clue - 1]}) marked correct for player {player_object.user.mention}! (Marked correct by {message.author.mention})")
+							await self.param["ADMIN_CHANNEL"].send(f"☑ Guess on **Clue #{guess_clue}** ({player_object.guesses[guess_clue - 1]}) marked correct for player {player_object.user.mention}! (Marked correct by {message.author.mention})")
 		
 	# Change a parameter of the event
 	async def edit_event(self, message, new_params):
