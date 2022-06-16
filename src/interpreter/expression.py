@@ -3,10 +3,13 @@ from enum import Enum
 from re import fullmatch
 from typing import Union, List
 
+from lark import Tree
+
 import src.interpreter.globals as globals
 import src.interpreter.tempFunctionsFile
 
 
+# Deprecated, lark does this now
 class Type(Enum):
     # [J 100]
     FUNCTION = 0
@@ -30,31 +33,52 @@ class Type(Enum):
     USERFUNCTION = 5
 
 
-def Expression(block: Union[List[str], str], codebase):
-    # TODO(?): try/except needed
+"""
+        diagram of a block
+        block {
+            children: [
+                0: block,
+                1: args
+            ],
+            data: "function" (usually)
+        }
+"""
 
-    blockType = isType(block)
 
-    if blockType == Type.FUNCTION:
-        arguments = block[1:]
-        alias = block[0]
-        functionWanted = findFunction(alias, codebase)
-        if functionWanted is not None:
-            if hasattr(functionWanted, "block"):
-                return functionWanted.run(arguments)
+def Expression(block: Tree, codebase):
+    # print(block, block.pretty())
+    match block.data:
+        case "function":
+            alias = block.children[0].children[0]
+
+            # this gets the argument values from the block
+            # arguments = list(map(lambda x: Expression(x, codebase), block.children[1].children))
+            arguments = list(map(lambda x: x, block.children[1].children))
+            # arguments = list(map(lambda x: x.children[0], arguments))
+            functionWanted = findFunction(alias, codebase)
+            if functionWanted is not None:
+                if hasattr(functionWanted, "block"):  # check if it's a user-made function
+                    return functionWanted.run(arguments)
+                else:
+                    return functionWanted.run(codebase, arguments, alias)
             else:
-                return functionWanted.run(codebase, arguments, alias)
-        else:
-            raise NotImplementedError(f"Function not found: {alias}")
-    elif blockType == Type.STRING:
-        return block
-    elif blockType == Type.ARRAY:
-        arguments = block[1:]
-        return list(map(lambda item: Expression(item, codebase), arguments))
-    elif blockType == Type.INTEGER:
-        return int(block)
-    elif blockType == Type.FLOAT:
-        return float(block)
+                raise NotImplementedError(f"Function not found: {alias}")
+        case "unescaped_string":
+            return str(block.children[0])
+        case "number":
+            # TODO: check if it's an int or float
+            return float(block.children[0])
+        case "array":
+            return block.children
+        case _:
+            return block.children[0]
+    # elif blockType == Type.ARRAY:
+    #     arguments = block[1:]
+    #     return list(map(lambda item: Expression(item, codebase), arguments))
+    # elif blockType == Type.INTEGER:
+    #     return int(block)
+    # elif blockType == Type.FLOAT:
+    #     return float(block)
     # elif blockType == Type.EXPONENT:
     #     return int(float(block))
 
@@ -66,20 +90,3 @@ def findFunction(name: str, codebase):  # -> Union[Callable[[List, Codebase], No
         functionWanted = src.interpreter.tempFunctionsFile.functions.get(name)
 
     return functionWanted
-
-
-def isType(block):
-    if type(block) == list:
-        if block[0] == "ARRAY":
-            return Type.ARRAY
-        else:
-            return Type.FUNCTION
-    else:
-        if fullmatch(r"^[+-]?\d+$", str(block)):
-            return Type.INTEGER
-        elif fullmatch(r"^[+-]?\d+(.|([eE][+-]?)|)\d+$", str(block)):
-            return Type.FLOAT
-        # elif fullmatch(r"^[+-]?\d+[eE][+-]?\d+$", block):
-        #     return Type.EXPONENT
-        else:
-            return Type.STRING

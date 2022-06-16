@@ -1,6 +1,8 @@
 import math
 from typing import Dict, Any, Union, Callable, List
 
+from lark import Tree
+
 from src.interpreter.expression import Expression
 from src.interpreter.tempFunctionsFile import functions
 from src.interpreter.run import Codebase
@@ -25,7 +27,7 @@ class Function:
             functions[alias.upper()] = self
             functions[alias.lower()] = self
 
-    def run(self, codebase: Codebase, args: List[Any], alias_used: str):
+    def run(self, codebase: Codebase, args: List[Tree], alias_used: str):
         if self.parse_args:
             parsedArgs = list(map(lambda arg: Expression(arg, codebase), args))
         else:

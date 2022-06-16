@@ -19,6 +19,7 @@ from src.interpreter.tempFunctionsFile import functions
 def runCode(code: str, user: Union[discord.User, None] = None, arguments: List[str] = None):
     try:
         return func_timeout(30, runCodeReal, args=(code, user, arguments))
+        # return runCodeReal(code, user, arguments)
     except FunctionTimedOut:
         return returnError("RUNTIME", "Timed out! (More than 30 seconds)")
     except Exception as error:
@@ -28,15 +29,16 @@ def runCode(code: str, user: Union[discord.User, None] = None, arguments: List[s
 # TODO: Find a better name for this
 def runCodeReal(code: str, user: Union[discord.User, None] = None, arguments: List[str] = None):
     # TODO: Trim up to three backticks from beginning and end of code
-    parsed_code = parseCode(code)
-    globals.codebase = Codebase(parsed_code, user, arguments)
+    parsed_code_tree = parseCode(code)
+    blocks = parsed_code_tree.children
+    globals.codebase = Codebase(blocks, user, arguments)
     globals.codebase.functions = globals.codebase.functions | functions
 
-    for statement in parsed_code:
+    for block in blocks:
         try:
-            readLine(statement)
+            readBlock(block)
         except Exception as error:
-            return returnError(statement, error)
+            return returnError(block, error)
 
     # print(codebase.variables)
     # print(codebase.output)
@@ -47,11 +49,8 @@ def runCodeReal(code: str, user: Union[discord.User, None] = None, arguments: Li
     return globals.codebase.output
 
 
-def readLine(statement):
-    if type(statement) == str:
-        result = statement
-    else:
-        result = Expression(statement, globals.codebase)
+def readBlock(block):
+    result = Expression(block, globals.codebase)
 
     # this prints the result code if you need it
     # print(result)
