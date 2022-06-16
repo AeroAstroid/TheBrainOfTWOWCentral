@@ -193,7 +193,7 @@ class EVENT:
 						except:
 							pass
 
-						if user_answer:
+						if user_answer != None:
 
 							# This is an answer from the user
 							# Get user's player object
@@ -253,7 +253,7 @@ class EVENT:
 									set_finished = False
 
 							# If set finished is true, end set
-							if set_finished == True:
+							if set_finished == True and self.info["GUESSING_OPEN"] == True:
 								await self.end_set()
 
 	# Function that starts the game
@@ -452,8 +452,20 @@ class EVENT:
 			# Close guessing
 			self.info["GUESSING_OPEN"] = False
 
+			# For those who did not answer correctly, set their timer to the maximum time
+			# Check if all contestants have answered correctly or have run out of guesses
+			all_contestants_finished = True
+			for contestant in list(self.info["CONTESTANTS"].values()):
+
+				if contestant.correct == False and contestant.guesses_left > 0:
+					contestant.round_times.append(self.param["MAX_TIME"])
+					all_contestants_finished = False
+
 			# Send message saying that set has ended
-			await self.param["GAME_CHANNEL"].send("**Set #{}/{} has ended!**\nThe correct answer was **`{}`**.".format(set_number, set_total, self.info["SET_INFO"]["CORRECT_ANSWER"]))
+			if all_contestants_finished == True:
+				await self.param["GAME_CHANNEL"].send("**Set #{}/{} has ended!**\nThe correct answer was **`{}`**.".format(set_number, set_total, self.info["SET_INFO"]["CORRECT_ANSWER"]))
+			else:
+				await self.param["GAME_CHANNEL"].send("**Set #{}/{} has ended!**\nThe correct answer was **`{}`**.\nAnyone who did not submit a correct answer in time gets a time of **`{}`**.".format(set_number, set_total, self.info["SET_INFO"]["CORRECT_ANSWER"], self.param["MAX_TIME"]))
 
 			await asyncio.sleep(5)
 
