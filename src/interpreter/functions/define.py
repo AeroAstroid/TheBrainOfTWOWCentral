@@ -2,9 +2,8 @@ import src.interpreter.globals as globals
 
 
 def define(name, item):
-    for i, val in reversed(list(enumerate(globals.codebase.variables))):
-        if name in val:
-            globals.codebase.variables[i][name] = item
-            return
+    if name in globals.codebase.variables[0]:
+        globals.codebase.variables[0][name] = item
+        return
 
     globals.codebase.variables[-1][name] = item
