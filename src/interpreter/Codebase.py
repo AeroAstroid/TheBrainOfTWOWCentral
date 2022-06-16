@@ -13,3 +13,4 @@ class Codebase:
         self.user: Union[discord.User, None] = user
         self.arguments: Union[List[str], None] = arguments
         self.output: str = ""
+        self.ret = None

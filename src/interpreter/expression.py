@@ -46,6 +46,9 @@ class Type(Enum):
 
 
 def Expression(block: Tree, codebase):
+    if globals.codebase.ret is not None:
+        return
+        
     # print(block, block.pretty())
     match block.data:
         case "function":

@@ -31,7 +31,10 @@ class UserFunction:
         result = Expression(self.block, globals.codebase)
         globals.codebase.variables.pop()
 
-        # for arg in func_arg_name:
-        #     Expression(["DEFINE", arg, 0], globals.codebase)
+        # Early return
+        if globals.codebase.ret is not None:
+            ret = globals.codebase.ret
+            globals.codebase.ret = None
+            return ret
 
         return result

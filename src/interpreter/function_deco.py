@@ -1,4 +1,3 @@
-# from typing import Dict
 import math
 
 from src.interpreter.function import Function
@@ -36,6 +35,7 @@ from src.interpreter.functions.username import username
 from src.interpreter.functions.var import var
 from src.interpreter.functions.while_func import while_func
 from src.interpreter.functions.block import block
+from interpreter.functions.return_func import return_func
 
 from src.interpreter.functions.math.abs import abs_func
 from src.interpreter.functions.math.add import add
@@ -74,6 +74,7 @@ def setupFunctions():
 
     Function(["find", "indexof"], {"v1": None, "v2": None, "v3": None, "v4": None}, find)
     Function(["func", "function"], {"name": None, "args": None, "code": Infinite}, func, parse_args=False)
+    Function(["return", "ret"], {"result": None}, return_func)
     Function(["global"], {"use": None, "name": None, "value": 0}, global_func)
     Function(["if"], {"compare": None, "true": None, "false": None}, if_func, parse_args=False)
     Function(["index"], {"arr": None, "number": None}, index)
