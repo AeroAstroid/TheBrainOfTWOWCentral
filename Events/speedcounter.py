@@ -11,7 +11,7 @@ from discord.ui import Select, Button, View
 from Config._const import ALPHABET, BRAIN
 
 # The announcement channel (where the game is hosted) and the admin channel (where the game is customisable)
-EVENT_ANNOUNCE_CHANNEL = "staff-event-time"
+EVENT_ANNOUNCE_CHANNEL = "event-time"
 EVENT_ADMIN_CHANNEL = "staff•commands"
 
 # Default information that will be set to at the start of the game
