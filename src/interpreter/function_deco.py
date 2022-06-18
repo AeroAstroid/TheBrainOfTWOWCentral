@@ -15,6 +15,7 @@ from src.interpreter.functions.global_func import global_func
 from src.interpreter.functions.if_func import if_func
 from src.interpreter.functions.import_func import import_func
 from src.interpreter.functions.index import index
+from src.interpreter.functions.setindex import setindex
 from src.interpreter.functions.j import j
 from src.interpreter.functions.join import join
 from src.interpreter.functions.joinall import joinall
@@ -72,12 +73,13 @@ def setupFunctions():
     Function(["concat"], {"items": Infinite}, concat)
     Function(["define"], {"name": None, "item": None}, define)
 
-    Function(["find", "indexof"], {"v1": None, "v2": None, "v3": None, "v4": None}, find)
+    Function(["find", "indexof"], {"list": None, "value": None}, find)
     Function(["func", "function"], {"name": None, "args": None, "body": None}, func, parse_args=False)
     Function(["return", "ret"], {"result": None}, return_func)
     Function(["global"], {"use": None, "name": None, "value": 0}, global_func)
     Function(["if"], {"compare": None, "true": None, "false": None}, if_func, parse_args=False)
-    Function(["index"], {"arr": None, "number": None}, index)
+    Function(["index"], {"arr": None, "index": None}, index)
+    Function(["setindex"], {"arr": None, "index": None, "value": None}, setindex)
     Function(["import"], {"name": None}, import_func)
 
     Function(["length"], {"arr": None}, length)
