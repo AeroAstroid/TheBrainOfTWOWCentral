@@ -42,6 +42,7 @@ from src.interpreter.functions.raise_func import raise_func
 from src.interpreter.functions.array.map_func import map_func
 from src.interpreter.functions.array.max_func import max_func
 from src.interpreter.functions.array.min_func import min_func
+from src.interpreter.functions.array.randomizer import randomizer
 from src.interpreter.functions.array.sort_func import sort_func
 
 from src.interpreter.functions.math.abs import abs_func
@@ -99,6 +100,7 @@ def setupFunctions():
 
     Function(["randint"], {"minimum": ArgumentType.Required, "maximum": ArgumentType.Required}, randint)
     Function(["random"], {"minimum": 0, "maximum": 1}, random_func)
+    Function(["randomizer", "shuffle"], {"array": ArgumentType.Required}, randomizer)
 
     Function(["repeat"], {"item": ArgumentType.Required, "amount": ArgumentType.Required}, repeat)
     Function(["raise"], {"message": ArgumentType.Required}, raise_func)
