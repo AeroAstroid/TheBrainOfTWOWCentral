@@ -35,7 +35,7 @@ def attempt(code, assumption, amount=50):
     failedAttemptOutput = ""
     for i in range(amount):
         output = runCodeSandbox(code)
-        correct = output == assumption
+        correct = output.strip() == assumption
         attemptResults.append(correct)
         if not correct:
             failedAttemptOutput = output
@@ -63,13 +63,13 @@ def testAll():
     test("Simple Define", "[DEFINE x 10][VAR x]", "10")
     test("Basic Math", """
         [ADD 1 [SUB 2 [MUL 3 [DIV 4 4]]]]
-    """, "0.0")
+    """, "0")
     test("Basic Legacy Math", """
         [MATH 1 + [MATH 2 - [MATH 3 * [MATH 4 / 4]]]]
-    """, "0.0")
+    """, "0")
     test("Basic Comparison", """
         [COMPARE 2 > 3]
-    """, "False")
+    """, "0")
     test("Basic Logic", """
         [IF [COMPARE 2 < 3] "yes" "no"]
     """, "yes")
@@ -79,6 +79,26 @@ def testAll():
         ]
         [SQUARE 5]
     """, "25")
+    test("Map Test (Functions, Arrays)", """
+        [FUNC MAP_SET [ARRAY "map" "key" "val"] [BLOCK
+        [DEFINE ind [FIND [INDEX [VAR map] 0] [VAR key]]]
+        [IF [COMPARE [VAR ind] == -1] [BLOCK
+            [DEFINE keys [CONCAT [INDEX [VAR map] 0] [ARRAY [VAR key]]]]
+            [DEFINE vals [CONCAT [INDEX [VAR map] 1] [ARRAY [VAR val]]]]
+            [RETURN [ARRAY [VAR keys] [VAR vals]]]
+        ] ""]
+        [DEFINE vals [SETINDEX [INDEX [VAR map] 1] [VAR ind] [VAR val]]]
+        [RETURN [SETINDEX [VAR map] 1 [VAR vals]]]
+        ]]
+        [FUNC MAP_GET [ARRAY "map" "key"] [BLOCK
+        [DEFINE ind [FIND [INDEX [VAR map] 0] [VAR key]]]
+        [RETURN [INDEX [INDEX [VAR map] 1] [VAR ind]]]
+        ]]
+        [DEFINE map [ARRAY {} {}]]
+        [DEFINE map [MAP_SET [VAR map] "a" "1"]]
+        [DEFINE map [MAP_SET [VAR map] "a" "2"]]
+        [MAP_GET [VAR map] "a"]
+    """, "2")
 
     test("J", "[J 5]", "jjjjj")
 
