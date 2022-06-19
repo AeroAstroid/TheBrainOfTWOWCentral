@@ -18,15 +18,14 @@ from src.interpreter.tempFunctionsFile import functions
 
 def runCode(code: str, user: Union[discord.User, None] = None, arguments: List[str] = None):
     try:
-        return func_timeout(30, runCodeReal, args=(code, user, arguments))
+        return func_timeout(30, runCodeSandbox, args=(code, user, arguments))
     except FunctionTimedOut:
         return returnError("RUNTIME", "Timed out! (More than 30 seconds)")
     except Exception as error:
         return error
 
 
-# TODO: Find a better name for this
-def runCodeReal(code: str, user: Union[discord.User, None] = None, arguments: List[str] = None):
+def runCodeSandbox(code: str, user: Union[discord.User, None] = None, arguments: List[str] = None):
     # TODO: Trim up to three backticks from beginning and end of code
     parsed_code = parseCode(code)
     globals.codebase = Codebase(parsed_code, user, arguments)
@@ -61,5 +60,6 @@ def readLine(statement):
 
 def returnError(statement, error):
     errmsg = f"{choice(unfunny_errmsg)}\n\nError of type {type(error).__name__} at `{statement}`:\n{error}"
-    print(f"{errmsg}\n\n{format_exc()}")  # print stack trace too
+    if globals.debug.print_error:
+        print(f"{errmsg}\n\n{format_exc()}")  # print stack trace too
     return errmsg

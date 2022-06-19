@@ -16,8 +16,6 @@ class UserFunction:
     def run(self, run_args: List[str]):
         # print(f"{run_args} > {self.args} > {self.block} > {self.block[0]} > {self.block[0][0]}")
 
-        # TODO: There is definitely a faster way to do this (3 nested for loops is terrible)
-        # TODO: Use numpy for arrays and stuff
         # for example maybe creating a lambda that already knows where to replace the variables
         # instead iterating through the entire code block
         # (interpreting within interpreting)
@@ -26,6 +24,7 @@ class UserFunction:
         func_arg_name = self.args.values()
         globals.codebase.variables.append({})
         for i, arg in enumerate(func_arg_name):
+            # TODO: This is outdated
             Expression(["DEFINE", arg, run_args[i]], globals.codebase)
 
         result = Expression(self.block, globals.codebase)

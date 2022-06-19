@@ -1,60 +1,45 @@
-quotes = ["\"", "“", "”"]
+from lark import Lark
 
-def parseCode(program: str):
-    parseTree = []
-    activityStack = [parseTree]
+bstargrammar = r"""
+start: bstar*
+    
+?bstar:
+    | function
+    | ALLBUTBRACKETS
+?arg:
+    | ("true" | "True") -> true
+    | ("false" | "False") -> false
+    | string
+    | SIGNED_INT -> integer
+    | DECIMAL -> float
+    | function
+    | array
+    | unescaped_string
+string: ESCAPED_STRING
+block: ALPHANUMERIC
+args: arg*
+array: "{" [arg ("," arg)*] "}"
+function: ("[") block args ("]")
+unescaped_string: ALPHANUMERIC
+ALLBUTBRACKETS: ALLEXCEPTBRACKETS+
+DIGIT: "0".."9"
+LCASE_LETTER: "a".."z"
+UCASE_LETTER: "A".."Z"
+LETTER: UCASE_LETTER | LCASE_LETTER
+ALPHANUMERIC: (ALLNONCONFLICTING)+
+ALLNONCONFLICTING: /[^\[\]0-9\{\}\"\s\,]/
+ALLEXCEPTBRACKETS: /[^\[\]]/
 
-    newString = True
-    backslashed = False
-    inString = False
+// imports from common library my beloved
+%import common.ESCAPED_STRING
+%import common.SIGNED_INT
+%import common.DECIMAL
+%import common.C_COMMENT
+%import common.WS
+%ignore WS
+%ignore C_COMMENT"""
+parser = Lark(bstargrammar)
 
-    # parse the program!
-    for c in program:
 
-        if newString and c not in ["[", " ", "\n"]:
-            activityStack[-1].append("")
-            newString = False
-            
-        if backslashed:
-            if c == "n":
-                activityStack[-1][-1] += "\n"
-            else:
-                activityStack[-1][-1] += c
-            backslashed = False
-
-        elif len(activityStack) == 1:
-            if c == "[":
-                activityStack[-1].append([])
-                activityStack.append(activityStack[-1][-1])
-                newString = True
-            elif c == "\\":
-                backslashed = True
-            else:
-                activityStack[-1][-1] += c
-
-        elif inString:
-            if c == "\\":
-                backslashed = True
-            elif c in quotes:
-                inString = False
-            else:
-                activityStack[-1][-1] += c
-
-        elif c == "\\":
-            backslashed = True
-        elif c in quotes:
-            inString = True
-        elif c in [" ", "\n"]:
-            newString = True
-        elif c == "[":
-            activityStack[-1].append([])
-            activityStack.append(activityStack[-1][-1])
-            newString = True
-        elif c == "]":
-            activityStack.pop()
-            if len(activityStack) == 1:
-                activityStack[-1].append("")
-        else:
-            activityStack[-1][-1] += c
-
-    return parseTree
+def parseCode(code):
+    return parser.parse(code)

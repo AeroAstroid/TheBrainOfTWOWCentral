@@ -1,8 +1,10 @@
 import types
 from enum import Enum
+from math import floor
 from re import fullmatch
 from typing import Union, List
 
+from lark import Tree, Token
 import src.interpreter.globals as globals
 import src.interpreter.tempFunctionsFile
 
@@ -30,33 +32,57 @@ class Type(Enum):
     USERFUNCTION = 5
 
 
-def Expression(block: Union[List[str], str], codebase):
-    # TODO(?): try/except needed
+"""
+        diagram of a block
+        block {
+            children: [
+                0: block,
+                1: args
+            ],
+            data: "function" (usually)
+        }
+"""
 
-    blockType = isType(block)
 
-    if blockType == Type.FUNCTION:
-        arguments = block[1:]
-        alias = block[0]
-        functionWanted = findFunction(alias, codebase)
-        if functionWanted is not None:
-            if hasattr(functionWanted, "block"):
-                return functionWanted.run(arguments)
-            else:
-                return functionWanted.run(codebase, arguments, alias)
-        else:
-            raise NotImplementedError(f"Function not found: {alias}")
-    elif blockType == Type.STRING:
+def Expression(block: Union[Tree, Token], codebase):
+    if globals.codebase.ret is not None:
+        return
+
+    if type(block) is Token:
+        # the worse if statement you've ever seen.
+        # TODO: maybe make this a function?
+        if (block[0] == "'" or block[0] == "\"") and (block[-1] == "'" or block[-1] == "\""):
+            return block[1:-1]
         return block
-    elif blockType == Type.ARRAY:
-        arguments = block[1:]
-        return list(map(lambda item: Expression(item, codebase), arguments))
-    elif blockType == Type.INTEGER:
-        return int(block)
-    elif blockType == Type.FLOAT:
-        return float(block)
-    # elif blockType == Type.EXPONENT:
-    #     return int(float(block))
+
+    # print(block, block.pretty())
+    match block.data:
+        case "function":
+            alias = block.children[0].children[0]
+
+            # this gets the argument values from the block
+            # arguments = list(map(lambda x: Expression(x, codebase), block.children[1].children))
+            arguments = list(map(lambda x: x, block.children[1].children))
+            # arguments = list(map(lambda x: x.children[0], arguments))
+            functionWanted = findFunction(alias, codebase)
+            if functionWanted is not None:
+                if hasattr(functionWanted, "block"):  # check if it's a user-made function
+                    return functionWanted.run(arguments)
+                else:
+                    return functionWanted.run(codebase, arguments, alias)
+            else:
+                raise NotImplementedError(f"Function not found: {alias}")
+        case "integer":
+            return int(block.children[0])
+        case "float":
+            return float(block.children[0])
+        case "array":
+            return block.children
+        case "string":
+            return block.children[0][1:-1]
+        case "unescaped_string" | _:
+            return block.children[0]
+
 
 
 def findFunction(name: str, codebase):  # -> Union[Callable[[List, Codebase], None], List[str]]:

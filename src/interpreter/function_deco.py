@@ -50,69 +50,72 @@ from src.interpreter.functions.math.mul import mul
 from src.interpreter.functions.math.pow import pow_func
 from src.interpreter.functions.math.sub import sub
 
-# functions: Dict[str, Function] = {}
-Infinite = math.inf
+
+class ArgumentType:
+    Required = None
+    Variadic = math.inf
 
 
 def setupFunctions():
-    Function(["abs"], {"number": None}, abs_func)
-    Function(["add", "sum"], {"number": None, "bys": Infinite}, add)
-    Function(["ceil"], {"number": None}, ceil)
-    Function(["div", "divide"], {"dividend": None, "divisors": Infinite}, div)
-    Function(["floor"], {"number": None}, floor)
-    Function(["math"], {"number": None, "operator": None, "by": None}, math_func)
-    Function(["mod"], {"number": None, "bys": Infinite}, mod)
-    Function(["mul", "multiply", "product"], {"number": None, "bys": Infinite}, mul)
-    Function(["pow"], {"number": None, "bys": Infinite}, pow_func)
-    Function(["sub", "subtract", "difference"], {"number": None, "bys": Infinite}, sub)
+    Function(["abs"], {"number": ArgumentType.Required}, abs_func)
+    Function(["add", "sum"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, add)
+    Function(["ceil"], {"number": ArgumentType.Required}, ceil)
+    Function(["div", "divide"], {"dividend": ArgumentType.Required, "divisors": ArgumentType.Variadic}, div)
+    Function(["floor"], {"number": ArgumentType.Required}, floor)
+    Function(["math"], {"number": ArgumentType.Required, "operator": ArgumentType.Required, "by": ArgumentType.Required}, math_func)
+    Function(["mod"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, mod)
+    Function(["mul", "multiply", "product"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, mul)
+    Function(["pow"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, pow_func)
+    Function(["sub", "subtract", "difference"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, sub)
 
     Function(["args"], {"index": ""}, args)
-    Function(["array"], {"arr": Infinite}, array)
-    Function(["choose"], {"arr": Infinite}, choose)
-    Function(["choosechar"], {"string": None}, choosechar)
-    Function(["compare"], {"v1": None, "operator": None, "v2": None}, compare)
-    Function(["concat"], {"items": Infinite}, concat)
-    Function(["define"], {"name": None, "item": None}, define)
+    Function(["array"], {"arr": ArgumentType.Variadic}, array)
+    Function(["choose"], {"arr": ArgumentType.Variadic}, choose)
+    Function(["choosechar"], {"string": ArgumentType.Required}, choosechar)
+    Function(["compare"], {"v1": ArgumentType.Required, "operator": ArgumentType.Required, "v2": ArgumentType.Required}, compare)
+    Function(["concat"], {"items": ArgumentType.Variadic}, concat)
+    Function(["define"], {"name": ArgumentType.Required, "item": ArgumentType.Required}, define)
+    
+    Function(["find", "indexof"], {"array": ArgumentType.Required, "element": ArgumentType.Required}, find)
+    Function(["func", "function"], {"name": ArgumentType.Required, "args": ArgumentType.Required, "body": ArgumentType.Required}, func, parse_args=False)
+    Function(["return", "ret"], {"result": ArgumentType.Required}, return_func)
+    Function(["global"], {"use": ArgumentType.Required, "name": ArgumentType.Required, "value": 0}, global_func)
+    Function(["if"], {"compare": ArgumentType.Required, "true": ArgumentType.Required, "false": ArgumentType.Required}, if_func, parse_args=False)
+    Function(["index"], {"arr": ArgumentType.Required, "number": ArgumentType.Required}, index)
+    Function(["import"], {"name": ArgumentType.Required}, import_func)
+    Function(["setindex"], {"arr": ArgumentType.Required, "index": ArgumentType.Required, "value": ARgumentType.Required}, setindex)
 
-    Function(["find", "indexof"], {"list": None, "value": None}, find)
-    Function(["func", "function"], {"name": None, "args": None, "body": None}, func, parse_args=False)
-    Function(["return", "ret"], {"result": None}, return_func)
-    Function(["global"], {"use": None, "name": None, "value": 0}, global_func)
-    Function(["if"], {"compare": None, "true": None, "false": None}, if_func, parse_args=False)
-    Function(["index"], {"arr": None, "index": None}, index)
-    Function(["setindex"], {"arr": None, "index": None, "value": None}, setindex)
-    Function(["import"], {"name": None}, import_func)
-
-    Function(["length"], {"arr": None}, length)
-    Function(["loop"], {"amount": None, "body": None}, loop, parse_args=False)
+    Function(["length"], {"arr": ArgumentType.Required}, length)
+    Function(["loop"], {"amount": ArgumentType.Required, "body": ArgumentType.Required}, loop, parse_args=False)
 
     Function(["j"], {"amount": 1}, j)
-    Function(["join"], {"array": None, "joiner": ""}, join)
-    Function(["joinall"], {"array": None}, joinall)
+    Function(["join"], {"array": ArgumentType.Required, "joiner": ""}, join)
+    Function(["joinall"], {"array": ArgumentType.Required}, joinall)
 
-    Function(["randint"], {"minimum": None, "maximum": None}, randint)
+    Function(["randint"], {"minimum": ArgumentType.Required, "maximum": ArgumentType.Required}, randint)
     Function(["random"], {"minimum": 0, "maximum": 1}, random_func)
-    Function(["repeat"], {"item": None, "amount": None}, repeat)
-    Function(["raise"], {"message": None}, raise_func)
-    Function(["round"], {"number": None}, round_func)
-    Function(["replace"], {"string": None, "match": None, "replace": None}, replace_func)
-    Function(["slice"], {"array": None, "index_start": None, "index_end": None}, slice_func)
-    Function(["split"], {"string": None, "seperator": " "}, split)
+
+    Function(["repeat"], {"item": ArgumentType.Required, "amount": ArgumentType.Required}, repeat)
+    Function(["raise"], {"message": ArgumentType.Required}, raise_func)
+    Function(["round"], {"number": ArgumentType.Required}, round_func)
+    Function(["replace"], {"string": ArgumentType.Required, "match": ArgumentType.Required, "replace": ArgumentType.Required}, replace_func)
+    Function(["slice"], {"array": ArgumentType.Required, "index_start": ArgumentType.Required, "index_end": ArgumentType.Required}, slice_func)
+    Function(["split"], {"string": ArgumentType.Required, "seperator": " "}, split)
 
     Function(["time"], {}, time_func)
-    Function(["try"], {"attempt": None, "on_error": None}, try_func, parse_args=False)
-    Function(["user"], {"userItemToGet": None}, user_func)
+    Function(["try"], {"attempt": ArgumentType.Required, "on_error": ArgumentType.Required}, try_func, parse_args=False)
+    Function(["user"], {"userItemToGet": ArgumentType.Required}, user_func)
     Function(["username"], {}, username)
     Function(["userid"], {}, userid)
-    Function(["var"], {"item": None, "index": ""}, var)
-    Function(["while"], {"condition": None, "body": None}, while_func, parse_args=False)
-    Function(["block"], {"body": Infinite}, block, parse_args=False)
-    Function(["#"], {"comments": Infinite}, comment)
+    Function(["var"], {"item": ArgumentType.Required, "index": ""}, var)
+    Function(["while"], {"condition": ArgumentType.Required, "body": ArgumentType.Required}, while_func, parse_args=False)
+    Function(["block"], {"body": ArgumentType.Variadic}, block, parse_args=False)
+    Function(["#"], {"comments": ArgumentType.Variadic}, comment)
 
-    Function(["str"], {"item": None}, str)
-    Function(["int"], {"item": None}, int)
-    Function(["float"], {"item": None}, float)
-    # Function(["#"], {"*": Infinite}, lambda x: None)
+    Function(["str"], {"item": ArgumentType.Required}, str)
+    Function(["int"], {"item": ArgumentType.Required}, int)
+    Function(["float"], {"item": ArgumentType.Required}, float)
+    # Function(["#"], {"*": ArgumentType.Variadic}, lambda x: ArgumentType.Required)
 
 
 setupFunctions()

@@ -4,6 +4,7 @@ from typing import Dict, Any, Union, Callable, List
 from src.interpreter.expression import Expression
 from src.interpreter.tempFunctionsFile import functions
 from src.interpreter.run import Codebase
+from src.interpreter.globals import debug
 
 
 # Returns true if the value is not "None" or "Infinite"
@@ -21,7 +22,8 @@ class Function:
         self.parse_args = parse_args
 
         for alias in aliases:
-            print([alias.upper(), alias.lower()], self)
+            if debug.print_debug:
+                print([alias.upper(), alias.lower()], self)
             functions[alias.upper()] = self
             functions[alias.lower()] = self
 
