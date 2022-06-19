@@ -32,7 +32,7 @@ class Function:
             parsedArgs = list(map(lambda arg: Expression(arg, codebase), args))
         else:
             parsedArgs = args
-
+        
         parsedArgsLength = len(parsedArgs)
 
         # TODO: Make it so that it doesnt change the original list (parsedArgs)

@@ -26,7 +26,7 @@ LCASE_LETTER: "a".."z"
 UCASE_LETTER: "A".."Z"
 LETTER: UCASE_LETTER | LCASE_LETTER
 ALPHANUMERIC: (ALLNONCONFLICTING)+
-ALLNONCONFLICTING: /[^\[\]0-9\{\}\"\s\,]/
+ALLNONCONFLICTING: /([^\[\]0-9\{\}\"\s\,\-]|\- )/
 ALLEXCEPTBRACKETS: /[^\[\]]/
 
 // imports from common library my beloved

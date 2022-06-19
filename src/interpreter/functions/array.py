@@ -1,2 +1,2 @@
 def array(*arr):
-    return ["ARRAY", arr]
+    return list(arr)
