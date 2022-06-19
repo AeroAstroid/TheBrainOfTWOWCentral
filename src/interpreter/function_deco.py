@@ -39,7 +39,7 @@ from src.interpreter.functions.block import block
 from src.interpreter.functions.return_func import return_func
 from src.interpreter.functions.raise_func import raise_func
 
-from src.interpreter.functions.array.map_func import map_func
+# from src.interpreter.functions.array.map_func import map_func
 from src.interpreter.functions.array.max_func import max_func
 from src.interpreter.functions.array.min_func import min_func
 from src.interpreter.functions.array.randomizer import randomizer
@@ -64,15 +64,15 @@ class ArgumentType:
 
 def setupFunctions():
     Function(["abs"], {"number": ArgumentType.Required}, abs_func)
-    Function(["add", "sum"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, add)
+    Function(["add", "sum", "+"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, add)
     Function(["ceil"], {"number": ArgumentType.Required}, ceil)
-    Function(["div", "divide"], {"dividend": ArgumentType.Required, "divisors": ArgumentType.Variadic}, div)
+    Function(["div", "divide", "/"], {"dividend": ArgumentType.Required, "divisors": ArgumentType.Variadic}, div)
     Function(["floor"], {"number": ArgumentType.Required}, floor)
     Function(["math"], {"number": ArgumentType.Required, "operator": ArgumentType.Required, "by": ArgumentType.Required}, math_func)
-    Function(["mod"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, mod)
-    Function(["mul", "multiply", "product"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, mul)
-    Function(["pow"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, pow_func)
-    Function(["sub", "subtract", "difference"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, sub)
+    Function(["mod", "%"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, mod)
+    Function(["mul", "multiply", "product", "*"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, mul)
+    Function(["pow", "^"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, pow_func)
+    Function(["sub", "subtract", "difference", "-"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, sub)
 
     Function(["args"], {"index": ""}, args)
     Function(["array"], {"arr": ArgumentType.Variadic}, array)
@@ -118,6 +118,11 @@ def setupFunctions():
     Function(["while"], {"condition": ArgumentType.Required, "body": ArgumentType.Required}, while_func, parse_args=False)
     Function(["block"], {"body": ArgumentType.Variadic}, block, parse_args=False)
     Function(["#"], {"comments": ArgumentType.Variadic}, comment)
+
+    Function(["min"], {"array": ArgumentType.Required}, min_func)
+    Function(["max"], {"array": ArgumentType.Required}, max_func)
+    # Function(["map"], {"array": ArgumentType.Required}, map_func)
+    Function(["sort"], {"array": ArgumentType.Required}, sort_func)
 
     Function(["str"], {"item": ArgumentType.Required}, str)
     Function(["int"], {"item": ArgumentType.Required}, int)
