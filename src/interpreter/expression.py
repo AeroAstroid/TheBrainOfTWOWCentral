@@ -84,7 +84,6 @@ def Expression(block: Union[Tree, Token], codebase):
             return block.children[0]
 
 
-
 def findFunction(name: str, codebase):  # -> Union[Callable[[List, Codebase], None], List[str]]:
     # This tries to find a user-made function first, then tries the built-in ones.
     functionWanted = globals.codebase.functions[name]
@@ -92,20 +91,3 @@ def findFunction(name: str, codebase):  # -> Union[Callable[[List, Codebase], No
         functionWanted = src.interpreter.tempFunctionsFile.functions.get(name)
 
     return functionWanted
-
-
-def isType(block):
-    if type(block) == list:
-        if block[0] == "ARRAY":
-            return Type.ARRAY
-        else:
-            return Type.FUNCTION
-    else:
-        if fullmatch(r"^[+-]?\d+$", str(block)):
-            return Type.INTEGER
-        elif fullmatch(r"^[+-]?\d+(.|([eE][+-]?)|)\d+$", str(block)):
-            return Type.FLOAT
-        # elif fullmatch(r"^[+-]?\d+[eE][+-]?\d+$", block):
-        #     return Type.EXPONENT
-        else:
-            return Type.STRING

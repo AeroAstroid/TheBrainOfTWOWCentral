@@ -11,6 +11,7 @@ def import_func(name):
     else:
         # Add it to the codebase functions
         # TODO: Remove this hack (by adding a FUNCS row to the tag database)
+        # TODO: This is outdated
         code = parseCode(tag["program"])
         funcLines = []
         for line in code:

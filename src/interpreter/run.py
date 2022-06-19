@@ -5,6 +5,7 @@ from typing import List, Union
 
 import discord
 from func_timeout import func_timeout, FunctionTimedOut
+from lark import Tree
 
 from src.interpreter.Codebase import Codebase
 from src.interpreter.error_messages import unfunny_errmsg
@@ -16,7 +17,7 @@ from src.interpreter.parse import parseCode
 from src.interpreter.tempFunctionsFile import functions
 
 
-def runCode(code: str, user: Union[discord.User, None] = None, arguments: List[str] = None):
+def runCode(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = None):
     try:
         return func_timeout(30, runCodeSandbox, args=(code, user, arguments))
     except FunctionTimedOut:
@@ -25,9 +26,9 @@ def runCode(code: str, user: Union[discord.User, None] = None, arguments: List[s
         return error
 
 
-def runCodeSandbox(code: str, user: Union[discord.User, None] = None, arguments: List[str] = None):
+def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = None):
     # TODO: Trim up to three backticks from beginning and end of code
-    parsed_code = parseCode(code)
+    parsed_code = parseCode(code).children
     globals.codebase = Codebase(parsed_code, user, arguments)
     globals.codebase.functions = globals.codebase.functions | functions
 
