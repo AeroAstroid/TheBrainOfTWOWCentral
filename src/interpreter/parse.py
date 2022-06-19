@@ -17,9 +17,8 @@ start: bstar*
     | unescaped_string
 string: ESCAPED_STRING
 block: ALPHANUMERIC
-args: arg*
 array: "{" [arg ("," arg)*] "}"
-function: ("[") block args ("]")
+function: ("[") block arg* ("]")
 unescaped_string: ALPHANUMERIC
 ALLBUTBRACKETS: ALLEXCEPTBRACKETS+
 DIGIT: "0".."9"

@@ -62,7 +62,7 @@ def Expression(block: Union[Tree, Token], codebase):
 
             # this gets the argument values from the block
             # arguments = list(map(lambda x: Expression(x, codebase), block.children[1].children))
-            arguments = list(map(lambda x: x, block.children[1].children))
+            arguments = list(map(lambda x: x, block.children[1:]))
             # arguments = list(map(lambda x: x.children[0], arguments))
             functionWanted = findFunction(alias, codebase)
             if functionWanted is not None:

@@ -2,10 +2,11 @@ from typing import List, Dict
 
 import src.interpreter.globals as globals
 from src.interpreter.expression import Expression
+from src.interpreter.functions.define import define
 
 
 class UserFunction:
-    def __init__(self, name: str, args: Dict[int, str], block: List[str], global_func: bool):
+    def __init__(self, name: str, args: List[str], block: List[str], global_func: bool):
         self.args = args
         self.block = block
 
@@ -21,11 +22,9 @@ class UserFunction:
         # (interpreting within interpreting)
 
         # Temporary variables for use in function (lexical scope)
-        func_arg_name = self.args.values()
         globals.codebase.variables.append({})
-        for i, arg in enumerate(func_arg_name):
-            # TODO: This is outdated
-            Expression(["DEFINE", arg, run_args[i]], globals.codebase)
+        for i, arg in enumerate(self.args):
+            define(arg, Expression(run_args[i], globals.codebase))
 
         result = Expression(self.block, globals.codebase)
         globals.codebase.variables.pop()
