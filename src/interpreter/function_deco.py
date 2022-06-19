@@ -83,7 +83,7 @@ def setupFunctions():
     Function(["if"], {"compare": ArgumentType.Required, "true": ArgumentType.Required, "false": ArgumentType.Required}, if_func, parse_args=False)
     Function(["index"], {"arr": ArgumentType.Required, "number": ArgumentType.Required}, index)
     Function(["import"], {"name": ArgumentType.Required}, import_func)
-    Function(["setindex"], {"arr": ArgumentType.Required, "index": ArgumentType.Required, "value": ARgumentType.Required}, setindex)
+    Function(["setindex"], {"arr": ArgumentType.Required, "index": ArgumentType.Required, "value": ArgumentType.Required}, setindex)
 
     Function(["length"], {"arr": ArgumentType.Required}, length)
     Function(["loop"], {"amount": ArgumentType.Required, "body": ArgumentType.Required}, loop, parse_args=False)
