@@ -77,7 +77,7 @@ def Expression(block: Union[Tree, Token], codebase):
         case "float":
             return float(block.children[0])
         case "array":
-            return block.children
+            return list(map(lambda x: Expression(x, globals.codebase), block.children))
         case "string":
             return block.children[0][1:-1]
         case "unescaped_string" | _:
