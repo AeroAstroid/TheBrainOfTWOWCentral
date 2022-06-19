@@ -37,6 +37,7 @@ from src.interpreter.functions.var import var
 from src.interpreter.functions.while_func import while_func
 from src.interpreter.functions.block import block
 from src.interpreter.functions.return_func import return_func
+from src.interpreter.functions.raise_func import raise_func
 
 from src.interpreter.functions.math.abs import abs_func
 from src.interpreter.functions.math.add import add
@@ -92,6 +93,7 @@ def setupFunctions():
     Function(["randint"], {"minimum": None, "maximum": None}, randint)
     Function(["random"], {"minimum": 0, "maximum": 1}, random_func)
     Function(["repeat"], {"item": None, "amount": None}, repeat)
+    Function(["raise"], {"message": None}, raise_func)
     Function(["round"], {"number": None}, round_func)
     Function(["replace"], {"string": None, "match": None, "replace": None}, replace_func)
     Function(["slice"], {"array": None, "index_start": None, "index_end": None}, slice_func)
