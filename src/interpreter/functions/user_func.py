@@ -1,5 +1,7 @@
 import src.interpreter.globals as globals
 
+from datetime import datetime
+
 
 def user_func(userItemToGet):
     match userItemToGet:
@@ -12,7 +14,7 @@ def user_func(userItemToGet):
         case "avatar":
             return str(globals.codebase.user.avatar_url)
         case "created_at":
-            return globals.codebase.user.created_at
+            return datetime.timestamp(globals.codebase.user.created_at)
         case "display_name":
             return globals.codebase.user.display_name
         case _:
