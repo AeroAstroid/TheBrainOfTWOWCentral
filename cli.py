@@ -14,5 +14,9 @@ while True:
     print(Colours.BOLD + "enter your b* code:\n" + Colours.ENDC)
 
     code = "\n".join(iter(input, empty))
+    if code.startswith("file "):
+        code = code.removeprefix("file ")
+        with open(code) as f:
+            code = f.read()
     result = runCodeSandbox(code)
     print("Result below:\n\n", result, "\n", sep="")
