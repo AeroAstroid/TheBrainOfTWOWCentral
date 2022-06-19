@@ -1,2 +1,6 @@
+class BStarProgramDefinedException(Exception):
+  pass
+
+
 def raise_func(msg):
-  raise Exception(msg)
+  raise BStarProgramDefinedException(msg)

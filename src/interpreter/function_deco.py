@@ -39,6 +39,10 @@ from src.interpreter.functions.block import block
 from src.interpreter.functions.return_func import return_func
 from src.interpreter.functions.raise_func import raise_func
 
+from src.interpreter.functions.array.max_func import max_func
+from src.interpreter.functions.array.min_func import min_func
+from src.interpreter.functions.array.sort_func import sort_func
+
 from src.interpreter.functions.math.abs import abs_func
 from src.interpreter.functions.math.add import add
 from src.interpreter.functions.math.ceil import ceil
