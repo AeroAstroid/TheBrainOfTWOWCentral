@@ -32,6 +32,7 @@ class Function:
             parsedArgs = list(map(lambda arg: Expression(arg, codebase), args))
         else:
             parsedArgs = args
+        parsedArgs = [arg for arg in parsedArgs if arg is not None] # TODO: Remove this once arg bug is fixed in Expression
         
         parsedArgsLength = len(parsedArgs)
 

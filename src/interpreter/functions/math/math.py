@@ -6,7 +6,8 @@ from src.interpreter.functions.math.pow import pow_func
 from src.interpreter.functions.math.sub import sub
 
 
-def math_func(number, operator, by):
+def math_func(number, operator: str, by):
+    operator = operator.strip()
     if operator == "+":
         return add(number, by)
     elif operator == "-":
@@ -19,3 +20,5 @@ def math_func(number, operator, by):
         return pow_func(number, by)
     elif operator == "%":
         return mod(number, by)
+    else:
+        raise Exception("unknown operator: " + operator)

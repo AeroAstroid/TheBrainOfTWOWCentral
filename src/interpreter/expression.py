@@ -81,9 +81,9 @@ def Expression(block: Union[Tree, Token], codebase):
             items = [item for item in items if item is not None] # TODO: Some might be None due to a blank arg being parsed, if this is fixed remove this (TODO below)
             return items
         case "string":
-            return block.children[0][1:-1].replace("\\n", "\n")
+            return block.children[0][1:-1].replace("\\n", "\n").replace("\\\"", "\"")
         case "arg":
-            return None # TODO: Make empty array not parse blank args, remove TODO above
+            return None # TODO: Make empty array not parse blank args, remove TODO above and TODO in function.py
         case "unescaped_string" | _:
             return block.children[0]
 
