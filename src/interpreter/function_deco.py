@@ -40,10 +40,10 @@ from src.interpreter.functions.return_func import return_func
 from src.interpreter.functions.raise_func import raise_func
 
 # from src.interpreter.functions.array.map_func import map_func
-from src.interpreter.functions.array.max_func import max_func
-from src.interpreter.functions.array.min_func import min_func
-from src.interpreter.functions.array.randomizer import randomizer
-from src.interpreter.functions.array.sort_func import sort_func
+from src.interpreter.functions.arrays.max_func import max_func
+from src.interpreter.functions.arrays.min_func import min_func
+from src.interpreter.functions.arrays.randomizer import randomizer
+from src.interpreter.functions.arrays.sort_func import sort_func
 
 from src.interpreter.functions.math.abs import abs_func
 from src.interpreter.functions.math.add import add
