@@ -77,9 +77,13 @@ def Expression(block: Union[Tree, Token], codebase):
         case "float":
             return float(block.children[0])
         case "array":
-            return list(map(lambda x: Expression(x, globals.codebase), block.children))
+            items = list(map(lambda x: Expression(x, globals.codebase), block.children))
+            items = [item for item in items if item is not None] # TODO: Some might be None due to a blank arg being parsed, if this is fixed remove this (TODO below)
+            return items
         case "string":
             return block.children[0][1:-1]
+        case "arg":
+            return None # TODO: Make empty array not parse blank args, remove TODO above
         case "unescaped_string" | _:
             return block.children[0]
 
