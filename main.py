@@ -58,9 +58,9 @@ async def tag(ctx, message, *, arguments=""):
     if tagObject is not None:
         code = tagObject["program"]
         # TODO: this is float only rn, do support for int in the future
-        argumentList = list(map(lambda arg: float(arg), arguments.split(" ")))
+        argument_list = arguments.split(" ")
 
-        output = runCode(code, ctx.author, argumentList)
+        output = runCode(code, ctx.author, argument_list)
         await ctx.send(output)
 
         # If all goes well, then increment the use
