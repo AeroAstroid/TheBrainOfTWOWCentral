@@ -3,7 +3,11 @@ from src.interpreter.expression import Expression
 
 
 def if_func(compare, true, false):
+    # TODO: Get a better name
+    false_arg = false is not False
+
     if Expression(compare, globals.codebase):
         return Expression(true, globals.codebase)
     else:
-        return Expression(false, globals.codebase)
+        if false_arg:
+            return Expression(false, globals.codebase)
