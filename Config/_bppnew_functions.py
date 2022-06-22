@@ -1,4 +1,4 @@
-import random, statistics, re, itertools, time
+import random, statistics, re, itertools, time, math
 import numpy as np
 
 try:
@@ -7,6 +7,9 @@ try:
 except ModuleNotFoundError:
 	from _const import ALPHABET
 	from _functions import is_float, is_whole, is_number, strip_alpha, match_count
+
+class ProgramDefinedException(Exception): # used in THROW
+	pass
 
 def express_array(l):
 	str_form = " ".join(["\"" + str(a) + "\"" for a in l])
@@ -67,7 +70,7 @@ def REPLACE(a,b,c):
 	return a.replace(b,c)
 
 def INDEX(a, b):
-	if type(a) not in [list, str]:
+	if type(a) not in [list, str]:does that
 		raise TypeError(f"First parameter of INDEX function must be a string or an array: {safe_cut(a)}")
 	if not is_whole(b):
 		raise TypeError(f"Second parameter of INDEX function must be an integer: {safe_cut(b)}")
@@ -186,7 +189,7 @@ def IF(a, b, c):
 		return c
 
 def COMPARE(a, b, c):
-	operations = [">", "<", ">=", "<=", "!=", "="]
+	operations = [">", "<", ">=", "<=", "!=", "=", "=="]
 	if b not in operations:
 		raise ValueError(f"Operation parameter of COMPARE function is not a comparison operator: {safe_cut(b)}")
 
@@ -201,7 +204,7 @@ def COMPARE(a, b, c):
 	if b == ">=": return int(a >= c)
 	if b == "<=": return int(a <= c)
 	if b == "!=": return int(a != c)
-	if b == "=": return int(a == c)
+	if b == "=" or b == "==": return int(a == c)
 
 def MOD(a, b):
 	if not is_number(a):
@@ -216,7 +219,7 @@ def MOD(a, b):
 
 	return a % b
 
-def MATH(a, b, c):
+def MATHFUNC(a, b, c):
 	operations = "+-*/^"
 	if not is_number(a):
 		raise ValueError(f"First parameter of MATH function is not a number: {safe_cut(a)}")
@@ -243,10 +246,10 @@ def MATH(a, b, c):
 		return a/c
 	
 	if b == "^":
-		if abs(a) > 1024:
-			raise ValueError(f"First parameter of MATH function too large to safely exponentiate: {safe_cut(a)} (limit 1024)")
-		if abs(c) > 128:
-			raise ValueError(f"Second parameter of MATH function too large to safely exponentiate: {safe_cut(c)} (limit 128)")
+		if abs(a) > 4096:
+			raise ValueError(f"First parameter of MATH function too large to safely exponentiate: {safe_cut(a)} (limit 4096)")
+		if abs(c) > 1024:
+			raise ValueError(f"Second parameter of MATH function too large to safely exponentiate: {safe_cut(c)} (limit 1024)")
 		return a**c
 
 def RANDINT(a, b):
@@ -273,26 +276,93 @@ def RANDOM(a, b):
 
 	return random.uniform(a, b)
 
-def ROUND(a):
+def THROW(a): # don't need to check, because either way it'll error
+	raise ProgramDefinedException(a)
+	
+def TYPEFUNC(a)
+	return type(a).__name__
+	
+def ROUND(a, b=0):
 	if not is_number(a):
 		raise ValueError(f"ROUND function parameter is not a number: {safe_cut(a)}")
+	if not is_number(b):
+		raise ValueError(f"ROUND function parameter is not a number: {safe_cut(b)}")
 	
-	return int(round(float(a)))
+	return round(float(a), b)
 
 def FLOOR(a):
 	if not is_number(a):
 		raise ValueError(f"FLOOR function parameter is not a number: {safe_cut(a)}")
 	
-	return int(float(a))
+	return math.floor(a)
 
 def CEIL(a):
 	if not is_number(a):
 		raise ValueError(f"CEIL function parameter is not a number: {safe_cut(a)}")
 	
-	return np.ceil(float(a))
+	return math.ceil(a)
+
+def LOG(a, b):
+	if not is_number(a):
+		raise ValueError(f"LOG function parameter is not a number: {safe_cut(a)}")
+	if not is_number(b):
+		raise ValueError(f"LOG function parameter is not a number: {safe_cut(b)}")
+		
+	return math.log(a,b)
+
+def FACTORIAL(a):
+	if not is_number(a):
+		raise ValueError(f"FACTORIAL function parameter is not a number: {safe_cut(a)}")
+	if abs(a) > 4096:
+		raise ValueError(f"First parameter of FACTORIAL function too large to safely factorial: {safe_cut(a)} (limit 4096)")
+
+	return math.gamma(a) # extension of the factorial function, allows floats too
+
+def SIN(a):
+	if not is_number(a):
+		raise ValueError(f"SIN function parameter is not a number: {safe_cut(a)}")
+	
+	return math.sin(a)
+
+def TAN(a):
+	if not is_number(a):
+		raise ValueError(f"TAN function parameter is not a number: {safe_cut(a)}")
+	
+	return math.tan(a)
+
+def COS(a):
+	if not is_number(a):
+		raise ValueError(f"COS function parameter is not a number: {safe_cut(a)}")
+	
+	return math.cos(a)
+
+def MINFUNC(a):
+	if not type(a) == list:
+		raise ValueError(f"MIN function parameter is not a list: {safe_cut(a)}")
+		
+	return min(a)
+
+def MAXFUNC(a):
+	if not type(a) == list:
+		raise ValueError(f"MAX function parameter is not a list: {safe_cut(a)}")
+		
+	return max(a)
+
+def SHUFFLE(a):
+	if not type(a) == list:
+		raise ValueError(f"MIN function parameter is not a list: {safe_cut(a)}")
+		
+	return random.sample(a, k=len(a))
+
+def SORTFUNC(a):
+	if not type(a) == list:
+		raise ValueError(f"MIN function parameter is not a list: {safe_cut(a)}")
+	
+	return sorted(a)
+
 
 FUNCTIONS = {
-	"MATH": MATH,
+	"MATH": MATHFUNC,
 	"RANDINT": RANDINT,
 	"RANDOM": RANDOM,
 	"FLOOR": FLOOR,
@@ -321,5 +391,16 @@ FUNCTIONS = {
 	"SLICE": SLICE,
 	"REPLACE": REPLACE,
 	"SPLIT": SPLIT,
-	"TIME": TIMEFUNC
+	"TIME": TIMEFUNC,
+	"LOG": LOG,
+	"FACTORIAL": FACTORIAL,
+	"SIN": SIN,
+	"COS": COS,
+	"TAN": TAN,
+	"TYPE": TYPEFUNC,
+	"THROW": THROW,
+	"MIN": MINFUNC,
+	"MAX": MAXFUNC,
+	"SHUFFLE": SHUFFLE,
+	"SORT": SORTFUNC
 }
