@@ -77,7 +77,7 @@ class EVENT:
 				return
 			
 			# Commands are limited solely to event administrators
-			if message.author not in self.EVENT_ADMIN:
+			if message.author not in self.EVENT_ADMIN.members:
 				return
 
 			args = msg.split(" ")
