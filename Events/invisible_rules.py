@@ -1,5 +1,7 @@
+import os
 import time
 import discord as dc
+import importlib
 
 class EVENT:
 	# Executes when loaded
@@ -84,8 +86,8 @@ class EVENT:
 			cmd = args[0][3:].lower()
 
 			if cmd == "begin":
-				player_role = dc.utils.get(self.SERVER["MAIN"].roles, id=self.PARAM["PLAYER_ROLE_ID"])
-				game_channel = dc.utils.get(self.SERVER["MAIN"].channels, id=self.PARAM["GAME_CHANNEL_ID"])
+				player_role = dc.utils.get(self.SERVER["MAIN"].roles, id=int(self.PARAM["PLAYER_ROLE_ID"]))
+				game_channel = dc.utils.get(self.SERVER["MAIN"].channels, id=int(self.PARAM["GAME_CHANNEL_ID"]))
 
 				if player_role is None:
 					await message.channel.send(
@@ -150,3 +152,39 @@ class EVENT:
 				await message.channel.send(
 				f"✅ **Successfully edited {parameter}** from\n> `{old_value}`\nto\n> `{value}`")
 				return
+			
+			if cmd == "setrules":
+				if len(message.attachments) == 0:
+					await message.channel.send(
+					f"💀 **Send a file containing the rule scripts!**")
+					return
+				
+				try:
+					await message.attachments[0].save(f"{message.id}_IR_RULES.py")
+
+					TEMP_IR_RULES = importlib.import_module(f"{message.id}_IR_RULES")
+
+					rule_funcs = [attr for attr in dir(TEMP_IR_RULES) if not attr.startswith("__")]
+
+					RULES = [getattr(TEMP_IR_RULES, func) for func in rule_funcs]
+					RULE_DESC = [f.__doc__.strip() for f in RULES]
+
+					os.remove(f"{message.id}_IR_RULES.py")
+
+				except Exception as err:
+					await message.channel.send(
+					"💀 **An error occurred while importing the rules file!**")
+
+					try: os.remove(f"{message.id}_IR_RULES.py")
+					except Exception: pass
+
+					raise err
+				
+				self.GAME["RULES"] = RULES
+				self.GAME["RULE_DESC"] = RULE_DESC
+
+				await message.channel.send(f"✅ **Successfully imported {len(RULES)} rules!**")
+				return
+
+
+				
