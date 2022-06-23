@@ -118,7 +118,7 @@ class EVENT:
 					
 					self.GAME["PERIOD_STEP"] += 1
 				
-					if p_s != len(msgs):
+					if self.GAME["PERIOD_STEP"] != len(msgs):
 						self.GAME["NEXT_PERIOD"] = int(time() + msg_delay)
 					else:
 						self.GAME["NEXT_PERIOD"] = int(time() + 20)
