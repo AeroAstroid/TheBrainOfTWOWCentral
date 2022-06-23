@@ -115,14 +115,17 @@ class EVENT:
 					current_params = "\n".join([f"**{k}**: {v}" for k, v in self.PARAM.items()])
 					await message.channel.send(
 					f"❓ **Do you wish to start the game?** Send `ir/begin confirm` to start!"
-					+ "\n\n**Parameters:**\n{current_params}"
-					+ f"\n\n**Players:** {players}\n**Rounds:** {rule_count}")
+					+ f"\n\n**Parameters:**\n{current_params}"
+					+ f"\n\n**Players:** {len(players)}\n**Rounds:** {rule_count}")
 					return
 				
 				self.PLAYER_ROLE = player_role
 				self.GAME_CHANNEL = game_channel
 				self.GAME["PLAYERS"] = players
 				self.GAME_STARTED = True
+
+				await message.channel.send("✅ **Invisible Rules is now starting.**")
+				return
 
 			if cmd == "modify": # Change parameters or view them
 				if len(args) == 1:
