@@ -1,5 +1,5 @@
 import os
-import time
+from time import time
 import discord as dc
 import importlib
 
@@ -21,14 +21,19 @@ class EVENT:
 			"TESTING": [],
 			"PLAYER_TESTS": [],
 
-			"NEXT_PERIOD": 0
+			"ELIMINATIONS": [],
+
+			"NEXT_PERIOD": 0,
+			"PERIOD_STEP": 0
 		}
 
 		self.PLAYER_ROLE = None
+		self.ANNOUNCE_CHANNEL = None
 		self.GAME_CHANNEL = None
 
 		self.PARAM = { # Define all the parameters necessary
 			"PLAYER_ROLE_ID": None,
+			"ANNOUNCE_CHANNEL_ID": None,
 			"GAME_CHANNEL_ID": None,
 			"EVENT_ADMIN_ID": None,
 
@@ -39,6 +44,7 @@ class EVENT:
 		self.RUNNING = True
 
 		self.PARAM["PLAYER_ROLE_ID"] = 498254150044352514
+		self.PARAM["ANNOUNCE_CHANNEL_ID"] = 716131405503004765
 		self.PARAM["GAME_CHANNEL_ID"] = 716131405503004765
 
 		self.PARAM["EVENT_ADMIN_ID"] = 959155078844010546
@@ -62,12 +68,60 @@ class EVENT:
 			"TESTING": [],
 			"PLAYER_TESTS": [],
 
-			"NEXT_PERIOD": 0
+			"ELIMINATIONS": [],
+
+			"NEXT_PERIOD": 0,
+			"PERIOD_STEP": 0
 		}
 
 		self.PLAYER_ROLE = None
+		self.ANNOUNCE_CHANNEL = None
 		self.GAME_CHANNEL = None
 	
+	# Function that runs every two seconds
+	async def on_two_second(self):
+		rnd = self.GAME["ROUND"]
+		t = self.GAME["NEXT_PERIOD"]
+		p_s = self.GAME["PERIOD_STEP"]
+
+		if time() > t:
+
+			if rnd == 0:
+				m, s = [self.PARAM["ROUND_TIME"] // 60, self.PARAM["ROUND_TIME"] % 60]
+
+				msg_delay = 6
+				msgs = [
+					"> **Welcome to Invisible Rules!**",
+
+					(f"The first round is about to start. Each round lasts **{m}m"
+					+ (f'{s}s' if s != 0 else '') + "**."),
+
+					(f"You will be able to send messages in <#{self.PARAM['GAME_CHANNEL_ID']}>, and I will "
+					+ "tell you whether or not each message passes this round's current rule.")
+
+					("Once you're confident you know the rule, DM me with **`ir/test`** - you will receive a test "
+					+ "comprised of [N] messages, and you must tell which ones break the rule and which don't!"),
+
+					("Starting the test is **final** - once you do it, you'll be locked from the inspection "
+					+ "channel for the remainder of the round."),
+
+					"If you fail the test, or fail to submit it within the round's time limit, you will be eliminated.",
+
+					"> Stand by! **Round 1** begins in **20 seconds**."
+				]
+				
+				if p_s < len(msgs):
+					await self.ANNOUNCE_CHANNEL.send(msgs[p_s])
+					
+					self.GAME["PERIOD_STEP"] += 1
+				
+					if p_s != len(msgs):
+						self.GAME["NEXT_PERIOD"] = int(time() + msg_delay)
+					else:
+						self.GAME["NEXT_PERIOD"] = int(time() + 20)
+						self.GAME["ROUND"] = 1
+
+
 	# Function that runs on each message
 	async def on_message(self, message):
 		msg = message.content
