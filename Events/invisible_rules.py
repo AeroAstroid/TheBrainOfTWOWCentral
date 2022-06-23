@@ -80,6 +80,9 @@ class EVENT:
 	
 	# Function that runs every two seconds
 	async def on_two_second(self):
+		if not self.GAME_STARTED:
+			return
+		
 		rnd = self.GAME["ROUND"]
 		t = self.GAME["NEXT_PERIOD"]
 		p_s = self.GAME["PERIOD_STEP"]
@@ -141,11 +144,17 @@ class EVENT:
 
 			if cmd == "begin":
 				player_role = dc.utils.get(self.SERVER["MAIN"].roles, id=int(self.PARAM["PLAYER_ROLE_ID"]))
+				announce_channel = dc.utils.get(self.SERVER["MAIN"].channels, id=int(self.PARAM["ANNOUNCE_CHANNEL_ID"]))
 				game_channel = dc.utils.get(self.SERVER["MAIN"].channels, id=int(self.PARAM["GAME_CHANNEL_ID"]))
 
 				if player_role is None:
 					await message.channel.send(
 					"💀 **Can't start: PLAYER_ROLE_ID doesn't point to a valid role!**")
+					return
+				
+				if announce_channel is None:
+					await message.channel.send(
+					"💀 **Can't start: ANNOUNCE_CHANNEL_ID doesn't point to a valid channel!**")
 					return
 				
 				if game_channel is None:
@@ -174,6 +183,7 @@ class EVENT:
 					return
 				
 				self.PLAYER_ROLE = player_role
+				self.ANNOUNCE_CHANNEL = announce_channel
 				self.GAME_CHANNEL = game_channel
 				self.GAME["PLAYERS"] = players
 				self.GAME_STARTED = True
