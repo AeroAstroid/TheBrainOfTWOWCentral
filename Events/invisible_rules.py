@@ -80,8 +80,6 @@ class EVENT:
 	
 	# Function that runs every two seconds
 	async def on_two_second(self):
-		print("======")
-		print(self.GAME_STARTED)
 
 		if not self.GAME_STARTED:
 			return
@@ -89,8 +87,6 @@ class EVENT:
 		rnd = self.GAME["ROUND"]
 		t = self.GAME["NEXT_PERIOD"]
 		p_s = self.GAME["PERIOD_STEP"]
-
-		print(time(), t, rnd)
 
 		if time() > t:
 
@@ -105,7 +101,7 @@ class EVENT:
 					+ (f'{s}s' if s != 0 else '') + "**."),
 
 					(f"You will be able to send messages in <#{self.PARAM['GAME_CHANNEL_ID']}>, and I will "
-					+ "tell you whether or not each message passes this round's current rule.")
+					+ "tell you whether or not each message passes this round's current rule."),
 
 					("Once you're confident you know the rule, DM me with **`ir/test`** - you will receive a test "
 					+ "comprised of [N] messages, and you must tell which ones break the rule and which don't!"),
@@ -118,7 +114,6 @@ class EVENT:
 					"> Stand by! **Round 1** begins in **20 seconds**."
 				]
 				
-				print(">", p_s, len(msgs))
 				if p_s < len(msgs):
 					await self.ANNOUNCE_CHANNEL.send(msgs[p_s])
 					
@@ -129,9 +124,6 @@ class EVENT:
 					else:
 						self.GAME["NEXT_PERIOD"] = int(time() + 20)
 						self.GAME["ROUND"] = 1
-				
-				print(self.GAME["NEXT_PERIOD"], self.GAME["PERIOD_STEP"], self.GAME["ROUND"])
-
 
 	# Function that runs on each message
 	async def on_message(self, message):
