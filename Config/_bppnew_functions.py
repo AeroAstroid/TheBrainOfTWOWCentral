@@ -341,13 +341,15 @@ def COS(a):
 def MINFUNC(a):
 	if not type(a) == list:
 		raise ValueError(f"MIN function parameter is not a list: {safe_cut(a)}")
-		
+	
+	a = [float(elem) if is_number(elem) else elem for elem in a]
 	return min(a)
 
 def MAXFUNC(a):
 	if not type(a) == list:
 		raise ValueError(f"MAX function parameter is not a list: {safe_cut(a)}")
-		
+	
+	a = [float(elem) if is_number(elem) else elem for elem in a]
 	return max(a)
 
 def SHUFFLE(a):
@@ -360,6 +362,7 @@ def SORTFUNC(a):
 	if not type(a) == list:
 		raise ValueError(f"MIN function parameter is not a list: {safe_cut(a)}")
 	
+	a = [float(elem) if is_number(elem) else elem for elem in a]
 	return sorted(a)
 
 
