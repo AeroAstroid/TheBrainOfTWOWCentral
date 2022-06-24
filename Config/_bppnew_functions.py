@@ -250,7 +250,6 @@ def MATHFUNC(a, b, c):
 			return math.pow(a, c)
 		except OverflowError:
 			raise ValueError(f"Parameters of MATH function too large to safely exponentiate: {safe_cut(a)}, {safe_cut(c)}")
-		return a**c
 
 def RANDINT(a, b):
 	if not is_whole(a):
