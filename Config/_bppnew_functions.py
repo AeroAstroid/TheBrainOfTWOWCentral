@@ -278,7 +278,7 @@ def RANDOM(a, b):
 def THROW(a): # don't need to check, because either way it'll error
 	raise ProgramDefinedException(a)
 	
-def TYPEFUNC(a)
+def TYPEFUNC(a):
 	return type(a).__name__
 	
 def ROUND(a, b=0):
