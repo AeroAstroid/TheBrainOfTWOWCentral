@@ -70,7 +70,7 @@ def REPLACE(a,b,c):
 	return a.replace(b,c)
 
 def INDEX(a, b):
-	if type(a) not in [list, str]:does that
+	if type(a) not in [list, str]:
 		raise TypeError(f"First parameter of INDEX function must be a string or an array: {safe_cut(a)}")
 	if not is_whole(b):
 		raise TypeError(f"Second parameter of INDEX function must be an integer: {safe_cut(b)}")
@@ -210,7 +210,7 @@ def MOD(a, b):
 	if not is_number(a):
 		raise ValueError(f"First parameter of MOD function is not a number: {safe_cut(a)}")
 	if not is_number(b):
-		raise ValueError(f"First parameter of MOD function is not a number: {safe_cut(a)}")
+		raise ValueError(f"Second parameter of MOD function is not a number: {safe_cut(b)}")
 
 	a = int(a) if is_whole(a) else float(a)
 	b = int(b) if is_whole(b) else float(b)
@@ -246,10 +246,10 @@ def MATHFUNC(a, b, c):
 		return a/c
 	
 	if b == "^":
-		if abs(a) > 4096:
-			raise ValueError(f"First parameter of MATH function too large to safely exponentiate: {safe_cut(a)} (limit 4096)")
-		if abs(c) > 1024:
-			raise ValueError(f"Second parameter of MATH function too large to safely exponentiate: {safe_cut(c)} (limit 1024)")
+		try:
+			return math.pow(a, c)
+		except OverflowError:
+			raise ValueError(f"Parameters of MATH function too large to safely exponentiate: {safe_cut(a)}, {safe_cut(c)}")
 		return a**c
 
 def RANDINT(a, b):
@@ -308,15 +308,18 @@ def LOG(a, b):
 	if not is_number(b):
 		raise ValueError(f"LOG function parameter is not a number: {safe_cut(b)}")
 		
+	if b == 0: raise ValueError("Second parameter of LOG function must not be zero")
+		
 	return math.log(a,b)
 
 def FACTORIAL(a):
 	if not is_number(a):
 		raise ValueError(f"FACTORIAL function parameter is not a number: {safe_cut(a)}")
-	if abs(a) > 4096:
-		raise ValueError(f"First parameter of FACTORIAL function too large to safely factorial: {safe_cut(a)} (limit 4096)")
-
-	return math.gamma(a) # extension of the factorial function, allows floats too
+	
+	try:
+		return math.gamma(a-1) # extension of the factorial function, allows floats too
+	except OverflowError:
+		raise ValueError(f"First parameter of FACTORIAL function too large to safely factorial: {safe_cut(a)}")
 
 def SIN(a):
 	if not is_number(a):
