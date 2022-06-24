@@ -110,10 +110,11 @@ def LENGTH(a):
 	if type(a) in [int, float]: a = str(a)
 	return len(a)
 
-def ARGS(a):
+def ARGS(a=-1):
 	if not is_whole(a):
 		raise ValueError(f"ARGS function index must be an integer: {safe_cut(a)}")
-	
+	if a == -1:
+		return ("aa", )
 	return ("a", int(a))
 
 def GLOBALDEFINE(a, b):
