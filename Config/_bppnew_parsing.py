@@ -227,6 +227,9 @@ def run_bpp_program(code, p_args, author, runner):
 
 			elif result[0] == "id":
 				result = runner.id
+			
+			elif result[0] == "aa":
+				result = p_args
 		
 		functions[k] = result
 		return result
