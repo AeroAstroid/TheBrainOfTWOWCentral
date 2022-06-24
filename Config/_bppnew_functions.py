@@ -63,6 +63,8 @@ def SPLIT(a,b):
 		raise TypeError(f"Parameter of SPLIT function must be a string: {safe_cut(b)}")
 	return a.split(b)
 
+def JOIN()
+
 def REPLACE(a,b,c):
 	if type(a) != str:
 		raise TypeError(f"Parameter of REPLACE function must be a string: {safe_cut(a)}")
@@ -342,28 +344,45 @@ def MINFUNC(a):
 	if not type(a) == list:
 		raise ValueError(f"MIN function parameter is not a list: {safe_cut(a)}")
 	
-	a = [float(elem) if is_number(elem) else elem for elem in a]
+	if 0 not in [is_number(elem) for elem in a]:
+		a = [float(elem) for elem in a]
+	
 	return min(a)
 
 def MAXFUNC(a):
 	if not type(a) == list:
 		raise ValueError(f"MAX function parameter is not a list: {safe_cut(a)}")
 	
-	a = [float(elem) if is_number(elem) else elem for elem in a]
+	if 0 not in [is_number(elem) for elem in a]:
+		a = [float(elem) for elem in a]
+	
 	return max(a)
 
 def SHUFFLE(a):
 	if not type(a) == list:
-		raise ValueError(f"MIN function parameter is not a list: {safe_cut(a)}")
+		raise ValueError(f"SHUFFLE function parameter is not a list: {safe_cut(a)}")
 		
 	return random.sample(a, k=len(a))
 
 def SORTFUNC(a):
 	if not type(a) == list:
-		raise ValueError(f"MIN function parameter is not a list: {safe_cut(a)}")
+		raise ValueError(f"SORT function parameter is not a list: {safe_cut(a)}")
 	
-	a = [float(elem) if is_number(elem) else elem for elem in a]
+	if 0 not in [is_number(elem) for elem in a]:
+		a = [float(elem) for elem in a]
+	
 	return sorted(a)
+
+def JOIN(a, b=""):
+	if not type(a) == list:
+		raise ValueError(f"First JOIN function parameter is not a list: {safe_cut(a)}")
+	if not type(b) == str:
+		raise ValueError(f"Second JOIN function parameter is not a string: {safe_cut(b)}")
+	
+	a = [str(elem) for elem in a]
+	
+	return b.join(a)
+	
 
 
 FUNCTIONS = {
@@ -407,5 +426,6 @@ FUNCTIONS = {
 	"MIN": MINFUNC,
 	"MAX": MAXFUNC,
 	"SHUFFLE": SHUFFLE,
-	"SORT": SORTFUNC
+	"SORT": SORTFUNC,
+	"JOIN": JOIN
 }
