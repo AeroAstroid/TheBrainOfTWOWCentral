@@ -311,8 +311,9 @@ class EVENT:
 				
 				value = " ".join(args[2:])
 				old_value = self.PARAM[parameter]
+				old_type = type(self.PARAM[parameter])
 
-				self.PARAM[parameter] = value
+				self.PARAM[parameter] = old_type(value)
 
 				await message.channel.send(
 				f"✅ **Successfully edited {parameter}** from\n> `{old_value}`\nto\n> `{value}`")
