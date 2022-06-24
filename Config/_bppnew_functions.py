@@ -287,19 +287,19 @@ def ROUND(a, b=0):
 	if not is_number(b):
 		raise ValueError(f"ROUND function parameter is not a number: {safe_cut(b)}")
 	
-	return round(float(a), b)
+	return round(float(a), float(b))
 
 def FLOOR(a):
 	if not is_number(a):
 		raise ValueError(f"FLOOR function parameter is not a number: {safe_cut(a)}")
 	
-	return math.floor(a)
+	return math.floor(float(a))
 
 def CEIL(a):
 	if not is_number(a):
 		raise ValueError(f"CEIL function parameter is not a number: {safe_cut(a)}")
 	
-	return math.ceil(a)
+	return math.ceil(float(a))
 
 def LOG(a, b):
 	if not is_number(a):
@@ -309,14 +309,14 @@ def LOG(a, b):
 		
 	if b == 0: raise ValueError("Second parameter of LOG function must not be zero")
 		
-	return math.log(a,b)
+	return math.log(float(a),float(b))
 
 def FACTORIAL(a):
 	if not is_number(a):
 		raise ValueError(f"FACTORIAL function parameter is not a number: {safe_cut(a)}")
 	
 	try:
-		return math.gamma(a-1) # extension of the factorial function, allows floats too
+		return math.gamma(float(a)+1) # extension of the factorial function, allows floats too
 	except OverflowError:
 		raise ValueError(f"First parameter of FACTORIAL function too large to safely factorial: {safe_cut(a)}")
 
@@ -324,19 +324,19 @@ def SIN(a):
 	if not is_number(a):
 		raise ValueError(f"SIN function parameter is not a number: {safe_cut(a)}")
 	
-	return math.sin(a)
+	return math.sin(float(a))
 
 def TAN(a):
 	if not is_number(a):
 		raise ValueError(f"TAN function parameter is not a number: {safe_cut(a)}")
 	
-	return math.tan(a)
+	return math.tan(float(a))
 
 def COS(a):
 	if not is_number(a):
 		raise ValueError(f"COS function parameter is not a number: {safe_cut(a)}")
 	
-	return math.cos(a)
+	return math.cos(float(a))
 
 def MINFUNC(a):
 	if not type(a) == list:
