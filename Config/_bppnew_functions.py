@@ -284,10 +284,10 @@ def TYPEFUNC(a):
 def ROUND(a, b=0):
 	if not is_number(a):
 		raise ValueError(f"ROUND function parameter is not a number: {safe_cut(a)}")
-	if not is_number(b):
-		raise ValueError(f"ROUND function parameter is not a number: {safe_cut(b)}")
+	if not is_whole(b):
+		raise ValueError(f"ROUND function parameter is not an integer: {safe_cut(b)}")
 	
-	return round(float(a), float(b))
+	return round(float(a), int(b))
 
 def FLOOR(a):
 	if not is_number(a):
