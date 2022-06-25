@@ -153,22 +153,29 @@ class EVENT:
 				return
 
 			if rnd < 0: # Round -N means the intermission preceding round N
-				print("Intermission ending")
-
 				self.GAME["NEXT_PERIOD"] = int(time() + self.PARAM["ROUND_TIME"])
 				self.GAME["ROUND"] *= -1
+				rnd *= -1
 				self.GAME["PERIOD_STEP"] = 0
 
 				self.GAME["INSPECTING"] = self.GAME["PLAYERS"]
 
-				ann_timer = await self.ANNOUNCE_CHANNEL.send((
-				f"🔍 **Round {self.GAME['ROUND']}** of Invisible Rules has started!\n\n"
+				await self.ANNOUNCE_CHANNEL.send("troll")
+
+				full_msg = (
+				f"🔍 **Round {rnd}** of Invisible Rules has started!\n\n"
 				+ f"Those with the <@{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by "
 				+ f"sending messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.\n\n"
-				+ self.make_timer(self.PARAM["ROUND_TIME"])))
+				+ self.make_timer(self.PARAM["ROUND_TIME"]))
+
+				print(full_msg)
+
+				ann_timer = await self.ANNOUNCE_CHANNEL.send(full_msg)
+
+				await self.ANNOUNCE_CHANNEL.send("troll2")
 
 				game_timer = await self.GAME_CHANNEL.send(
-				f"🔍 **Round {self.GAME['ROUND']}**\n\n{self.make_timer(self.PARAM['ROUND_TIME'])}")
+				f"🔍 **Round {rnd}**\n\n{self.make_timer(self.PARAM['ROUND_TIME'])}")
 
 				self.GAME["TIMER_MSGS"] = [ann_timer, game_timer]
 
@@ -176,7 +183,7 @@ class EVENT:
 
 				for p in self.GAME["PLAYERS"]:
 					player_timer = await p.send((
-					f"🔍 **Round {self.GAME['ROUND']}**\n\n{self.make_timer(self.PARAM['ROUND_TIME'])}"
+					f"🔍 **Round {rnd}**\n\n{self.make_timer(self.PARAM['ROUND_TIME'])}"
 					+ "\n\nSend **`ir/test`** to stop inspecting the rule and access the test!"))
 
 					self.GAME["TIMER_MSGS"].append(player_timer)
@@ -184,7 +191,7 @@ class EVENT:
 				return
 
 			# NEXT_PERIOD being reached in a round means the round is over
-			await self.ANNOUNCE_CHANNEL.send(f"🔍 **Round {self.GAME['ROUND']}** has **ended!**")
+			await self.ANNOUNCE_CHANNEL.send(f"🔍 **Round {rnd}** has **ended!**")
 
 			self.GAME["INSPECTING"] = []
 			self.GAME["TESTING"] = []
@@ -207,7 +214,7 @@ class EVENT:
 
 				# Edit the message in the announcing channel
 				await self.GAME["TIMER_MSGS"][0].edit(content=(
-				f"🔍 **Round {self.GAME['ROUND']}** of Invisible Rules has started!\n\n"
+				f"🔍 **Round {rnd}** of Invisible Rules has started!\n\n"
 				+ f"Those with the <@{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by "
 				+ f"sending messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.\n\n"
 				+ self.make_timer(self.PARAM["ROUND_TIME"])))
