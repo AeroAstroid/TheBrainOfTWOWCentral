@@ -110,9 +110,12 @@ def LENGTH(a):
 	if type(a) in [int, float]: a = str(a)
 	return len(a)
 
-def ARGS(a):
-	if not is_whole(a):
+def ARGS(a=None):
+	if not is_whole(a) and a is not None:
 		raise ValueError(f"ARGS function index must be an integer: {safe_cut(a)}")
+	
+	if a is None:
+		return ("aa", )
 	
 	return ("a", int(a))
 
@@ -287,7 +290,9 @@ def ROUND(a, b=0):
 	if not is_whole(b):
 		raise ValueError(f"ROUND function parameter is not an integer: {safe_cut(b)}")
 	
-	return round(float(a), int(b))
+	rounded = round(float(a), int(b))
+	if rounded.is_integer(): return int(rounded)
+	return rounded
 
 def FLOOR(a):
 	if not is_number(a):
