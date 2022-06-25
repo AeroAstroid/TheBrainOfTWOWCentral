@@ -3,6 +3,7 @@ from time import time
 import discord as dc
 import importlib
 import numpy as np
+import traceback
 
 class EVENT:
 	# Executes when loaded
@@ -162,13 +163,17 @@ class EVENT:
 
 				await self.ANNOUNCE_CHANNEL.send("troll")
 
-				full_msg = (
-				f"🔍 **Round {rnd}** of Invisible Rules has started!\n\n"
-				+ f"Those with the <@{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by "
-				+ f"sending messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.\n\n"
-				+ self.make_timer(self.PARAM["ROUND_TIME"]))
+				try:
+					full_msg = (
+					f"🔍 **Round {rnd}** of Invisible Rules has started!\n\n"
+					+ f"Those with the <@{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by "
+					+ f"sending messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.\n\n"
+					+ self.make_timer(self.PARAM["ROUND_TIME"]))
 
-				print(full_msg)
+					print(full_msg)
+				except Exception:
+					traceback.print_exc()
+					pass
 
 				ann_timer = await self.ANNOUNCE_CHANNEL.send(full_msg)
 
