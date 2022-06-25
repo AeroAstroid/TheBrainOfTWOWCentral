@@ -287,7 +287,9 @@ def ROUND(a, b=0):
 	if not is_whole(b):
 		raise ValueError(f"ROUND function parameter is not an integer: {safe_cut(b)}")
 	
-	return round(float(a), int(b))
+	rounded = round(float(a), int(b))
+	if rounded.is_integer(): return int(rounded)
+	return rounded
 
 def FLOOR(a):
 	if not is_number(a):
