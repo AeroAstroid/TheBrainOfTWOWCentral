@@ -110,9 +110,12 @@ def LENGTH(a):
 	if type(a) in [int, float]: a = str(a)
 	return len(a)
 
-def ARGS(a):
-	if not is_whole(a):
+def ARGS(a=None):
+	if not is_whole(a) and a is not None:
 		raise ValueError(f"ARGS function index must be an integer: {safe_cut(a)}")
+	
+	if a is None:
+		return ("aa", )
 	
 	return ("a", int(a))
 
