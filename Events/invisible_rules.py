@@ -95,9 +95,7 @@ class EVENT:
 		
 		timer_bar = emoji * p + "⬛" * (10 - p)
 
-		m = remaining // 60
-		m_str = f"{m} minute{'s' if m != 1 else ''}"
-		msg = f"{'⌛' if p % 2 == 0 else '⏳'} **You have less than {m_str} remaining!**"
+		msg = f"{'⌛' if p % 2 == 0 else '⏳'} **The round ends <t:{self.GAME['NEXT_PERIOD']}:R>!**"
 
 		return msg + "\n" + timer_bar
 
@@ -111,6 +109,9 @@ class EVENT:
 		rnd = self.GAME["ROUND"]
 		t = self.GAME["NEXT_PERIOD"]
 		p_s = self.GAME["PERIOD_STEP"]
+
+		print(rnd)
+		print(time(), t)
 
 		if time() > t:
 
@@ -152,6 +153,8 @@ class EVENT:
 				return
 
 			if rnd < 0: # Round -N means the intermission preceding round N
+				print("Intermission ending")
+
 				self.GAME["NEXT_PERIOD"] = int(time() + self.PARAM["ROUND_TIME"])
 				self.GAME["ROUND"] *= -1
 				self.GAME["PERIOD_STEP"] = 0
@@ -168,6 +171,8 @@ class EVENT:
 				f"🔍 **Round {self.GAME['ROUND']}**\n\n{self.make_timer(self.PARAM['ROUND_TIME'])}")
 
 				self.GAME["TIMER_MSGS"] = [ann_timer, game_timer]
+
+				print(self.GAME["TIMER_MSGS"])
 
 				for p in self.GAME["PLAYERS"]:
 					player_timer = await p.send((
@@ -194,6 +199,7 @@ class EVENT:
 			return
 		
 		elif rnd > 0: # If a round is currently running, update the timers in intervals of 10 seconds
+			print("during round", self.GAME["TIMER_MSGS"])
 			self.GAME["PERIOD_STEP"] += 1
 			self.GAME["PERIOD_STEP"] %= 5
 
