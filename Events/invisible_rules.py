@@ -3,7 +3,6 @@ from time import time
 import discord as dc
 import importlib
 import numpy as np
-import traceback
 
 class EVENT:
 	# Executes when loaded
@@ -48,7 +47,7 @@ class EVENT:
 
 		self.PARAM["PLAYER_ROLE_ID"] = 498254150044352514
 		self.PARAM["ANNOUNCE_CHANNEL_ID"] = 716131405503004765
-		self.PARAM["GAME_CHANNEL_ID"] = 716131405503004765
+		self.PARAM["GAME_CHANNEL_ID"] = 990307784690135060
 
 		self.PARAM["EVENT_ADMIN_ID"] = 959155078844010546
 		self.EVENT_ADMIN = dc.utils.get(SERVER["MAIN"].roles, id=self.PARAM["EVENT_ADMIN_ID"])
@@ -98,7 +97,10 @@ class EVENT:
 
 		timer_bar = " ".join(timer_bar)
 
-		msg = f"{'⌛' if p % 2 == 0 else '⏳'} **The round ends <t:{self.GAME['NEXT_PERIOD']}:R>!**"
+		if remaining != 0:
+			msg = f"{'⌛' if p % 2 == 0 else '⏳'} **The round ends <t:{self.GAME['NEXT_PERIOD']}:R>!**"
+		else:
+			msg = "⌛ **The round has ended!**"
 
 		return msg + "\n\n" + timer_bar
 
@@ -174,30 +176,67 @@ class EVENT:
 				self.GAME["TIMER_MSGS"] = [ann_timer, game_timer]
 
 				for p in self.GAME["PLAYERS"]:
-					player_timer = await p.send((
-					f"🔍 **Round {rnd}**\n\n{self.make_timer(self.PARAM['ROUND_TIME'])}"
-					+ "\n\nSend **`ir/test`** to stop inspecting the rule and access the test!"))
-
-					self.GAME["TIMER_MSGS"].append(player_timer)
+					await p.send((f"🔍 **Invisible Rules Round {rnd}**\n\n"
+					+ "Send **`ir/test`** to stop inspecting the rule and access the test!"))
 			
 				return
 
 			# NEXT_PERIOD being reached in a round means the round is over
-			await self.ANNOUNCE_CHANNEL.send(f"🔍 **Round {rnd}** has **ended!**")
 
-			self.GAME["INSPECTING"] = []
-			self.GAME["TESTING"] = []
-			self.GAME["PLAYER_TESTS"] = []
+			if self.GAME["PERIOD_STEP"] < 6:
+				self.GAME["PERIOD_STEP"] = 5
+			
+			self.GAME["PERIOD_STEP"] += 1
 
-			self.GAME["ROUND"] += 1
-			self.GAME["ROUND"] *= -1
+			if self.GAME["PERIOD_STEP"] == 6:
+				await self.ANNOUNCE_CHANNEL.send(f"🔍 **Round {rnd}** has **ENDED!**")
 
-			# debug line that ensures the next round doesn't start, will remove after I code the game ending
-			self.GAME["NEXT_PERIOD"] = int(time() * 2)
-			#self.GAME["NEXT_PERIOD"] = int(time() + 20)
+				# Edit the message in the announcing channel
+				await self.GAME["TIMER_MSGS"][0].edit(content=(
+				f"🔍 **Round {rnd}** of Invisible Rules has started!\n\n"
+				+ f"Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by "
+				+ f"sending messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.\n\n"
+				+ self.make_timer(0)))
+
+				# Edit the message in the game channel
+				await self.GAME["TIMER_MSGS"][1].edit(content=(
+				f"🔍 **Round {self.GAME['ROUND']}**\n\n{self.make_timer(0)}"))
+
+				return
+			
+			if self.GAME["PERIOD_STEP"] == 8:
+				await self.ANNOUNCE_CHANNEL.send("Here are the results:")
+				return
+			
+			if self.GAME["PERIOD_STEP"] == 10:
+				await self.ANNOUNCE_CHANNEL.send("troll")
+				# TODO: send actual results and perform elimination code here
+				return
+
+			if self.GAME["PERIOD_STEP"] == 15:
+				self.GAME["INSPECTING"] = []
+				self.GAME["TESTING"] = []
+				self.GAME["PLAYER_TESTS"] = []
+
+				if self.GAME["ROUND"] != len(self.GAME["RULES"]):
+					self.GAME["ROUND"] += 1
+					next_rnd = self.GAME["ROUND"]
+					self.GAME["ROUND"] *= -1
+
+					self.GAME["NEXT_PERIOD"] = int(time() + 20)
+					await self.ANNOUNCE_CHANNEL.send(f"> ⏳ Stand by! **Round {next_rnd}** begins in **20 seconds**.")
+					return
+				
+				# TODO: program an actual ending
+				await self.ANNOUNCE_CHANNEL.send("🔍 **Invisible Rules has ended!** Thank you for playing.")
+				return False
+
 			return
 		
 		elif rnd > 0: # If a round is currently running, update the timers in intervals of 10 seconds
+			if self.GAME["PERIOD_STEP"] > 5:
+				return
+			
 			self.GAME["PERIOD_STEP"] += 1
 			self.GAME["PERIOD_STEP"] %= 5
 
@@ -214,17 +253,6 @@ class EVENT:
 				# Edit the message in the game channel
 				await self.GAME["TIMER_MSGS"][1].edit(content=(
 				f"🔍 **Round {self.GAME['ROUND']}**\n\n{self.make_timer(current_remaining)}"))
-
-				# Edit the timers in everyone's DMs
-				for ind, p_timer in enumerate(self.GAME["TIMER_MSGS"][2:]):
-					if self.GAME["PLAYERS"][ind] in self.GAME["INSPECTING"]:
-						last_line = "\n\nSend **`ir/test`** to stop inspecting the rule and access the test!"
-					else:
-						last_line = "\n\nAnswer the entire test before the time runs out!"
-					
-					await p_timer.edit(content=(
-					f"🔍 **Round {self.GAME['ROUND']}**\n\n{self.make_timer(current_remaining)}"
-					+ last_line))
 				
 				return
 
@@ -378,8 +406,8 @@ class EVENT:
 
 					self.GAME["INSPECTING"].remove(message.author)
 					self.GAME["TESTING"].append(message.author)
-					# update ["PLAYER_TESTS"] with a test for this round
-					# lock user from seeing GAME_CHANNEL
+					# TODO: update ["PLAYER_TESTS"] with a test for this round
+					# TODO: lock user from seeing GAME_CHANNEL
 
 					await message.channel.send(f"📝 **Round {rnd} Rules Test!**")
 					return
