@@ -83,7 +83,7 @@ class EVENT:
 		self.GAME_CHANNEL = None
 	
 	def make_timer(self, remaining):
-		p = np.ceil((remaining / self.EVENT["ROUND_TIME"]) * 10)
+		p = np.ceil((remaining / self.PARAM["ROUND_TIME"]) * 10)
 
 		if p >= 7:
 			emoji = "🟩" # Green square
@@ -110,9 +110,6 @@ class EVENT:
 		rnd = self.GAME["ROUND"]
 		t = self.GAME["NEXT_PERIOD"]
 		p_s = self.GAME["PERIOD_STEP"]
-
-		print(rnd)
-		print(time(), t)
 
 		if time() > t:
 
@@ -161,30 +158,18 @@ class EVENT:
 
 				self.GAME["INSPECTING"] = self.GAME["PLAYERS"]
 
-				await self.ANNOUNCE_CHANNEL.send("troll")
-
-				try:
-					full_msg = (
-					f"🔍 **Round {rnd}** of Invisible Rules has started!\n\n"
-					+ f"Those with the <@{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by "
-					+ f"sending messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.\n\n"
-					+ self.make_timer(self.PARAM["ROUND_TIME"]))
-
-					print(full_msg)
-				except Exception:
-					traceback.print_exc()
-					pass
+				full_msg = (
+				f"🔍 **Round {rnd}** of Invisible Rules has started!\n\n"
+				+ f"Those with the <@{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by "
+				+ f"sending messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.\n\n"
+				+ self.make_timer(self.PARAM["ROUND_TIME"]))
 
 				ann_timer = await self.ANNOUNCE_CHANNEL.send(full_msg)
-
-				await self.ANNOUNCE_CHANNEL.send("troll2")
 
 				game_timer = await self.GAME_CHANNEL.send(
 				f"🔍 **Round {rnd}**\n\n{self.make_timer(self.PARAM['ROUND_TIME'])}")
 
 				self.GAME["TIMER_MSGS"] = [ann_timer, game_timer]
-
-				print(self.GAME["TIMER_MSGS"])
 
 				for p in self.GAME["PLAYERS"]:
 					player_timer = await p.send((
@@ -211,7 +196,6 @@ class EVENT:
 			return
 		
 		elif rnd > 0: # If a round is currently running, update the timers in intervals of 10 seconds
-			print("during round", self.GAME["TIMER_MSGS"])
 			self.GAME["PERIOD_STEP"] += 1
 			self.GAME["PERIOD_STEP"] %= 5
 

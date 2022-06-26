@@ -34,13 +34,18 @@ async def event_task(): # This is an event handler for the time-based functions 
 					if not SERVERS[server]["EVENTS"][event].RUNNING:
 						continue # We only care about events that are currently running
 
+					two_sec_func = None
 					try:
-						status = await SERVERS[server]["EVENTS"][event].on_two_second()
+						two_sec_func = await SERVERS[server]["EVENTS"][event].on_two_second
+					except AttributeError as e:
+						pass
+
+					if two_sec_func is not None:
+						status = two_sec_func()
+						
 						if status is False: # "return False"
 							SERVERS[server]["EVENTS"][event].end()
 							continue
-					except AttributeError as e:
-						pass
 					
 					# If the hour just changed, run the hour function
 					if hour_function:
