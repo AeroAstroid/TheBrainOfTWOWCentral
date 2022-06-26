@@ -178,23 +178,23 @@ async def on_ready():
 						continue
 					try:
 						await msg_guild["EVENTS"][event].on_message(message)
-					except:
+					except Exception:
+						traceback.print_exc()
 						pass
 
 			elif message.guild is None:
 
 				# Made for events in TWOW Central that are ran in DMs 
-				tc_guild = None
-				for server in list(SERVERS.keys()):
-					if SERVERS[server]["MAIN"].id == PARAMS["MAIN_SERVER"]["ID"]: tc_guild = SERVERS[server]
+				for event in MAIN_SERVER["MAIN"]["EVENTS"].keys():
 
-				if tc_guild:
-					for event in tc_guild["EVENTS"].keys():
-						if event in ["DESCRIPTION_DETECTIVE", "RESPONDING", "SPEEDCOUNTER"] and tc_guild["EVENTS"][event].RUNNING:
-							try:
-								await tc_guild["EVENTS"][event].on_message(message)
-							except:
-								pass
+					dm_events = ["DESCRIPTION_DETECTIVE", "RESPONDING", "SPEEDCOUNTER", "INVISIBLE_RULES"]
+
+					if event in dm_events and MAIN_SERVER["MAIN"]["EVENTS"][event].RUNNING:
+						try:
+							await MAIN_SERVER["MAIN"]["EVENTS"][event].on_message(message)
+						except Exception:
+							traceback.print_exc()
+							pass
 			
 			# Not bother with non-commands from here on
 			msg_guild = None
