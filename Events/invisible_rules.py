@@ -94,7 +94,7 @@ class EVENT:
 		else:
 			emoji = ["🟥"] # Red square
 		
-		timer_bar = ["➡️"] + emoji * p + ["⬛"] * (8 - p)  + "[⬅️]"
+		timer_bar = ["➡️"] + emoji * p + ["⬛"] * (8 - p)  + ["⬅️"]
 
 		timer_bar = " ".join(timer_bar)
 
