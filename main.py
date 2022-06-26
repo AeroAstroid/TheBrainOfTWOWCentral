@@ -34,13 +34,18 @@ async def event_task(): # This is an event handler for the time-based functions 
 					if not SERVERS[server]["EVENTS"][event].RUNNING:
 						continue # We only care about events that are currently running
 
+					two_sec_func = None
 					try:
-						status = await SERVERS[server]["EVENTS"][event].on_two_second()
+						two_sec_func = SERVERS[server]["EVENTS"][event].on_two_second
+					except AttributeError as e:
+						pass
+
+					if two_sec_func is not None:
+						status = await two_sec_func()
+						
 						if status is False: # "return False"
 							SERVERS[server]["EVENTS"][event].end()
 							continue
-					except AttributeError as e:
-						pass
 					
 					# If the hour just changed, run the hour function
 					if hour_function:
@@ -171,10 +176,13 @@ async def on_ready():
 				for event in msg_guild["EVENTS"].keys():
 					if not msg_guild["EVENTS"][event].RUNNING:
 						continue
+
 					try:
-						await msg_guild["EVENTS"][event].on_message(message)
-					except:
-						pass
+						on_msg_func = msg_guild["EVENTS"][event].on_message
+					except AttributeError:
+						continue
+
+					await on_msg_func(message)
 
 			elif message.guild is None:
 
@@ -183,13 +191,17 @@ async def on_ready():
 				for server in list(SERVERS.keys()):
 					if SERVERS[server]["MAIN"].id == PARAMS["MAIN_SERVER"]["ID"]: tc_guild = SERVERS[server]
 
-				if tc_guild:
+				if tc_guild is not None:
+					dm_events = ["DESCRIPTION_DETECTIVE", "RESPONDING", "SPEEDCOUNTER", "INVISIBLE_RULES"]
+
 					for event in tc_guild["EVENTS"].keys():
-						if event in ["DESCRIPTION_DETECTIVE", "RESPONDING", "SPEEDCOUNTER"] and tc_guild["EVENTS"][event].RUNNING:
+						if event in tc_guild and tc_guild["EVENTS"][event].RUNNING:
 							try:
-								await tc_guild["EVENTS"][event].on_message(message)
-							except:
-								pass
+								on_msg_func = tc_guild["EVENTS"][event].on_message
+							except AttributeError:
+								continue
+
+							await on_msg_func(message)
 			
 			# Not bother with non-commands from here on
 			msg_guild = None

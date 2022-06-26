@@ -1,5 +1,5 @@
 git+https://github.com/Rapptz/discord.py
-numpy==1.21.0
+numpy==1.22.0
 Pillow==9.0.1
 psycopg2==2.8.6
 requests==2.23.0

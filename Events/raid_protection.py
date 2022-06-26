@@ -1,4 +1,5 @@
 import time, discord
+from Config._functions import grammar_list
 
 class EVENT:
 	# Note: These are the rules that will get you muted by the raid protection system
@@ -34,8 +35,11 @@ class EVENT:
 
 	# Function that runs on every message
 	async def on_message(self, message):
-		if self.MEMBER in self.SERVER.get_member(message.author.id).roles:
-			return # Only non-members are subject to raid detection
+		try:
+			if self.MEMBER in self.SERVER["MAIN"].get_member(message.author.id).roles:
+				return # Only non-members are subject to raid detection
+		except AttributeError:
+			return
 
 		# Make sure there's an entry for the non-member on the dict
 		if message.author.id not in self.param["INFO"].keys():
