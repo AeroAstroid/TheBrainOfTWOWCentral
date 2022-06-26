@@ -363,11 +363,7 @@ class EVENT:
 			if rnd <= 0: # Only check messages if there's a round running
 				return
 			
-			print(message.channel.name)
-			print(message.author.name, self.GAME["PLAYERS"])
 			if message.channel == self.GAME_CHANNEL and message.author in self.GAME["PLAYERS"]:
-				print(rnd, message)
-
 				rule = self.GAME["RULES"][rnd - 1]
 
 				passed = "✅" if rule(msg) else "❌"

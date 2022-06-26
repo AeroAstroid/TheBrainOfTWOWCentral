@@ -176,11 +176,13 @@ async def on_ready():
 				for event in msg_guild["EVENTS"].keys():
 					if not msg_guild["EVENTS"][event].RUNNING:
 						continue
+
 					try:
-						await msg_guild["EVENTS"][event].on_message(message)
-					except Exception:
-						traceback.print_exc()
-						pass
+						on_msg_func = msg_guild["EVENTS"][event].on_message
+					except AttributeError:
+						continue
+
+					await on_msg_func(message)
 
 			elif message.guild is None:
 
@@ -191,10 +193,11 @@ async def on_ready():
 
 					if event in dm_events and MAIN_SERVER["MAIN"]["EVENTS"][event].RUNNING:
 						try:
-							await MAIN_SERVER["MAIN"]["EVENTS"][event].on_message(message)
-						except Exception:
-							traceback.print_exc()
-							pass
+							on_msg_func = MAIN_SERVER["MAIN"]["EVENTS"][event].on_message
+						except AttributeError:
+							continue
+						
+						await on_msg_func(message)
 			
 			# Not bother with non-commands from here on
 			msg_guild = None
