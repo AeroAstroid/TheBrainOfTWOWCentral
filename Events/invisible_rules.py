@@ -83,22 +83,24 @@ class EVENT:
 		self.GAME_CHANNEL = None
 	
 	def make_timer(self, remaining):
-		p = int(np.ceil((remaining / self.PARAM["ROUND_TIME"]) * 10))
+		p = int(np.ceil((remaining / self.PARAM["ROUND_TIME"]) * 8))
 
 		if p >= 7:
-			emoji = "🟩" # Green square
+			emoji = ["🟩"] # Green square
 		elif p >= 5:
-			emoji = "🟨" # Yellow square
+			emoji = ["🟨"] # Yellow square
 		elif p >= 3:
-			emoji = "🟧" # Orange square
+			emoji = ["🟧"] # Orange square
 		else:
-			emoji = "🟥" # Red square
+			emoji = ["🟥"] # Red square
 		
-		timer_bar = emoji * p + "⬛" * (10 - p)
+		timer_bar = ["➡️"] + emoji * p + ["⬛"] * (8 - p)  + "[⬅️]"
+
+		timer_bar = " ".join(timer_bar)
 
 		msg = f"{'⌛' if p % 2 == 0 else '⏳'} **The round ends <t:{self.GAME['NEXT_PERIOD']}:R>!**"
 
-		return msg + "\n" + timer_bar
+		return msg + "\n\n" + timer_bar
 
 
 	# Function that runs every two seconds
@@ -160,7 +162,7 @@ class EVENT:
 
 				full_msg = (
 				f"🔍 **Round {rnd}** of Invisible Rules has started!\n\n"
-				+ f"Those with the <@{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by "
+				+ f"Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by "
 				+ f"sending messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.\n\n"
 				+ self.make_timer(self.PARAM["ROUND_TIME"]))
 
@@ -204,7 +206,7 @@ class EVENT:
 				# Edit the message in the announcing channel
 				await self.GAME["TIMER_MSGS"][0].edit(content=(
 				f"🔍 **Round {rnd}** of Invisible Rules has started!\n\n"
-				+ f"Those with the <@{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by "
+				+ f"Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by "
 				+ f"sending messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.\n\n"
 				+ self.make_timer(self.PARAM["ROUND_TIME"])))
 
@@ -219,7 +221,7 @@ class EVENT:
 					else:
 						last_line = "\n\nAnswer the entire test before the time runs out!"
 					
-					await p_timer.edit((
+					await p_timer.edit(content=(
 					f"🔍 **Round {self.GAME['ROUND']}**\n\n{self.make_timer(self.PARAM['ROUND_TIME'])}"
 					+ last_line))
 				
