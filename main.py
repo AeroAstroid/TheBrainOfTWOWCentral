@@ -36,12 +36,12 @@ async def event_task(): # This is an event handler for the time-based functions 
 
 					two_sec_func = None
 					try:
-						two_sec_func = await SERVERS[server]["EVENTS"][event].on_two_second
+						two_sec_func = SERVERS[server]["EVENTS"][event].on_two_second
 					except AttributeError as e:
 						pass
 
 					if two_sec_func is not None:
-						status = two_sec_func()
+						status = await two_sec_func()
 						
 						if status is False: # "return False"
 							SERVERS[server]["EVENTS"][event].end()
