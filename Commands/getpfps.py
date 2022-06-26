@@ -58,6 +58,7 @@ async def MAIN(message, args, level, perms, SERVER):
             csv_result += f"{m.display_avatar.url},{m.id},{m.name}\n"
 
         with open("getpfps.csv", "w", encoding="utf-8") as f:
+            f.write('\ufeff')
             f.write(csv_result)
 
         await message.channel.send(f"File containing PFPs of members with the {role_name} role:",
