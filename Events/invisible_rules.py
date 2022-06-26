@@ -202,17 +202,18 @@ class EVENT:
 			self.GAME["PERIOD_STEP"] %= 5
 
 			if self.GAME["PERIOD_STEP"] == 4:
+				current_remaining = self.GAME["NEXT_PERIOD"] - time()
 
 				# Edit the message in the announcing channel
 				await self.GAME["TIMER_MSGS"][0].edit(content=(
 				f"🔍 **Round {rnd}** of Invisible Rules has started!\n\n"
 				+ f"Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by "
 				+ f"sending messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.\n\n"
-				+ self.make_timer(self.PARAM["ROUND_TIME"])))
+				+ self.make_timer(current_remaining)))
 
 				# Edit the message in the game channel
 				await self.GAME["TIMER_MSGS"][1].edit(content=(
-				f"🔍 **Round {self.GAME['ROUND']}**\n\n{self.make_timer(self.PARAM['ROUND_TIME'])}"))
+				f"🔍 **Round {self.GAME['ROUND']}**\n\n{self.make_timer(current_remaining)}"))
 
 				# Edit the timers in everyone's DMs
 				for ind, p_timer in enumerate(self.GAME["TIMER_MSGS"][2:]):
@@ -222,7 +223,7 @@ class EVENT:
 						last_line = "\n\nAnswer the entire test before the time runs out!"
 					
 					await p_timer.edit(content=(
-					f"🔍 **Round {self.GAME['ROUND']}**\n\n{self.make_timer(self.PARAM['ROUND_TIME'])}"
+					f"🔍 **Round {self.GAME['ROUND']}**\n\n{self.make_timer(current_remaining)}"
 					+ last_line))
 				
 				return
@@ -362,7 +363,11 @@ class EVENT:
 			if rnd <= 0: # Only check messages if there's a round running
 				return
 			
+			print(message.channel.name)
+			print(message.author.name, self.GAME["PLAYERS"])
 			if message.channel == self.GAME_CHANNEL and message.author in self.GAME["PLAYERS"]:
+				print(rnd, message)
+
 				rule = self.GAME["RULES"][rnd - 1]
 
 				passed = "✅" if rule(msg) else "❌"
