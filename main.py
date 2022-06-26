@@ -187,17 +187,21 @@ async def on_ready():
 			elif message.guild is None:
 
 				# Made for events in TWOW Central that are ran in DMs 
-				for event in MAIN_SERVER["MAIN"]["EVENTS"].keys():
+				tc_guild = None
+				for server in list(SERVERS.keys()):
+					if SERVERS[server]["MAIN"].id == PARAMS["MAIN_SERVER"]["ID"]: tc_guild = SERVERS[server]
 
+				if tc_guild is not None:
 					dm_events = ["DESCRIPTION_DETECTIVE", "RESPONDING", "SPEEDCOUNTER", "INVISIBLE_RULES"]
 
-					if event in dm_events and MAIN_SERVER["MAIN"]["EVENTS"][event].RUNNING:
-						try:
-							on_msg_func = MAIN_SERVER["MAIN"]["EVENTS"][event].on_message
-						except AttributeError:
-							continue
-						
-						await on_msg_func(message)
+					for event in tc_guild["EVENTS"].keys():
+						if event in tc_guild and tc_guild["EVENTS"][event].RUNNING:
+							try:
+								on_msg_func = tc_guild["EVENTS"][event].on_message
+							except AttributeError:
+								continue
+
+							await on_msg_func(message)
 			
 			# Not bother with non-commands from here on
 			msg_guild = None
