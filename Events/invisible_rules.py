@@ -83,7 +83,7 @@ class EVENT:
 		self.GAME_CHANNEL = None
 	
 	def make_timer(self, remaining):
-		p = np.ceil((remaining / self.PARAM["ROUND_TIME"]) * 10)
+		p = int(np.ceil((remaining / self.PARAM["ROUND_TIME"]) * 10))
 
 		if p >= 7:
 			emoji = "🟩" # Green square
