@@ -108,7 +108,8 @@ class EVENT:
 		if not self.GAME_STARTED:
 			return
 		
-		if time() <= self.GAME["NEXT_PERIOD"] and self.GAME["PERIOD_STEP"] != -1: # Within a period
+		# Within a period
+		if time() <= self.GAME["NEXT_PERIOD"] and self.GAME["PERIOD_STEP"] != -1 and self.GAME["ROUND"] > 0:
 			round_t = self.PARAM[f"PHASE_{self.GAME['PHASE']}_ROUND_TIME"]
 
 			edit_delay = round_t / 16 # Amount of iterations (2s each) between timer edits
