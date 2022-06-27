@@ -315,18 +315,18 @@ class EVENT:
 			if self.GAME["PERIOD_STEP"] % message_delay == 0:
 				ind = self.GAME["PERIOD_STEP"] // message_delay
 
-				self.GAME["PERIOD_STEP"] += 1
-
 				if ind >= len(lines):
 					self.GAME["ROUND"] = -1 if self.GAME['PHASE'] == 1 else -(self.PARAM['PHASE_1_LEN']+1)
 					self.GAME["NEXT_PERIOD"] = int(time() + 30)
 					self.GAME["PERIOD_STEP"] = 0
 
 					await self.ANNOUNCE_CHANNEL.send(
-					f"🔍 **Stand by! Phase {self.game['PHASE']} and **Round {-self.GAME['ROUND']}** begin in 30 seconds!**")
+					f"🔍 **Stand by! Phase {self.game['PHASE']} and Round {-self.GAME['ROUND']} begin in 30 seconds!**")
 					return
 				
 				await self.ANNOUNCE_CHANNEL.send(lines[ind])
+			
+			self.GAME["PERIOD_STEP"] += 1
 			
 			return
 			
