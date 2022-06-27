@@ -15,7 +15,7 @@ def font_boltalic(z): return ImageFont.truetype("Fonts/RobotoCondensed-BoldItali
 
 # m_line : Command to parse multiline strings within the code more nicely
 def m_line(line):
-	return line.replace("\n\n", "/n/n").replace("\n", "").replace("\t", "").replace("/n", "\n")
+	return line.replace("\t", "").replace("\n\n", "/n/n").replace("\n", "").replace("/n", "\n")
 
 # grammar_list : Simple function to properly list many strings
 def grammar_list(listed, c_or=False):

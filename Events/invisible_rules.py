@@ -37,6 +37,7 @@ def DEFAULT_GAME():
 
 		"NEXT_PERIOD": 0,
 		"PERIOD_STEP": 0,
+		"ROUND_RUNNING": False,
 		"TRACKED_MSGS": []
 	}
 
@@ -111,10 +112,10 @@ class EVENT:
 			return
 		
 		# Within a period
-		if time() <= self.GAME["NEXT_PERIOD"] and self.GAME["PERIOD_STEP"] != -1 and self.GAME["ROUND"] > 0:
+		if time() <= self.GAME["NEXT_PERIOD"] and self.GAME["ROUND_RUNNING"]:
 			round_t = self.PARAM[f"PHASE_{self.GAME['PHASE']}_ROUND_TIME"]
 
-			edit_delay = round_t / 16 # Amount of iterations (2s each) between timer edits
+			edit_delay = round_t / 32 # Amount of iterations (2s each) between timer edits
 
 			if self.GAME["PERIOD_STEP"] % edit_delay < 1:
 				await self.GAME["TRACKED_MSGS"][0].edit(content=m_line(
@@ -127,14 +128,15 @@ class EVENT:
 
 				await self.GAME["TRACKED_MSGS"][1].edit(content=m_line(
 				f"""🔍 **Invisible Rules: Round {self.GAME["ROUND"]} (Phase {self.GAME['PHASE']})**
-				
+
 				{self.make_timer(self.GAME["NEXT_PERIOD"] - time())}"""))
 			
 			self.GAME["PERIOD_STEP"] += 1
 			return
 		
 		if self.GAME["ROUND"] > 0: # Ending a round
-			if self.GAME["PERIOD_STEP"] > 9:
+			if self.GAME["ROUND_RUNNING"]:
+				self.GAME["ROUND_RUNNING"] = False
 				self.GAME["PERIOD_STEP"] = 0
 
 			if self.GAME["PERIOD_STEP"] == -1:
@@ -179,6 +181,7 @@ class EVENT:
 					await self.ANNOUNCE_CHANNEL.send(f"🔍 **Stand by! Round {new_round} begins in 8 seconds!**") # 20
 					self.GAME["PERIOD_STEP"] = -1
 					self.GAME["NEXT_PERIOD"] = int(time() + 8) # 20
+					self.GAME["ROUND"] = -new_round
 
 				else:
 					self.GAME["PHASE"] = 2
@@ -199,6 +202,7 @@ class EVENT:
 			# Control channel access here
 			self.GAME["NEXT_PERIOD"] = int(time() + round_t)
 			self.GAME["PERIOD_STEP"] = 0
+			self.GAME["ROUND_RUNNING"] = True
 
 
 			ann_timer = await self.ANNOUNCE_CHANNEL.send(m_line(
@@ -620,7 +624,7 @@ class EVENT:
 		else: # Game functions
 			rnd = self.GAME["ROUND"]
 
-			if rnd <= 0 or self.GAME["PERIOD_STEP"] == -1: # Only check messages if there's a round running
+			if not self.GAME["ROUND_RUNNING"]: # Only check messages if there's a round running
 				return
 			
 			if message.channel == self.GAME_CHANNEL and message.author in self.GAME["INSPECTING"]:
@@ -633,8 +637,13 @@ class EVENT:
 
 				return
 			
+
 			if isinstance(message.channel, dc.DMChannel) and message.author in self.GAME["PLAYERS"]:
+				print(message, msg)
+				print(isinstance(message.channel, dc.DMChannel))
+
 				if msg.lower() == "ir/test" and message.author in self.GAME["INSPECTING"]:
+					print("ir/test")
 					# TODO: Maybe add a confirmation here
 
 					self.GAME["INSPECTING"].remove(message.author)
@@ -659,6 +668,7 @@ class EVENT:
 
 				if (msg.lower() == "ir/inspect" and message.author in self.GAME["TESTING"]
 				and message.author not in self.GAME["INSPECTING"]):
+					print("ir/inspect")
 					if self.GAME["PHASE"] == 1:
 						await message.channel.send("You can't go back to inspecting after starting the test!")
 						return
