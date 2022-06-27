@@ -168,7 +168,7 @@ class EVENT:
 			if self.GAME["PERIOD_STEP"] == 9:
 				new_round = self.GAME["ROUND"] + 1
 
-				if new_round > len(self.GAME["RULES"]):
+				if new_round >= len(self.GAME["RULES"]):
 					await self.ANNOUNCE_CHANNEL.send("🔍 **Invisible Rules has finished!** Thank you for playing.")
 					return False # End the event
 
