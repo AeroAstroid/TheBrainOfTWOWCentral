@@ -195,7 +195,7 @@ async def on_ready():
 					dm_events = ["DESCRIPTION_DETECTIVE", "RESPONDING", "SPEEDCOUNTER", "INVISIBLE_RULES"]
 
 					for event in tc_guild["EVENTS"].keys():
-						if event in tc_guild and tc_guild["EVENTS"][event].RUNNING:
+						if event in dm_events and tc_guild["EVENTS"][event].RUNNING:
 							try:
 								on_msg_func = tc_guild["EVENTS"][event].on_message
 							except AttributeError:

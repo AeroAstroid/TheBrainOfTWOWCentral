@@ -144,8 +144,8 @@ class EVENT:
 				return
 			
 			if self.GAME["PERIOD_STEP"] == 0:
-				await self.ANNOUNCE_CHANNEL.send(f"🔍 **Round {self.game['ROUND']} has ended!**")
-				await self.GAME_CHANNEL.send(f"🔍 **Round {self.game['ROUND']} has ended!**")
+				await self.ANNOUNCE_CHANNEL.send(f"🔍 **Round {self.GAME['ROUND']} has ended!**")
+				await self.GAME_CHANNEL.send(f"🔍 **Round {self.GAME['ROUND']} has ended!**")
 				# TODO: lock Participating from the channel
 
 				await self.GAME["TRACKED_MSGS"][0].edit(content=m_line(
@@ -636,12 +636,8 @@ class EVENT:
 				await message.add_reaction(passed)
 
 				return
-			
 
 			if isinstance(message.channel, dc.DMChannel) and message.author in self.GAME["PLAYERS"]:
-				print(message, msg)
-				print(isinstance(message.channel, dc.DMChannel))
-
 				if msg.lower() == "ir/test" and message.author in self.GAME["INSPECTING"]:
 					print("ir/test")
 					# TODO: Maybe add a confirmation here
