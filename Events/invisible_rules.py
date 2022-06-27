@@ -173,9 +173,9 @@ class EVENT:
 					return False # End the event
 
 				if self.GAME["ROUND"] != self.PARAM["PHASE_1_LEN"]:
-					await self.ANNOUNCE_CHANNEL.send(f"🔍 **Stand by! Round {new_round} begins in 20 seconds!**")
+					await self.ANNOUNCE_CHANNEL.send(f"🔍 **Stand by! Round {new_round} begins in 8 seconds!**") # 20
 					self.GAME["PERIOD_STEP"] = -1
-					self.GAME["NEXT_PERIOD"] = int(time() + 20)
+					self.GAME["NEXT_PERIOD"] = int(time() + 8) # 20
 
 				else:
 					self.GAME["PHASE"] = 2
@@ -229,7 +229,7 @@ class EVENT:
 			return
 
 		if self.GAME["ROUND"] == 0: # Intermission between phases
-			message_delay = 4 # Amount of iterations (2s each) between messages
+			message_delay = 1 # 4 # Amount of iterations (2s each) between messages
 
 			if self.GAME["PHASE"] == 1:
 				m, s = [self.PARAM["PHASE_1_ROUND_TIME"] // 60, self.PARAM["PHASE_1_ROUND_TIME"] % 60]
@@ -317,11 +317,11 @@ class EVENT:
 
 				if ind >= len(lines):
 					self.GAME["ROUND"] = -1 if self.GAME['PHASE'] == 1 else -(self.PARAM['PHASE_1_LEN']+1)
-					self.GAME["NEXT_PERIOD"] = int(time() + 30)
+					self.GAME["NEXT_PERIOD"] = int(time() + 10) # 30
 					self.GAME["PERIOD_STEP"] = 0
 
 					await self.ANNOUNCE_CHANNEL.send(
-					f"🔍 **Stand by! Phase {self.game['PHASE']} and Round {-self.GAME['ROUND']} begin in 30 seconds!**")
+					f"🔍 **Stand by! Phase {self.GAME['PHASE']} and Round {-self.GAME['ROUND']} begin in 10 seconds!**") # 30
 					return
 				
 				await self.ANNOUNCE_CHANNEL.send(lines[ind])
