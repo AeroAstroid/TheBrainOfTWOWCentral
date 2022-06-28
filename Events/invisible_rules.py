@@ -13,10 +13,10 @@ def DEFAULT_PARAM():
 		"GAME_CHANNEL_ID": None,
 		"EVENT_ADMIN_ID": None,
 
-		"PHASE_1_ROUND_TIME": 360,
-		"PHASE_2_ROUND_TIME": 300,
+		"PHASE_1_ROUND_TIME": 40,
+		"PHASE_2_ROUND_TIME": 40,
 
-		"PHASE_1_LEN": 2
+		"PHASE_1_LEN": 5
 	}
 
 def DEFAULT_GAME():
@@ -112,26 +112,28 @@ class EVENT:
 			return
 		
 		# Within a period
-		if time() <= self.GAME["NEXT_PERIOD"] and self.GAME["ROUND_RUNNING"]:
-			round_t = self.PARAM[f"PHASE_{self.GAME['PHASE']}_ROUND_TIME"]
+		if time() <= self.GAME["NEXT_PERIOD"]:
+			if self.GAME["ROUND_RUNNING"]:
+				round_t = self.PARAM[f"PHASE_{self.GAME['PHASE']}_ROUND_TIME"]
 
-			edit_delay = round_t / 32 # Amount of iterations (2s each) between timer edits
+				edit_delay = round_t / 32 # Amount of iterations (2s each) between timer edits
 
-			if self.GAME["PERIOD_STEP"] % edit_delay < 1:
-				await self.GAME["TRACKED_MSGS"][0].edit(content=m_line(
-				f"""🔍 **Round {self.GAME["ROUND"]}** of Invisible Rules has started!
+				if self.GAME["PERIOD_STEP"] % edit_delay < 1:
+					await self.GAME["TRACKED_MSGS"][0].edit(content=m_line(
+					f"""🔍 **Round {self.GAME["ROUND"]}** of Invisible Rules has started!
+					
+					Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
+					messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
+
+					{self.make_timer(self.GAME["NEXT_PERIOD"] - time())}"""))
+
+					await self.GAME["TRACKED_MSGS"][1].edit(content=m_line(
+					f"""🔍 **Invisible Rules: Round {self.GAME["ROUND"]} (Phase {self.GAME['PHASE']})**
+
+					{self.make_timer(self.GAME["NEXT_PERIOD"] - time())}"""))
 				
-				Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
-				messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
-
-				{self.make_timer(self.GAME["NEXT_PERIOD"] - time())}"""))
-
-				await self.GAME["TRACKED_MSGS"][1].edit(content=m_line(
-				f"""🔍 **Invisible Rules: Round {self.GAME["ROUND"]} (Phase {self.GAME['PHASE']})**
-
-				{self.make_timer(self.GAME["NEXT_PERIOD"] - time())}"""))
+				self.GAME["PERIOD_STEP"] += 1
 			
-			self.GAME["PERIOD_STEP"] += 1
 			return
 		
 		if self.GAME["ROUND"] > 0: # Ending a round
@@ -161,6 +163,12 @@ class EVENT:
 				
 				{self.make_timer(0)}"""))
 
+				for t_msg in self.GAME["TRACKED_MSGS"][2:]:
+					await t_msg.edit(content=m_line(
+					f"""🔍 **Invisible Rules: Round {self.GAME['ROUND']} (Phase {self.GAME['PHASE']})**
+					
+					{self.make_timer(0, just_timestamp=True)}"""))
+
 				self.GAME["INSPECTING"] = []
 			
 			if self.GAME["PERIOD_STEP"] == 3:
@@ -173,7 +181,7 @@ class EVENT:
 			if self.GAME["PERIOD_STEP"] == 9:
 				new_round = self.GAME["ROUND"] + 1
 
-				if new_round >= len(self.GAME["RULES"]):
+				if new_round > len(self.GAME["RULES"]):
 					await self.ANNOUNCE_CHANNEL.send("🔍 **Invisible Rules has finished!** Thank you for playing.")
 					return False # End the event
 
@@ -198,8 +206,13 @@ class EVENT:
 			round_t = self.PARAM[f"PHASE_{self.GAME['PHASE']}_ROUND_TIME"]
 
 			self.GAME["ROUND"] *= -1
+
 			self.GAME["INSPECTING"] = self.GAME["PLAYERS"]
+			self.GAME["TESTING"] = []
+			self.GAME["PLAYER_TESTS"] = []
+
 			# Control channel access here
+
 			self.GAME["NEXT_PERIOD"] = int(time() + round_t)
 			self.GAME["PERIOD_STEP"] = 0
 			self.GAME["ROUND_RUNNING"] = True
