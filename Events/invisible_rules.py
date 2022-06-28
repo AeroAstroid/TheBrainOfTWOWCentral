@@ -207,7 +207,7 @@ class EVENT:
 
 			self.GAME["ROUND"] *= -1
 
-			self.GAME["INSPECTING"] = self.GAME["PLAYERS"]
+			self.GAME["INSPECTING"] = self.GAME["PLAYERS"].copy()
 			self.GAME["TESTING"] = []
 			self.GAME["PLAYER_TESTS"] = []
 
@@ -482,10 +482,6 @@ class EVENT:
 		else: # Game functions
 			rnd = self.GAME["ROUND"]
 
-			print(self.GAME["ROUND_RUNNING"], rnd)
-			print(self.GAME["INSPECTING"], self.GAME["TESTING"])
-			print(self.GAME["PLAYERS"])
-
 			if not self.GAME["ROUND_RUNNING"]: # Only check messages if there's a round running
 				return
 			
@@ -501,7 +497,6 @@ class EVENT:
 
 			if isinstance(message.channel, dc.DMChannel) and message.author in self.GAME["PLAYERS"]:
 				if msg.lower() == "ir/test" and message.author in self.GAME["INSPECTING"]:
-					print("ir/test")
 					# TODO: Maybe add a confirmation here
 
 					self.GAME["INSPECTING"].remove(message.author)
@@ -526,7 +521,6 @@ class EVENT:
 
 				if (msg.lower() == "ir/inspect" and message.author in self.GAME["TESTING"]
 				and message.author not in self.GAME["INSPECTING"]):
-					print("ir/inspect")
 					if self.GAME["PHASE"] == 1:
 						await message.channel.send("You can't go back to inspecting after starting the test!")
 						return
