@@ -223,7 +223,7 @@ def MOD(a, b):
 	return a % b
 
 def MATHFUNC(a, b, c):
-	operations = "+-*/^"
+	operations = "+-*/^%"
 	if not is_number(a):
 		raise ValueError(f"First parameter of MATH function is not a number: {safe_cut(a)}")
 	if b not in operations:
@@ -247,6 +247,11 @@ def MATHFUNC(a, b, c):
 	if b == "/":
 		if c == 0: raise ZeroDivisionError(f"Second parameter of MATH function in division cannot be zero")
 		return a/c
+	
+	if b == "%":
+		if c == 0: raise ZeroDivisionError(f"Second parameter of MATH function in modulo cannot be zero")
+		return a%c
+	
 	
 	if b == "^":
 		try:
