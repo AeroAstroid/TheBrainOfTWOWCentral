@@ -18,7 +18,7 @@ start: bstar*
 string: ESCAPED_STRING
 block: ALPHANUMERIC
 array: "{" [arg ("," arg)*] "}"
-function: ("[") block arg* ("]")
+function: ("[") (block | function) arg* ("]")
 unescaped_string: ALPHANUMERIC
 ALLBUTBRACKETS: ALLEXCEPTBRACKETS+
 DIGIT: "0".."9"
@@ -28,7 +28,6 @@ LETTER: UCASE_LETTER | LCASE_LETTER
 ALPHANUMERIC: (ALLNONCONFLICTING)+
 ALLNONCONFLICTING: /([^\[\]0-9\{\}\"\s\,\-]|\- )/
 ALLEXCEPTBRACKETS: /[^\[\]]/
-
 // imports from common library my beloved
 %import common.ESCAPED_STRING
 %import common.SIGNED_INT
