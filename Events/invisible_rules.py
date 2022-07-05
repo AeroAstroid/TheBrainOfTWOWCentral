@@ -104,6 +104,10 @@ class EVENT:
 			return msg
 
 		return msg + "\n\n" + timer_bar
+	
+	# Currently not fully implemented
+	def generate_test_msg(self):
+		return "sample test message"
 
 	# Function that runs every two seconds
 	async def on_two_second(self):
@@ -148,7 +152,7 @@ class EVENT:
 			if self.GAME["PERIOD_STEP"] == 0:
 				await self.ANNOUNCE_CHANNEL.send(f"🔍 **Round {self.GAME['ROUND']} has ended!**")
 				await self.GAME_CHANNEL.send(f"🔍 **Round {self.GAME['ROUND']} has ended!**")
-				# TODO: lock Participating from the channel
+				await self.GAME_CHANNEL.set_permissions(self.PLAYER_ROLE, send_messages=False)
 
 				await self.GAME["TRACKED_MSGS"][0].edit(content=m_line(
 				f"""🔍 **Round {self.GAME["ROUND"]}** of Invisible Rules has started!
@@ -169,6 +173,8 @@ class EVENT:
 					
 					{self.make_timer(0, just_timestamp=True)}"""))
 
+					await self.GAME_CHANNEL.set_permissions(t_msg.channel.recipient, view_messages=None)
+
 				self.GAME["INSPECTING"] = []
 			
 			if self.GAME["PERIOD_STEP"] == 3:
@@ -177,6 +183,7 @@ class EVENT:
 			if self.GAME["PERIOD_STEP"] == 5:
 				await self.ANNOUNCE_CHANNEL.send("trolled")
 				# TODO: make it send actual results
+				# TODO: perform eliminations
 			
 			if self.GAME["PERIOD_STEP"] == 9:
 				new_round = self.GAME["ROUND"] + 1
@@ -232,6 +239,7 @@ class EVENT:
 			
 			{self.make_timer(round_t)}"""))
 
+			await self.GAME_CHANNEL.set_permissions(self.PLAYER_ROLE, send_messages=True)
 
 			self.GAME["TRACKED_MSGS"] = [ann_timer, game_timer]
 
@@ -242,7 +250,6 @@ class EVENT:
 				{self.make_timer(round_t, just_timestamp=True)}
 				
 				Send **`ir/test`** to stop inspecting the rule and access the test!"""))
-				# TODO: add button to switch between testing
 
 				self.GAME["TRACKED_MSGS"].append(msg)
 
@@ -497,10 +504,9 @@ class EVENT:
 
 			if isinstance(message.channel, dc.DMChannel) and message.author in self.GAME["PLAYERS"]:
 				if msg.lower() == "ir/test" and message.author in self.GAME["INSPECTING"]:
-					# TODO: Maybe add a confirmation here
 
 					self.GAME["INSPECTING"].remove(message.author)
-					# TODO: lock user from seeing GAME_CHANNEL
+					await self.GAME_CHANNEL.set_permissions(message.author, view_messages=False)
 
 					if self.GAME["PHASE"] == 1:
 						self.GAME["TESTING"].append(message.author)
@@ -527,6 +533,7 @@ class EVENT:
 					
 					self.GAME["INSPECTING"].append(message.author)
 					# TODO: update player's test to have a 0 streak
+					await self.GAME_CHANNEL.set_permissions(message.author, view_messages=None)
 					# TODO: allow player back into GAME_CHANNEL
 					# TODO: edit test message to hide test
 
