@@ -9,6 +9,7 @@ from Config._functions import grammar_list, word_count, elim_prize
 from Config._const import ALPHABET, BRAIN
 
 NORMAL_POINTS = [60, 50, 40, 30, 20, 10]
+EASY_POINTS = [30, 25, 20, 15, 10, 5]
 TIME_START_ROUND = 10
 NUMBER_EMOJIS = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"]
 
@@ -45,8 +46,8 @@ class EVENT:
 			# Holds the current round's data
 			"CURRENT_ROUND": {
 				"START_TIME": 0,
+				"DIFFICULTY": "",
 				"ANSWERS": [],
-				"CATEGORY": "",
 				"CLUE_1": "",
 				"CLUE_2": "",
 				"CLUE_3": "",
@@ -61,7 +62,7 @@ class EVENT:
 		}
 
 		self.param = { # Define all the parameters necessary that could be changed
-			"CLUE_TIME": 20,
+			"CLUE_TIME": 30,
 			"FINAL_GUESS_TIME": 30,
 			"CLUE_POSTING": 0,
 			"ADMIN_CHANNEL": 0,
@@ -87,8 +88,8 @@ class EVENT:
 			# Holds the current round's data
 			"CURRENT_ROUND": {
 				"START_TIME": 0,
+				"DIFFICULTY": "",
 				"ANSWERS": [],
-				"CATEGORY": "",
 				"CLUE_1": "",
 				"CLUE_2": "",
 				"CLUE_3": "",
@@ -103,7 +104,7 @@ class EVENT:
 		}
 
 		self.param = { # Define all the parameters necessary that could be changed
-			"CLUE_TIME": 20,
+			"CLUE_TIME": 30,
 			"FINAL_GUESS_TIME": 30,
 			"CLUE_POSTING": 0,
 			"ADMIN_CHANNEL": 0,
@@ -180,17 +181,17 @@ The game will start in ten seconds."""
 		self.info["CLUE_NUM"] = 0
 
 		# Input the data into CURRENT_ROUND
-		self.info["CURRENT_ROUND"]["CATEGORY"] = game_round[1]
-		self.info["CURRENT_ROUND"]["CLUE_1"] = game_round[2]
-		self.info["CURRENT_ROUND"]["CLUE_2"] = game_round[3]
-		self.info["CURRENT_ROUND"]["CLUE_3"] = game_round[4]
-		self.info["CURRENT_ROUND"]["CLUE_4"] = game_round[5]
-		self.info["CURRENT_ROUND"]["CLUE_5"] = game_round[6]
-		self.info["CURRENT_ROUND"]["CLUE_6"] = game_round[7]
+		self.info["CURRENT_ROUND"]["DIFFICULTY"] = game_round[0]
+		self.info["CURRENT_ROUND"]["CLUE_1"] = game_round[1]
+		self.info["CURRENT_ROUND"]["CLUE_2"] = game_round[2]
+		self.info["CURRENT_ROUND"]["CLUE_3"] = game_round[3]
+		self.info["CURRENT_ROUND"]["CLUE_4"] = game_round[4]
+		self.info["CURRENT_ROUND"]["CLUE_5"] = game_round[5]
+		self.info["CURRENT_ROUND"]["CLUE_6"] = game_round[6]
 		self.info["CURRENT_ROUND"]["ANSWERS"] = []
 
 		# Get the valid answers
-		index_num = 7
+		index_num = 6
 		while True:
 
 			try:
@@ -203,7 +204,7 @@ The game will start in ten seconds."""
 				break
 
 		# Send message
-		await clue_posting_channel.send("```ROUND {}```\nThe category is **{}**.\nClues will begin to be sent in {} seconds.".format(self.info["ROUND_NUMBER"], self.info["CURRENT_ROUND"]["CATEGORY"], TIME_START_ROUND))
+		await clue_posting_channel.send("```ROUND {}```\nDifficulty: **{}**.\nClues will begin to be sent in {} seconds.".format(self.info["ROUND_NUMBER"], self.info["CURRENT_ROUND"]["DIFFICULTY"].title(), TIME_START_ROUND))
 
 		# Start round in 10 seconds
 		await asyncio.sleep(TIME_START_ROUND)
@@ -551,6 +552,7 @@ The game will start in ten seconds."""
 									if player_guess in self.info["CURRENT_ROUND"]["ANSWERS"]:
 
 										# Give player points
+										if 
 										points_gained = NORMAL_POINTS[self.info["CLUE_NUM"] - 1]
 
 										player_object.correct = True
