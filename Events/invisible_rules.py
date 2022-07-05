@@ -509,7 +509,7 @@ class EVENT:
 				if msg.lower() == "ir/test" and message.author in self.GAME["INSPECTING"]:
 
 					self.GAME["INSPECTING"].remove(message.author)
-					await self.GAME_CHANNEL.set_permissions(message.author, view_messages=False)
+					await self.GAME_CHANNEL.set_permissions(message.author, view_channel=False)
 
 					if self.GAME["PHASE"] == 1:
 						self.GAME["TESTING"].append(message.author)
