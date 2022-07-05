@@ -152,6 +152,8 @@ class EVENT:
 			if self.GAME["PERIOD_STEP"] == 0:
 				await self.ANNOUNCE_CHANNEL.send(f"🔍 **Round {self.GAME['ROUND']} has ended!**")
 				await self.GAME_CHANNEL.send(f"🔍 **Round {self.GAME['ROUND']} has ended!**")
+
+				# Ensures all players can't talk in the channel
 				await self.GAME_CHANNEL.set_permissions(self.PLAYER_ROLE, send_messages=False)
 
 				await self.GAME["TRACKED_MSGS"][0].edit(content=m_line(
@@ -173,7 +175,8 @@ class EVENT:
 					
 					{self.make_timer(0, just_timestamp=True)}"""))
 
-					await self.GAME_CHANNEL.set_permissions(t_msg.channel.recipient, view_messages=None)
+					# Ensures the player can see the channel
+					await self.GAME_CHANNEL.set_permissions(t_msg.channel.recipient, overwrite=None)
 
 				self.GAME["INSPECTING"] = []
 			
@@ -533,7 +536,7 @@ class EVENT:
 					
 					self.GAME["INSPECTING"].append(message.author)
 					# TODO: update player's test to have a 0 streak
-					await self.GAME_CHANNEL.set_permissions(message.author, view_messages=None)
+					await self.GAME_CHANNEL.set_permissions(message.author, overwrite=None)
 					# TODO: allow player back into GAME_CHANNEL
 					# TODO: edit test message to hide test
 
