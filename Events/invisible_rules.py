@@ -201,6 +201,7 @@ class EVENT:
 					p_ind = self.GAME["TESTING"].index(p[0])
 					p_test = self.GAME["PLAYER_TESTS"][p_ind]
 
+					print(p.name, p.id, p_test[0], p_test[5])
 					results_list[ind][2] = p_test[5] if p_test[5] != 0 else 9999999
 					results_list[ind][3] = True
 
@@ -216,8 +217,11 @@ class EVENT:
 						
 						results_list[ind][1] = score
 				
+				print(results_list)
 				results_list = sorted(results_list, key=lambda m: m[4])
 				results_list = sorted(results_list, key=lambda m: -int(m[3]))
+				print(results_list)
+				print("------")
 
 				result_msgs = [f"🏆 **Round {self.GAME['ROUND']} Results**\n> Ordered by completion time\n\n"]
 				p_len = len(results_list)
@@ -819,7 +823,7 @@ class EVENT:
 			
 			else:
 				self.GAME["PLAYER_TESTS"][user_test_ind][5] = (
-					self.PARAM["PHASE_1_ROUND_TIME"] - (self.GAME["NEXT_PERIOD"] - time()))
+					self.PARAM["PHASE_2_ROUND_TIME"] - (self.GAME["NEXT_PERIOD"] - time()))
 				
 				m, s = (
 					int(self.GAME["PLAYER_TESTS"][user_test_ind][5] // 60),
