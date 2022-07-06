@@ -208,7 +208,7 @@ class EVENT:
 						if self.GAME["PHASE"] == 1:
 							score = p_test[3].count(True)
 							
-							if score >= self.GAME["PHASE_1_TEST_LEN"]-1:
+							if score >= self.PARAM["PHASE_1_TEST_LEN"]-1:
 								results_list[ind][3] = True
 						else:
 							score = len(p_test[3])
@@ -242,7 +242,7 @@ class EVENT:
 					p_line += f"**Finished in {m_str}** "
 
 					if self.GAME["PHASE"] == 1:
-						p_line += f"({p[1]}/{self.GAME['PHASE_1_TEST_LEN']})"
+						p_line += f"({p[1]}/{self.PARAM['PHASE_1_TEST_LEN']})"
 					else:
 						p_line += f"({p[1]} attempts)"
 					
@@ -347,7 +347,7 @@ class EVENT:
 			message_delay = 1 # 4 # Amount of iterations (2s each) between messages
 
 			if self.GAME["PHASE"] == 1:
-				m, s = [self.PARAM["PHASE_1_ROUND_TIME"] // 60, self.PARAM["PHASE_1_ROUND_TIME"] % 60]
+				m, s = [int(self.PARAM["PHASE_1_ROUND_TIME"] // 60), int(self.PARAM["PHASE_1_ROUND_TIME"] % 60)]
 				m_str = f"{m} minute{'s' if m != 1 else ''}" + (f" {s} second{'s' if s != 1 else ''}" if s != 0 else "")
 
 				lines = [
@@ -368,13 +368,15 @@ class EVENT:
 					locked out of #rule-inspection and cannot go back to INSPECTING for the remainder of the round.
 					"""),
 
-					m_line("""> Once they switch to **TESTING**, players will receive a **test** comprised of 10 
-					messages. You must indicate, for each message, whether it PASSES or BREAKS the current rule. 
-					You will be given no immediate feedback on whether or not your answers are correct.
-					After doing so for all 10 messages, you will be **FINISHED** with the round."""),
+					m_line(f"""> Once they switch to **TESTING**, players will receive a **test** comprised of 
+					{self.PARAM['PHASE_1_TEST_LEN']} messages. You must indicate, for each message, whether it 
+					PASSES or BREAKS the current rule. You will be given no immediate feedback on whether or not 
+					your answers are correct. After doing so for all 10 messages, you will be **FINISHED** with 
+					the round."""),
 
 					m_line(f"""> By the end of the round (**{m_str}**), anyone who didn't finish their test in time, 
-					as well as **anyone who scored under a 9/10** on the test, will be **eliminated.**"""),
+					as well as **anyone who scored under a {self.PARAM['PHASE_1_TEST_LEN']-1}/
+					{self.PARAM['PHASE_1_TEST_LEN']}** on the test, will be **eliminated.**"""),
 
 					m_line("""> The survivors will be ranked by how long they took to finish the round, and the 
 					fastest ones will be given point bonuses."""),
@@ -705,7 +707,7 @@ class EVENT:
 				info = f"__**TEST - Message #{n}"
 			
 		info += m_line(f"""
-			> **```{msg}```**
+			> **```{msg}```**/n
 			> Characters: `{len(msg)}`/n
 			> Words: `{word_count}`/n
 			> Letter Count: `{letters}`/n
@@ -753,7 +755,7 @@ class EVENT:
 					self.PARAM["PHASE_1_ROUND_TIME"] - (self.GAME["NEXT_PERIOD"] - time()))
 				
 				m, s = (
-					self.GAME["PLAYER_TESTS"][user_test_ind][5] // 60,
+					int(self.GAME["PLAYER_TESTS"][user_test_ind][5] // 60),
 					int(self.GAME["PLAYER_TESTS"][user_test_ind][5] % 60)
 				)
 
@@ -791,7 +793,7 @@ class EVENT:
 					self.PARAM["PHASE_1_ROUND_TIME"] - (self.GAME["NEXT_PERIOD"] - time()))
 				
 				m, s = (
-					self.GAME["PLAYER_TESTS"][user_test_ind][5] // 60,
+					int(self.GAME["PLAYER_TESTS"][user_test_ind][5] // 60),
 					int(self.GAME["PLAYER_TESTS"][user_test_ind][5] % 60)
 				)
 
