@@ -773,7 +773,7 @@ class EVENT:
 			required = self.PARAM["PHASE_2_TEST_STREAK"]
 			last_answers = self.GAME["PLAYER_TESTS"][user_test_ind][3][-required:]
 
-			if False in last_answers:
+			if last_answers.count(True) == required:
 				new_msg = self.generate_test_msg()
 
 				self.GAME["PLAYER_TESTS"][user_test_ind][1].append(new_msg)
