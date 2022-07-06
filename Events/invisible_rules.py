@@ -651,6 +651,11 @@ class EVENT:
 								if self.GAME["PLAYER_TESTS"][ind][0] == int(message.author.id)
 							]
 
+							try:
+								u_ind = u_ind[0]
+							except IndexError:
+								return
+
 							self.GAME["PLAYER_TESTS"][u_ind][1].append(new_msg)
 							self.GAME["PLAYER_TESTS"][u_ind][1].append(new_answer)
 
@@ -663,7 +668,7 @@ class EVENT:
 
 						if message.author not in self.GAME["TESTING"]:
 							self.GAME["TESTING"].append(message.author)
-							
+
 							# UserID, messages, answer sheet, player's answers, msg obj, finish time
 							self.GAME["PLAYER_TESTS"].append([message.author.id, [new_msg], 
 							[new_answer], [], test_dm_msg, 0])
@@ -682,6 +687,11 @@ class EVENT:
 						ind for ind in range(len(self.GAME["PLAYER_TESTS"]))
 						if self.GAME["PLAYER_TESTS"][ind][0] == int(message.author.id)
 					]
+
+					try:
+						u_ind = u_ind[0]
+					except IndexError:
+						return
 
 					self.GAME["PLAYER_TESTS"][u_ind][3].append(False)
 
