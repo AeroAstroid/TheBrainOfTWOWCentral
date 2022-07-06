@@ -181,6 +181,11 @@ class EVENT:
 
 					# Ensures the player can see the channel
 					await self.GAME_CHANNEL.set_permissions(t_msg.channel.recipient, overwrite=None)
+				
+				for test_msg_info in self.GAME["PLAYER_TESTS"]:
+					if test_msg_info[5] == 0:
+						await test_msg_info[4].edit(view=None, content=
+						f"📝 **Round {self.GAME['ROUND']} Rules Test!**\nThe round has ended; you've run out of time!")
 
 				self.GAME["INSPECTING"] = []
 			
@@ -812,7 +817,7 @@ class EVENT:
 					self.GAME["RULES"][rnd - 1](new_msg))
 
 				t_msg = (f"📝 **Round {rnd} Rules Test!**\n"
-				+"Answer {required} questions correctly in a row to finish the test!"
+				+f"Answer {required} questions correctly in a row to finish the test!"
 				+f"\n\n{self.format_test_msg(new_msg, n+1)}")
 
 				await ctx.response.edit_message(content=t_msg)
