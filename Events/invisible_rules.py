@@ -642,17 +642,10 @@ class EVENT:
 						emoji="❌", custom_id=f"{message.author.id} 0")
 						break_button.callback = self.step_through_test
 						test_view.add_item(break_button)
-
-						if message.author not in self.GAME["TESTING"]:
-							self.GAME["TESTING"].append(message.author)
-
-							# UserID, messages, answer sheet, player's answers, msg obj, finish time
-							self.GAME["PLAYER_TESTS"].append([message.author.id, [new_msg], 
-							[new_answer], [], test_dm_msg, 0])
 							
-							n = 1
+						n = 1
 
-						else:
+						if message.author in self.GAME["TESTING"]:
 							u_ind = [
 								ind for ind in range(len(self.GAME["PLAYER_TESTS"]))
 								if self.GAME["PLAYER_TESTS"][ind][0] == int(message.author.id)
@@ -667,6 +660,13 @@ class EVENT:
 						+f"Answer {self.PARAM['PHASE_2_TEST_STREAK']} questions correctly in a row to finish the test!"
 						+f"\n\n{self.format_test_msg(new_msg, n)}"),
 						view=test_view)
+
+						if message.author not in self.GAME["TESTING"]:
+							self.GAME["TESTING"].append(message.author)
+							
+							# UserID, messages, answer sheet, player's answers, msg obj, finish time
+							self.GAME["PLAYER_TESTS"].append([message.author.id, [new_msg], 
+							[new_answer], [], test_dm_msg, 0])
 
 					return
 
