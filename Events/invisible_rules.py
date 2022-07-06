@@ -4,6 +4,8 @@ import discord as dc
 import importlib
 import numpy as np
 
+from discord.ui import Button, View
+
 from Config._functions import m_line
 
 def DEFAULT_PARAM():
@@ -13,10 +15,12 @@ def DEFAULT_PARAM():
 		"GAME_CHANNEL_ID": None,
 		"EVENT_ADMIN_ID": None,
 
-		"PHASE_1_ROUND_TIME": 40,
-		"PHASE_2_ROUND_TIME": 40,
+		"PHASE_1_ROUND_TIME": 60,
+		"PHASE_2_ROUND_TIME": 60,
 
-		"PHASE_1_LEN": 5
+		"PHASE_1_LEN": 1,
+		"PHASE_1_TEST_LEN": 10,
+		"PHASE_2_TEST_STREAK": 7
 	}
 
 def DEFAULT_GAME():
@@ -61,8 +65,8 @@ class EVENT:
 		self.PARAM["PLAYER_ROLE_ID"] = 498254150044352514
 		self.PARAM["ANNOUNCE_CHANNEL_ID"] = 716131405503004765
 		self.PARAM["GAME_CHANNEL_ID"] = 990307784690135060
-
 		self.PARAM["EVENT_ADMIN_ID"] = 959155078844010546
+
 		self.EVENT_ADMIN = dc.utils.get(SERVER["MAIN"].roles, id=self.PARAM["EVENT_ADMIN_ID"])
 
 		self.SERVER = SERVER
@@ -184,8 +188,88 @@ class EVENT:
 				await self.ANNOUNCE_CHANNEL.send("Results are as follows:")
 			
 			if self.GAME["PERIOD_STEP"] == 5:
-				await self.ANNOUNCE_CHANNEL.send("trolled")
-				# TODO: make it send actual results
+				results_list = [
+					# Username, score, time, started test, survives, TCO points gained
+					[p, 0, 9999999, False, False, 0]
+					for p in self.GAME["PLAYERS"]
+				]
+
+				for ind, p in enumerate(results_list):
+					if p[0] not in self.GAME["TESTING"]:
+						continue
+					
+					p_ind = self.GAME["TESTING"].index(p[0])
+					p_test = self.GAME["PLAYER_TESTS"][p_ind]
+
+					results_list[ind][2] = p_test[5] if p_test[5] != 0 else 9999999
+					results_list[ind][3] = True
+
+					if p_test[5] != 0:
+						if self.GAME["PHASE"] == 1:
+							score = p_test[3].count(True)
+							
+							if score >= self.PARAM["PHASE_1_TEST_LEN"]-1:
+								results_list[ind][4] = True
+						else:
+							score = len(p_test[3])
+							results_list[ind][4] = True
+						
+						results_list[ind][1] = score
+				
+				results_list = sorted(results_list, key=lambda m: m[4])
+				results_list = sorted(results_list, key=lambda m: -int(m[3]))
+
+				result_msgs = [f"🏆 **Round {self.GAME['ROUND']} Results**\n> Ordered by completion time\n\n"]
+				p_len = len(results_list)
+				survivors = 0
+
+				for ind, p in enumerate(results_list):
+					elim_emoji = "✅" if p[4] else "💀"
+
+					p_line = f"`[{ind+1}]` {elim_emoji} <@{p[0].id}> --- "
+
+					if not p[3]:
+						p_line += "Did not start test\n"
+					
+					elif p[2] == 9999999:
+						p_line += "Did not finish test\n"
+
+					else:
+						m, s = (int(p[2] // 60), int(p[2] % 60))
+						m_str = f"{m}:{s:>02}"
+
+						p_line += f"**Finished in {m_str}** /// "
+
+						if self.GAME["PHASE"] == 1:
+							p_line += f"{p[1]}/{self.PARAM['PHASE_1_TEST_LEN']} score"
+						else:
+							p_line += f"{p[1]} attempts"
+						
+						if p[4]:
+							survivors += 1
+
+							top_percent = survivors / p_len
+
+							# TODO: Log the TCO points earned in rounds
+							if survivors == 1:
+								p_line += " ///  **+4 TCO points**"
+							elif top_percent < 0.1:
+								p_line += " ///  **+3 TCO points**"
+							elif top_percent < 0.3:
+								p_line += " ///  **+2 TCO points**"
+							elif top_percent < 0.6:
+								p_line += " ///  **+1 TCO point**"
+						
+						p_line += "\n"
+
+					if len(result_msgs[-1] + p_line) >= 1950:
+						result_msgs.append("")
+					
+					result_msgs[-1] += p_line
+
+				for msg in result_msgs:
+					await self.ANNOUNCE_CHANNEL.send(msg)
+
 				# TODO: perform eliminations
 			
 			if self.GAME["PERIOD_STEP"] == 9:
@@ -262,7 +346,7 @@ class EVENT:
 			message_delay = 1 # 4 # Amount of iterations (2s each) between messages
 
 			if self.GAME["PHASE"] == 1:
-				m, s = [self.PARAM["PHASE_1_ROUND_TIME"] // 60, self.PARAM["PHASE_1_ROUND_TIME"] % 60]
+				m, s = [int(self.PARAM["PHASE_1_ROUND_TIME"] // 60), int(self.PARAM["PHASE_1_ROUND_TIME"] % 60)]
 				m_str = f"{m} minute{'s' if m != 1 else ''}" + (f" {s} second{'s' if s != 1 else ''}" if s != 0 else "")
 
 				lines = [
@@ -283,13 +367,15 @@ class EVENT:
 					locked out of #rule-inspection and cannot go back to INSPECTING for the remainder of the round.
 					"""),
 
-					m_line("""> Once they switch to **TESTING**, players will receive a **test** comprised of 10 
-					messages. You must indicate, for each message, whether it PASSES or BREAKS the current rule. 
-					You will be given no immediate feedback on whether or not your answers are correct.
-					After doing so for all 10 messages, you will be **FINISHED** with the round."""),
+					m_line(f"""> Once they switch to **TESTING**, players will receive a **test** comprised of 
+					{self.PARAM['PHASE_1_TEST_LEN']} messages. You must indicate, for each message, whether it 
+					PASSES or BREAKS the current rule. You will be given no immediate feedback on whether or not 
+					your answers are correct. After doing so for all 10 messages, you will be **FINISHED** with 
+					the round."""),
 
 					m_line(f"""> By the end of the round (**{m_str}**), anyone who didn't finish their test in time, 
-					as well as **anyone who scored under a 9/10** on the test, will be **eliminated.**"""),
+					as well as **anyone who scored under a {self.PARAM['PHASE_1_TEST_LEN']-1}/
+					{self.PARAM['PHASE_1_TEST_LEN']}** on the test, will be **eliminated.**"""),
 
 					m_line("""> The survivors will be ranked by how long they took to finish the round, and the 
 					fastest ones will be given point bonuses."""),
@@ -513,18 +599,79 @@ class EVENT:
 
 					if self.GAME["PHASE"] == 1:
 						self.GAME["TESTING"].append(message.author)
-						# TODO: update ["PLAYER_TESTS"] with a test for this round
-						await message.channel.send(f"📝 **Round {rnd} Rules Test!**")
-						# TODO: Send test
+						
+						test_msgs = []
+						for _ in range(10):
+							test_msgs.append(self.generate_test_msg())
+						
+						answer_sheet = [self.GAME["RULES"][rnd - 1](msg) for msg in test_msgs]
+
+						test_view = View()
+
+						pass_button = Button(label="Passes the rule", style=dc.ButtonStyle.green,
+						emoji="✅", custom_id=f"{message.author.id} 1")
+						pass_button.callback = self.step_through_test
+						test_view.add_item(pass_button)
+
+						break_button = Button(label="Breaks the rule", style=dc.ButtonStyle.red,
+						emoji="❌", custom_id=f"{message.author.id} 0")
+						break_button.callback = self.step_through_test
+						test_view.add_item(break_button)
+
+						test_dm_msg = await message.channel.send(
+						(f"📝 **Round {rnd} Rules Test!**\nAnswer all questions to finish the test!"
+						+f"\n\n{self.format_test_msg(test_msgs[0], 1)}"),
+						view=test_view)
+
+						# UserID, messages, answer sheet, player's answers, msg obj, finish time
+						self.GAME["PLAYER_TESTS"].append([message.author.id, test_msgs, 
+						answer_sheet, [], test_dm_msg, 0])
 					
 					else:
+						new_msg = self.generate_test_msg()
+						new_answer = self.GAME["RULES"][rnd - 1](new_msg)
+
+						test_view = View()
+
+						pass_button = Button(label="Passes the rule", style=dc.ButtonStyle.green,
+						emoji="✅", custom_id=f"{message.author.id} 1")
+						pass_button.callback = self.step_through_test
+						test_view.add_item(pass_button)
+
+						break_button = Button(label="Breaks the rule", style=dc.ButtonStyle.red,
+						emoji="❌", custom_id=f"{message.author.id} 0")
+						break_button.callback = self.step_through_test
+						test_view.add_item(break_button)
+							
+						n = 1
+
+						if message.author in self.GAME["TESTING"]:
+							u_ind = [
+								ind for ind in range(len(self.GAME["PLAYER_TESTS"]))
+								if self.GAME["PLAYER_TESTS"][ind][0] == int(message.author.id)
+							]
+
+							try:
+								u_ind = u_ind[0]
+							except IndexError:
+								return
+
+							self.GAME["PLAYER_TESTS"][u_ind][1].append(new_msg)
+							self.GAME["PLAYER_TESTS"][u_ind][2].append(new_answer)
+
+							n = len(self.GAME["PLAYER_TESTS"][u_ind][1])
+						
+						test_dm_msg = await message.channel.send((f"📝 **Round {rnd} Rules Test!**\n"
+						+f"Answer {self.PARAM['PHASE_2_TEST_STREAK']} questions correctly in a row to finish the test!"
+						+f"\n\n{self.format_test_msg(new_msg, n)}"),
+						view=test_view)
+
 						if message.author not in self.GAME["TESTING"]:
 							self.GAME["TESTING"].append(message.author)
-							# TODO: update ["PLAYER_TESTS"] with a test for this round
-							await message.channel.send(f"📝 **Round {rnd} Rules Test!**")
-							# TODO: Send test
 
-						# TODO: Edit test message to show test again
+							# UserID, messages, answer sheet, player's answers, msg obj, finish time
+							self.GAME["PLAYER_TESTS"].append([message.author.id, [new_msg], 
+							[new_answer], [], test_dm_msg, 0])
 
 					return
 
@@ -533,11 +680,159 @@ class EVENT:
 					if self.GAME["PHASE"] == 1:
 						await message.channel.send("You can't go back to inspecting after starting the test!")
 						return
+
+					u_ind = [
+						ind for ind in range(len(self.GAME["PLAYER_TESTS"]))
+						if self.GAME["PLAYER_TESTS"][ind][0] == int(message.author.id)
+					]
+
+					try:
+						u_ind = u_ind[0]
+					except IndexError:
+						return
 					
 					self.GAME["INSPECTING"].append(message.author)
-					# TODO: update player's test to have a 0 streak
+
+					self.GAME["PLAYER_TESTS"][u_ind][3].append(False)
+
 					await self.GAME_CHANNEL.set_permissions(message.author, overwrite=None)
-					# TODO: allow player back into GAME_CHANNEL
-					# TODO: edit test message to hide test
+					await self.GAME["PLAYER_TESTS"][u_ind][4].edit(content="**Test hidden!**", view=None)
+
+					await message.channel.send(
+					m_line(f"""You have gone back to **inspecting** this round's rule! The test has been hidden 
+					from you.
+					
+					Use **`ir/test`** to stop inspecting and go back to testing. Once you return to the test, **the 
+					last question and your correct answer streak will have reset.**
+					
+					You are now able to see and talk in <#{self.GAME_CHANNEL.id}> again."""))
 
 			return
+	
+	def format_test_msg(self, msg, n=None):
+		split_msg = msg.split(" ")
+		word_count = 0
+
+		for potential_word in split_msg:
+			alphanum_list = [c for c in list(potential_word.upper())
+			if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"]
+			
+			if len(alphanum_list) != 0:
+				word_count += 1
+		
+		letter_list = [c for c in list(msg.upper()) if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
+		letters = len(letter_list)
+		letters_used = sorted(list(set(letter_list)))
+
+		info = ""
+		if n is not None:
+			if self.GAME["PHASE"] == 1:
+				info = f"__**TEST - Message #{n}/{self.PARAM['PHASE_1_TEST_LEN']}**__\n"
+			else:
+				info = f"__**TEST - Message #{n}**__\n"
+			
+		info += m_line(f"""
+			> **```{msg}```**/n
+			> Characters: `{len(msg)}`/n
+			> Words: `{word_count}`/n
+			> Letter Count: `{letters}`/n
+			> Letters Used: `{''.join(letters_used)}`
+		""")
+
+		return info
+
+	async def step_through_test(self, ctx):
+		user, answer = ctx.data['custom_id'].split(" ")
+
+		for i in self.GAME["INSPECTING"]:
+			if i.id == int(user):
+				return
+
+		user_test_ind = [
+			ind for ind in range(len(self.GAME["PLAYER_TESTS"]))
+			if self.GAME["PLAYER_TESTS"][ind][0] == int(user)
+		]
+
+		try:
+			user_test_ind = user_test_ind[0]
+		except IndexError:
+			return
+		
+		n = len(self.GAME["PLAYER_TESTS"][user_test_ind][3])
+
+		if int(answer) == int(self.GAME["PLAYER_TESTS"][user_test_ind][2][n]):
+			self.GAME["PLAYER_TESTS"][user_test_ind][3].append(True)
+		else:
+			self.GAME["PLAYER_TESTS"][user_test_ind][3].append(False)
+		
+		n += 1
+
+		rnd = self.GAME['ROUND']
+
+		if self.GAME["PHASE"] == 1:
+			if n < self.PARAM["PHASE_1_TEST_LEN"]:
+				new_msg = self.GAME["PLAYER_TESTS"][user_test_ind][1][n]
+
+				t_msg = (f"📝 **Round {rnd} Rules Test!**\nAnswer all questions to finish the test!"
+				+f"\n\n{self.format_test_msg(new_msg, n+1)}")
+
+				await ctx.response.edit_message(content=t_msg)
+				return
+			
+			else:
+				self.GAME["PLAYER_TESTS"][user_test_ind][5] = (
+					self.PARAM["PHASE_1_ROUND_TIME"] - (self.GAME["NEXT_PERIOD"] - time()))
+				
+				m, s = (
+					int(self.GAME["PLAYER_TESTS"][user_test_ind][5] // 60),
+					int(self.GAME["PLAYER_TESTS"][user_test_ind][5] % 60)
+				)
+
+				m_str = f"{m} minute{'s' if m != 1 else ''} {s} second{'s' if s != 1 else ''}"
+
+				t_msg = (m_line(
+				f"""📝 You have finished **Round {rnd}** in **{m_str}**!
+
+				Your test results will be revealed once the round ends."""))
+
+				await ctx.response.edit_message(content=t_msg, view=None)
+				return
+		
+		else:
+			required = self.PARAM["PHASE_2_TEST_STREAK"]
+			last_answers = self.GAME["PLAYER_TESTS"][user_test_ind][3][-required:]
+
+			if False in last_answers or len(last_answers) < required:
+				new_msg = self.generate_test_msg()
+
+				self.GAME["PLAYER_TESTS"][user_test_ind][1].append(new_msg)
+
+				self.GAME["PLAYER_TESTS"][user_test_ind][2].append(
+					self.GAME["RULES"][rnd - 1](new_msg))
+
+				t_msg = (f"📝 **Round {rnd} Rules Test!**\n"
+				+"Answer {required} questions correctly in a row to finish the test!"
+				+f"\n\n{self.format_test_msg(new_msg, n+1)}")
+
+				await ctx.response.edit_message(content=t_msg)
+				return
+			
+			else:
+				self.GAME["PLAYER_TESTS"][user_test_ind][5] = (
+					self.PARAM["PHASE_1_ROUND_TIME"] - (self.GAME["NEXT_PERIOD"] - time()))
+				
+				m, s = (
+					int(self.GAME["PLAYER_TESTS"][user_test_ind][5] // 60),
+					int(self.GAME["PLAYER_TESTS"][user_test_ind][5] % 60)
+				)
+
+				m_str = f"{m} minute{'s' if m != 1 else ''} {s} second{'s' if s != 1 else ''}"
+
+				t_msg = (m_line(
+				f"""📝 You have finished **Round {rnd}** in **{m_str}**!
+
+				Your last {required} answers were all correct. 
+				It took you {len(self.GAME["PLAYER_TESTS"][user_test_ind][1])} attempts."""))
+
+				await ctx.response.edit_message(content=t_msg, view=None)
+				return
