@@ -11,7 +11,7 @@ from discord.ui import Select, Button, View
 from Config._const import ALPHABET, BRAIN
 
 # The announcement channel (where the game is hosted) and the admin channel (where the game is customisable)
-EVENT_ANNOUNCE_CHANNEL = "event-time"
+EVENT_ANNOUNCE_CHANNEL = "staff-event-time"
 EVENT_ADMIN_CHANNEL = "staff•commands"
 
 # Default information that will be set to at the start of the game
@@ -585,7 +585,7 @@ class EVENT:
 		admin_embed = discord.Embed(title="Round {} - {} Contestants Remain".format(self.info["ROUND_NUMBER"], len(self.info["CONTESTANTS"])), description="Select a parameter to change for the round the dropdown menu, or select `Confirm` to start the round.", color=0x31d8b1)
 
 		# Add fields to the embed
-		admin_embed.add_field(name="😀 Emoji sets", value="\n".join(["".join(emoji_set) for emoji_set in self.param["EMOJI_SETS"]]), inline=False)
+		admin_embed.add_field(name="😀 Emoji sets", value="\n".join([", ".join(emoji_set) for emoji_set in self.param["EMOJI_SETS"]]), inline=False)
 		admin_embed.add_field(name="🔢 Emoji count range", value=str(self.param["EMOJI_COUNT_RANGE"][0]) + " to " + str(self.param["EMOJI_COUNT_RANGE"][1]), inline=True)
 		admin_embed.add_field(name="🐑 Emojis to count range", value=str(self.param["EMOJI_COUNTING_RANGE"][0]) + " to " + str(self.param["EMOJI_COUNTING_RANGE"][1]), inline=True)
 		admin_embed.add_field(name="⌨️ Emoji type range", value=str(self.param["EMOJI_TYPE_RANGE"][0]) + " to " + str(self.param["EMOJI_TYPE_RANGE"][1]), inline=True)
@@ -633,6 +633,22 @@ class EVENT:
 				# Make an action depending on the option selected
 				if option_selected == "emoji_sets":
 					# EMOJI SETS - Get user to change emoji sets
+					await self.param["ADMIN_CHANNEL"].send("Send new emoji sets to replace the current ones. Seperate each emoji using a comma and seperate each set using a linebreak. You can also send `cancel` to go back.")
+
+					msg = await BRAIN.wait_for('message', check=lambda m: (m.author == user and m.channel == channel))
+					# Check if user is cancelling, and do not continue with the splitting if they do cancel
+					if msg.content.strip().lower() != "cancel":
+					
+						try:
+							# Split the message content into emoji sets
+							emoji_set_strings = msg.content.split("\n")
+							emoji_sets = msg.split(",")
+							emoji_sets = [x.strip() for x in emoji_sets]
+							self.param["EMOJI_SETS"] = emoji_sets
+							await self.param["ADMIN_CHANNEL"].send("**Emoji sets successfully changed!**")
+						except:
+							await self.param["ADMIN_CHANNEL"].send("Error occured whilst trying to change the emoji sets!")
+					
 					await self.admin_modify()
 
 				elif option_selected == "emoji_count_range":
