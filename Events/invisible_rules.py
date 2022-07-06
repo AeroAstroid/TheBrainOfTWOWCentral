@@ -744,6 +744,7 @@ class EVENT:
 	async def step_through_test(self, ctx):
 		user, answer = ctx.data['custom_id'].split(" ")
 
+		print(self.GAME["INSPECTING"])
 		for i in self.GAME["INSPECTING"]:
 			if i.id == int(user):
 				return
