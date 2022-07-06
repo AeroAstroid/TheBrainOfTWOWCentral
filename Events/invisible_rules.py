@@ -19,7 +19,8 @@ def DEFAULT_PARAM():
 		"PHASE_2_ROUND_TIME": 60,
 
 		"PHASE_1_LEN": 4,
-		"PHASE_1_TEST_LEN": 10
+		"PHASE_1_TEST_LEN": 10,
+		"PHASE_2_TEST_STREAK": 7
 	}
 
 def DEFAULT_GAME():
@@ -249,9 +250,7 @@ class EVENT:
 
 			self.GAME["TRACKED_MSGS"] = [ann_timer, game_timer]
 
-			print(self.GAME["PLAYERS"])
 			for p in self.GAME["PLAYERS"]:
-				print(p)
 				msg = await p.send(m_line(
 				f"""🔍 **Invisible Rules: Round {self.GAME['ROUND']} (Phase {self.GAME['PHASE']})**
 				
@@ -262,7 +261,6 @@ class EVENT:
 				self.GAME["TRACKED_MSGS"].append(msg)
 
 			return
-			print("------")
 
 		if self.GAME["ROUND"] == 0: # Intermission between phases
 			message_delay = 1 # 4 # Amount of iterations (2s each) between messages
@@ -550,9 +548,32 @@ class EVENT:
 					else:
 						if message.author not in self.GAME["TESTING"]:
 							self.GAME["TESTING"].append(message.author)
-							# TODO: update ["PLAYER_TESTS"] with a test for this round
-							await message.channel.send(f"📝 **Round {rnd} Rules Test!**")
-							# TODO: Send test
+
+							new_msg = self.generate_test_msg()
+							new_answer = self.GAME["RULES"][rnd - 1](new_msg)
+
+							test_view = View()
+
+							pass_button = Button(label="Passes the rule", style=dc.ButtonStyle.green,
+							emoji="✅", custom_id=f"{message.author.id} 1")
+							pass_button.callback = self.step_through_test
+							test_view.add_item(pass_button)
+
+							break_button = Button(label="Breaks the rule", style=dc.ButtonStyle.red,
+							emoji="❌", custom_id=f"{message.author.id} 0")
+							break_button.callback = self.step_through_test
+							test_view.add_item(break_button)
+
+							test_dm_msg = await message.channel.send((f"📝 **Round {rnd} Rules Test!**\n"
+							+"Answer {required} questions correctly in a row to finish the test!"
+							+f"\n\n{self.format_test_msg(new_msg, 1)}"),
+							view=test_view)
+
+							# UserID, messages, answer sheet, player's answers, msg obj, finish time
+							self.GAME["PLAYER_TESTS"].append([message.author.id, [new_msg], 
+							[new_answer], [], test_dm_msg, 0])
+
+							return
 
 						# TODO: Edit test message to show test again
 
@@ -603,8 +624,7 @@ class EVENT:
 				info = f"__**TEST - Message #{n}"
 			
 		info += m_line(f"""
-			> **`{msg}`**
-
+			> **```{msg}```**
 			> Characters: `{len(msg)}`/n
 			> Words: `{word_count}`/n
 			> Letter Count: `{letters}`/n
@@ -635,10 +655,11 @@ class EVENT:
 		
 		n += 1
 
+		rnd = self.GAME['ROUND']
+
 		if self.GAME["PHASE"] == 1:
 			if n < self.PARAM["PHASE_1_TEST_LEN"]:
 				new_msg = self.GAME["PLAYER_TESTS"][user_test_ind][1][n]
-				rnd = self.GAME['ROUND']
 
 				t_msg = (f"📝 **Round {rnd} Rules Test!**\nAnswer all questions to finish the test!"
 				+f"\n\n{self.format_test_msg(new_msg, n+1)}")
@@ -661,6 +682,45 @@ class EVENT:
 				f"""📝 You have finished **Round {rnd}** in **{m_str}**!
 
 				Your test results will be revealed once the round ends."""))
+
+				await ctx.response.edit_message(content=t_msg, view=None)
+				return
+		
+		else:
+			required = self.PARAM["PHASE_2_TEST_STREAK"]
+			last_answers = self.GAME["PLAYER_TESTS"][user_test_ind][3][-required:]
+
+			if False in last_answers:
+				new_msg = self.generate_test_msg()
+
+				self.GAME["PLAYER_TESTS"][user_test_ind][1].append(new_msg)
+
+				self.GAME["PLAYER_TESTS"][user_test_ind][2].append(
+					self.GAME["RULES"][rnd - 1](new_msg))
+
+				t_msg = (f"📝 **Round {rnd} Rules Test!**\n"
+				+"Answer {required} questions correctly in a row to finish the test!"
+				+f"\n\n{self.format_test_msg(new_msg, n+1)}")
+
+				await ctx.response.edit_message(content=t_msg)
+				return
+			
+			else:
+				self.GAME["PLAYER_TESTS"][user_test_ind][5] = (
+					self.PARAM["PHASE_1_ROUND_TIME"] - (self.GAME["NEXT_PERIOD"] - time()))
+				
+				m, s = (
+					self.GAME["PLAYER_TESTS"][user_test_ind][5] // 60,
+					int(self.GAME["PLAYER_TESTS"][user_test_ind][5] % 60)
+				)
+
+				m_str = f"{m} minute{'s' if m != 1 else ''} {s} second{'s' if s != 1 else ''}"
+
+				t_msg = (m_line(
+				f"""📝 You have finished **Round {rnd}** in **{m_str}**!
+
+				Your last {required} answers were all correct. 
+				It took you {len(self.GAME["PLAYER_TESTS"][user_test_ind][1])} attempts."""))
 
 				await ctx.response.edit_message(content=t_msg, view=None)
 				return
