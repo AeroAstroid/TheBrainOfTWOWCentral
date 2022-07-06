@@ -18,7 +18,7 @@ def DEFAULT_PARAM():
 		"PHASE_1_ROUND_TIME": 60,
 		"PHASE_2_ROUND_TIME": 60,
 
-		"PHASE_1_LEN": 4,
+		"PHASE_1_LEN": 1,
 		"PHASE_1_TEST_LEN": 10,
 		"PHASE_2_TEST_STREAK": 7
 	}
@@ -188,8 +188,89 @@ class EVENT:
 				await self.ANNOUNCE_CHANNEL.send("Results are as follows:")
 			
 			if self.GAME["PERIOD_STEP"] == 5:
-				await self.ANNOUNCE_CHANNEL.send("trolled")
-				# TODO: make it send actual results
+				results_list = [
+					# Username, score, time, started test, survives, TCO points gained
+					[p, 0, 9999999, False, False, 0]
+					for p in self.GAME["PLAYERS"]
+				]
+
+				for ind, p in enumerate(results_list):
+					if p[0] not in self.GAME["TESTING"]:
+						continue
+					
+					p_ind = self.GAME["TESTING"].index(p[0])
+					p_test = self.GAME["PLAYER_TESTS"][p_ind]
+
+					results_list[ind][2] = p_test[5] if p_test[5] != 0 else 9999998
+					results_list[ind][3] = True
+
+					if p_test[5] != 0:
+						if self.GAME["PHASE"] == 1:
+							score = p_test[3].count(True)
+							
+							if score >= self.GAME["PHASE_1_TEST_LEN"]-1:
+								results_list[ind][3] = True
+						else:
+							score = len(p_test[3])
+							results_list[ind][3] = True
+						
+						results_list[ind][1] = score
+				
+				results_list = sorted(results_list, key=lambda m: m[4])
+				results_list = sorted(results_list, key=lambda m: -int(m[3]))
+
+				result_msgs = [f"**Round {self.GAME['ROUND']} Results**\n> Ordered by completion time\n"]
+				p_len = len(results_list)
+				survivors = 0
+
+				for ind, p in enumerate(results_list):
+					elim_emoji = "✅" if p[3] else "💀"
+
+					p_line = f"`[{ind}]` {elim_emoji} <@{p[0].id}> --- "
+
+					if p[2] == 9999999:
+						p_line += "Did not start test\n"
+						continue
+					
+					if p[2] == 9999998:
+						p_line += "Did not finish test\n"
+						continue
+
+					m, s = (int(p[2] // 60), int(p[2] % 60))
+					m_str = f"{m}:{s:>02}"
+
+					p_line += f"**Finished in {m_str}** "
+
+					if self.GAME["PHASE"] == 1:
+						p_line += f"({p[1]}/{self.GAME['PHASE_1_TEST_LEN']})"
+					else:
+						p_line += f"({p[1]} attempts)"
+					
+					if elim_emoji == "✅":
+						survivors += 1
+
+						top_percent = survivors / p_len
+
+						# TODO: Log the TCO points earned in rounds
+						if survivors == 1:
+							p_line += " **+4 TCO points**"
+						elif top_percent < 0.1:
+							p_line += " **+3 TCO points**"
+						elif top_percent < 0.3:
+							p_line += " **+2 TCO points**"
+						elif top_percent < 0.6:
+							p_line += " **+1 TCO point**"
+					
+					p_line += "\n"
+
+					if len(result_msgs[-1] + p_line) >= 1950:
+						result_msgs.append("")
+					
+					result_msgs[-1] += p_line
+
+				for msg in result_msgs:
+					await self.ANNOUNCE_CHANNEL.send(msg)
+
 				# TODO: perform eliminations
 			
 			if self.GAME["PERIOD_STEP"] == 9:
