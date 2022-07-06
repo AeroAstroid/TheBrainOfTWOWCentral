@@ -696,7 +696,7 @@ class EVENT:
 					self.GAME["PLAYER_TESTS"][u_ind][3].append(False)
 
 					await self.GAME_CHANNEL.set_permissions(message.author, overwrite=None)
-					await self.GAME["PLAYER_TESTS"][u_ind][3].edit(content="**Test hidden!**", view=None)
+					await self.GAME["PLAYER_TESTS"][u_ind][4].edit(content="**Test hidden!**", view=None)
 
 					await message.channel.send(
 					m_line(f"""You have gone back to **inspecting** this round's rule! The test has been hidden 
