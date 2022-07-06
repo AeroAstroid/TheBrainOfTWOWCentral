@@ -544,6 +544,10 @@ The game will start in ten seconds."""
 									# Get player's guess from the content of the message and strip it of whitespace + lowercase it
 									player_guess = message.content.strip().lower()
 
+									# Check if guess is too long
+									if len(player_guess) < 70:
+										return
+
 									# Log player's guess
 									player_object.guess_msg[self.info["CLUE_NUM"] - 1] = message
 									player_object.guesses[self.info["CLUE_NUM"] - 1] = player_guess
