@@ -249,7 +249,9 @@ class EVENT:
 
 			self.GAME["TRACKED_MSGS"] = [ann_timer, game_timer]
 
+			print(self.GAME["PLAYERS"])
 			for p in self.GAME["PLAYERS"]:
+				print(p)
 				msg = await p.send(m_line(
 				f"""🔍 **Invisible Rules: Round {self.GAME['ROUND']} (Phase {self.GAME['PHASE']})**
 				
@@ -260,6 +262,7 @@ class EVENT:
 				self.GAME["TRACKED_MSGS"].append(msg)
 
 			return
+			print("------")
 
 		if self.GAME["ROUND"] == 0: # Intermission between phases
 			message_delay = 1 # 4 # Amount of iterations (2s each) between messages
