@@ -680,8 +680,6 @@ class EVENT:
 					if self.GAME["PHASE"] == 1:
 						await message.channel.send("You can't go back to inspecting after starting the test!")
 						return
-					
-					self.GAME["INSPECTING"].append(message.author)
 
 					u_ind = [
 						ind for ind in range(len(self.GAME["PLAYER_TESTS"]))
@@ -692,6 +690,8 @@ class EVENT:
 						u_ind = u_ind[0]
 					except IndexError:
 						return
+					
+					self.GAME["INSPECTING"].append(message.author)
 
 					self.GAME["PLAYER_TESTS"][u_ind][3].append(False)
 
