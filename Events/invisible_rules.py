@@ -628,36 +628,45 @@ class EVENT:
 						answer_sheet, [], test_dm_msg, 0])
 					
 					else:
+						new_msg = self.generate_test_msg()
+						new_answer = self.GAME["RULES"][rnd - 1](new_msg)
+
+						test_view = View()
+
+						pass_button = Button(label="Passes the rule", style=dc.ButtonStyle.green,
+						emoji="✅", custom_id=f"{message.author.id} 1")
+						pass_button.callback = self.step_through_test
+						test_view.add_item(pass_button)
+
+						break_button = Button(label="Breaks the rule", style=dc.ButtonStyle.red,
+						emoji="❌", custom_id=f"{message.author.id} 0")
+						break_button.callback = self.step_through_test
+						test_view.add_item(break_button)
+
 						if message.author not in self.GAME["TESTING"]:
 							self.GAME["TESTING"].append(message.author)
-
-							new_msg = self.generate_test_msg()
-							new_answer = self.GAME["RULES"][rnd - 1](new_msg)
-
-							test_view = View()
-
-							pass_button = Button(label="Passes the rule", style=dc.ButtonStyle.green,
-							emoji="✅", custom_id=f"{message.author.id} 1")
-							pass_button.callback = self.step_through_test
-							test_view.add_item(pass_button)
-
-							break_button = Button(label="Breaks the rule", style=dc.ButtonStyle.red,
-							emoji="❌", custom_id=f"{message.author.id} 0")
-							break_button.callback = self.step_through_test
-							test_view.add_item(break_button)
-
-							test_dm_msg = await message.channel.send((f"📝 **Round {rnd} Rules Test!**\n"
-						+f"Answer {self.PARAM['PHASE_2_TEST_STREAK']} questions correctly in a row to finish the test!"
-						+f"\n\n{self.format_test_msg(new_msg, 1)}"),
-							view=test_view)
 
 							# UserID, messages, answer sheet, player's answers, msg obj, finish time
 							self.GAME["PLAYER_TESTS"].append([message.author.id, [new_msg], 
 							[new_answer], [], test_dm_msg, 0])
+							
+							n = 1
 
-							return
+						else:
+							u_ind = [
+								ind for ind in range(len(self.GAME["PLAYER_TESTS"]))
+								if self.GAME["PLAYER_TESTS"][ind][0] == int(message.author.id)
+							]
 
-						# TODO: Edit test message to show test again
+							self.GAME["PLAYER_TESTS"][u_ind][1].append(new_msg)
+							self.GAME["PLAYER_TESTS"][u_ind][1].append(new_answer)
+
+							n = len(self.GAME["PLAYER_TESTS"][u_ind][1])
+						
+						test_dm_msg = await message.channel.send((f"📝 **Round {rnd} Rules Test!**\n"
+						+f"Answer {self.PARAM['PHASE_2_TEST_STREAK']} questions correctly in a row to finish the test!"
+						+f"\n\n{self.format_test_msg(new_msg, n)}"),
+						view=test_view)
 
 					return
 
@@ -668,16 +677,23 @@ class EVENT:
 						return
 					
 					self.GAME["INSPECTING"].append(message.author)
-					# TODO: update player's test to have a 0 streak
+
+					u_ind = [
+						ind for ind in range(len(self.GAME["PLAYER_TESTS"]))
+						if self.GAME["PLAYER_TESTS"][ind][0] == int(message.author.id)
+					]
+
+					self.GAME["PLAYER_TESTS"][u_ind][3].append(False)
+
 					await self.GAME_CHANNEL.set_permissions(message.author, overwrite=None)
-					# TODO: edit test message to hide test
+					await self.GAME["PLAYER_TESTS"][u_ind][3].edit(content="**Test hidden!**", view=None)
 
 					await message.channel.send(
 					m_line(f"""You have gone back to **inspecting** this round's rule! The test has been hidden 
 					from you.
 					
-					Once you return to it, **the last question and your correct answer streak will 
-					have reset.**
+					Use **`ir/test`** to stop inspecting and go back to testing. Once you return to the test, **the 
+					last question and your correct answer streak will have reset.**
 					
 					You are now able to see and talk in <#{self.GAME_CHANNEL.id}> again."""))
 
@@ -710,13 +726,17 @@ class EVENT:
 			> Characters: `{len(msg)}`/n
 			> Words: `{word_count}`/n
 			> Letter Count: `{letters}`/n
-			> Letters Used: `{letters_used}`
+			> Letters Used: `{''.join(letters_used)}`
 		""")
 
 		return info
 
 	async def step_through_test(self, ctx):
 		user, answer = ctx.data['custom_id'].split(" ")
+
+		for i in self.GAME["INSPECTING"]:
+			if i.id == int(user):
+				return
 
 		user_test_ind = [
 			ind for ind in range(len(self.GAME["PLAYER_TESTS"]))
