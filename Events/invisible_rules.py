@@ -194,6 +194,9 @@ class EVENT:
 					for p in self.GAME["PLAYERS"]
 				]
 
+				print(self.GAME["PLAYERS"])
+				print(results_list)
+
 				for ind, p in enumerate(results_list):
 					if p[0] not in self.GAME["TESTING"]:
 						continue
@@ -219,14 +222,16 @@ class EVENT:
 				results_list = sorted(results_list, key=lambda m: m[4])
 				results_list = sorted(results_list, key=lambda m: -int(m[3]))
 
-				result_msgs = [f"**Round {self.GAME['ROUND']} Results**\n> Ordered by completion time\n"]
+				print(results_list)
+
+				result_msgs = [f"🏆 **Round {self.GAME['ROUND']} Results**\n> Ordered by completion time\n\n"]
 				p_len = len(results_list)
 				survivors = 0
 
 				for ind, p in enumerate(results_list):
 					elim_emoji = "✅" if p[3] else "💀"
 
-					p_line = f"`[{ind}]` {elim_emoji} <@{p[0].id}> --- "
+					p_line = f"`[{ind+1}]` {elim_emoji} <@{p[0].id}> --- "
 
 					if p[2] == 9999999:
 						p_line += "Did not start test\n"
@@ -239,27 +244,27 @@ class EVENT:
 					m, s = (int(p[2] // 60), int(p[2] % 60))
 					m_str = f"{m}:{s:>02}"
 
-					p_line += f"**Finished in {m_str}** "
+					p_line += f"**Finished in {m_str}** /// "
 
 					if self.GAME["PHASE"] == 1:
-						p_line += f"({p[1]}/{self.PARAM['PHASE_1_TEST_LEN']})"
+						p_line += f"{p[1]}/{self.PARAM['PHASE_1_TEST_LEN']} score"
 					else:
-						p_line += f"({p[1]} attempts)"
+						p_line += f"{p[1]} attempts"
 					
-					if elim_emoji == "✅":
+					if p[3]:
 						survivors += 1
 
 						top_percent = survivors / p_len
 
 						# TODO: Log the TCO points earned in rounds
 						if survivors == 1:
-							p_line += " **+4 TCO points**"
+							p_line += " ///  **+4 TCO points**"
 						elif top_percent < 0.1:
-							p_line += " **+3 TCO points**"
+							p_line += " ///  **+3 TCO points**"
 						elif top_percent < 0.3:
-							p_line += " **+2 TCO points**"
+							p_line += " ///  **+2 TCO points**"
 						elif top_percent < 0.6:
-							p_line += " **+1 TCO point**"
+							p_line += " ///  **+1 TCO point**"
 					
 					p_line += "\n"
 
