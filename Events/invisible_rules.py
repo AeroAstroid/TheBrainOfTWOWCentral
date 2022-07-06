@@ -657,7 +657,7 @@ class EVENT:
 								return
 
 							self.GAME["PLAYER_TESTS"][u_ind][1].append(new_msg)
-							self.GAME["PLAYER_TESTS"][u_ind][1].append(new_answer)
+							self.GAME["PLAYER_TESTS"][u_ind][2].append(new_answer)
 
 							n = len(self.GAME["PLAYER_TESTS"][u_ind][1])
 						
@@ -759,10 +759,6 @@ class EVENT:
 			return
 		
 		n = len(self.GAME["PLAYER_TESTS"][user_test_ind][3])
-
-		print(self.GAME["PLAYER_TESTS"])
-		print(self.GAME["PLAYER_TESTS"][user_test_ind])
-		print("-----")
 
 		if int(answer) == int(self.GAME["PLAYER_TESTS"][user_test_ind][2][n]):
 			self.GAME["PLAYER_TESTS"][user_test_ind][3].append(True)
