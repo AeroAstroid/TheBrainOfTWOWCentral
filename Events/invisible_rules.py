@@ -194,9 +194,6 @@ class EVENT:
 					for p in self.GAME["PLAYERS"]
 				]
 
-				print(self.GAME["PLAYERS"])
-				print(results_list)
-
 				for ind, p in enumerate(results_list):
 					if p[0] not in self.GAME["TESTING"]:
 						continue
@@ -221,8 +218,6 @@ class EVENT:
 				
 				results_list = sorted(results_list, key=lambda m: m[4])
 				results_list = sorted(results_list, key=lambda m: -int(m[3]))
-
-				print(results_list)
 
 				result_msgs = [f"🏆 **Round {self.GAME['ROUND']} Results**\n> Ordered by completion time\n\n"]
 				p_len = len(results_list)
@@ -652,8 +647,8 @@ class EVENT:
 							test_view.add_item(break_button)
 
 							test_dm_msg = await message.channel.send((f"📝 **Round {rnd} Rules Test!**\n"
-							+"Answer {required} questions correctly in a row to finish the test!"
-							+f"\n\n{self.format_test_msg(new_msg, 1)}"),
+						+f"Answer {self.PARAM['PHASE_2_TEST_STREAK']} questions correctly in a row to finish the test!"
+						+f"\n\n{self.format_test_msg(new_msg, 1)}"),
 							view=test_view)
 
 							# UserID, messages, answer sheet, player's answers, msg obj, finish time
@@ -708,7 +703,7 @@ class EVENT:
 			if self.GAME["PHASE"] == 1:
 				info = f"__**TEST - Message #{n}/{self.PARAM['PHASE_1_TEST_LEN']}**__\n"
 			else:
-				info = f"__**TEST - Message #{n}"
+				info = f"__**TEST - Message #{n}**__\n"
 			
 		info += m_line(f"""
 			> **```{msg}```**/n
@@ -777,7 +772,7 @@ class EVENT:
 			required = self.PARAM["PHASE_2_TEST_STREAK"]
 			last_answers = self.GAME["PLAYER_TESTS"][user_test_ind][3][-required:]
 
-			if last_answers.count(True) == required:
+			if False in last_answers or len(last_answers) < required:
 				new_msg = self.generate_test_msg()
 
 				self.GAME["PLAYER_TESTS"][user_test_ind][1].append(new_msg)
