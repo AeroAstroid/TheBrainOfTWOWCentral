@@ -223,7 +223,12 @@ class EVENT:
 					results_list[ind][2] = p_test[5] if p_test[5] != 0 else 9999999
 					results_list[ind][3] = True
 
+					
 					ap_ind = self.GAME["ALL_PLAYERS"].index(p[0])
+					print(ap_ind)
+					print(p[0])
+					print([p.name for p in self.GAME["ALL_PLAYERS"]])
+					
 						
 					if p_test[5] != 0:
 						if self.GAME["PHASE"] == 1:
@@ -236,11 +241,16 @@ class EVENT:
 						
 						results_list[ind][1] = score
 					
+					print(self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind])
+
 					self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0] += results_list[ind][2]
 					self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1] += 1
 
 					results_list[ind][6] = (self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]
 						/ self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1])
+					
+					print(self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind])
+					print("------")
 				
 				results_list = sorted(results_list, key=lambda m: -m[1])
 				results_list = sorted(results_list, key=lambda m: m[6])
@@ -341,6 +351,8 @@ class EVENT:
 						ap_ind = self.GAME["ALL_PLAYERS"].index(p)
 						p_pts = self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind]
 						p_avg = self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]/self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1]
+
+						print(self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind])
 
 						final_results.append([p.name, p.id, p_pts, p_avg])
 
