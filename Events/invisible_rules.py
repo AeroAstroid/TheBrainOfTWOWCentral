@@ -679,6 +679,9 @@ class EVENT:
 							self.GAME["PLAYER_TESTS"].append([message.author.id, [new_msg], 
 							[new_answer], [], test_dm_msg, 0])
 
+						else:
+							self.GAME["PLAYER_TESTS"][u_ind][4] = test_dm_msg
+
 					return
 
 				if (msg.lower() == "ir/inspect" and message.author in self.GAME["TESTING"]
