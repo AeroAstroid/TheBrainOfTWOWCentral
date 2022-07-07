@@ -642,7 +642,7 @@ class EVENT:
 						try:
 							# Split the message content into emoji sets
 							emoji_set_strings = msg.content.split("\n")
-							emoji_sets = emoji_set_strings.split(",")
+							emoji_sets = [x.split(",") for x in emoji_set_strings]
 							print(emoji_sets)
 							emoji_sets = [x.strip() for x in emoji_sets]
 							self.param["EMOJI_SETS"] = emoji_sets
