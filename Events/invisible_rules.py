@@ -225,9 +225,6 @@ class EVENT:
 
 					
 					ap_ind = self.GAME["ALL_PLAYERS"].index(p[0])
-					print(ap_ind)
-					print(p[0])
-					print([p.name for p in self.GAME["ALL_PLAYERS"]])
 					
 						
 					if p_test[5] != 0:
@@ -240,17 +237,12 @@ class EVENT:
 							score = len(p_test[3])
 						
 						results_list[ind][1] = score
-					
-					print(self.GAME["ALL_PLAYER_AVERAGE_TIME"])
 
 					self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0] += results_list[ind][2]
 					self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1] += 1
 
 					results_list[ind][6] = (self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]
 						/ self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1])
-					
-					print(self.GAME["ALL_PLAYER_AVERAGE_TIME"])
-					print("------")
 				
 				results_list = sorted(results_list, key=lambda m: -m[1])
 				results_list = sorted(results_list, key=lambda m: m[6])
@@ -501,7 +493,7 @@ class EVENT:
 					m_line("""> To start **TESTING**, DM me with **`ir/test`** as normal. In the PHASE TWO TEST, 
 					you will be sequentially shown a series of messages, one by one, and must answer whether or not 
 					they PASS or BREAK the current rule as they come."""),
-					
+
 					m_line(f"""> The test is considered to be passed once a player gives 
 					**{self.PARAM['PHASE_2_TEST_STREAK']} correct answers IN A ROW**. Therefore, making a mistake 
 					will reset your correct answer count back to 0, and make the test longer. You will be given no 
@@ -609,7 +601,11 @@ class EVENT:
 				self.GAME["PLAYERS"] = players
 				self.GAME["ALL_PLAYERS"] = players
 				self.GAME["ALL_PLAYER_TCO_POINTS"] = [0] * len(players)
-				self.GAME["ALL_PLAYER_AVERAGE_TIME"] = [[0, 0]] * len(players)
+
+				self.GAME["ALL_PLAYER_AVERAGE_TIME"] = []
+				# Prevent the arrays from being linked to one another
+				for _ in range(len(players)): self.GAME["ALL_PLAYER_AVERAGE_TIME"].append([0, 0])
+
 				self.GAME_STARTED = True
 
 				await message.channel.send("✅ **Invisible Rules is now starting.**")
