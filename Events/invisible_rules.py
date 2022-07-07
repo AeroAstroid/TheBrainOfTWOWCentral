@@ -19,8 +19,9 @@ def DEFAULT_PARAM():
 		"PHASE_2_ROUND_TIME": 60,
 
 		"PHASE_1_LEN": 1,
+		"PHASE_2_LEN": 6,
 		"PHASE_1_TEST_LEN": 10,
-		"PHASE_2_TEST_STREAK": 7
+		"PHASE_2_TEST_STREAK": 8
 	}
 
 def DEFAULT_GAME():
@@ -33,11 +34,18 @@ def DEFAULT_GAME():
 
 		"PLAYERS": [],
 
+		"ALL_PLAYERS": [],
+		"ALL_PLAYER_TCO_POINTS": [],
+		"ALL_PLAYER_AVERAGE_TIME": [],
+
 		"INSPECTING": [],
 		"TESTING": [],
 		"PLAYER_TESTS": [],
 
 		"ELIMINATIONS": [],
+		"ELIM_RATE": 0,
+		"ELIM_AMOUNT": 0,
+		"FINAL_RANKINGS": [],
 
 		"NEXT_PERIOD": 0,
 		"PERIOD_STEP": 0,
@@ -127,9 +135,12 @@ class EVENT:
 				edit_delay = round_t / 32 # Amount of iterations (2s each) between timer edits
 
 				if self.GAME["PERIOD_STEP"] % edit_delay < 1:
+					elim_msg = m_line(f"""/nOut of **{len(self.GAME['PLAYERS'])}** players, 
+					**{self.GAME['ELIM_AMOUNT']}** will be eliminated./n""")
+
 					await self.GAME["TRACKED_MSGS"][0].edit(content=m_line(
 					f"""🔍 **Round {self.GAME["ROUND"]}** of Invisible Rules has started!
-					
+					{elim_msg if self.GAME["PHASE"] == 2 else ''}
 					Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
 					messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
 
@@ -160,9 +171,12 @@ class EVENT:
 				# Ensures all players can't talk in the channel
 				await self.GAME_CHANNEL.set_permissions(self.PLAYER_ROLE, send_messages=False)
 
+				elim_msg = m_line(f"""/nOut of **{len(self.GAME['PLAYERS'])}** players, 
+				**{self.GAME['ELIM_AMOUNT']}** will be eliminated./n""")
+				
 				await self.GAME["TRACKED_MSGS"][0].edit(content=m_line(
 				f"""🔍 **Round {self.GAME["ROUND"]}** of Invisible Rules has started!
-				
+				{elim_msg if self.GAME["PHASE"] == 2 else ''}
 				Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
 				messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
 
@@ -194,8 +208,8 @@ class EVENT:
 			
 			if self.GAME["PERIOD_STEP"] == 5:
 				results_list = [
-					# Username, score, time, started test, survives, TCO points gained
-					[p, 0, 9999999, False, False, 0]
+					# Username, score, time, started test, survives, TCO points gained, avg round time
+					[p, 0, 9999999, False, False, 0, 0]
 					for p in self.GAME["PLAYERS"]
 				]
 
@@ -209,6 +223,8 @@ class EVENT:
 					results_list[ind][2] = p_test[5] if p_test[5] != 0 else 9999999
 					results_list[ind][3] = True
 
+					ap_ind = self.GAME["ALL_PLAYERS"].index(p[0])
+						
 					if p_test[5] != 0:
 						if self.GAME["PHASE"] == 1:
 							score = p_test[3].count(True)
@@ -217,17 +233,31 @@ class EVENT:
 								results_list[ind][4] = True
 						else:
 							score = len(p_test[3])
-							results_list[ind][4] = True
 						
 						results_list[ind][1] = score
+					
+					self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0] += results_list[ind][2]
+					self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1] += 1
+
+					results_list[ind][6] = (self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]
+						/ self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1])
 				
+				results_list = sorted(results_list, key=lambda m: -m[1])
+				results_list = sorted(results_list, key=lambda m: m[6])
 				results_list = sorted(results_list, key=lambda m: m[2])
 				results_list = sorted(results_list, key=lambda m: -int(m[3]))
 				results_list = sorted(results_list, key=lambda m: -int(m[4]))
 
-				result_msgs = [f"🏆 **Round {self.GAME['ROUND']} Results**\n> Ordered by completion time\n\n"]
+				result_msgs = [f"🏆 **Round {self.GAME['ROUND']} Results**\n\n"]
 				p_len = len(results_list)
 				survivors = 0
+
+				# Do eliminations for phase 2 (slowest players)
+				if self.GAME["PHASE"] == 2:
+					for ind in range(len(results_list)):
+						# Highest ranks get saved from elim
+						if len(results_list) - ind > self.GAME["ELIM_AMOUNT"]:
+							results_list[ind][4] = True
 
 				for ind, p in enumerate(results_list):
 					elim_emoji = "✅" if p[4] else "💀"
@@ -256,15 +286,20 @@ class EVENT:
 
 							top_percent = survivors / p_len
 
-							# TODO: Log the TCO points earned in rounds
+							ap_ind = self.GAME["ALL_PLAYERS"].index(p[0])
+
 							if survivors == 1:
 								p_line += " ///  **+4 TCO points**"
+								self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind] += 4
 							elif top_percent < 0.1:
 								p_line += " ///  **+3 TCO points**"
+								self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind] += 3
 							elif top_percent < 0.3:
 								p_line += " ///  **+2 TCO points**"
+								self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind] += 2
 							elif top_percent < 0.6:
 								p_line += " ///  **+1 TCO point**"
+								self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind] += 1
 						
 						p_line += "\n"
 
@@ -276,14 +311,48 @@ class EVENT:
 				for msg in result_msgs:
 					await self.ANNOUNCE_CHANNEL.send(msg)
 
-				# TODO: perform eliminations
+				self.GAME["ELIMINATIONS"] = [p[0] for p in results_list if not p[4]]
+				self.GAME["FINAL_RANKINGS"] = self.GAME["ELIMINATIONS"] + self.GAME["FINAL_RANKINGS"]
+
+				self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
+
+				for e in self.GAME["ELIMINATIONS"]:
+					await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
 			
 			if self.GAME["PERIOD_STEP"] == 9:
 				new_round = self.GAME["ROUND"] + 1
 
-				if new_round > len(self.GAME["RULES"]):
-					await self.ANNOUNCE_CHANNEL.send("🔍 **Invisible Rules has finished!** Thank you for playing.")
-					return False # End the event
+				if len(self.GAME["PLAYERS"]) < 2:
+					if len(self.GAME["PLAYERS"]) == 1:
+						winner = self.GAME["PLAYERS"][0]
+
+						await self.ANNOUNCE_CHANNEL.send(f"🔍 **The winner of Invisible Rules is <@{winner.id}>!**")
+					
+					else:
+						winner = self.GAME["FINAL_RANKINGS"][0]
+
+						await self.ANNOUNCE_CHANNEL.send(
+						f"🔍 By an average completion time tiebreaker, **the winner of Invisible Rules is <@{winner.id}>!**")
+					
+					final_results = []
+
+					for p in self.GAME["FINAL_RANKINGS"]:
+						ap_ind = self.GAME["ALL_PLAYERS"].index(p)
+						p_pts = self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind]
+						p_avg = self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind]
+
+						final_results.append([p.name, p.id, p_pts, p_avg])
+
+					final_results = "\n".join(["\t".join(row) for row in final_results])
+
+					with open('IR_Results.tsv', 'w', encoding='utf-8') as f:
+						f.write(final_results)
+
+					# Send a log of results in a staff channel
+					await self.SERVER["MAIN"].get_channel(716131405503004765).send(file=dc.File('IR_Results.tsv'))
+
+					os.remove('IR_Results.tsv')
+					return False
 
 				if self.GAME["ROUND"] != self.PARAM["PHASE_1_LEN"]:
 					await self.ANNOUNCE_CHANNEL.send(f"🔍 **Stand by! Round {new_round} begins in 8 seconds!**") # 20
@@ -311,16 +380,26 @@ class EVENT:
 			self.GAME["TESTING"] = []
 			self.GAME["PLAYER_TESTS"] = []
 
-			# Control channel access here
+			self.GAME["ELIMINATIONS"] = []
 
 			self.GAME["NEXT_PERIOD"] = int(time() + round_t)
 			self.GAME["PERIOD_STEP"] = 0
 			self.GAME["ROUND_RUNNING"] = True
 
+			if self.GAME["PHASE"] == 2:
+				if self.GAME["ROUND"] == self.PARAM["PHASE_1_LEN"] + self.PARAM["PHASE_2_LEN"]:
+					# Finale
+					self.GAME["ELIM_AMOUNT"] = len(self.GAME["PLAYERS"]) - 1
+				else:
+					# Ensure at least 1 player is eliminated
+					self.GAME["ELIM_AMOUNT"] = max(1, int(round(len(self.GAME["PLAYERS"]) * self.GAME["ELIM_RATE"])))
 
+			elim_msg = m_line(f"""/nOut of **{len(self.GAME['PLAYERS'])}** players, 
+			**{self.GAME['ELIM_AMOUNT']}** will be eliminated./n""")
+			
 			ann_timer = await self.ANNOUNCE_CHANNEL.send(m_line(
 			f"""🔍 **Round {self.GAME["ROUND"]}** of Invisible Rules has started!
-			
+			{elim_msg if self.GAME["PHASE"] == 2 else ''}
 			Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
 			messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
 
@@ -376,8 +455,8 @@ class EVENT:
 					m_line(f"""> Once they switch to **TESTING**, players will receive a **test** comprised of 
 					{self.PARAM['PHASE_1_TEST_LEN']} messages. You must indicate, for each message, whether it 
 					PASSES or BREAKS the current rule. You will be given no immediate feedback on whether or not 
-					your answers are correct. After doing so for all 10 messages, you will be **FINISHED** with 
-					the round."""),
+					your answers are correct. After doing so for all {self.PARAM['PHASE_1_TEST_LEN']} messages, 
+					you will be **FINISHED** with the round."""),
 
 					m_line(f"""> By the end of the round (**{m_str}**), anyone who didn't finish their test in time, 
 					as well as **anyone who scored under a {self.PARAM['PHASE_1_TEST_LEN']-1}/
@@ -393,6 +472,8 @@ class EVENT:
 			elif self.GAME["PHASE"] == 2:
 				m, s = [self.PARAM["PHASE_2_ROUND_TIME"] // 60, self.PARAM["PHASE_2_ROUND_TIME"] % 60]
 				m_str = f"{m} minute{'s' if m != 1 else ''}" + (f" {s} second{'s' if s != 1 else ''}" if s != 0 else "")
+
+				self.GAME["ELIM_RATE"] = 1-(1/len(self.GAME["PLAYERS"]))**(1/(self.PARAM["PHASE_2_LEN"] + 1))
 
 				lines = [
 					"🔍 **It's time for Phase Two!**",
@@ -410,10 +491,12 @@ class EVENT:
 					you will be sequentially shown a series of messages, one by one, and must answer whether or not 
 					they PASS or BREAK the current rule as they come."""),
 
-					m_line("""> The test is considered to be passed once a player gives **SEVEN correct answers IN 
-					A ROW**. Therefore, making a mistake will reset your correct answer count back to 0, and make 
-					the test longer. You will be given no immediate feedback on whether or not your answers are 
-					correct (that is, until you're notified that you passed the test)."""),
+					m_line(f"""> The test is considered to be passed once a player gives 
+					**{self.PARAM['PHASE_2_TEST_STREAK']} correct answers IN A ROW**. Therefore, making a mistake 
+					will reset your correct answer count back to 0, and make the test longer. You will be given no 
+					immediate feedback on whether or not your answers are correct (that is, until you're notified 
+					that you passed the test). The test has 100 messages maximum. If it's not solved by then, it is 
+					considered to be unfinished."""),
 
 					m_line("""> However, for this PHASE, **you may go back to INSPECTING even after starting a 
 					TEST** by DMing me with **`ir/inspect`**. You will be given access to #rule-inspection again 
@@ -428,9 +511,9 @@ class EVENT:
 
 					"> The survivors who finished the fastest will, once again, be given point bonuses.",
 
-					m_line("""> **PHASE TWO: Investigative Journalism** will last until there's one player standing. 
-					If a round eliminates all players, the final rankings will be tiebroken by amount of points earned, 
-					then by average time necessary to complete each round.""")
+					m_line(f"""> **PHASE TWO: Investigative Journalism** will last until there's one player standing. 
+					This will happen in, at most, **{self.PARAM['PHASE_2_LEN']}** rounds. If a round eliminates all 
+					players, the final rankings will be tiebroken by average time necessary to complete each round.""")
 				]
 
 			# Post the messages every [message_delay] iterations
@@ -513,6 +596,9 @@ class EVENT:
 				self.ANNOUNCE_CHANNEL = announce_channel
 				self.GAME_CHANNEL = game_channel
 				self.GAME["PLAYERS"] = players
+				self.GAME["ALL_PLAYERS"] = players
+				self.GAME["ALL_PLAYER_TCO_POINTS"] = [0] * len(players)
+				self.GAME["ALL_PLAYER_AVERAGE_TIME"] = [[0, 0]] * len(players)
 				self.GAME_STARTED = True
 
 				await message.channel.send("✅ **Invisible Rules is now starting.**")
@@ -812,18 +898,27 @@ class EVENT:
 			last_answers = self.GAME["PLAYER_TESTS"][user_test_ind][3][-required:]
 
 			if False in last_answers or len(last_answers) < required:
-				new_msg = self.generate_test_msg()
+				if n < 100:
+					new_msg = self.generate_test_msg()
 
-				self.GAME["PLAYER_TESTS"][user_test_ind][1].append(new_msg)
+					self.GAME["PLAYER_TESTS"][user_test_ind][1].append(new_msg)
 
-				self.GAME["PLAYER_TESTS"][user_test_ind][2].append(
-					self.GAME["RULES"][rnd - 1](new_msg))
+					self.GAME["PLAYER_TESTS"][user_test_ind][2].append(
+						self.GAME["RULES"][rnd - 1](new_msg))
 
-				t_msg = (f"📝 **Round {rnd} Rules Test!**\n"
-				+f"Answer {required} questions correctly in a row to finish the test!"
-				+f"\n\n{self.format_test_msg(new_msg, n+1)}")
+					t_msg = (f"📝 **Round {rnd} Rules Test!**\n"
+					+f"Answer {required} questions correctly in a row to finish the test!"
+					+f"\n\n{self.format_test_msg(new_msg, n+1)}")
 
-				await ctx.response.edit_message(content=t_msg)
+					await ctx.response.edit_message(content=t_msg)
+					
+				else:
+					t_msg = m_line(f"""📝 **Round {rnd} Rules Test!**
+					
+					**You have ran out of test messages (100) without being able to finish the test!**""")
+
+					await ctx.response.edit_message(content=t_msg, view=None)
+
 				return
 			
 			else:
