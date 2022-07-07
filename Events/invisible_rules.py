@@ -241,7 +241,7 @@ class EVENT:
 						
 						results_list[ind][1] = score
 					
-					print(self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind])
+					print(self.GAME["ALL_PLAYER_AVERAGE_TIME"])
 
 					self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0] += results_list[ind][2]
 					self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1] += 1
@@ -249,7 +249,7 @@ class EVENT:
 					results_list[ind][6] = (self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]
 						/ self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1])
 					
-					print(self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind])
+					print(self.GAME["ALL_PLAYER_AVERAGE_TIME"])
 					print("------")
 				
 				results_list = sorted(results_list, key=lambda m: -m[1])
@@ -351,8 +351,6 @@ class EVENT:
 						ap_ind = self.GAME["ALL_PLAYERS"].index(p)
 						p_pts = self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind]
 						p_avg = self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]/self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1]
-
-						print(self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind])
 
 						final_results.append([p.name, p.id, p_pts, p_avg])
 
