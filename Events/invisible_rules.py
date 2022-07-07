@@ -205,8 +205,8 @@ class EVENT:
 			
 			if self.GAME["PERIOD_STEP"] == 3:
 				await self.ANNOUNCE_CHANNEL.send(m_line(f"""
-				The **Round {self.game['ROUND']} Rule** was:/n
-				> **```{self.GAME['RULE_DESC'][self.game['ROUND']-1]}```**
+				The **Round {self.GAME['ROUND']} Rule** was:/n
+				> **```{self.GAME['RULE_DESC'][self.GAME['ROUND']-1]}```**
 
 				Test results are as follows:"""))
 			
