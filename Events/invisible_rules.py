@@ -325,6 +325,7 @@ class EVENT:
 				if len(self.GAME["PLAYERS"]) < 2:
 					if len(self.GAME["PLAYERS"]) == 1:
 						winner = self.GAME["PLAYERS"][0]
+						self.GAME["FINAL_RANKINGS"] = [winner] + self.GAME["FINAL_RANKINGS"]
 
 						await self.ANNOUNCE_CHANNEL.send(f"🔍 **The winner of Invisible Rules is <@{winner.id}>!**")
 					
@@ -339,7 +340,7 @@ class EVENT:
 					for p in self.GAME["FINAL_RANKINGS"]:
 						ap_ind = self.GAME["ALL_PLAYERS"].index(p)
 						p_pts = self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind]
-						p_avg = self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind]
+						p_avg = self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]/self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1]
 
 						final_results.append([p.name, p.id, p_pts, p_avg])
 
