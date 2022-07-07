@@ -635,7 +635,7 @@ class EVENT:
 					# EMOJI SETS - Get user to change emoji sets
 					await self.param["ADMIN_CHANNEL"].send("Send new emoji sets to replace the current ones. Seperate each emoji using a comma and seperate each set using a linebreak. You can also send `cancel` to go back.")
 
-					msg = await BRAIN.wait_for('message', check=lambda m: (m.author == user and m.channel == channel))
+					msg = await BRAIN.wait_for('message', check=lambda m: (m.author == interaction.user and m.channel == self.param["ADMIN_CHANNEL"]))
 					# Check if user is cancelling, and do not continue with the splitting if they do cancel
 					if msg.content.strip().lower() != "cancel":
 					
