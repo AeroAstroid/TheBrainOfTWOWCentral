@@ -643,10 +643,12 @@ class EVENT:
 							# Split the message content into emoji sets
 							emoji_set_strings = msg.content.split("\n")
 							emoji_sets = msg.split(",")
+							print(emoji_sets)
 							emoji_sets = [x.strip() for x in emoji_sets]
 							self.param["EMOJI_SETS"] = emoji_sets
 							await self.param["ADMIN_CHANNEL"].send("**Emoji sets successfully changed!**")
-						except:
+						except Exception as e:
+							print(e)
 							await self.param["ADMIN_CHANNEL"].send("Error occured whilst trying to change the emoji sets!")
 					
 					await self.admin_modify()
