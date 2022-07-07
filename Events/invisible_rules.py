@@ -181,6 +181,11 @@ class EVENT:
 
 					# Ensures the player can see the channel
 					await self.GAME_CHANNEL.set_permissions(t_msg.channel.recipient, overwrite=None)
+				
+				for test_msg_info in self.GAME["PLAYER_TESTS"]:
+					if test_msg_info[5] == 0:
+						await test_msg_info[4].edit(view=None, content=
+						f"📝 **Round {self.GAME['ROUND']} Rules Test!**\nThe round has ended; you've run out of time!")
 
 				self.GAME["INSPECTING"] = []
 			
@@ -201,7 +206,6 @@ class EVENT:
 					p_ind = self.GAME["TESTING"].index(p[0])
 					p_test = self.GAME["PLAYER_TESTS"][p_ind]
 
-					print(p.name, p.id, p_test[0], p_test[5])
 					results_list[ind][2] = p_test[5] if p_test[5] != 0 else 9999999
 					results_list[ind][3] = True
 
@@ -217,11 +221,9 @@ class EVENT:
 						
 						results_list[ind][1] = score
 				
-				print(results_list)
-				results_list = sorted(results_list, key=lambda m: m[4])
+				results_list = sorted(results_list, key=lambda m: m[2])
 				results_list = sorted(results_list, key=lambda m: -int(m[3]))
-				print(results_list)
-				print("------")
+				results_list = sorted(results_list, key=lambda m: -int(m[4]))
 
 				result_msgs = [f"🏆 **Round {self.GAME['ROUND']} Results**\n> Ordered by completion time\n\n"]
 				p_len = len(results_list)
@@ -677,6 +679,9 @@ class EVENT:
 							self.GAME["PLAYER_TESTS"].append([message.author.id, [new_msg], 
 							[new_answer], [], test_dm_msg, 0])
 
+						else:
+							self.GAME["PLAYER_TESTS"][u_ind][4] = test_dm_msg
+
 					return
 
 				if (msg.lower() == "ir/inspect" and message.author in self.GAME["TESTING"]
@@ -815,7 +820,7 @@ class EVENT:
 					self.GAME["RULES"][rnd - 1](new_msg))
 
 				t_msg = (f"📝 **Round {rnd} Rules Test!**\n"
-				+"Answer {required} questions correctly in a row to finish the test!"
+				+f"Answer {required} questions correctly in a row to finish the test!"
 				+f"\n\n{self.format_test_msg(new_msg, n+1)}")
 
 				await ctx.response.edit_message(content=t_msg)
