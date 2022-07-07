@@ -452,16 +452,16 @@ class EVENT:
 
 					f"> For this phase, each round lasts **{m_str}**.",
 
-					m_line("""> Once the round starts, everyone playing will be able to **INSPECT** the current 
-					rule by sending messages in #rule-inspection. The bot will react to every message with a ✅ 
-					**if it passes the rule**, or a ❌ **if it breaks the rule.** You may send as many messages 
-					as you want. There is no penalty or reward for specifically sending messages that break or 
-					pass the rule."""),
+					m_line(f"""> Once the round starts, everyone playing will be able to **INSPECT** the current 
+					rule by sending messages in <#{self.GAME_CHANNEL.id}>. The bot will react to every message 
+					with a ✅ **if it passes the rule**, or a ❌ **if it breaks the rule.** You may send as many 
+					messages as you want. There is no penalty or reward for specifically sending messages that 
+					break or pass the rule."""),
 
-					m_line("""> A player who is confident they figured out the rule can **DM me with the command 
+					m_line(f"""> A player who is confident they figured out the rule can **DM me with the command 
 					`ir/test`** to stop INSPECTING and start **TESTING**. This command is **final** - you will be 
-					locked out of #rule-inspection and cannot go back to INSPECTING for the remainder of the round.
-					"""),
+					locked out of <#{self.GAME_CHANNEL.id}> and cannot go back to INSPECTING for the remainder of 
+					the round."""),
 
 					m_line(f"""> Once they switch to **TESTING**, players will receive a **test** comprised of 
 					{self.PARAM['PHASE_1_TEST_LEN']} messages. You must indicate, for each message, whether it 
@@ -501,7 +501,7 @@ class EVENT:
 					m_line("""> To start **TESTING**, DM me with **`ir/test`** as normal. In the PHASE TWO TEST, 
 					you will be sequentially shown a series of messages, one by one, and must answer whether or not 
 					they PASS or BREAK the current rule as they come."""),
-
+					
 					m_line(f"""> The test is considered to be passed once a player gives 
 					**{self.PARAM['PHASE_2_TEST_STREAK']} correct answers IN A ROW**. Therefore, making a mistake 
 					will reset your correct answer count back to 0, and make the test longer. You will be given no 
@@ -509,9 +509,9 @@ class EVENT:
 					that you passed the test). The test has 100 messages maximum. If it's not solved by then, it is 
 					considered to be unfinished."""),
 
-					m_line("""> However, for this PHASE, **you may go back to INSPECTING even after starting a 
-					TEST** by DMing me with **`ir/inspect`**. You will be given access to #rule-inspection again 
-					and will be allowed to read/send more messages."""),
+					m_line(f"""> However, for this PHASE, **you may go back to INSPECTING even after starting a 
+					TEST** by DMing me with **`ir/inspect`**. You will be given access to <#{self.GAME_CHANNEL.id}> 
+					again and will be allowed to read/send more messages."""),
 
 					m_line("""> You can go back to TESTING using **`ir/test`** as usual. However, leaving the test 
 					to go back to INSPECTION will also reset your correct answer streak back to 0."""),
