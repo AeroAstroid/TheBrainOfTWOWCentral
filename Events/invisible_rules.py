@@ -204,9 +204,13 @@ class EVENT:
 				self.GAME["INSPECTING"] = []
 			
 			if self.GAME["PERIOD_STEP"] == 3:
-				await self.ANNOUNCE_CHANNEL.send("Results are as follows:")
+				await self.ANNOUNCE_CHANNEL.send(m_line(f"""
+				The **Round {self.game['ROUND']} Rule** was:/n
+				> **```{self.GAME['RULE_DESC'][self.game['ROUND']-1]}```**
+
+				Test results are as follows:"""))
 			
-			if self.GAME["PERIOD_STEP"] == 5:
+			if self.GAME["PERIOD_STEP"] == 6:
 				results_list = [
 					# Username, score, time, started test, survives, TCO points gained, avg round time
 					[p, 0, 9999999, False, False, 0, 0]
@@ -321,7 +325,7 @@ class EVENT:
 				for e in self.GAME["ELIMINATIONS"]:
 					await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
 			
-			if self.GAME["PERIOD_STEP"] == 9:
+			if self.GAME["PERIOD_STEP"] == 10:
 				new_round = self.GAME["ROUND"] + 1
 
 				if len(self.GAME["PLAYERS"]) < 2:
