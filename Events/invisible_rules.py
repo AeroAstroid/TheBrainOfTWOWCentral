@@ -320,10 +320,10 @@ class EVENT:
 				self.GAME["ELIMINATIONS"] = [p[0] for p in results_list if not p[4]]
 				self.GAME["FINAL_RANKINGS"] = self.GAME["ELIMINATIONS"] + self.GAME["FINAL_RANKINGS"]
 
-				self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
+				#self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
 
-				for e in self.GAME["ELIMINATIONS"]:
-					await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
+				#for e in self.GAME["ELIMINATIONS"]:
+				#	await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
 			
 			if self.GAME["PERIOD_STEP"] == 10:
 				new_round = self.GAME["ROUND"] + 1
@@ -360,6 +360,10 @@ class EVENT:
 
 					os.remove('IR_Results.txt')
 					return False
+				
+				elif self.GAME["ROUND"] >= len(self.GAME["RULES"]):
+					await self.ANNOUNCE_CHANNEL.send("Invisible Rules has finished!")
+					return
 
 				if self.GAME["ROUND"] != self.PARAM["PHASE_1_LEN"]:
 					await self.ANNOUNCE_CHANNEL.send(f"🔍 **Stand by! Round {new_round} begins in 8 seconds!**") # 20
