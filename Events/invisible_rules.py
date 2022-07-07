@@ -343,7 +343,7 @@ class EVENT:
 
 						final_results.append([p.name, p.id, p_pts, p_avg])
 
-					final_results = "\n".join(["\t".join(row) for row in final_results])
+					final_results = "\n".join(["\t".join([str(r) for r in row]) for row in final_results])
 
 					with open('IR_Results.tsv', 'w', encoding='utf-8') as f:
 						f.write(final_results)
