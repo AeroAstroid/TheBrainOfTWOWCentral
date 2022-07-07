@@ -345,13 +345,13 @@ class EVENT:
 
 					final_results = "\n".join(["\t".join([str(r) for r in row]) for row in final_results])
 
-					with open('IR_Results.tsv', 'w', encoding='utf-8') as f:
+					with open('IR_Results.txt', 'w', encoding='utf-8') as f:
 						f.write(final_results)
 
 					# Send a log of results in a staff channel
-					await self.SERVER["MAIN"].get_channel(716131405503004765).send(file=dc.File('IR_Results.tsv'))
+					await self.SERVER["MAIN"].get_channel(716131405503004765).send(file=dc.File('IR_Results.txt'))
 
-					os.remove('IR_Results.tsv')
+					os.remove('IR_Results.txt')
 					return False
 
 				if self.GAME["ROUND"] != self.PARAM["PHASE_1_LEN"]:
