@@ -188,13 +188,16 @@ class EVENT:
 				{self.make_timer(0)}"""))
 
 				for t_msg in self.GAME["TRACKED_MSGS"][2:]:
-					await t_msg.edit(content=m_line(
-					f"""🔍 **Invisible Rules: Round {self.GAME['ROUND']} (Phase {self.GAME['PHASE']})**
-					
-					{self.make_timer(0, just_timestamp=True)}"""))
+					try:
+						await t_msg.edit(content=m_line(
+						f"""🔍 **Invisible Rules: Round {self.GAME['ROUND']} (Phase {self.GAME['PHASE']})**
+						
+						{self.make_timer(0, just_timestamp=True)}"""))
 
-					# Ensures the player can see the channel
-					await self.GAME_CHANNEL.set_permissions(t_msg.channel.recipient, overwrite=None)
+						# Ensures the player can see the channel
+						await self.GAME_CHANNEL.set_permissions(t_msg.channel.recipient, overwrite=None)
+					except Exception:
+						pass
 				
 				for test_msg_info in self.GAME["PLAYER_TESTS"]:
 					if test_msg_info[5] == 0:
@@ -427,14 +430,17 @@ class EVENT:
 			self.GAME["TRACKED_MSGS"] = [ann_timer, game_timer]
 
 			for p in self.GAME["PLAYERS"]:
-				msg = await p.send(m_line(
-				f"""🔍 **Invisible Rules: Round {self.GAME['ROUND']} (Phase {self.GAME['PHASE']})**
-				
-				{self.make_timer(round_t, just_timestamp=True)}
-				
-				Send **`ir/test`** to stop inspecting the rule and access the test!"""))
+				try:
+					msg = await p.send(m_line(
+					f"""🔍 **Invisible Rules: Round {self.GAME['ROUND']} (Phase {self.GAME['PHASE']})**
+					
+					{self.make_timer(round_t, just_timestamp=True)}
+					
+					Send **`ir/test`** to stop inspecting the rule and access the test!"""))
 
-				self.GAME["TRACKED_MSGS"].append(msg)
+					self.GAME["TRACKED_MSGS"].append(msg)
+				except Exception:
+					pass
 
 			return
 
