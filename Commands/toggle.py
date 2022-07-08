@@ -38,16 +38,16 @@ async def MAIN(message, args, level, perms, SERVER):
 	for ch in channels: # For every channel mentioned...
 		if ch.startswith("<#") and ch.endswith(">"): # Don't bother if it's not an actual channel mention
 			try:
-				if (discord.utils.get(SERVERS["MAIN"].channels, id=int(ch[2:-1])) is None
-				or int(ch[2:-1]) not in SERVERS["PUBLIC_CHANNELS"]): # If it's invalid or not a public channel, point so out
+				if (discord.utils.get(SERVER["MAIN"].channels, id=int(ch[2:-1])) is None
+				or int(ch[2:-1]) not in SERVER["PUBLIC_CHANNELS"]): # If it's invalid or not a public channel, point so out
 					add = f"The channel with ID {ch[2:-1]} is either invalid or not a public channel. No action will be taken.\n"
 					if len(lines[-1] + add) > 1950:
 						lines.append("")
 					lines[-1] += add
 
 				else: # Otherwise, it's valid, so add it
-					target_c = discord.utils.get(SERVERS["MAIN"].channels, id=int(ch[2:-1]))
-					c_perm = target_c.overwrites_for(SERVERS["MAIN"].default_role).send_messages
+					target_c = discord.utils.get(SERVER["MAIN"].channels, id=int(ch[2:-1]))
+					c_perm = target_c.overwrites_for(SERVER["MAIN"].default_role).send_messages
 
 					if mode is None: # If the user wants to switch the permissions...
 						if c_perm in [None, True]: # Channels that allow speaking...
@@ -94,7 +94,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	for act in actions:
 		# Toggle the channel (changing its send messages and add reactions permissions)
 		await act[0].set_permissions(
-			SERVERS["MAIN"].default_role, send_messages=act[1], add_reactions=act[1])
+			SERVER["MAIN"].default_role, send_messages=act[1], add_reactions=act[1])
 
 		# Lines to be added to the confirmation and/or log message
 		add = f"**{act[0].mention} has been toggled {'ON' if act[1] is None else 'OFF'}.**\n"
