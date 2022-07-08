@@ -269,7 +269,7 @@ The game will start in ten seconds."""
 		# Check if there is a next round
 		if self.info["ROUND_NUMBER"] != len(self.info["GAME_ROUNDS"]):
 			# Create buttons to prompt user to start next round
-			button_view = View()
+			button_view = View(timeout = None)
 
 			async def next_round_pressed(interaction):
 
@@ -289,7 +289,7 @@ The game will start in ten seconds."""
 			next_round_button.callback = next_round_pressed				
 			button_view.add_item(next_round_button)
 
-			await clue_posting_channel.send("Next round will start soon!", view = button_view)
+			await self.param["ADMIN_CHANNEL"].send("Press this button to start the next round.", view = button_view)
 		# If there is no next round, then end game
 		else:
 
@@ -486,7 +486,7 @@ The game will start in ten seconds."""
 				# If the command has not yet returned, a valid CSV file has been sent!
 				# Send message allowing player to start game
 
-				button_view = View()
+				button_view = View(timeout = None)
 
 				# BUTTON FUNCTIONS
 				async def start_button_pressed(interaction):
