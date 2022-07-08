@@ -17,7 +17,7 @@ ALIASES = []
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
-    signup_channel_id = 716131405503004765
+    signup_channel_id = 633045040716840970
     participating_role_id = 498254150044352514
 
     signup_channel = SERVER["MAIN"].get_channel(signup_channel_id)
