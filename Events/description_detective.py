@@ -269,7 +269,7 @@ The game will start in ten seconds."""
 		# Check if there is a next round
 		if self.info["ROUND_NUMBER"] != len(self.info["GAME_ROUNDS"]):
 			# Create buttons to prompt user to start next round
-			button_view = View()
+			button_view = View(timeout = None)
 
 			async def next_round_pressed(interaction):
 
@@ -289,7 +289,7 @@ The game will start in ten seconds."""
 			next_round_button.callback = next_round_pressed				
 			button_view.add_item(next_round_button)
 
-			await clue_posting_channel.send("Next round will start soon!", view = button_view)
+			await self.param["ADMIN_CHANNEL"].send("Press this button to start the next round.", view = button_view)
 		# If there is no next round, then end game
 		else:
 
@@ -486,7 +486,7 @@ The game will start in ten seconds."""
 				# If the command has not yet returned, a valid CSV file has been sent!
 				# Send message allowing player to start game
 
-				button_view = View()
+				button_view = View(timeout = None)
 
 				# BUTTON FUNCTIONS
 				async def start_button_pressed(interaction):
@@ -545,7 +545,7 @@ The game will start in ten seconds."""
 									player_guess = message.content.strip().lower()
 
 									# Check if guess is too long
-									if len(player_guess) < 70:
+									if len(player_guess) > 70:
 										return
 
 									# Log player's guess
@@ -556,9 +556,9 @@ The game will start in ten seconds."""
 									if player_guess in self.info["CURRENT_ROUND"]["ANSWERS"]:
 
 										# Give player points
-										if self.info["CURRENT_ROUND"]["DIFFICULTY"] == "NORMAL": 
+										if self.info["CURRENT_ROUND"]["DIFFICULTY"].upper() == "NORMAL": 
 											points_gained = NORMAL_POINTS[self.info["CLUE_NUM"] - 1]
-										elif self.info["CURRENT_ROUND"]["DIFFICULTY"] == "EASY": 
+										elif self.info["CURRENT_ROUND"]["DIFFICULTY"].upper() == "EASY": 
 											points_gained = EASY_POINTS[self.info["CLUE_NUM"] - 1]
 
 										player_object.correct = True
@@ -629,10 +629,10 @@ The game will start in ten seconds."""
 								return
 
 							# Give player points
-							if self.info["CURRENT_ROUND"]["DIFFICULTY"] == "NORMAL": 
-								points_gained = NORMAL_POINTS[self.info["CLUE_NUM"] - 1]
-							elif self.info["CURRENT_ROUND"]["DIFFICULTY"] == "EASY": 
-								points_gained = EASY_POINTS[self.info["CLUE_NUM"] - 1]
+							if self.info["CURRENT_ROUND"]["DIFFICULTY"].upper() == "NORMAL": 
+								points_gained = NORMAL_POINTS[guess_clue - 1]
+							elif self.info["CURRENT_ROUND"]["DIFFICULTY"].upper() == "EASY": 
+								points_gained = EASY_POINTS[guess_clue - 1]
 
 							player_object.correct = True
 							player_object.score_this_round = points_gained
