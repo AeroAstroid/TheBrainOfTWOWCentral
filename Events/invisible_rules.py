@@ -267,8 +267,8 @@ class EVENT:
 				# Do eliminations for phase 2 (slowest players)
 				if self.GAME["PHASE"] == 2:
 					for ind in range(len(results_list)):
-						# Highest ranks get saved from elim
-						if len(results_list) - ind > self.GAME["ELIM_AMOUNT"]:
+						# Highest ranks get saved from elim (provided they did the test)
+						if len(results_list) - ind > self.GAME["ELIM_AMOUNT"] and results_list[ind][2] < 9999999:
 							results_list[ind][4] = True
 
 				for ind, p in enumerate(results_list):
