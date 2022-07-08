@@ -630,9 +630,9 @@ The game will start in ten seconds."""
 
 							# Give player points
 							if self.info["CURRENT_ROUND"]["DIFFICULTY"].upper() == "NORMAL": 
-								points_gained = NORMAL_POINTS[self.info["CLUE_NUM"] - 1]
+								points_gained = NORMAL_POINTS[guess_clue - 1]
 							elif self.info["CURRENT_ROUND"]["DIFFICULTY"].upper() == "EASY": 
-								points_gained = EASY_POINTS[self.info["CLUE_NUM"] - 1]
+								points_gained = EASY_POINTS[guess_clue - 1]
 
 							player_object.correct = True
 							player_object.score_this_round = points_gained
