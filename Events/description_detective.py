@@ -545,7 +545,7 @@ The game will start in ten seconds."""
 									player_guess = message.content.strip().lower()
 
 									# Check if guess is too long
-									if len(player_guess) < 70:
+									if len(player_guess) > 70:
 										return
 
 									# Log player's guess
