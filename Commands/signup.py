@@ -30,20 +30,17 @@ async def MAIN(message, args, level, perms, SERVER):
         # Check database for whether to add another role
         db = Database()
 
-        role = db.get_entries("signupeventrole")[0]
+        role = db.get_entries("signupeventrole")[0][0]
 
-        print(role)
         if role == "None":
             return
         
-        print(role)
         role_obj = dc.utils.get(SERVER["MAIN"].roles, name=role)
-        print(role_obj)
+
         if role_obj is None:
             return
         
         await SERVER["MAIN"].get_member(message.author.id).add_roles(role_obj)
-        print("role added")
         return
     
     if level == 1 or perms < 2:
