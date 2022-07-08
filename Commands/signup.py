@@ -24,24 +24,47 @@ async def MAIN(message, args, level, perms, SERVER):
     participating = SERVER["MAIN"].get_role(participating_role_id)
 
     if message.channel == signup_channel:
-        await SERVER["MAIN"].get_member(message.author.id).add_roles(participating)
-        await message.add_reaction("✅")
-        
-        # Check database for whether to add another role
-        db = Database()
+        m = SERVER["MAIN"].get_member(message.author.id)
 
-        role = db.get_entries("signupeventrole")[0][0]
+        if participating not in m.roles:
+            await m.add_roles(participating)
+            await message.add_reaction("✅")
+            
+            # Check database for whether to add another role
+            db = Database()
 
-        if role == "None":
+            role = db.get_entries("signupeventrole")[0][0]
+
+            if role == "None":
+                return
+            
+            role_obj = dc.utils.get(SERVER["MAIN"].roles, name=role)
+
+            if role_obj is None:
+                return
+            
+            await m.add_roles(role_obj)
             return
         
-        role_obj = dc.utils.get(SERVER["MAIN"].roles, name=role)
+        else:
+            await m.remove_roles(participating)
+            await message.add_reaction("👋")
+            
+            # Check database for whether to add another role
+            db = Database()
 
-        if role_obj is None:
+            role = db.get_entries("signupeventrole")[0][0]
+
+            if role == "None":
+                return
+            
+            role_obj = dc.utils.get(SERVER["MAIN"].roles, name=role)
+
+            if role_obj is None:
+                return
+            
+            await m.remove_roles(role_obj)
             return
-        
-        await SERVER["MAIN"].get_member(message.author.id).add_roles(role_obj)
-        return
     
     if level == 1 or perms < 2:
         return
