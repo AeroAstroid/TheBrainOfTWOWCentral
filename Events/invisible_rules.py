@@ -363,7 +363,7 @@ class EVENT:
 				
 				elif self.GAME["ROUND"] >= len(self.GAME["RULES"]):
 					await self.ANNOUNCE_CHANNEL.send("Invisible Rules has finished!")
-					return
+					return False
 
 				if self.GAME["ROUND"] != self.PARAM["PHASE_1_LEN"]:
 					await self.ANNOUNCE_CHANNEL.send(f"🔍 **Stand by! Round {new_round} begins in 8 seconds!**") # 20
