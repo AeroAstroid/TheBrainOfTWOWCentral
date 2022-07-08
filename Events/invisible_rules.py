@@ -491,7 +491,7 @@ class EVENT:
 				m, s = [self.PARAM["PHASE_2_ROUND_TIME"] // 60, self.PARAM["PHASE_2_ROUND_TIME"] % 60]
 				m_str = f"{m} minute{'s' if m != 1 else ''}" + (f" {s} second{'s' if s != 1 else ''}" if s != 0 else "")
 
-				self.GAME["ELIM_RATE"] = 1-(1/len(self.GAME["PLAYERS"]))**(1/(self.PARAM["PHASE_2_LEN"] + 1))
+				self.GAME["ELIM_RATE"] = 1-(1/len(self.GAME["PLAYERS"]))**(1/(self.PARAM["PHASE_2_LEN"] + 0.5))
 
 				lines = [
 					"🔍 **It's time for Phase Two!**",
