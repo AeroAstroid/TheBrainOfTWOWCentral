@@ -30,7 +30,7 @@ async def MAIN(message, args, level, perms, SERVER):
         # Check database for whether to add another role
         db = Database()
 
-        role = db.get_entries("SIGNUPEVENTROLE")[0]
+        role = db.get_entries("signupeventrole")[0]
 
         if role == "None":
             return
@@ -54,7 +54,7 @@ async def MAIN(message, args, level, perms, SERVER):
         else:
             new_role = " ".join(args[2:])
 
-        db.edit_entry("SIGNUPEVENTROLE", {"role": new_role})
+        db.edit_entry("signupeventrole", {"role": new_role})
 
         await message.channel.send(f"Set the event-specific signup role to {new_role}!")
         return
