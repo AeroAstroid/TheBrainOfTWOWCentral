@@ -17,6 +17,8 @@ ALIASES = []
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
+    print("Testing print statement")
+
     signup_channel_id = 633045040716840970
     participating_role_id = 498254150044352514
 
