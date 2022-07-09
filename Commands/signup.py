@@ -17,14 +17,12 @@ ALIASES = []
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
-    signup_channel_id = 990307784690135060 # 633045040716840970
+    signup_channel_id = 633045040716840970
     participating_role_id = 498254150044352514
 
     signup_channel = SERVER["MAIN"].get_channel(signup_channel_id)
     participating = SERVER["MAIN"].get_role(participating_role_id)
 
-    print(message.channel, signup_channel)
-    
     if message.channel == signup_channel:
         await SERVER["MAIN"].get_member(message.author.id).add_roles(participating)
         await message.add_reaction("✅")
