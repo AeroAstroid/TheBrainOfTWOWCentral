@@ -393,6 +393,8 @@ class EVENT:
 		if self.GAME["ROUND"] < 0: # Ending an intermission between rounds
 			round_t = self.PARAM[f"PHASE_{self.GAME['PHASE']}_ROUND_TIME"]
 
+			self.GAME["GEN_TEST"].reset()
+
 			self.GAME["ROUND"] *= -1
 
 			self.GAME["INSPECTING"] = self.GAME["PLAYERS"].copy()
