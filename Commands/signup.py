@@ -12,7 +12,7 @@ def HELP(PREFIX):
 		"CATEGORY" : "Utility"
 	}
 
-PERMS = 1 # Member
+PERMS = 0 # Member
 ALIASES = []
 REQ = []
 
