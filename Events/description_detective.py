@@ -123,7 +123,7 @@ class EVENT:
 		self.EVENT_ADMIN_ROLE = 959155078844010546 # Event participant role
 		self.param["ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ROLE)
 		self.param["ADMIN_ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ADMIN_ROLE)
-		self.param["GAME_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff-event-time") # Post messages in here
+		self.param["GAME_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="tco-center-stage") # Post messages in here
 		self.param["ADMIN_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff•commands")
 
 	# Begin the game
