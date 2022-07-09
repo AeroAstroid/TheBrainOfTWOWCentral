@@ -4,7 +4,7 @@ from Config._db import Database
 def HELP(PREFIX):
 	return {
 		"COOLDOWN": 3,
-		"MAIN": "Use this command to automatically sign up ",
+		"MAIN": "Use this command to automatically sign up to the current event",
 		"FORMAT": "",
 		"CHANNEL": 0,
 		"USAGE": f"""Using `{PREFIX}signups` in a designated event signups channel will add you as a participant 
@@ -17,14 +17,14 @@ ALIASES = []
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
-    print("Testing print statement")
-
-    signup_channel_id = 633045040716840970
+    signup_channel_id = 990307784690135060 # 633045040716840970
     participating_role_id = 498254150044352514
 
     signup_channel = SERVER["MAIN"].get_channel(signup_channel_id)
     participating = SERVER["MAIN"].get_role(participating_role_id)
 
+    print(message.channel, signup_channel)
+    
     if message.channel == signup_channel:
         await SERVER["MAIN"].get_member(message.author.id).add_roles(participating)
         await message.add_reaction("✅")
