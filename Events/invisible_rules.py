@@ -31,6 +31,7 @@ def DEFAULT_GAME():
 
 		"RULES": [],
 		"RULE_DESC": [],
+		"TEST_GEN": None,
 
 		"PLAYERS": [],
 
@@ -118,8 +119,8 @@ class EVENT:
 		return msg + "\n\n" + timer_bar
 	
 	# Currently not fully implemented
-	def generate_test_msg(self):
-		return "sample test message"
+	def generate_test_msg(self, uid, rule):
+		return self.GAME["TEST_GEN"].gen_test(uid, rule)
 
 	# Function that runs every two seconds
 	async def on_two_second(self):
@@ -691,6 +692,37 @@ class EVENT:
 
 				await message.channel.send(f"✅ **Successfully imported {len(RULES)} rules!**")
 				return
+			
+			if cmd == "settestgen":
+				if len(message.attachments) == 0:
+					await message.channel.send(
+					f"💀 **Send a file containing the rule scripts!**")
+					return
+				
+				try:
+					await message.attachments[0].save(f"{message.id}_IR_TEST_GEN.py")
+
+					TEMP_IR_TEST_GEN = importlib.import_module(f"{message.id}_IR_TEST_GEN")
+					
+					await message.channel.send("Generating test cases. This can take a few minutes.")
+					
+					TEST_GEN = TEMP_IR_TEST_GEN.TestGenerator()
+
+					os.remove(f"{message.id}_IR_TEST_GEN.py")
+
+				except Exception as err:
+					await message.channel.send(
+					"💀 **An error occurred while importing the rules file!**")
+
+					try: os.remove(f"{message.id}_IR_TEST_GEN.py")
+					except Exception: pass
+
+					raise err
+				
+				self.GAME["TEST_GEN"] = TEST_GEN
+
+				await message.channel.send(f"✅ **Successfully generated the test cases!**")
+				return
 
 		else: # Game functions
 			rnd = self.GAME["ROUND"]
@@ -719,7 +751,7 @@ class EVENT:
 						
 						test_msgs = []
 						for _ in range(10):
-							test_msgs.append(self.generate_test_msg())
+							test_msgs.append(self.generate_test_msg(message.author.id, self.GAME["ROUND"]))
 						
 						answer_sheet = [self.GAME["RULES"][rnd - 1](msg) for msg in test_msgs]
 
@@ -745,7 +777,7 @@ class EVENT:
 						answer_sheet, [], test_dm_msg, 0])
 					
 					else:
-						new_msg = self.generate_test_msg()
+						new_msg = self.generate_test_msg(message.author.id, self.GAME["ROUND"])
 						new_answer = self.GAME["RULES"][rnd - 1](new_msg)
 
 						test_view = View()
