@@ -28,6 +28,7 @@ from src.interpreter.functions.slice import slice_func
 from src.interpreter.functions.split import split
 from src.interpreter.functions.time_func import time_func
 from src.interpreter.functions.try_func import try_func
+from src.interpreter.functions.type_func import type_func
 from src.interpreter.functions.user_func import user_func
 from src.interpreter.functions.userid import userid
 from src.interpreter.functions.username import username
