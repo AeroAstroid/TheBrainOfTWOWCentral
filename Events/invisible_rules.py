@@ -15,10 +15,10 @@ def DEFAULT_PARAM():
 		"GAME_CHANNEL_ID": None,
 		"EVENT_ADMIN_ID": None,
 
-		"PHASE_1_ROUND_TIME": 60,
-		"PHASE_2_ROUND_TIME": 60,
+		"PHASE_1_ROUND_TIME": 360,
+		"PHASE_2_ROUND_TIME": 420,
 
-		"PHASE_1_LEN": 1,
+		"PHASE_1_LEN": 4,
 		"PHASE_2_LEN": 6,
 		"PHASE_1_TEST_LEN": 10,
 		"PHASE_2_TEST_STREAK": 8
@@ -72,8 +72,8 @@ class EVENT:
 		self.RUNNING = True
 
 		self.PARAM["PLAYER_ROLE_ID"] = 498254150044352514
-		self.PARAM["ANNOUNCE_CHANNEL_ID"] = 716131405503004765
-		self.PARAM["GAME_CHANNEL_ID"] = 990307784690135060
+		self.PARAM["ANNOUNCE_CHANNEL_ID"] = 994452515594702868
+		self.PARAM["GAME_CHANNEL_ID"] = 990881801641807892
 		self.PARAM["EVENT_ADMIN_ID"] = 959155078844010546
 
 		self.EVENT_ADMIN = dc.utils.get(SERVER["MAIN"].roles, id=self.PARAM["EVENT_ADMIN_ID"])
@@ -328,7 +328,10 @@ class EVENT:
 				self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
 
 				for e in self.GAME["ELIMINATIONS"]:
-					await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
+					try:
+						await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
+					except Exception:
+						continue
 			
 			if self.GAME["PERIOD_STEP"] == 19:
 				new_round = self.GAME["ROUND"] + 1
@@ -911,6 +914,10 @@ class EVENT:
 		return info
 
 	async def step_through_test(self, ctx):
+		if not self.GAME["ROUND_RUNNING"]:
+			await ctx.response.defer()
+			return
+		
 		user, answer = ctx.data['custom_id'].split(" ")
 
 		for i in self.GAME["INSPECTING"]:
