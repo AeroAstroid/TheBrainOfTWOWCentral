@@ -95,7 +95,7 @@ def setupFunctions():
     Function(["choosechar"], {"string": ArgumentType.Required}, choosechar)
     Function(["compare"], {"v1": ArgumentType.Required, "operator": ArgumentType.Required, "v2": ArgumentType.Required}, compare)
     Function(["concat"], {"items": ArgumentType.Variadic}, concat)
-    Function(["define"], {"name": ArgumentType.Required, "item": ArgumentType.Required}, define)
+    Function(["define", "def"], {"name": ArgumentType.Required, "item": ArgumentType.Required}, define)
     
     Function(["find", "indexof"], {"array": ArgumentType.Required, "element": ArgumentType.Required}, find)
     Function(["func", "function"], {"name": ArgumentType.Required, "args": ArgumentType.Required, "body": ArgumentType.Required}, func, parse_args=False)
