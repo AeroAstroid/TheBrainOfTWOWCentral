@@ -5,6 +5,6 @@ class PMSentError(Exception):
 
 def pm(string):
     if globals.codebase.pmsent == False:
-        globals.user.send(string)
+        globals.codebase.user.send(string)
     else:
         raise PMSentError("You already sent a PM to the user!")
