@@ -19,6 +19,7 @@ string: ESCAPED_STRING
 block: ALPHANUMERIC
 array: "{" [arg ("," arg)*] "}"
 function: ("[") (block | function) arg* ("]")
+COMMENT: ("[# ") ALLBUTBRACKETS ("]")
 unescaped_string: ALPHANUMERIC
 ALLBUTBRACKETS: ALLEXCEPTBRACKETS+
 DIGIT: "0".."9"
@@ -35,7 +36,8 @@ ALLEXCEPTBRACKETS: /[^\[\]]/
 %import common.C_COMMENT
 %import common.WS
 %ignore WS
-%ignore C_COMMENT"""
+%ignore C_COMMENT
+%ignore COMMENT"""
 parser = Lark(bstargrammar)
 
 
