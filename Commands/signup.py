@@ -23,6 +23,9 @@ async def MAIN(message, args, level, perms, SERVER):
     signup_channel = SERVER["MAIN"].get_channel(signup_channel_id)
     participating = SERVER["MAIN"].get_role(participating_role_id)
 
+    print(signup_channel)
+    print(participating)
+
     if message.channel == signup_channel:
         await SERVER["MAIN"].get_member(message.author.id).add_roles(participating)
         await message.add_reaction("✅")
