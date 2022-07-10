@@ -1,7 +1,3 @@
-import copy
-
-from lark import Token, Tree
-
 import src.interpreter.globals as globals
 from src.interpreter.expression import Expression
 

@@ -103,8 +103,8 @@ def testAll():
     test("Array Syntax", "{[J 10], [J 50]}", "['jjjjjjjjjj', 'jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj'}")
     test("Array Syntax 2", "[INDEX {[J 10], [J 50]} 1]", "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
     test("J", "[J 5]", "jjjjj")
-    test("Built-in MAP", "[MAP [LENGTH] {1, 21, 101}]", "[1, 2, 3]")
-    test("Built-in MAP 2", "[MAP [MUL 5] {1, 2, 3}]", "[5, 10, 15]")
+    test("Built-in MAP", '[MAP [LENGTH [var "map.iterator"]] {1, 21, 101}]', "[1, 2, 3]")
+    test("Built-in MAP 2", '[MAP [MUL [var "map.iterator"] 5] {1, 2, 3}]', "[5, 10, 15]")
 
 
 if __name__ == "__main__":
