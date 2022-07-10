@@ -136,7 +136,7 @@ def setupFunctions():
 
     Function(["min"], {"array": ArgumentType.Required}, min_func)
     Function(["max"], {"array": ArgumentType.Required}, max_func)
-    Function(["map"], {"array": ArgumentType.Required}, map_func)
+    Function(["map"], {"function": ArgumentType.Required, "listToEdit": ArgumentType.Required}, map_func)
     Function(["sort"], {"array": ArgumentType.Required}, sort_func)
 
     Function(["str"], {"item": ArgumentType.Required}, str)
