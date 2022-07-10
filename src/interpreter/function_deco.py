@@ -1,3 +1,5 @@
+import math
+
 from src.interpreter.function import Function
 from src.interpreter.functions.args import args
 from src.interpreter.functions.array import array
