@@ -14,3 +14,4 @@ class Codebase:
         self.arguments: Union[List[str], None] = arguments
         self.output: str = ""
         self.ret = None
+        self.pmsent = False

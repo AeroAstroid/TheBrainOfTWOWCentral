@@ -21,6 +21,7 @@ from src.interpreter.functions.join import join
 from src.interpreter.functions.joinall import joinall
 from src.interpreter.functions.length import length
 from src.interpreter.functions.loop import loop
+from src.interpreter.functions.pm import pm
 from src.interpreter.functions.randint import randint
 from src.interpreter.functions.random_func import random_func
 from src.interpreter.functions.range_func import range_func
@@ -108,6 +109,7 @@ def setupFunctions():
 
     Function(["length"], {"arr": ArgumentType.Required}, length)
     Function(["loop"], {"amount": ArgumentType.Required, "body": ArgumentType.Required}, loop, parse_args=False)
+    Function(["pm"], {"string": ArgumentType.Required}, loop)
 
     Function(["j"], {"amount": 1}, j)
     Function(["join"], {"array": ArgumentType.Required, "joiner": ""}, join)
