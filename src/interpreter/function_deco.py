@@ -23,6 +23,7 @@ from src.interpreter.functions.length import length
 from src.interpreter.functions.loop import loop
 from src.interpreter.functions.randint import randint
 from src.interpreter.functions.random_func import random_func
+from src.interpreter.functions.range_func import range_func
 from src.interpreter.functions.repeat import repeat
 from src.interpreter.functions.replace import replace_func
 from src.interpreter.functions.round import round_func
@@ -116,11 +117,12 @@ def setupFunctions():
     Function(["random"], {"minimum": 0, "maximum": 1}, random_func)
     Function(["randomizer", "shuffle"], {"array": ArgumentType.Required}, randomizer)
 
+    Function(["range"], {"index_start": ArgumentType.Required, "index_end": ArgumentType.Required, "index_step": ArgumentType.Required}, slice_func)
     Function(["repeat"], {"item": ArgumentType.Required, "amount": ArgumentType.Required}, repeat)
     Function(["raise", "throw"], {"message": ArgumentType.Required}, raise_func)
     Function(["round"], {"number": ArgumentType.Required}, round_func)
     Function(["replace"], {"string": ArgumentType.Required, "match": ArgumentType.Required, "replace": ArgumentType.Required}, replace_func)
-    Function(["slice"], {"array": ArgumentType.Required, "index_start": ArgumentType.Required, "index_end": ArgumentType.Required}, slice_func)
+    Function(["slice"], {"array": ArgumentType.Required, "index_start": ArgumentType.Required, "index_end": ArgumentType.Required, "index_step": ArgumentType.Required}, slice_func)
     Function(["split"], {"string": ArgumentType.Required, "seperator": " "}, split)
 
     Function(["time"], {}, time_func)
