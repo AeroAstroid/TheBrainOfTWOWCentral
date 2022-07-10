@@ -32,11 +32,11 @@ def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments
     globals.codebase = Codebase(parsed_code, user, arguments)
     globals.codebase.functions = globals.codebase.functions | functions
 
-    for statement in parsed_code:
+    for i, statement in enumerate(parsed_code):
         try:
             readLine(statement)
         except Exception as error:
-            return returnError(statement, error)
+            return returnError(statement, error, i)
 
     # print(codebase.variables)
     # print(codebase.output)
@@ -59,8 +59,12 @@ def readLine(statement):
         globals.codebase.output += str(result)
 
 
-def returnError(statement, error):
-    errmsg = f"{choice(unfunny_errmsg)}\n\nError of type {type(error).__name__} at `{statement}`:\n{error}"
+def returnError(statement, error, i):
+    section = statement.pretty()
+
+    errmsg = f"{choice(unfunny_errmsg)}\n\nError of type {type(error).__name__} at ```scala" \
+             f"\n{section}" \
+             f"```:\n**{error}** (Error occurred at line {i + 1})"
     if globals.debug.print_error:
         print(f"{errmsg}\n\n{format_exc()}")  # print stack trace too
     return errmsg
