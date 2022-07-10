@@ -117,12 +117,12 @@ def setupFunctions():
     Function(["random"], {"minimum": 0, "maximum": 1}, random_func)
     Function(["randomizer", "shuffle"], {"array": ArgumentType.Required}, randomizer)
 
-    Function(["range"], {"index_start": ArgumentType.Required, "index_end": ArgumentType.Required, "index_step": ArgumentType.Required}, slice_func)
+    Function(["range"], {"index_start": ArgumentType.Required, "index_end": ArgumentType.Required, "index_step": 1}, slice_func)
     Function(["repeat"], {"item": ArgumentType.Required, "amount": ArgumentType.Required}, repeat)
     Function(["raise", "throw"], {"message": ArgumentType.Required}, raise_func)
     Function(["round"], {"number": ArgumentType.Required}, round_func)
     Function(["replace"], {"string": ArgumentType.Required, "match": ArgumentType.Required, "replace": ArgumentType.Required}, replace_func)
-    Function(["slice"], {"array": ArgumentType.Required, "index_start": ArgumentType.Required, "index_end": ArgumentType.Required, "index_step": ArgumentType.Required}, slice_func)
+    Function(["slice"], {"array": ArgumentType.Required, "index_start": ArgumentType.Required, "index_end": ArgumentType.Required, "index_step": 1}, slice_func)
     Function(["split"], {"string": ArgumentType.Required, "seperator": " "}, split)
 
     Function(["time"], {}, time_func)
@@ -144,7 +144,7 @@ def setupFunctions():
     Function(["str"], {"item": ArgumentType.Required}, str)
     Function(["int"], {"item": ArgumentType.Required}, int)
     Function(["float"], {"item": ArgumentType.Required}, float)
-    # Function(["#"], {"*": ArgumentType.Variadic}, lambda x: ArgumentType.Required)
+    Function(["#"], {"*": ArgumentType.Variadic}, lambda x: ArgumentType.Required)
 
 
 setupFunctions()
