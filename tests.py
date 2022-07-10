@@ -100,6 +100,8 @@ def testAll():
         [MAP_GET [VAR map] "a"]
     """, "2")
 
+    test("Array Syntax", "{[J 10], [J 50]}", "['jjjjjjjjjj', 'jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj'}")
+    test("Array Syntax 2", "[INDEX {[J 10], [J 50]} 1]", "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
     test("J", "[J 5]", "jjjjj")
 
 
