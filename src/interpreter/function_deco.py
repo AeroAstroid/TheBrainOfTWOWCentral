@@ -1,5 +1,3 @@
-import math
-
 from src.interpreter.function import Function
 from src.interpreter.functions.args import args
 from src.interpreter.functions.array import array
@@ -49,12 +47,18 @@ from src.interpreter.functions.math.abs import abs_func
 from src.interpreter.functions.math.add import add
 from src.interpreter.functions.math.ceil import ceil
 from src.interpreter.functions.math.div import div
+from src.interpreter.functions.math.factorial import factorial
 from src.interpreter.functions.math.floor import floor
+from src.interpreter.functions.math.log import log
 from src.interpreter.functions.math.math import math_func
 from src.interpreter.functions.math.mod import mod
 from src.interpreter.functions.math.mul import mul
 from src.interpreter.functions.math.pow import pow_func
 from src.interpreter.functions.math.sub import sub
+
+from src.interpreter.functions.math.cos import cos
+from src.interpreter.functions.math.sin import sin
+from src.interpreter.functions.math.tan import tan
 
 
 class ArgumentType:
@@ -67,12 +71,19 @@ def setupFunctions():
     Function(["add", "sum", "+"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, add)
     Function(["ceil"], {"number": ArgumentType.Required}, ceil)
     Function(["div", "divide", "/"], {"dividend": ArgumentType.Required, "divisors": ArgumentType.Variadic}, div)
+    Function(["factorial"], {"number": ArgumentType.Required}, factorial)
     Function(["floor"], {"number": ArgumentType.Required}, floor)
+    Function(["log"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, log)
     Function(["math"], {"number": ArgumentType.Required, "operator": ArgumentType.Required, "by": ArgumentType.Required}, math_func)
     Function(["mod", "%"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, mod)
     Function(["mul", "multiply", "product", "*"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, mul)
     Function(["pow", "^"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, pow_func)
     Function(["sub", "subtract", "difference", "-"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, sub)
+
+    Function(["cos", "cosine"], {"number": ArgumentType.Required}, cos)
+    Function(["sin", "sine"], {"number": ArgumentType.Required}, sin)
+    Function(["tan", "tangent"], {"number": ArgumentType.Required}, tan)
+
 
     Function(["args"], {"index": ""}, args)
     Function(["array"], {"arr": ArgumentType.Variadic}, array)
@@ -103,7 +114,7 @@ def setupFunctions():
     Function(["randomizer", "shuffle"], {"array": ArgumentType.Required}, randomizer)
 
     Function(["repeat"], {"item": ArgumentType.Required, "amount": ArgumentType.Required}, repeat)
-    Function(["raise"], {"message": ArgumentType.Required}, raise_func)
+    Function(["raise", "throw"], {"message": ArgumentType.Required}, raise_func)
     Function(["round"], {"number": ArgumentType.Required}, round_func)
     Function(["replace"], {"string": ArgumentType.Required, "match": ArgumentType.Required, "replace": ArgumentType.Required}, replace_func)
     Function(["slice"], {"array": ArgumentType.Required, "index_start": ArgumentType.Required, "index_end": ArgumentType.Required}, slice_func)
