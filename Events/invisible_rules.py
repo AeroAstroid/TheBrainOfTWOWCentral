@@ -327,11 +327,10 @@ class EVENT:
 				self.GAME["ELIMINATIONS"] = [p[0] for p in results_list if not p[4]]
 				self.GAME["FINAL_RANKINGS"] = self.GAME["ELIMINATIONS"] + self.GAME["FINAL_RANKINGS"]
 
-				if self.GAME["PHASE"] == 2:
-					self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
+				#self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
 
-					for e in self.GAME["ELIMINATIONS"]:
-						await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
+				#for e in self.GAME["ELIMINATIONS"]:
+				#await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
 			
 			if self.GAME["PERIOD_STEP"] == 12: # 19
 				new_round = self.GAME["ROUND"] + 1
@@ -958,7 +957,7 @@ class EVENT:
 
 			if False in last_answers or len(last_answers) < required:
 				if n < 100:
-					new_msg = self.generate_test_msg()
+					new_msg = self.generate_test_msg(int(user), rnd)
 
 					self.GAME["PLAYER_TESTS"][user_test_ind][1].append(new_msg)
 
