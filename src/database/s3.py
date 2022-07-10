@@ -11,7 +11,8 @@ from dotenv import load_dotenv
 from bot import bot
 
 load_dotenv()
-db_name = "\"" + os.environ.get("DATABASE") + "\""
+databaseName = os.environ.get("DATABASE") or "UNKNOWN"
+db_name = "\"" + databaseName + "\""
 # global conn: psycopg2.connect
 # global table: psycopg2._psycopg.connection
 
