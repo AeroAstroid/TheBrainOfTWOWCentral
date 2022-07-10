@@ -325,12 +325,12 @@ class EVENT:
 				self.GAME["ELIMINATIONS"] = [p[0] for p in results_list if not p[4]]
 				self.GAME["FINAL_RANKINGS"] = self.GAME["ELIMINATIONS"] + self.GAME["FINAL_RANKINGS"]
 
-				#self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
+				self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
 
-				#for e in self.GAME["ELIMINATIONS"]:
-				#await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
+				for e in self.GAME["ELIMINATIONS"]:
+					await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
 			
-			if self.GAME["PERIOD_STEP"] == 12: # 19
+			if self.GAME["PERIOD_STEP"] == 19:
 				new_round = self.GAME["ROUND"] + 1
 
 				if len(self.GAME["PLAYERS"]) < 2:
@@ -389,9 +389,9 @@ class EVENT:
 					return False
 
 				if self.GAME["ROUND"] != self.PARAM["PHASE_1_LEN"]:
-					await self.ANNOUNCE_CHANNEL.send(f"🔍 **Stand by! Round {new_round} begins in 8 seconds!**") # 20
+					await self.ANNOUNCE_CHANNEL.send(f"🔍 **Stand by! Round {new_round} begins in 20 seconds!**")
 					self.GAME["PERIOD_STEP"] = -1
-					self.GAME["NEXT_PERIOD"] = int(time() + 8) # 20
+					self.GAME["NEXT_PERIOD"] = int(time() + 20)
 					self.GAME["ROUND"] = -new_round
 
 				else:
@@ -467,7 +467,7 @@ class EVENT:
 			return
 
 		if self.GAME["ROUND"] == 0: # Intermission between phases
-			message_delay = 1 # 4 # Amount of iterations (2s each) between messages
+			message_delay = 4 # Amount of iterations (2s each) between messages
 
 			if self.GAME["PHASE"] == 1:
 				m, s = [int(self.PARAM["PHASE_1_ROUND_TIME"] // 60), int(self.PARAM["PHASE_1_ROUND_TIME"] % 60)]
@@ -561,11 +561,11 @@ class EVENT:
 
 				if ind >= len(lines):
 					self.GAME["ROUND"] = -1 if self.GAME['PHASE'] == 1 else -(self.PARAM['PHASE_1_LEN']+1)
-					self.GAME["NEXT_PERIOD"] = int(time() + 10) # 30
+					self.GAME["NEXT_PERIOD"] = int(time() + 30)
 					self.GAME["PERIOD_STEP"] = 0
 
 					await self.ANNOUNCE_CHANNEL.send(
-					f"🔍 **Stand by! Phase {self.GAME['PHASE']} and Round {-self.GAME['ROUND']} begin in 10 seconds!**") # 30
+					f"🔍 **Stand by! Phase {self.GAME['PHASE']} and Round {-self.GAME['ROUND']} begin in 30 seconds!**")
 					return
 				
 				await self.ANNOUNCE_CHANNEL.send(lines[ind])
