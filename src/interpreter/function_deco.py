@@ -109,7 +109,7 @@ def setupFunctions():
 
     Function(["length"], {"arr": ArgumentType.Required}, length)
     Function(["loop"], {"amount": ArgumentType.Required, "body": ArgumentType.Required}, loop, parse_args=False)
-    Function(["pm"], {"string": ArgumentType.Required}, loop)
+    Function(["pm"], {"string": ArgumentType.Required}, pm)
 
     Function(["j"], {"amount": 1}, j)
     Function(["join"], {"array": ArgumentType.Required, "joiner": ""}, join)
