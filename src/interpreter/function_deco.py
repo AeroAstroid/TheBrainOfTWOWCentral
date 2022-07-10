@@ -40,7 +40,7 @@ from src.interpreter.functions.block import block
 from src.interpreter.functions.return_func import return_func
 from src.interpreter.functions.raise_func import raise_func
 
-# from src.interpreter.functions.array.map_func import map_func
+from src.interpreter.functions.array.map_func import map_func
 from src.interpreter.functions.arrays.max_func import max_func
 from src.interpreter.functions.arrays.min_func import min_func
 from src.interpreter.functions.arrays.randomizer import randomizer
@@ -136,7 +136,7 @@ def setupFunctions():
 
     Function(["min"], {"array": ArgumentType.Required}, min_func)
     Function(["max"], {"array": ArgumentType.Required}, max_func)
-    # Function(["map"], {"array": ArgumentType.Required}, map_func)
+    Function(["map"], {"array": ArgumentType.Required}, map_func)
     Function(["sort"], {"array": ArgumentType.Required}, sort_func)
 
     Function(["str"], {"item": ArgumentType.Required}, str)
