@@ -368,6 +368,24 @@ class EVENT:
 				
 				elif self.GAME["ROUND"] >= len(self.GAME["RULES"]):
 					await self.ANNOUNCE_CHANNEL.send("Invisible Rules has finished!")
+					final_results = []
+
+					for p in self.GAME["FINAL_RANKINGS"]:
+						ap_ind = self.GAME["ALL_PLAYERS"].index(p)
+						p_pts = self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind]
+						p_avg = self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]/self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1]
+
+						final_results.append([p.name, p.id, p_pts, p_avg])
+
+					final_results = "\n".join(["\t".join([str(r) for r in row]) for row in final_results])
+
+					with open('IR_Results.txt', 'w', encoding='utf-8') as f:
+						f.write(final_results)
+
+					# Send a log of results in a staff channel
+					await self.SERVER["MAIN"].get_channel(716131405503004765).send(file=dc.File('IR_Results.txt'))
+
+					os.remove('IR_Results.txt')
 					return False
 
 				if self.GAME["ROUND"] != self.PARAM["PHASE_1_LEN"]:
