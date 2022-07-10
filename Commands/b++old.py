@@ -17,7 +17,7 @@ def HELP(PREFIX):
 		"CATEGORY" : "Fun"
 	}
 
-PERMS = 3 # Member
+PERMS = 1 # Member
 ALIASES = ["OLDTAG", "OLDB++", "TAGOLD"]
 REQ = []
 
