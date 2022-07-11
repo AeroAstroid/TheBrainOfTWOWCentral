@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from bot import bot
+from bot import bot, postrun
 from src.database.s3 import createTag, getTag, infoTag, updateTag, isOwnerProgram, editTag, deleteTag, leaderboards, \
     connectToDatabase
 from src.interpreter.function_deco import setupFunctions
@@ -39,10 +39,6 @@ def accept_file_or_message(ctx, message):
             return file
     else:
         return message
-
-async def postrun(output):
-    await ctx.send(output['main'])
-    await ctx.author.dm_channel.send(output['pm'])
 
 
 @bot.command()
