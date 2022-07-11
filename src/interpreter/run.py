@@ -48,10 +48,10 @@ def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments
         globals.codebase.output += f"\n\n⚠️: The code has ran successfully, but a PM failed to send due to it being empty or too long! ({len(globals.codebase.pmoutput)} chars)"
 
     if len(globals.codebase.output) == 0 or globals.codebase.output.isspace():
-        return "⚠️: The code has ran successfully, but returned nothing!"
+        return {"main": "⚠️: The code has ran successfully, but returned nothing!"}
         
     if len(globals.codebase.output) > 2000:
-        return f"⚠️: Output too long, only showing the first 1000 characters:\n\n```{globals.codebase.output[:1000]}```"
+        return {"main": f"⚠️: Output too long, only showing the first 1000 characters:\n\n```{globals.codebase.output[:1000]}```"}
     
     globals.codebase.giveToBot['main'] = globals.codebase.output
     print(globals.codebase.giveToBot)
@@ -83,7 +83,7 @@ def returnError(statement, error, i):
 
 async def postrun(output, ctx):
     await ctx.send(output['main'])
-    if globals.codebase.sendpm:
+    if globals.codebase.sendpm and globals.codebase.pmoutput > 0:
         try:
             await ctx.message.author.send(output['pm'])
         except:
