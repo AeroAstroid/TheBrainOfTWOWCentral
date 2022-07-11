@@ -14,6 +14,6 @@ class Codebase:
         self.arguments: Union[List[str], None] = arguments
         self.output: str = ""
         self.ret = None
-        self.pmmade = False
+        self.sendpm = False
         self.pmoutput: str = ""
         self.giveToBot = {}
