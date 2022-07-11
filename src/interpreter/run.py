@@ -50,6 +50,7 @@ def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments
         return f"⚠️: Output too long, only showing the first 1000 characters:\n\n```{globals.codebase.output[:1000]}```"
     
     globals.codebase.giveToBot['main'] = globals.codebase.output
+    print(globals.codebase.giveToBot)
     return globals.codebase.giveToBot
 
 
