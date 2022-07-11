@@ -21,9 +21,9 @@ def runCode(code: Tree, user: Union[discord.User, None] = None, arguments: List[
     try:
         return func_timeout(30, runCodeSandbox, args=(code, user, arguments))
     except FunctionTimedOut:
-        return returnError("RUNTIME", "Timed out! (More than 30 seconds)")
+        return {"main": returnError("RUNTIME", "Timed out! (More than 30 seconds)")}
     except Exception as error:
-        return error
+        return {"main": error}
 
 
 def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = None):
