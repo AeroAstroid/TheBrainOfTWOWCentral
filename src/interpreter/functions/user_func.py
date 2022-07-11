@@ -16,7 +16,7 @@ def user_func(userItemToGet):
             return str(globals.codebase.user.avatar_url)
         case "created_at":
             return datetime.timestamp(globals.codebase.user.created_at)
-        case "display_name":
+        case "display_name" | "nickname" | "nick":
             return globals.codebase.user.display_name
         case "display_avatar":
             return globals.codebase.user.display_avatar
