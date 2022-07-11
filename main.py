@@ -7,11 +7,11 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from bot import bot, postrun
+from bot import bot
 from src.database.s3 import createTag, getTag, infoTag, updateTag, isOwnerProgram, editTag, deleteTag, leaderboards, \
     connectToDatabase
 from src.interpreter.function_deco import setupFunctions
-from src.interpreter.run import runCode
+from src.interpreter.run import runCode, postrun
 prod = os.environ.get("IS_HEROKU", False)
 
 load_dotenv()
@@ -22,7 +22,7 @@ setupFunctions()
 async def on_ready():
     connectToDatabase()
     print('Logged in as')
-    print(bot.user.name)
+    print(bot.user.name) 
     print(bot.user.id)
     print('------')
     global startTime  # global variable to be used later for uptime

@@ -79,3 +79,14 @@ def returnError(statement, error, i):
     if globals.debug.print_error:
         print(f"{errmsg}\n\n{format_exc()}")  # print stack trace too
     return errmsg
+
+
+async def postrun(output, ctx):
+    await ctx.send(output['main'])
+    if globals.codebase.sendpm:
+        try:
+            await ctx.message.author.send(output['pm'])
+        except:
+            await ctx.author.create_dm()
+            await ctx.message.author.send(output['pm'])
+
