@@ -46,7 +46,7 @@ async def run(ctx, *, message=None):
     """Run B* code"""
     try:
         output = runCode(accept_file_or_message(ctx, message), ctx.author)
-        await postrun(output)
+        await postrun(output, ctx)
     except Exception as e:
         await ctx.send(e)
 
@@ -61,7 +61,7 @@ async def tag(ctx, message, *, arguments=""):
         argument_list = arguments.split(" ")
 
         output = runCode(code, ctx.author, argument_list)
-        await postrun(output)
+        await postrun(output, ctx)
 
         # If all goes well, then increment the use
         updateTag(message)
