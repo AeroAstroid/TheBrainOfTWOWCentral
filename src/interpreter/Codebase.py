@@ -15,5 +15,5 @@ class Codebase:
         self.output: str = ""
         self.ret = None
         self.pmmade = False
-        self.pmoutput = ""
+        self.pmoutput: str = ""
         self.giveToBot = {}

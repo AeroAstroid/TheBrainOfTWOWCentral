@@ -6,6 +6,6 @@ class PMSentError(Exception):
 def pm(string):
     if globals.codebase.pmmade == False:
         globals.codebase.pmmade = True
-        globals.codebase.pmstring = string
+        globals.codebase.pmoutput = string
     else:
-        globals.codebase.pmstring += string
+        globals.codebase.pmoutput += string
