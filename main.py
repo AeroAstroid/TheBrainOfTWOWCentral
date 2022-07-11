@@ -40,14 +40,17 @@ def accept_file_or_message(ctx, message):
     else:
         return message
 
+async def postrun():
+    await ctx.send(output['main'])
+    await ctx.author.dm_channel.send(output['pm'])
+
 
 @bot.command()
 async def run(ctx, *, message=None):
     """Run B* code"""
     try:
         output = runCode(accept_file_or_message(ctx, message), ctx.author)
-        await ctx.send(output['main'])
-        await ctx.author.send(output['pm'])
+        await postrun
     except Exception as e:
         await ctx.send(e)
 
