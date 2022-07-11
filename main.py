@@ -44,7 +44,6 @@ def accept_file_or_message(ctx, message):
 @bot.command()
 async def run(ctx, *, message=None):
     """Run B* code"""
-    print(ctx)
     try:
         output = runCode(accept_file_or_message(ctx, message), ctx.author)
         await postrun(output, ctx)
