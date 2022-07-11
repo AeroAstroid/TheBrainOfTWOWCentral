@@ -16,14 +16,14 @@ start: bstar*
     | function
     | array
 string: ESCAPED_STRING
-integer.0: INT
+integer.-1: INT
 float.2: FLOAT
 FLOAT: INT "." INT | "." INT
 block: ALPHANUMERIC
 array: "{" [arg ("," arg)*] "}"
 function: ("[") (block | function) arg* ("]")
 COMMENT: ("[# ") ALLBUTBRACKETS ("]")
-unescaped_string.-1: ALPHANUMERIC
+unescaped_string.-2: ALPHANUMERIC
 ALLBUTBRACKETS: ALLEXCEPTBRACKETS+
 DIGIT: "0".."9"
 INT: DIGIT+
