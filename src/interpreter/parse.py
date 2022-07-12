@@ -17,7 +17,7 @@ start: bstar*
     | unescaped_string
 string: ESCAPED_STRING
 block: ALPHANUMERIC
-array: "{" [arg ("," arg)*] "}"
+array: "{" [arg? ("," arg)*] "}"
 function: ("[") (block | function) arg* ("]")
 COMMENT: ("[# ") ALLBUTBRACKETS ("]")
 unescaped_string: ALPHANUMERIC
