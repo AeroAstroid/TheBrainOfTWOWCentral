@@ -37,8 +37,8 @@ async def edit_original_message(interaction, reaction_dict, args_concat):
 
 async def MAIN(message, args, level, perms, SERVER):
 	
-	if len(args) == 0: args_concat = "How do you feel about Neonic?"
-	else: args_concat = " ".join(args)
+	if len(args) == 1: args_concat = "How do you feel about Neonic?"
+	else: args_concat = " ".join(args[1:])
 	# Create buttons for changing things
 	button_view = View()
 	msg_to_edit = None
@@ -113,5 +113,5 @@ async def MAIN(message, args, level, perms, SERVER):
 	button_4.callback = flushed_emoji
 	button_view.add_item(button_4)
 
-	msg_to_edit = await message.channel.send("**How do you feel about Neonic?**", view = button_view)
+	msg_to_edit = await message.channel.send("**"+args_concat+"**", view = button_view)
 	return
