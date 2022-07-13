@@ -287,7 +287,7 @@ def THROW(a): # don't need to check, because either way it'll error
 	raise ProgramDefinedException(a)
 	
 def TYPEFUNC(a):
-	if a.is_integer(): return "int"
+	if is_whole(a): return "int"
 	if is_number(a): return "float"
 	return type(a).__name__
 	
