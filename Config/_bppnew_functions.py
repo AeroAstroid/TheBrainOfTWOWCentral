@@ -398,7 +398,7 @@ def SETINDEX(a, b, c):
 		raise ValueError(f"SETINDEX function parameter is not a list: {safe_cut(a)}")
 	if not is_whole(b):
 		raise ValueError(f"SETINDEX function parameter is not an integer: {safe_cut(b)}")
-	a[b] = c
+	a[int(b)] = c
 	return a
 
 FUNCTIONS = {
