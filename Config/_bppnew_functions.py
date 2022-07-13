@@ -183,7 +183,7 @@ def CHOOSECHAR(a):
 
 	return random.choice(list(a))
 
-def IF(a, b, c):
+def IF(a, b, c=""):
 	a = a not in [0, "0"]
 
 	if a:
