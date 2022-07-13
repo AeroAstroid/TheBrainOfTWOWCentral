@@ -386,7 +386,13 @@ def JOIN(a, b=""):
 	
 	return b.join(a)
 	
-
+def SETINDEX(a, b, c):
+	if not type(a) == list:
+		raise ValueError(f"SETINDEX function parameter is not a list: {safe_cut(a)}")
+	if not is_whole(b):
+		raise ValueError(f"SETINDEX function parameter is not an integer: {safe_cut(b)}")
+	a[b] = c
+	return a
 
 FUNCTIONS = {
 	"MATH": MATHFUNC,
@@ -431,4 +437,5 @@ FUNCTIONS = {
 	"SHUFFLE": SHUFFLE,
 	"SORT": SORTFUNC,
 	"JOIN": JOIN
+	"SETINDEX" : SETINDEX
 }
