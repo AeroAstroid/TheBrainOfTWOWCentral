@@ -85,7 +85,11 @@ def Expression(block: Union[Tree, Token], codebase):
         case "arg":
             return None # TODO: Make empty array not parse blank args, remove TODO above and TODO in function.py
         case "unescaped_string" | _:
-            return block.children[0][0]
+            unstring = block.children[0]
+            if unstring is Token():
+                return unstring[0]
+            else:
+                return unstring
 
 
 def findFunction(name: str, codebase):  # -> Union[Callable[[List, Codebase], None], List[str]]:
