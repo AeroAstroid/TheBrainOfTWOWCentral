@@ -64,7 +64,7 @@ def returnError(statement, error, i):
 
     errmsg = f"{choice(unfunny_errmsg)}\n\nError of type {type(error).__name__} at ```scala" \
              f"\n{section}" \
-             f"```\n**{error}** (Error occurred at line {i + 1})"
+             f"```\n**{error}** (Error occurred at code block {i + 1})"
     if globals.debug.print_error:
         print(f"{errmsg}\n\n{format_exc()}")  # print stack trace too
     return errmsg

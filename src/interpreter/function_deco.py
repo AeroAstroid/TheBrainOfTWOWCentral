@@ -144,7 +144,7 @@ def setupFunctions():
     Function(["str"], {"item": ArgumentType.Required}, str)
     Function(["int"], {"item": ArgumentType.Required}, int)
     Function(["float"], {"item": ArgumentType.Required}, float)
-    Function(["#"], {"*": ArgumentType.Variadic}, lambda x: ArgumentType.Required)
+    Function(["#"], {"*": ArgumentType.Variadic}, lambda x: ArgumentType.Required, parse_args=False)
 
 
 setupFunctions()
