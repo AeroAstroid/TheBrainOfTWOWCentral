@@ -70,7 +70,7 @@ async def tag(ctx, message, *, arguments=""):
 
 
 @bot.command()
-async def create(ctx, name, *, message):
+async def create(ctx, name, *, message=None):
     """Creates a B* tag with your code"""
     # try:
     if len(name) < 50:
