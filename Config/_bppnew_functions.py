@@ -398,8 +398,9 @@ def SETINDEX(a, b, c):
 		raise ValueError(f"SETINDEX function parameter is not a list: {safe_cut(a)}")
 	if not is_whole(b):
 		raise ValueError(f"SETINDEX function parameter is not an integer: {safe_cut(b)}")
-	a[b] = c
-	return a
+	mylist = a.copy()
+	mylist[int(b)] = c
+	return mylist
 
 FUNCTIONS = {
 	"MATH": MATHFUNC,
