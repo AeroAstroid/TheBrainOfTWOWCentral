@@ -86,7 +86,7 @@ def Expression(block: Union[Tree, Token], codebase):
             return None # TODO: Make empty array not parse blank args, remove TODO above and TODO in function.py
         case "unescaped_string" | _:
             unstring = block.children[0]
-            if unstring is Token():
+            if unstring is Token("check if token", "a"):
                 return unstring[0]
             else:
                 return unstring
