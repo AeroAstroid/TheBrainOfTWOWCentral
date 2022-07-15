@@ -22,7 +22,6 @@ FLOAT: INT "." INT | "." INT
 block: ALPHANUMERIC
 array: "{" [arg ("," arg)*] "}"
 function: ("[") (block | function) arg* ("]")
-COMMENT: ("[# ") ALLBUTBRACKETS ("]")
 unescaped_string.-2: ALPHANUMERIC
 ALLBUTBRACKETS: ALLEXCEPTBRACKETS+
 DIGIT: "0".."9"
@@ -37,8 +36,7 @@ ALLEXCEPTBRACKETS: /[^\[\]]/
 %import common.C_COMMENT
 %import common.WS
 %ignore WS
-%ignore C_COMMENT
-%ignore COMMENT"""
+%ignore C_COMMENT"""
 parser = Lark(bstargrammar)
 
 
