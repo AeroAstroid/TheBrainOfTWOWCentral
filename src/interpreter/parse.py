@@ -9,25 +9,24 @@ start: bstar*
 ?arg:
     | ("true" | "True") -> true
     | ("false" | "False") -> false
+    | unescaped_string
     | string
-    | integer
     | float
+    | integer
     | function
     | array
-    | unescaped_string
 string: ESCAPED_STRING
+integer.-1: INT
+float.2: FLOAT
+FLOAT: INT "." INT | "." INT
 block: ALPHANUMERIC
-float.-0: DECIMAL
-integer.-1: SIGNED_INT
 array: "{" [arg ("," arg)*] "}"
 function: ("[") (block | function) arg* ("]")
 COMMENT: ("[# ") ALLBUTBRACKETS ("]")
-unescaped_string.-3: ALPHANUMERIC
+unescaped_string.-2: ALPHANUMERIC
 ALLBUTBRACKETS: ALLEXCEPTBRACKETS+
 DIGIT: "0".."9"
-LCASE_LETTER: "a".."z"
-UCASE_LETTER: "A".."Z"
-LETTER: UCASE_LETTER | LCASE_LETTER
+INT: DIGIT+
 ALPHANUMERIC: (ALLNONCONFLICTING)+
 ALLNONCONFLICTING: /([^\[\]\{\}\"\s\,\-]|\- )/
 ALLEXCEPTBRACKETS: /[^\[\]]/
