@@ -9,34 +9,40 @@ start: bstar*
 ?arg:
     | ("true" | "True") -> true
     | ("false" | "False") -> false
-    | unescaped_string
     | string
-    | float
     | integer
+    | float
     | function
     | array
+    | unescaped_string
 string: ESCAPED_STRING
-integer.-1: INT
-float.2: FLOAT
-FLOAT: INT "." INT | "." INT
 block: ALPHANUMERIC
+float.-0: DECIMAL
+integer.-1: SIGNED_INT
 array: "{" [arg ("," arg)*] "}"
 function: ("[") (block | function) arg* ("]")
-unescaped_string.-2: ALPHANUMERIC
+COMMENT: ("[# ") ALLBUTBRACKETS ("]")
+unescaped_string.-3: ALPHANUMERIC
 ALLBUTBRACKETS: ALLEXCEPTBRACKETS+
 DIGIT: "0".."9"
-INT: DIGIT+
+LCASE_LETTER: "a".."z"
+UCASE_LETTER: "A".."Z"
+LETTER: UCASE_LETTER | LCASE_LETTER
 ALPHANUMERIC: (ALLNONCONFLICTING)+
-ALLNONCONFLICTING: /([^\[\]\{\}\"\s\,\-]|\- )/
+ALLNONCONFLICTING: /([^\[\]\{\}\"\s\,\-]|\-)/
 ALLEXCEPTBRACKETS: /[^\[\]]/
+
+
+// common lib stuff
 // imports from common library my beloved
 %import common.ESCAPED_STRING
-%import common.SIGNED_INT
 %import common.DECIMAL
 %import common.C_COMMENT
+%import common.SIGNED_INT
 %import common.WS
 %ignore WS
-%ignore C_COMMENT"""
+%ignore C_COMMENT
+%ignore COMMENT"""
 parser = Lark(bstargrammar)
 
 
