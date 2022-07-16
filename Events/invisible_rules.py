@@ -197,15 +197,15 @@ class EVENT:
 
 				self.GAME["INSPECTING"] = []
 			
-			if self.GAME["PERIOD_STEP"] == 1: # MAIN EVENT: 3
+			if self.GAME["PERIOD_STEP"] == 3:
 				await self.ANNOUNCE_CHANNEL.send(m_line(f"""
 				The **Round {self.GAME['ROUND']} Rule** was:/n
 				> **```{self.GAME['RULE_DESC'][self.GAME['ROUND']-1]}```**"""))
 			
-			if self.GAME["PERIOD_STEP"] == 2: # MAIN EVENT: 5
+			if self.GAME["PERIOD_STEP"] == 5:
 				await self.ANNOUNCE_CHANNEL.send("Test results are as follows:")
 			
-			if self.GAME["PERIOD_STEP"] == 3: # MAIN EVENT: 7
+			if self.GAME["PERIOD_STEP"] == 7:
 				results_list = [
 					# Username, score, time, started test, survives, TCO points gained, avg round time
 					[p, 0, 9999999, False, False, 0, 0]
@@ -325,7 +325,7 @@ class EVENT:
 						except Exception:
 							continue'''
 			
-			if self.GAME["PERIOD_STEP"] == 4: # MAIN EVENT: 19
+			if self.GAME["PERIOD_STEP"] == 19:
 				new_round = self.GAME["ROUND"] + 1
 
 				if len(self.GAME["PLAYERS"]) < 2:
@@ -393,10 +393,9 @@ class EVENT:
 					return False
 
 				if self.GAME["ROUND"] != self.PARAM["PHASE_1_LEN"]:
-					# MAIN EVENT: 20
-					await self.ANNOUNCE_CHANNEL.send(f"🔍 **Stand by! Round {new_round} begins in 8 seconds!**")
+					await self.ANNOUNCE_CHANNEL.send(f"🔍 **Stand by! Round {new_round} begins in 20 seconds!**")
 					self.GAME["PERIOD_STEP"] = -1
-					self.GAME["NEXT_PERIOD"] = int(time() + 8)
+					self.GAME["NEXT_PERIOD"] = int(time() + 20)
 					self.GAME["ROUND"] = -new_round
 
 				else:
@@ -469,8 +468,7 @@ class EVENT:
 			return
 
 		if self.GAME["ROUND"] == 0: # Intermission between phases
-			# MAIN EVENT: 4
-			message_delay = 1 # Amount of iterations (2s each) between messages
+			message_delay = 4 # Amount of iterations (2s each) between messages
 
 			if self.GAME["PHASE"] == 1:
 				m, s = [int(self.PARAM["PHASE_1_ROUND_TIME"] // 60), int(self.PARAM["PHASE_1_ROUND_TIME"] % 60)]
@@ -566,13 +564,12 @@ class EVENT:
 				ind = self.GAME["PERIOD_STEP"] // message_delay
 
 				if ind >= len(lines):
-					# MAIN EVENT: 30
 					self.GAME["ROUND"] = -1 if self.GAME['PHASE'] == 1 else -(self.PARAM['PHASE_1_LEN']+1)
-					self.GAME["NEXT_PERIOD"] = int(time() + 8)
+					self.GAME["NEXT_PERIOD"] = int(time() + 30)
 					self.GAME["PERIOD_STEP"] = 0
 
 					await self.ANNOUNCE_CHANNEL.send(
-					f"🔍 **Stand by! Phase {self.GAME['PHASE']} and Round {-self.GAME['ROUND']} begin in 8 seconds!**")
+					f"🔍 **Stand by! Phase {self.GAME['PHASE']} and Round {-self.GAME['ROUND']} begin in 30 seconds!**")
 					return
 				
 				await self.ANNOUNCE_CHANNEL.send(lines[ind])
@@ -892,16 +889,7 @@ class EVENT:
 			return
 	
 	def format_test_msg(self, msg, n=None):
-		split_msg = msg.split(" ")
-		word_count = 0
-
-		for potential_word in split_msg:
-			alphanum_list = [c for c in list(potential_word.upper())
-			if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"]
-			
-			if len(alphanum_list) != 0:
-				word_count += 1
-		
+		word_count = len(msg.split(" "))
 		letter_list = [c for c in list(msg.upper()) if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
 		letters = len(letter_list)
 		letters_used = sorted(list(set(letter_list)))
