@@ -80,8 +80,7 @@ async def create(ctx, name, *, message=None):
     # try:
     if len(name) < 50:
         try:
-            text = await accept_file_or_message(ctx, message)
-            createTag(ctx.author, name, text)
+            createTag(ctx.author, name, await accept_file_or_message(ctx, message))
             await ctx.send(f"Tag `{name}` created!")
         except Exception as e:
             await ctx.send(e)
@@ -108,7 +107,7 @@ async def edit(ctx, name, *, message):
     """Edit one of your B* tags"""
     if isOwnerProgram(name, ctx.author.id):
         try:
-            editTag(name, accept_file_or_message(ctx, message))
+            editTag(name, await accept_file_or_message(ctx, message))
             await ctx.send(f"Tag `{name}` edited!")
         except Exception as e:
             await ctx.send(e)
