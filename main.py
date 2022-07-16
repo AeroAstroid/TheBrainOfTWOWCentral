@@ -80,7 +80,8 @@ async def create(ctx, name, *, message=None):
     # try:
     if len(name) < 50:
         try:
-            createTag(ctx.author, name, await accept_file_or_message(ctx, message))
+            text = await accept_file_or_message(ctx, message)
+            createTag(ctx.author, name, text)
             await ctx.send(f"Tag `{name}` created!")
         except Exception as e:
             await ctx.send(e)
