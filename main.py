@@ -29,10 +29,11 @@ async def on_ready():
     startTime = time.time()  # snapshot of time when listener sends on_ready
 
 
-def accept_file_or_message(ctx, message):
+async def accept_file_or_message(ctx, message):
     if len(ctx.message.attachments) > 0:
         attachment = ctx.message.attachments[0]
-        file = requests.get(attachment.url).text
+        file = attachment.open().decode("utf-8")
+        print 
         if attachment.size >= 150_000:
             raise "File is too large! (150KB MAX)"
         else:
@@ -45,7 +46,7 @@ def accept_file_or_message(ctx, message):
 async def run(ctx, *, message=None):
     """Run B* code"""
     try:
-        output = runCode(accept_file_or_message(ctx, message), ctx.author)
+        output = runCode(await accept_file_or_message(ctx, message), ctx.author)
         await ctx.send(output)
     except Exception as e:
         await ctx.send(e)
