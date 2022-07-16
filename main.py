@@ -103,7 +103,7 @@ async def leaderboard(ctx, page: int = 0):
 
 
 @bot.command()
-async def edit(ctx, name, *, message):
+async def edit(ctx, name, *, message=None):
     """Edit one of your B* tags"""
     if isOwnerProgram(name, ctx.author.id):
         try:
