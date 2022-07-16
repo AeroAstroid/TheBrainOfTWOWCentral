@@ -29,7 +29,7 @@ async def on_ready():
     startTime = time.time()  # snapshot of time when listener sends on_ready
 
 
-def accept_file_or_message(ctx, message):
+async def accept_file_or_message(ctx, message):
     if len(ctx.message.attachments) > 0:
         attachment = ctx.message.attachments[0]
         try:
@@ -50,7 +50,7 @@ def accept_file_or_message(ctx, message):
 async def run(ctx, *, message=None):
     """Run B* code"""
     try:
-        output = runCode(accept_file_or_message(ctx, message), ctx.author)
+        output = runCode(await accept_file_or_message(ctx, message), ctx.author)
         await ctx.send(output)
     except Exception as e:
         await ctx.send(e)
@@ -80,7 +80,7 @@ async def create(ctx, name, *, message=None):
     # try:
     if len(name) < 50:
         try:
-            createTag(ctx.author, name, accept_file_or_message(ctx, message))
+            createTag(ctx.author, name, await accept_file_or_message(ctx, message))
             await ctx.send(f"Tag `{name}` created!")
         except Exception as e:
             await ctx.send(e)
@@ -107,7 +107,7 @@ async def edit(ctx, name, *, message):
     """Edit one of your B* tags"""
     if isOwnerProgram(name, ctx.author.id):
         try:
-            editTag(name, accept_file_or_message(ctx, message))
+            editTag(name,  await accept_file_or_message(ctx, message))
             await ctx.send(f"Tag `{name}` edited!")
         except Exception as e:
             await ctx.send(e)
