@@ -32,7 +32,8 @@ async def on_ready():
 async def accept_file_or_message(ctx, message):
     if len(ctx.message.attachments) > 0:
         attachment = ctx.message.attachments[0]
-        file = await attachment.read().decode("utf-8")
+        file = await attachment.read()
+        file = file.decode("utf-8")
         print 
         if attachment.size >= 150_000:
             raise "File is too large! (150KB MAX)"
