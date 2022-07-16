@@ -33,7 +33,7 @@ def accept_file_or_message(ctx, message):
     if len(ctx.message.attachments) > 0:
         attachment = ctx.message.attachments[0]
         try:
-            await attachment.save(f"Config/{ctx.message.id}.txt")
+            attachment.save(f"Config/{ctx.message.id}.txt")
         except Exception:
             raise "Include a program to save!"
         file = open(f"Config/{ctx.message.id}.txt", "r", encoding="utf-8")
