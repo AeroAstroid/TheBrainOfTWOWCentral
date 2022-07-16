@@ -15,4 +15,4 @@ def range_func(index_start, index_end, index_step):
     else:
         index_start = int(index_start)
 
-    return range(index_start, index_end, index_step)
+    return [x for x in range(index_start, index_end, index_step)]
