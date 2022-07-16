@@ -283,7 +283,7 @@ class EVENT:
 						else:
 							p_line += f"{p[1]} attempts"
 						
-						if p[4] and self.GAME["ROUND"] == 1:
+						if p[4] and self.GAME["ROUND"] != 1:
 							survivors += 1
 
 							top_percent = survivors / p_len
@@ -317,13 +317,13 @@ class EVENT:
 					self.GAME["ELIMINATIONS"] = [p[0] for p in results_list if not p[4]]
 					self.GAME["FINAL_RANKINGS"] = self.GAME["ELIMINATIONS"] + self.GAME["FINAL_RANKINGS"]
 
-					'''self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
+					self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
 
 					for e in self.GAME["ELIMINATIONS"]:
 						try:
 							await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
 						except Exception:
-							continue'''
+							continue
 			
 			if self.GAME["PERIOD_STEP"] == 4: # MAIN EVENT: 19
 				new_round = self.GAME["ROUND"] + 1
@@ -368,6 +368,8 @@ class EVENT:
 				elif self.GAME["ROUND"] >= len(self.GAME["RULES"]):
 					await self.ANNOUNCE_CHANNEL.send("Invisible Rules has finished!")
 					final_results = []
+					
+					self.GAME["FINAL_RANKINGS"] = self.GAME["PLAYERS"] + self.GAME["FINAL_RANKINGS"]
 
 					for p in self.GAME["FINAL_RANKINGS"]:
 						ap_ind = self.GAME["ALL_PLAYERS"].index(p)
