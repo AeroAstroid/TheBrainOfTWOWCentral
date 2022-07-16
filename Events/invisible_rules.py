@@ -293,13 +293,13 @@ class EVENT:
 							if survivors == 1:
 								p_line += " ///  **+4 TCO points**"
 								self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind] += 4
-							elif top_percent < 0.2:
+							elif top_percent <= 0.2:
 								p_line += " ///  **+3 TCO points**"
 								self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind] += 3
-							elif top_percent < 0.4:
+							elif top_percent <= 0.4:
 								p_line += " ///  **+2 TCO points**"
 								self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind] += 2
-							elif top_percent < 0.6:
+							elif top_percent <= 0.6:
 								p_line += " ///  **+1 TCO point**"
 								self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind] += 1
 						
@@ -317,13 +317,13 @@ class EVENT:
 					self.GAME["ELIMINATIONS"] = [p[0] for p in results_list if not p[4]]
 					self.GAME["FINAL_RANKINGS"] = self.GAME["ELIMINATIONS"] + self.GAME["FINAL_RANKINGS"]
 
-					self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
+					'''self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
 
 					for e in self.GAME["ELIMINATIONS"]:
 						try:
 							await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
 						except Exception:
-							continue
+							continue'''
 			
 			if self.GAME["PERIOD_STEP"] == 4: # MAIN EVENT: 19
 				new_round = self.GAME["ROUND"] + 1
