@@ -117,7 +117,7 @@ def setupFunctions():
     Function(["random"], {"minimum": 0, "maximum": 1}, random_func)
     Function(["randomizer", "shuffle"], {"array": ArgumentType.Required}, randomizer)
 
-    Function(["range"], {"index_start": ArgumentType.Required, "index_end": ArgumentType.Required, "index_step": 1}, slice_func)
+    Function(["range"], {"index_start": ArgumentType.Required, "index_end": ArgumentType.Required, "index_step": 1}, range_func)
     Function(["repeat"], {"item": ArgumentType.Required, "amount": ArgumentType.Required}, repeat)
     Function(["raise", "throw"], {"message": ArgumentType.Required}, raise_func)
     Function(["round"], {"number": ArgumentType.Required}, round_func)
