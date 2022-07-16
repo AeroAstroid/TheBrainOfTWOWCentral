@@ -29,14 +29,14 @@ async def on_ready():
     startTime = time.time()  # snapshot of time when listener sends on_ready
 
 
-async def accept_file_or_message(ctx, message):
+def accept_file_or_message(ctx, message):
     if len(ctx.message.attachments) > 0:
         attachment = ctx.message.attachments[0]
         try:
             await attachment.save(f"Config/{ctx.message.id}.txt")
         except Exception:
             raise "Include a program to save!"
-        file = open(f"Config/{ctx.message.id}.txt", "r", encoding="utf-8")
+        file = open(f"Config/{ctx.message.id}.txt", "r", encoding="utf-8").read()
         os.remove(f"Config/{ctx.message.id}.txt")
         if attachment.size >= 150_000:
             raise "File is too large! (150KB MAX)"
@@ -50,7 +50,7 @@ async def accept_file_or_message(ctx, message):
 async def run(ctx, *, message=None):
     """Run B* code"""
     try:
-        output = runCode(await accept_file_or_message(ctx, message), ctx.author)
+        output = runCode(accept_file_or_message(ctx, message), ctx.author)
         await ctx.send(output)
     except Exception as e:
         await ctx.send(e)
@@ -80,7 +80,7 @@ async def create(ctx, name, *, message=None):
     # try:
     if len(name) < 50:
         try:
-            createTag(ctx.author, name, await accept_file_or_message(ctx, message))
+            createTag(ctx.author, name, accept_file_or_message(ctx, message))
             await ctx.send(f"Tag `{name}` created!")
         except Exception as e:
             await ctx.send(e)
@@ -107,7 +107,7 @@ async def edit(ctx, name, *, message):
     """Edit one of your B* tags"""
     if isOwnerProgram(name, ctx.author.id):
         try:
-            editTag(name, await accept_file_or_message(ctx, message))
+            editTag(name, accept_file_or_message(ctx, message))
             await ctx.send(f"Tag `{name}` edited!")
         except Exception as e:
             await ctx.send(e)
