@@ -437,7 +437,7 @@ class EVENT:
 			{self.make_timer(round_t)}"""))
 
 
-			await self.GAME_CHANNEL.send(f"🔍 **Invisible Rules: Round {self.GAME["ROUND"]} (Phase {self.GAME['PHASE']})**"))
+			await self.GAME_CHANNEL.send(f"🔍 **Invisible Rules: Round {self.GAME["ROUND"]} (Phase {self.GAME['PHASE']})**")
 
 			await self.GAME_CHANNEL.set_permissions(self.PLAYER_ROLE, send_messages=True)
 
