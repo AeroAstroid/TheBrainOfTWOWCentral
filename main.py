@@ -29,12 +29,15 @@ async def on_ready():
     startTime = time.time()  # snapshot of time when listener sends on_ready
 
 
-async def accept_file_or_message(ctx, message):
+def accept_file_or_message(ctx, message):
     if len(ctx.message.attachments) > 0:
         attachment = ctx.message.attachments[0]
-        file = attachment.read()
-        await file
-        file = file.decode("utf-8")
+        try:
+            await attachment.save(f"Config/{ctx.message.id}.txt")
+        except Exception:
+            raise "Include a program to save!"
+        file = open(f"Config/{ctx.message.id}.txt", "r", encoding="utf-8")
+        os.remove(f"Config/{ctx.message.id}.txt")
         if attachment.size >= 150_000:
             raise "File is too large! (150KB MAX)"
         else:
@@ -47,7 +50,7 @@ async def accept_file_or_message(ctx, message):
 async def run(ctx, *, message=None):
     """Run B* code"""
     try:
-        output = runCode(await accept_file_or_message(ctx, message), ctx.author)
+        output = runCode(accept_file_or_message(ctx, message), ctx.author)
         await ctx.send(output)
     except Exception as e:
         await ctx.send(e)
