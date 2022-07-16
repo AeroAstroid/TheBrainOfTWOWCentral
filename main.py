@@ -49,11 +49,11 @@ async def accept_file_or_message(ctx, message):
 @bot.command()
 async def run(ctx, *, message=None):
     """Run B* code"""
-#    try:
-    output = runCode(await accept_file_or_message(ctx, message), ctx.author)
-    await ctx.send(output)
-#    except Exception as e:
-#        await ctx.send(e)
+    try:
+        output = runCode(await accept_file_or_message(ctx, message), ctx.author)
+        await ctx.send(output)
+    except Exception as e:
+        await ctx.send(e)
 
 
 @bot.command()
