@@ -372,8 +372,11 @@ class EVENT:
 					for p in self.GAME["FINAL_RANKINGS"]:
 						ap_ind = self.GAME["ALL_PLAYERS"].index(p)
 						p_pts = self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind]
-						p_avg = self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]/self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1]
-
+						try:
+							p_avg = self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]/self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1]
+						except ZeroDivisionError:
+							p_avg = 9999999
+							
 						final_results.append([p.name, p.id, p_pts, p_avg])
 
 					final_results = "\n".join(["\t".join([str(r) for r in row]) for row in final_results])
@@ -751,8 +754,8 @@ class EVENT:
 			
 			if message.channel == self.GAME_CHANNEL and message.author in self.GAME["INSPECTING"]:
 				
-				not_allowed = [c for c in list(msg) if ord(c) > 127 and c not in ["“”‘’"]]
-				not_allowed += [c for c in list(msg) if c in ["_*~`\\"]]
+				not_allowed = [c for c in list(msg) if ord(c) > 127 and c not in "“”‘’"]
+				not_allowed += [c for c in list(msg) if c in "_*~`\\"]
 				
 				if len(not_allowed) > 0:
 					return
