@@ -26,7 +26,7 @@ def runCode(code: Tree, user: Union[discord.User, None] = None, arguments: List[
         return error
 
 
-def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = None):
+def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = []):
     # TODO: Trim up to three backticks from beginning and end of code
     parsed_code = parseCode(code).children
     globals.codebase = Codebase(parsed_code, user, arguments)
