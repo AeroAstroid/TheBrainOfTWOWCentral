@@ -17,7 +17,7 @@ from src.interpreter.parse import parseCode
 from src.interpreter.tempFunctionsFile import functions
 
 
-def runCode(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = None):
+def runCode(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = []):
     try:
         return func_timeout(30, runCodeSandbox, args=(code, user, arguments))
     except FunctionTimedOut:
