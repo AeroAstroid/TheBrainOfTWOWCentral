@@ -5,4 +5,8 @@ def args(index):
     if index == "":
         return globals.codebase.arguments
     else:
-        return globals.codebase.arguments[index]
+        arg = globals.codebase.arguments[index]
+        if arg is None:
+            return ""
+
+        return arg
