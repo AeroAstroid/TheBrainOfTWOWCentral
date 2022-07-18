@@ -29,13 +29,15 @@ LCASE_LETTER: "a".."z"
 UCASE_LETTER: "A".."Z"
 LETTER: UCASE_LETTER | LCASE_LETTER
 ALPHANUMERIC: (ALLNONCONFLICTING)+
-ALLNONCONFLICTING: /([^\[\]\{\}\"\s\,\-]|\-)/
+ALLNONCONFLICTINGWITHNEWLINES: /([^\[\]\{\}\"\s\,\-]|[\n\-])/
+ALLNONCONFLICTING: /([^\[\]\{\}\"\s\,\-]|[\-])/
 ALLEXCEPTBRACKETS: /[^\[\]]/
+WHITESPACEEXCEPTNEWLINE: /[^\S\r\n]/
+ESCAPED_STRING : "\"" ALLNONCONFLICTINGWITHNEWLINES+ "\""
 
 
 // common lib stuff
 // imports from common library my beloved
-%import common.ESCAPED_STRING
 %import common.DECIMAL
 %import common.C_COMMENT
 %import common.SIGNED_INT
