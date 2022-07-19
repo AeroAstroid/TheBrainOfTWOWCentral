@@ -979,7 +979,7 @@ class EVENT:
 
 									tech_objects = [attr for attr in dir(TEMP_TECHS) if attr.startswith("TECHNICAL_")]
 
-									TECHS = [getattr(TEMP_TECHS, func) for techobj in tech_objects]
+									TECHS = [getattr(TEMP_TECHS, techobj) for techobj in tech_objects]
 									TECHNICAL_NAMES = [techobj[9:].upper() for techobj in tech_objects]
 
 									os.remove(f"{input_message.id}_RESPONDING_TECHS.py")
