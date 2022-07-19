@@ -15,10 +15,10 @@ def DEFAULT_PARAM():
 		"GAME_CHANNEL_ID": None,
 		"EVENT_ADMIN_ID": None,
 
-		"PHASE_1_ROUND_TIME": 360,
+		"PHASE_1_ROUND_TIME": 420,
 		"PHASE_2_ROUND_TIME": 420,
 
-		"PHASE_1_LEN": 4,
+		"PHASE_1_LEN": 5,
 		"PHASE_2_LEN": 6,
 		"PHASE_1_TEST_LEN": 10,
 		"PHASE_2_TEST_STREAK": 8
@@ -146,11 +146,6 @@ class EVENT:
 					messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
 
 					{self.make_timer(self.GAME["NEXT_PERIOD"] - time())}"""))
-
-					await self.GAME["TRACKED_MSGS"][1].edit(content=m_line(
-					f"""🔍 **Invisible Rules: Round {self.GAME["ROUND"]} (Phase {self.GAME['PHASE']})**
-
-					{self.make_timer(self.GAME["NEXT_PERIOD"] - time())}"""))
 				
 				self.GAME["PERIOD_STEP"] += 1
 			
@@ -183,12 +178,7 @@ class EVENT:
 
 				{self.make_timer(0)}"""))
 
-				await self.GAME["TRACKED_MSGS"][1].edit(content=m_line(
-				f"""🔍 **Invisible Rules: Round {self.GAME["ROUND"]} (Phase {self.GAME['PHASE']})**
-				
-				{self.make_timer(0)}"""))
-
-				for t_msg in self.GAME["TRACKED_MSGS"][2:]:
+				for t_msg in self.GAME["TRACKED_MSGS"][1:]:
 					try:
 						await t_msg.edit(content=m_line(
 						f"""🔍 **Invisible Rules: Round {self.GAME['ROUND']} (Phase {self.GAME['PHASE']})**
@@ -247,11 +237,12 @@ class EVENT:
 						
 						results_list[ind][1] = score
 
-					self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0] += results_list[ind][2]
-					self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1] += 1
+					if self.GAME["ROUND"] > 1:
+						self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0] += results_list[ind][2]
+						self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1] += 1
 
-					results_list[ind][6] = (self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]
-						/ self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1])
+						results_list[ind][6] = (self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]
+							/ self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1])
 				
 				results_list = sorted(results_list, key=lambda m: -m[1])
 				results_list = sorted(results_list, key=lambda m: m[6])
@@ -271,7 +262,7 @@ class EVENT:
 							results_list[ind][4] = True
 
 				for ind, p in enumerate(results_list):
-					elim_emoji = "✅" if p[4] else "💀"
+					elim_emoji = "✅" if p[4] or self.GAME["ROUND"] == 1 else "💀"
 
 					p_line = f"`[{ind+1}]` {elim_emoji} <@{p[0].id}> --- "
 
@@ -292,7 +283,7 @@ class EVENT:
 						else:
 							p_line += f"{p[1]} attempts"
 						
-						if p[4]:
+						if p[4] and self.GAME["ROUND"] != 1:
 							survivors += 1
 
 							top_percent = survivors / p_len
@@ -302,13 +293,13 @@ class EVENT:
 							if survivors == 1:
 								p_line += " ///  **+4 TCO points**"
 								self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind] += 4
-							elif top_percent < 0.1:
+							elif top_percent <= 0.2:
 								p_line += " ///  **+3 TCO points**"
 								self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind] += 3
-							elif top_percent < 0.3:
+							elif top_percent <= 0.4:
 								p_line += " ///  **+2 TCO points**"
 								self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind] += 2
-							elif top_percent < 0.6:
+							elif top_percent <= 0.6:
 								p_line += " ///  **+1 TCO point**"
 								self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind] += 1
 						
@@ -322,16 +313,17 @@ class EVENT:
 				for msg in result_msgs:
 					await self.ANNOUNCE_CHANNEL.send(msg)
 
-				self.GAME["ELIMINATIONS"] = [p[0] for p in results_list if not p[4]]
-				self.GAME["FINAL_RANKINGS"] = self.GAME["ELIMINATIONS"] + self.GAME["FINAL_RANKINGS"]
+				if self.GAME["ROUND"] > 1:
+					self.GAME["ELIMINATIONS"] = [p[0] for p in results_list if not p[4]]
+					self.GAME["FINAL_RANKINGS"] = self.GAME["ELIMINATIONS"] + self.GAME["FINAL_RANKINGS"]
 
-				self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
+					self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
 
-				for e in self.GAME["ELIMINATIONS"]:
-					try:
-						await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
-					except Exception:
-						continue
+					for e in self.GAME["ELIMINATIONS"]:
+						try:
+							await self.SERVER["MAIN"].get_member(e.id).remove_roles(self.PLAYER_ROLE)
+						except Exception:
+							continue
 			
 			if self.GAME["PERIOD_STEP"] == 19:
 				new_round = self.GAME["ROUND"] + 1
@@ -354,8 +346,12 @@ class EVENT:
 					for p in self.GAME["FINAL_RANKINGS"]:
 						ap_ind = self.GAME["ALL_PLAYERS"].index(p)
 						p_pts = self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind]
-						p_avg = self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]/self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1]
-
+						
+						try:
+							p_avg = self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]/self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1]
+						except ZeroDivisionError:
+							p_avg = 9999999
+						
 						final_results.append([p.name, p.id, p_pts, p_avg])
 
 					final_results = "\n".join(["\t".join([str(r) for r in row]) for row in final_results])
@@ -372,12 +368,17 @@ class EVENT:
 				elif self.GAME["ROUND"] >= len(self.GAME["RULES"]):
 					await self.ANNOUNCE_CHANNEL.send("Invisible Rules has finished!")
 					final_results = []
+					
+					self.GAME["FINAL_RANKINGS"] = self.GAME["PLAYERS"] + self.GAME["FINAL_RANKINGS"]
 
 					for p in self.GAME["FINAL_RANKINGS"]:
 						ap_ind = self.GAME["ALL_PLAYERS"].index(p)
 						p_pts = self.GAME["ALL_PLAYER_TCO_POINTS"][ap_ind]
-						p_avg = self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]/self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1]
-
+						try:
+							p_avg = self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][0]/self.GAME["ALL_PLAYER_AVERAGE_TIME"][ap_ind][1]
+						except ZeroDivisionError:
+							p_avg = 9999999
+							
 						final_results.append([p.name, p.id, p_pts, p_avg])
 
 					final_results = "\n".join(["\t".join([str(r) for r in row]) for row in final_results])
@@ -445,14 +446,11 @@ class EVENT:
 			{self.make_timer(round_t)}"""))
 
 
-			game_timer = await self.GAME_CHANNEL.send(m_line(
-			f"""🔍 **Invisible Rules: Round {self.GAME["ROUND"]} (Phase {self.GAME['PHASE']})**
-			
-			{self.make_timer(round_t)}"""))
+			await self.GAME_CHANNEL.send(f"🔍 **Invisible Rules: Round {self.GAME['ROUND']} (Phase {self.GAME['PHASE']})**")
 
 			await self.GAME_CHANNEL.set_permissions(self.PLAYER_ROLE, send_messages=True)
 
-			self.GAME["TRACKED_MSGS"] = [ann_timer, game_timer]
+			self.GAME["TRACKED_MSGS"] = [ann_timer]
 
 			for p in self.GAME["PLAYERS"]:
 				try:
@@ -508,7 +506,10 @@ class EVENT:
 					fastest ones will be given point bonuses."""),
 
 					m_line(f"""> **PHASE ONE: Legal Forensics** will last for the first **{self.PARAM['PHASE_1_LEN']} 
-					rounds** of the game.""")
+					rounds** of the game."""),
+					
+					m_line("""> **Round 1** will be a practice round to get everyone up to speed on the event - it 
+					will not count for **eliminations**, **average completion time**, OR **TCO points**!""")
 				]
 			
 			elif self.GAME["PHASE"] == 2:
@@ -751,7 +752,13 @@ class EVENT:
 				return
 			
 			if message.channel == self.GAME_CHANNEL and message.author in self.GAME["INSPECTING"]:
-			
+				
+				not_allowed = [c for c in list(msg) if ord(c) > 127 and c not in "“”‘’"]
+				not_allowed += [c for c in list(msg) if c in "_*~`\\"]
+				
+				if len(not_allowed) > 0:
+					return
+				
 				rule = self.GAME["RULES"][rnd - 1]
 
 				passed = "✅" if rule(msg) else "❌"
@@ -882,16 +889,7 @@ class EVENT:
 			return
 	
 	def format_test_msg(self, msg, n=None):
-		split_msg = msg.split(" ")
-		word_count = 0
-
-		for potential_word in split_msg:
-			alphanum_list = [c for c in list(potential_word.upper())
-			if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"]
-			
-			if len(alphanum_list) != 0:
-				word_count += 1
-		
+		word_count = len(msg.split(" "))
 		letter_list = [c for c in list(msg.upper()) if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
 		letters = len(letter_list)
 		letters_used = sorted(list(set(letter_list)))

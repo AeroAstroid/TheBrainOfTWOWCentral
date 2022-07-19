@@ -183,7 +183,7 @@ def CHOOSECHAR(a):
 
 	return random.choice(list(a))
 
-def IF(a, b, c):
+def IF(a, b, c=""):
 	a = a not in [0, "0"]
 
 	if a:
@@ -223,7 +223,7 @@ def MOD(a, b):
 	return a % b
 
 def MATHFUNC(a, b, c):
-	operations = "+-*/^"
+	operations = "+-*/^%"
 	if not is_number(a):
 		raise ValueError(f"First parameter of MATH function is not a number: {safe_cut(a)}")
 	if b not in operations:
@@ -247,6 +247,11 @@ def MATHFUNC(a, b, c):
 	if b == "/":
 		if c == 0: raise ZeroDivisionError(f"Second parameter of MATH function in division cannot be zero")
 		return a/c
+	
+	if b == "%":
+		if c == 0: raise ZeroDivisionError(f"Second parameter of MATH function in modulo cannot be zero")
+		return a%c
+	
 	
 	if b == "^":
 		try:
@@ -282,6 +287,8 @@ def THROW(a): # don't need to check, because either way it'll error
 	raise ProgramDefinedException(a)
 	
 def TYPEFUNC(a):
+	if is_whole(a): return "int"
+	if is_number(a): return "float"
 	return type(a).__name__
 	
 def ROUND(a, b=0):
@@ -386,7 +393,14 @@ def JOIN(a, b=""):
 	
 	return b.join(a)
 	
-
+def SETINDEX(a, b, c):
+	if not type(a) == list:
+		raise ValueError(f"SETINDEX function parameter is not a list: {safe_cut(a)}")
+	if not is_whole(b):
+		raise ValueError(f"SETINDEX function parameter is not an integer: {safe_cut(b)}")
+	mylist = a.copy()
+	mylist[int(b)] = c
+	return mylist
 
 FUNCTIONS = {
 	"MATH": MATHFUNC,
@@ -430,5 +444,6 @@ FUNCTIONS = {
 	"MAX": MAXFUNC,
 	"SHUFFLE": SHUFFLE,
 	"SORT": SORTFUNC,
-	"JOIN": JOIN
+	"JOIN": JOIN,
+	"SETINDEX": SETINDEX
 }

@@ -65,7 +65,7 @@ class EVENT:
 		ping = sum(self.param["INFO"][message.author.id][1][-msg_ping:])
 
 		cause = "" # Determine the rule broken and specify it
-		if msg_1 >= self.param["MESSAGE_LIMIT"][0] or msg_2 >= self.param["MESSAGE_LIMIT"][0]:
+		if msg_1 >= self.param["MESSAGE_LIMIT"][0] or msg_2 >= self.param["MESSAGE_LIMIT"][1]:
 			cause = "sending messages too quickly"
 		if ping >= self.param["PING_LIMIT"]:
 			cause = "pinging too many people"

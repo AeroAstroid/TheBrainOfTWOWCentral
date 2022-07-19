@@ -21,12 +21,12 @@ def HELP(PREFIX):
 		[newcode]` or deleted with `tc/b++ delete [program]`. Finally, `tc/b++ [program] (args)` allows you to run any 
 		saved program.^n^n
 		The full documentation for all B++ program functionality is displayed in this document:^n
-		https://docs.google.com/document/d/1o9uy-HBtwD5g584S_F_2dtTj6j_LGtTK16Lg1jUBgzg/edit?usp=sharing
+		https://docs.google.com/document/d/1pU2ezYE505sAPEmnSMNx9yfzD7FT4_KmICOkEUpMSA8/edit?usp=sharing
 		""".replace("\n", "").replace("\t", "").replace("^n", "\n"),
 		"CATEGORY" : "Fun"
 	}
 
-PERMS = 3 # Member
+PERMS = 1 # Member
 ALIASES = ["TAG", "B++NEW", "TAGNEW", "NEWB++", "NEWTAG"]
 REQ = []
 

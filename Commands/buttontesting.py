@@ -22,9 +22,9 @@ REQ = []
 
 EMOJIS = ["😃", "😭", "😎", "😳"]
 
-async def edit_original_message(interaction, reaction_dict):
-
-	msg_list = ["**How do you feel about Neonic?**\n"]
+async def edit_original_message(interaction, reaction_dict, args_concat):
+	
+	msg_list = ["**"+args_concat+"**\n"]
 
 	for user_in_dict in list(reaction_dict.keys()):
 
@@ -36,7 +36,9 @@ async def edit_original_message(interaction, reaction_dict):
 
 
 async def MAIN(message, args, level, perms, SERVER):
-
+	
+	if len(args) == 1: args_concat = "How do you feel about Neonic?"
+	else: args_concat = " ".join(args[1:])
 	# Create buttons for changing things
 	button_view = View()
 	msg_to_edit = None
@@ -52,7 +54,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			list_of_reactions[button_user] = EMOJIS[0]
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] = EMOJIS[0]
-		await edit_original_message(interaction, list_of_reactions)
+		await edit_original_message(interaction, list_of_reactions, args_concat)
 		return
 
 	async def sob_emoji(interaction):
@@ -64,7 +66,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			list_of_reactions[button_user] = EMOJIS[1]
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] = EMOJIS[1]
-		await edit_original_message(interaction, list_of_reactions)
+		await edit_original_message(interaction, list_of_reactions, args_concat)
 		return
 
 	async def sunglasses_emoji(interaction):
@@ -76,7 +78,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			list_of_reactions[button_user] = EMOJIS[2]
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] = EMOJIS[2]
-		await edit_original_message(interaction, list_of_reactions)
+		await edit_original_message(interaction, list_of_reactions, args_concat)
 		return
 
 	async def flushed_emoji(interaction):
@@ -88,7 +90,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			list_of_reactions[button_user] = EMOJIS[3]
 		elif len(list(list_of_reactions.keys())) < 10:
 			list_of_reactions[button_user] = EMOJIS[3]
-		await edit_original_message(interaction, list_of_reactions)
+		await edit_original_message(interaction, list_of_reactions, args_concat)
 		return
 
 	# Create first button - smiley emoji button
@@ -111,5 +113,5 @@ async def MAIN(message, args, level, perms, SERVER):
 	button_4.callback = flushed_emoji
 	button_view.add_item(button_4)
 
-	msg_to_edit = await message.channel.send("**How do you feel about Neonic?**", view = button_view)
+	msg_to_edit = await message.channel.send("**"+args_concat+"**", view = button_view)
 	return
