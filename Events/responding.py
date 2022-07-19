@@ -495,6 +495,7 @@ class EVENT:
 						for i, responseobj in enumerate(self.info["RESPONSES"][user]):
 							if responseobj == None:
 								# Recording response information - response, whether or not it is valid, or the timestamp of the message and some other response info if given
+								print([response, response_is_valid, message.created_at.timestamp()] + misc_response_info)
 								self.info["RESPONSES"][user][i] = [response, response_is_valid, message.created_at.timestamp()] + misc_response_info
 								break
 
