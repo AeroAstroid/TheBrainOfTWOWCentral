@@ -944,7 +944,7 @@ class EVENT:
 						elif admin_input == "toggle":
 							# Toggling a certain technical
 							message_words = input_message.content.split()
-							if len(message_words) > 1:
+							if len(message_words) == 1:
 								await self.param["ADMIN_CHANNEL"].send(f"You must provide a technical to toggle!")
 							else:
 								technical = message_words[1].upper()
@@ -980,7 +980,7 @@ class EVENT:
 									tech_objects = [attr for attr in dir(TEMP_TECHS) if attr.startswith("TECHNICAL_")]
 
 									TECHS = [getattr(TEMP_TECHS, techobj) for techobj in tech_objects]
-									TECHNICAL_NAMES = [techobj[9:].upper() for techobj in tech_objects]
+									TECHNICAL_NAMES = [techobj[10:].upper() for techobj in tech_objects]
 
 									os.remove(f"{input_message.id}_RESPONDING_TECHS.py")
 
@@ -989,7 +989,6 @@ class EVENT:
 
 									string_technical_list = ", ".join(TECHNICAL_NAMES)
 									await input_message.channel.send(f"✅ **Successfully imported these {len(TECHS)} technicals:** {string_technical_list}")
-									return
 
 								except Exception as err:
 									await input_message.channel.send(
