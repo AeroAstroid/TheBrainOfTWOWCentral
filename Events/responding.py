@@ -258,6 +258,8 @@ class EVENT:
 				response_list = self.info["RESPONSES"][user]
 				for response in response_list:
 
+					print(response)
+
 					if response == None: continue
 
 					# Add each response to the CSV
@@ -955,7 +957,7 @@ class EVENT:
 
 									if technical in active_technicals:
 										# Remove the technical from the technicals list
-										self.param["TECHNICALS"].pop(technical)
+										self.param["TECHNICALS"].remove(technical)
 										await self.param["ADMIN_CHANNEL"].send(f"Removed **{technical}** technical from the active technicals list!")
 
 									elif technical in non_active_technicals:
