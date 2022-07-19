@@ -923,7 +923,7 @@ class EVENT:
 						admin_input = None
 						input_message = None
 						while True:
-							msg = await BRAIN.wait_for('message', check=lambda m: (m.author == user and m.channel == channel))
+							msg = await BRAIN.wait_for('message', check=lambda m: (m.author == interaction.user and m.channel == self.param["ADMIN_CHANNEL"]))
 							input_message = msg
 							if msg.content.lower().startswith("toggle"):
 								admin_input = "toggle"
