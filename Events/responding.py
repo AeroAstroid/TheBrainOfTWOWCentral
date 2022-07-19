@@ -3,7 +3,7 @@
 # Written by Neonic - ask him if you have any questions about how the code works
 ###################################################################################
 
-import time, discord, random, statistics, csv, asyncio, copy, math, textwrap, traceback, os
+import time, discord, random, statistics, csv, asyncio, copy, math, textwrap, traceback, os, importlib
 from discord.ui import Button, View, Select
 from Config._functions import grammar_list, word_count, formatting_fix
 from Config._const import ALPHABET, BRAIN, ALPHANUM_UNDERSCORE
@@ -446,7 +446,8 @@ class EVENT:
 				for technical in self.info["TECHNICALS"]:
 					try:
 						await technical.on_player_message(message, user)
-					except:
+					except Exception as exc:
+						print(f"[ERROR - RESPONDING] Exception in on_message portion of technical {technical.name}: {exc}")
 						pass
 				
 				# Is in DMs, split the content of the message
@@ -688,7 +689,8 @@ class EVENT:
 		for technical in self.info["TECHNICALS"]:
 			try:
 				response, response_is_valid, misc_response_info, info_list = technical.on_response_submission(user, response, response_is_valid, misc_response_info, info_list) 
-			except:
+			except Exception as e:
+				print(f"[ERROR - RESPONDING] Exception in response_info portion of technical {technical.name}: {exc}")
 				pass
 
 		return response_is_valid, misc_response_info, "\n".join(info_list)
