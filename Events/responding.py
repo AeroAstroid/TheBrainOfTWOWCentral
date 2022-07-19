@@ -964,36 +964,36 @@ class EVENT:
 
 						elif admin_input == "new":
 
-							if len(message.attachments) == 0:
-								await message.channel.send(
+							if len(input_message.attachments) == 0:
+								await input_message.channel.send(
 								f"**You must send a file containing the technicals!**")
 
 							else:
 
 								try:
-									await message.attachments[0].save(f"{message.id}_RESPONDING_TECHS.py")
+									await input_message.attachments[0].save(f"{input_message.id}_RESPONDING_TECHS.py")
 
-									TEMP_TECHS = importlib.import_module(f"{message.id}_RESPONDING_TECHS")
+									TEMP_TECHS = importlib.import_module(f"{input_message.id}_RESPONDING_TECHS")
 
 									tech_objects = [attr for attr in dir(TEMP_TECHS) if attr.startswith("TECHNICAL_")]
 
 									TECHS = [getattr(TEMP_TECHS, func) for techobj in tech_objects]
 									TECHNICAL_NAMES = [techobj[9:].upper() for techobj in tech_objects]
 
-									os.remove(f"{message.id}_RESPONDING_TECHS.py")
+									os.remove(f"{input_message.id}_RESPONDING_TECHS.py")
 
 									for i, tech_name in enumerate(TECHNICAL_NAMES):
 										IMPORTED_TECHNICALS[tech_name] = TECHS[i]
 
 									string_technical_list = ", ".join(TECHNICAL_NAMES)
-									await message.channel.send(f"✅ **Successfully imported these {len(TECHS)} technicals:** {string_technical_list}")
+									await input_message.channel.send(f"✅ **Successfully imported these {len(TECHS)} technicals:** {string_technical_list}")
 									return
 
 								except Exception as err:
-									await message.channel.send(
+									await input_message.channel.send(
 									"**An error occurred while importing the technicals file!**")
 
-									try: os.remove(f"{message.id}_RESPONDING_TECHS.py")
+									try: os.remove(f"{input_message.id}_RESPONDING_TECHS.py")
 									except Exception: pass
 				
 					await self.admin_modify()
