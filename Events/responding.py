@@ -164,6 +164,7 @@ class EVENT:
 			try:
 				technical_object = IMPORTED_TECHNICALS[technical](self)
 				self.info["TECHNICALS"].append(technical_object)
+				self.info["CSV_TITLE_ROWS"] += technical_object.extra_csv_title_rows
 				technical_object.responding_start()
 				
 			except Exception:
