@@ -949,7 +949,7 @@ class EVENT:
 							else:
 								technical = message_words[1].upper()
 								
-								if technical in self.IMPORTED_TECHNICALS:
+								if technical in IMPORTED_TECHNICALS:
 
 									if technical in active_technicals:
 										# Remove the technical from the technicals list
