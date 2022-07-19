@@ -162,7 +162,7 @@ class EVENT:
 		self.info["TECHNICALS"] = []
 		for technical in self.param["TECHNICALS"]:
 			try:
-				technical_object = TECHNICALS[technical](self)
+				technical_object = IMPORTED_TECHNICALS[technical](self)
 				self.info["TECHNICALS"].append(technical_object)
 				technical_object.responding_start()
 				
@@ -908,7 +908,7 @@ class EVENT:
 					while True:
 
 						active_technicals = self.param["TECHNICALS"]
-						non_active_technicals = [tech for tech in list(TECHNICALS.keys()) if not tech in active_technicals]
+						non_active_technicals = [tech for tech in list(IMPORTED_TECHNICALS.keys()) if not tech in active_technicals]
 
 						await self.param["ADMIN_CHANNEL"].send(textwrap.dedent(f"""
 							:white_check_mark: **Active technicals:** {", ".join(active_technicals)}
