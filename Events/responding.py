@@ -993,6 +993,8 @@ class EVENT:
 									await input_message.channel.send(
 									"**An error occurred while importing the technicals file!**")
 
+									print(err)
+
 									try: os.remove(f"{input_message.id}_RESPONDING_TECHS.py")
 									except Exception: pass
 				
