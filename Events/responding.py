@@ -258,10 +258,6 @@ class EVENT:
 				response_list = self.info["RESPONSES"][user]
 				for response in response_list:
 
-					print(response)
-					print(len(response))
-					print(response[3:])
-
 					if response == None: continue
 
 					# Add each response to the CSV
@@ -273,9 +269,7 @@ class EVENT:
 					resp_csv_list.append(str(round(response[2] - self.info["RESPONDING_START_TIME"], 2))) # The relative timestamp of the user's response - how long ago they sent a response
 					# If any special information was passed onto the response
 					if len(response) > 3:
-						resp_csv_list + response[3:] # Add any special information and write it in the CSV
-
-					print(resp_csv_list)
+						resp_csv_list += response[3:] # Add any special information and write it in the CSV
 
 					# Write to CSV
 					writer.writerow(resp_csv_list)
