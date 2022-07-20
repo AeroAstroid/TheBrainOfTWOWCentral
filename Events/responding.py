@@ -259,6 +259,8 @@ class EVENT:
 				for response in response_list:
 
 					print(response)
+					print(len(response))
+					print(response[3:])
 
 					if response == None: continue
 
@@ -272,6 +274,8 @@ class EVENT:
 					# If any special information was passed onto the response
 					if len(response) > 3:
 						resp_csv_list + response[3:] # Add any special information and write it in the CSV
+
+					print(resp_csv_list)
 
 					# Write to CSV
 					writer.writerow(resp_csv_list)
