@@ -172,7 +172,7 @@ def run_bpp_program(code, p_args, author, runner):
 
 		# Tuples indicate special behavior necessary
 		if type(result) == tuple:
-			if result[0] == "d":
+			if result[0] == "d": #DEFINE
 				if len(str(result[1])) > 100000:
 					raise MemoryError(
 					f"The variable {safe_cut(args[0])} is too large: {safe_cut(result[1])} (limit 100kb)")
@@ -180,19 +180,19 @@ def run_bpp_program(code, p_args, author, runner):
 				VARIABLES[args[0]] = result[1]
 				result = ""
 
-			elif result[0] == "v":
+			elif result[0] == "v": #VAR
 				try:
 					result = VARIABLES[args[0]]
 				except KeyError:
 					raise NameError(f"No variable by the name {safe_cut(args[0])} defined")
 
-			elif result[0] == "a":
+			elif result[0] == "a": #[ARGS [number]]
 				if result[1] >= len(p_args) or -result[1] >= len(p_args) + 1:
 					result = ""
 				else:
 					result = p_args[result[1]]
 
-			elif result[0] == "gd":
+			elif result[0] == "gd": #GLOBAL DEFINE
 				v_name = args[0]
 				if len(str(result[1])) > 100000:
 					raise MemoryError(
@@ -218,7 +218,7 @@ def run_bpp_program(code, p_args, author, runner):
 						conditions={"name": v_name})
 					result = ""
 				
-			elif result[0] == "gv":
+			elif result[0] == "gv": #GLOBAL VAR
 				v_name = args[0]
 
 				if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
@@ -230,14 +230,17 @@ def run_bpp_program(code, p_args, author, runner):
 
 				result = v_value
 
-			elif result[0] == "n":
+			elif result[0] == "n": #USERNAME
 				result = runner.name
 
-			elif result[0] == "id":
+			elif result[0] == "id": #USERID
 				result = runner.id
 			
-			elif result[0] == "aa":
+			elif result[0] == "aa": #[ARGS]
 				result = p_args
+				
+			elif result[0] == "eval": #EVAL - needs sandboxed, so we need to make a decoy user
+				result = run_bpp_program(result[1], result[2], 0, runner) 
 		
 		functions[k] = result
 		return result
