@@ -220,7 +220,8 @@ class EVENT:
 		responses_recorded = self.info["RESPONSES_RECEIVED"]
 
 		# Send message
-		await self.param["ANNOUNCE_CHANNEL"].send("__**Responding has closed!**__\nWe received **{}/{}** responses.\nThe DNPers were (sent in no responses): {}".format(responses_recorded, total_responses, dnp_list_mention_str))
+		#await self.param["ANNOUNCE_CHANNEL"].send("__**Responding has closed!**__\nWe received **{}/{}** responses.\nThe DNPers were (sent in no responses): {}".format(responses_recorded, total_responses, dnp_list_mention_str))
+		await self.param["ANNOUNCE_CHANNEL"].send("__**Responding has closed!**__")
 
 		# CREATING CSV FILES
 		################################################
@@ -348,7 +349,7 @@ class EVENT:
 						players_to_respond_list.append(user)
 
 				# Turn the players to respond dict into a string that can be sent with the deadline message
-				still_to_respond_strings = []
+				"""still_to_respond_strings = []
 				for responses_left in list(players_to_respond.keys()):
 
 					players_with_amount = players_to_respond[responses_left]
@@ -365,25 +366,28 @@ class EVENT:
 							still_to_respond_strings.append(f"{player_mentions_str} have {responses_left} responses left to submit.")
 
 				# Put together all the strings in the still_to_respond_strings list
-				still_to_respond_str = "\n".join(still_to_respond_strings)
+				still_to_respond_str = "\n".join(still_to_respond_strings)"""
 				
 				# Send a message saying deadline passed
-				if len(still_to_respond_strings) > 0:
-					deadline_passed_str = f"__**The deadline has passed!**__\n\n{still_to_respond_str}\n\nYou are still able to respond and edit responses. If you are still responding, please let anyone running the event know. The grace period will close soon."
-				else:
-					deadline_passed_str = f"__**The deadline has passed!**__\n\nYou are still able to respond and edit responses. If you are still responding, please let anyone running the event know. The grace period will close soon."
+				#if len(still_to_respond_strings) > 0:
+					#deadline_passed_str = f"__**The deadline has passed!**__\n\n{still_to_respond_str}\n\nYou are still able to respond and edit responses. If you are still responding, please let anyone running the event know. The grace period will close soon."
+				#else:
+					#deadline_passed_str = f"__**The deadline has passed!**__\n\nYou are still able to respond and edit responses. If you are still responding, please let anyone running the event know. The grace period will close soon."
+
+				deadline_passed_str = f"__**The deadline has passed!**__\n\nYou are still able to respond and edit responses. If you are still responding, please let anyone running the event know. The grace period will close soon."
 
 				# Send a message in the admin channel about the responding period after the deadline
 				# Check what users have not sent responses yet
-				players_left_to_respond_strings = []
+				players_left_to_respond_strings = ["**The deadline has passed!**\n\nResponses received before the deadline: **{}/{}**\n__Users left to respond:__]".format(self.info["RESPONSES_RECEIVED"], self.info["TOTAL_RESPONSES"])]
 				for user in players_to_respond_list:
 					# Check how many responses they have submitted and how many they have in total
 					user_total_responses = len(self.info["RESPONSES"][user])
 					user_responses_submitted = user_total_responses - self.info["RESPONSES"][user].count(None)
 
-					players_left_to_respond_strings.append(f"{user.mention} ({user_responses_submitted}/{user_total_responses})")
+					if len(players_left_to_respond_strings[-1]) + len(player_string) > 2000:
+						players_left_to_respond_strings.append("")
 
-				players_left_to_respond_str = "\n".join(players_left_to_respond_strings)
+					players_left_to_respond_strings[-1] += f"{user.mention} ({user_responses_submitted}/{user_total_responses})\n"				
 
 				await self.param["ANNOUNCE_CHANNEL"].send(deadline_passed_str)
 
@@ -407,17 +411,12 @@ class EVENT:
 				end_responding_button.callback = responding_end_pressed				
 				button_view.add_item(end_responding_button)
 
+				# Message has been split into chunks
+				for string in players_left_to_respond_strings:
+					await self.param["ADMIN_CHANNEL"].send(string)
+
 				# Sending message
-				await self.param["ADMIN_CHANNEL"].send(content = textwrap.dedent("""
-					**The deadline has passed!**
-
-					Responses received before the deadline: **{}/{}**
-					__Users left to respond:__
-					{}
-
-					Any further responses sent after the deadline will be sent here.
-					Press the button to end responding.
-				""".format(self.info["RESPONSES_RECEIVED"], self.info["TOTAL_RESPONSES"], players_left_to_respond_str)), view = button_view)
+				await self.param["ADMIN_CHANNEL"].send(content = "Any further responses sent after the deadline will be sent here. Press the button to end responding.", view = button_view)
 
 	# Function that runs on each message
 	async def on_message(self, message):
@@ -497,7 +496,6 @@ class EVENT:
 						for i, responseobj in enumerate(self.info["RESPONSES"][user]):
 							if responseobj == None:
 								# Recording response information - response, whether or not it is valid, or the timestamp of the message and some other response info if given
-								print([response, response_is_valid, message.created_at.timestamp()] + misc_response_info)
 								self.info["RESPONSES"][user][i] = [response, response_is_valid, message.created_at.timestamp()] + misc_response_info
 								break
 
