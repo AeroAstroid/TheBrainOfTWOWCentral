@@ -165,7 +165,8 @@ class EVENT:
 				technical_object = IMPORTED_TECHNICALS[technical](self)
 				self.info["TECHNICALS"].append(technical_object)
 				self.info["CSV_TITLE_ROWS"] += technical_object.extra_csv_title_rows
-				technical_object.responding_start()
+				if hasattr(technical, "responding_start"):
+					technical_object.responding_start()
 				
 			except Exception:
 				try:
@@ -445,11 +446,12 @@ class EVENT:
 
 				# Run technical on_message function
 				for technical in self.info["TECHNICALS"]:
-					try:
-						await technical.on_player_message(message, user)
-					except Exception as exc:
-						print(f"[ERROR - RESPONDING] Exception in on_message portion of technical {technical.name}: {exc}")
-						pass
+					if hasattr(technical, "on_player_message"):
+						try:
+							await technical.on_player_message(message, user)
+						except Exception as e:
+							print(f"[ERROR - RESPONDING] Exception in on_message portion of technical {technical.name}: {e}")
+							pass
 				
 				# Is in DMs, split the content of the message
 				message_words = message.content.split(" ")
@@ -689,11 +691,12 @@ class EVENT:
 
 		# Run technical on_response_submission function to add extra data and check if response is valid
 		for technical in self.info["TECHNICALS"]:
-			try:
-				response, response_is_valid, misc_response_info, info_list = technical.on_response_submission(user, response, response_is_valid, misc_response_info, info_list) 
-			except Exception as e:
-				print(f"[ERROR - RESPONDING] Exception in response_info portion of technical {technical.name}: {exc}")
-				pass
+			if hasattr(technical, "on_response_submission"):
+				try:
+					response, response_is_valid, misc_response_info, info_list = technical.on_response_submission(user, response, response_is_valid, misc_response_info, info_list) 
+				except Exception as e:
+					print(f"[ERROR - RESPONDING] Exception in response_info portion of technical {technical.name}: {e}")
+					pass
 
 		return response_is_valid, misc_response_info, "\n".join(info_list)
 
