@@ -384,10 +384,12 @@ class EVENT:
 					user_total_responses = len(self.info["RESPONSES"][user])
 					user_responses_submitted = user_total_responses - self.info["RESPONSES"][user].count(None)
 
+					player_string = f"{user.mention} ({user_responses_submitted}/{user_total_responses})\n"	
+
 					if len(players_left_to_respond_strings[-1]) + len(player_string) > 2000:
 						players_left_to_respond_strings.append("")
 
-					players_left_to_respond_strings[-1] += f"{user.mention} ({user_responses_submitted}/{user_total_responses})\n"				
+					players_left_to_respond_strings[-1] += player_string		
 
 				await self.param["ANNOUNCE_CHANNEL"].send(deadline_passed_str)
 
