@@ -165,7 +165,7 @@ class EVENT:
 				technical_object = IMPORTED_TECHNICALS[technical](self)
 				self.info["TECHNICALS"].append(technical_object)
 				self.info["CSV_TITLE_ROWS"] += technical_object.extra_csv_title_rows
-				if hasattr(technical, "responding_start"):
+				if hasattr(technical_object, "responding_start"):
 					technical_object.responding_start()
 				
 			except Exception:
