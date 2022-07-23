@@ -6,6 +6,7 @@ except ModuleNotFoundError:
 	from _functions import is_whole
 	from _bppnew_functions import express_array, safe_cut, FUNCTIONS
 	from _db import Database
+import cexprtk
 
 def run_bpp_program(code, p_args, author, runner):
 	# Pointers for tag and function organization
@@ -239,8 +240,8 @@ def run_bpp_program(code, p_args, author, runner):
 			elif result[0] == "aa": #[ARGS]
 				result = p_args
 				
-			elif result[0] == "eval": #EVAL - needs sandboxed, so we need to make a decoy user
-				result = run_bpp_program(result[1], result[2], 0, runner) 
+			elif result[0] == "expr": #EXPRESSION - not done but goal is to simplify math. result[1] is equation, result[2] is vars
+				
 		
 		functions[k] = result
 		return result
