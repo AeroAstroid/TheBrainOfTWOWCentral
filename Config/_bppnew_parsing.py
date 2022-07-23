@@ -7,6 +7,8 @@ except ModuleNotFoundError:
 	from _bppnew_functions import express_array, safe_cut, FUNCTIONS
 	from _db import Database
 import cexprtk
+import random
+from string import ascii_lowercase
 
 def run_bpp_program(code, p_args, author, runner):
 	# Pointers for tag and function organization
@@ -240,8 +242,11 @@ def run_bpp_program(code, p_args, author, runner):
 			elif result[0] == "aa": #[ARGS]
 				result = p_args
 				
-			elif result[0] == "expr": #EXPRESSION - not done but goal is to simplify math. result[1] is equation, result[2] is vars
-				
+			elif result[0] == "expr": #EXPRESSION - not done but goal is to simplify math. result[1] is equation, result[2] is vars given
+				d = dict(zip(ascii_lowercase, result[2])) # generates a-z variables and throws out the rest basically so max is array length 26
+				st = cexprtk.Symbol_Table(d, add_constants=True) # add_constants gives nice math-assisting consts
+				st.functions["rand"] = rnd
+				return cexptrk.evaluate_expression(result[1], st)
 		
 		functions[k] = result
 		return result
@@ -262,6 +267,13 @@ def run_bpp_program(code, p_args, author, runner):
 	output = output.replace("{}", "\t").replace("{", "{{").replace("}", "}}").replace("\t", "{}")
 
 	return output.format(*results).replace("\v", "{}")
+
+# EXPRESSION FUNCTIONS
+
+def rnd(low, high):
+	return random.uniform(low,high)
+
+# END EXPRfuncs
 
 if __name__ == "__main__":
 	program = input("Program:\n\t")
