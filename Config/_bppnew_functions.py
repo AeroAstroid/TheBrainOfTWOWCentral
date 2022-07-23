@@ -402,6 +402,11 @@ def SETINDEX(a, b, c):
 	mylist[int(b)] = c
 	return mylist
 
+def EXPRESSION(a, b):
+	if not type(b) == list or b == None:
+		raise ValueError(f"EXPRESSION function parameter is not a list or empty: {safe_cut(a)}")
+	return ("expr", a, b)
+
 FUNCTIONS = {
 	"MATH": MATHFUNC,
 	"RANDINT": RANDINT,
