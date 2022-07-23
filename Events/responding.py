@@ -8,7 +8,7 @@ from discord.ui import Button, View, Select
 from Config._functions import grammar_list, word_count, formatting_fix
 from Config._const import ALPHABET, BRAIN, ALPHANUM_UNDERSCORE
 
-EVENT_ANNOUNCE_CHANNEL = "tco-center-stage"
+EVENT_ANNOUNCE_CHANNEL = "staff-event-time"
 EVENT_ADMIN_CHANNEL = "staff•commands"
 
 DEFAULT_INFO = { # Define all the game information - This dictionary will be copied whenever there is a reset
@@ -100,7 +100,7 @@ class EVENT:
 		self.param["ADMIN_ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ADMIN_ROLE)
 
 		# Set the parameter for the event announcement channel and admin channel
-		self.param["ANNOUNCE_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="tco-center-stage") # Post messages in here
+		self.param["ANNOUNCE_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name=EVENT_ANNOUNCE_CHANNEL) # Post messages in here
 		self.param["ADMIN_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff•commands")
 
 		# Add participating role
