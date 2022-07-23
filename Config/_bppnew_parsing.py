@@ -10,6 +10,13 @@ import cexprtk
 import random
 from string import ascii_lowercase
 
+# EXPRESSION FUNCTIONS
+
+def rnd(low, high):
+	return random.uniform(low,high)
+
+# END EXPRfuncs
+
 def run_bpp_program(code, p_args, author, runner):
 	# Pointers for tag and function organization
 	tag_level = 0
@@ -268,12 +275,7 @@ def run_bpp_program(code, p_args, author, runner):
 
 	return output.format(*results).replace("\v", "{}")
 
-# EXPRESSION FUNCTIONS
 
-def rnd(low, high):
-	return random.uniform(low,high)
-
-# END EXPRfuncs
 
 if __name__ == "__main__":
 	program = input("Program:\n\t")
