@@ -4,3 +4,4 @@ Pillow==9.0.1
 psycopg2==2.8.6
 requests==2.23.0
 aiohttp==3.7.4
+cexprtk==0.4.0
