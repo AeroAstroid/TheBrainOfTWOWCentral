@@ -754,7 +754,7 @@ class EVENT:
 			if message.channel == self.GAME_CHANNEL and message.author in self.GAME["INSPECTING"]:
 				
 				not_allowed = [c for c in list(msg) if ord(c) > 127 and c not in "“”‘’"]
-				not_allowed += [c for c in list(msg) if c in "_*~`\\"]
+				not_allowed += [c for c in list(msg) if c in "_*~`\\\n"]
 				
 				if len(not_allowed) > 0:
 					return
