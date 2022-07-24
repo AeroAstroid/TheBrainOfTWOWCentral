@@ -317,7 +317,7 @@ class EVENT:
 					self.GAME["ELIMINATIONS"] = [p[0] for p in results_list if not p[4]]
 					self.GAME["FINAL_RANKINGS"] = self.GAME["ELIMINATIONS"] + self.GAME["FINAL_RANKINGS"]
 
-					self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
+					# self.GAME["PLAYERS"] = [p for p in self.GAME["PLAYERS"] if p not in self.GAME["ELIMINATIONS"]]
 
 					"""for e in self.GAME["ELIMINATIONS"]:
 						try:
