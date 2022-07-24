@@ -26,7 +26,7 @@ def HELP(PREFIX):
 		"CATEGORY" : "Fun"
 	}
 
-PERMS = 3 # Disabled for now
+PERMS = 1 # Member
 ALIASES = ["TAG", "B++NEW", "TAGNEW", "NEWB++", "NEWTAG"]
 REQ = []
 
