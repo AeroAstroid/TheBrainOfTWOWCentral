@@ -13,4 +13,7 @@ class Codebase:
         self.user: Union[discord.User, None] = user
         self.arguments: Union[List[str], None] = arguments
         self.output: str = ""
+
+        # TODO: This is temporary while s3.py gets revamped in 1.1
+        self.global_limit: int = 0
         self.ret = None
