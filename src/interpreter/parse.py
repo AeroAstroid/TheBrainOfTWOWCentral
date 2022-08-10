@@ -15,7 +15,8 @@ start: bstar*
     | function
     | array
     | unescaped_string
-string: ESCAPED_STRING
+
+string.-2 : ESCAPED_STRING
 block: ALPHANUMERIC
 float.-0: DECIMAL
 integer.-1: SIGNED_INT
@@ -32,8 +33,9 @@ ALPHANUMERIC: (ALLNONCONFLICTING)+
 ALLNONCONFLICTINGWITHNEWLINES: /([^\[\]\{\}\"\s\,\-]|[\n\-])/
 ALLNONCONFLICTING: /([^\[\]\{\}\"\s\,\-]|[\-])/
 ALLEXCEPTBRACKETS: /[^\[\]]/
+ALLEXCEPTQUOTES: /[^\"]/
 WHITESPACEEXCEPTNEWLINE: /[^\S\r\n]/
-ESCAPED_STRING : "\"" ALLNONCONFLICTINGWITHNEWLINES+ "\""
+ESCAPED_STRING : "\"" ALLEXCEPTQUOTES* "\""
 
 
 // common lib stuff
