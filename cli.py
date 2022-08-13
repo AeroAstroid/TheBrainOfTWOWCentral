@@ -18,6 +18,7 @@ parsed = argparser.parse_args()
 empty = ""
 debug.print_debug = False
 setupFunctions()
+
 if parsed.interactive:
     while True:
         print(Colours.BOLD + "enter your b* code:\n" + Colours.ENDC)
@@ -35,6 +36,9 @@ else:
             text = file.read()
             file.close()
         result = runCodeSandbox(text, None, parsed.args)
+    else:
+        argparser.print_help()
+        exit()
     if parsed.output:
         with parsed.output.open("w") as file:
             text = file.write(result)

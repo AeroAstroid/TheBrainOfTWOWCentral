@@ -1,2 +1,2 @@
 def repeat(item, amount):
-    return str(item) * amount
+    return item * amount
