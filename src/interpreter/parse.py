@@ -43,8 +43,7 @@ ESCAPED_STRING : "\"" ALLEXCEPTQUOTES* "\""
 %import common.DECIMAL
 %import common.C_COMMENT
 %import common.SIGNED_INT
-%import common.WS
-%ignore WS
+%ignore WHITESPACEEXCEPTNEWLINE
 %ignore C_COMMENT
 %ignore COMMENT"""
 parser = Lark(bstargrammar)
