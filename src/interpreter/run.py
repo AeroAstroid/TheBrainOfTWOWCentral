@@ -15,6 +15,7 @@ from src.interpreter.expression import Expression
 import src.interpreter.globals as globals
 from src.interpreter.parse import parseCode
 from src.interpreter.tempFunctionsFile import functions
+from src.interpreter.functions.raise_func import BStarProgramDefinedException
 
 
 def runCode(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = []):
@@ -35,6 +36,8 @@ def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments
     for i, statement in enumerate(parsed_code):
         try:
             readLine(statement)
+        except BStarProgramDefinedException as error:
+            return f"{error}"
         except Exception as error:
             return returnError(statement, error, i)
 
