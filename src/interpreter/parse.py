@@ -15,13 +15,14 @@ start: bstar*
     | function
     | array
     | unescaped_string
+    | _WS?
 
 string.-2 : ESCAPED_STRING
 block: ALPHANUMERIC
 float.-0: DECIMAL
 integer.-1: SIGNED_INT
 array: "{" [arg ("," arg)*] "}"
-function: ("[") (block | function) arg* ("]")
+function: ("[") (block | function) (arg | _WS)* ("]")
 COMMENT: ("[# ") ALLBUTBRACKETS ("]")
 unescaped_string.-3: ALPHANUMERIC
 ALLBUTBRACKETS: ALLEXCEPTBRACKETS+
@@ -35,14 +36,16 @@ ALLNONCONFLICTING: /([^\[\]\{\}\"\s\,\-]|[\-])/
 ALLEXCEPTBRACKETS: /[^\[\]]/
 ALLEXCEPTQUOTES: /[^\"]/
 WHITESPACEEXCEPTNEWLINE: /[^\S\r\n]/
+NEWLINE: /[\r\n]/
 ESCAPED_STRING : "\"" ALLEXCEPTQUOTES* "\""
-
+_WS: WS
 
 // common lib stuff
 // imports from common library my beloved
 %import common.DECIMAL
 %import common.C_COMMENT
 %import common.SIGNED_INT
+%import common.WS
 %ignore WHITESPACEEXCEPTNEWLINE
 %ignore C_COMMENT
 %ignore COMMENT"""
