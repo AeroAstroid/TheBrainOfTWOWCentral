@@ -3,6 +3,9 @@ import numpy as np
 from Config._functions import grammar_list
 from Config._db import Database
 
+UPDATES_MSG_ID = 913191494159044609
+SIGNUPS_CHANNEL = "twows-in-signups"
+
 class EVENT:
 	# Executes when loaded
 	def __init__(self):
@@ -30,18 +33,20 @@ class EVENT:
 
 	# Exclusive to this event, updates the list of TWOWs in signups
 	async def update_list(self, hour=False, announce=True, update_channel=False):
-		if len(self.MESSAGES) == 0 or update_channel:
-			msgs = [int(x) for x in self.db.get_entries("signupmessages")[0][0].split(" ")]
-			self.CHANNEL = discord.utils.get(self.SERVER["MAIN"].channels, id=msgs[0])
-			self.MESSAGES = [""] * (len(msgs) - 2)
-			self.ANNOUNCE = ""
+		msgs = [int(x) for x in self.db.get_entries("signupmessages")[0][0].split(" ")]
+		self.CHANNEL = discord.utils.get(self.SERVER["MAIN"].channels, id=msgs[0])
+		self.MESSAGES = [""] * (len(msgs) - 2)
+		self.ANNOUNCE = ""
 
-			async for msg in self.CHANNEL.history(limit=100):
-				if msg.id in msgs:
-					if msgs.index(msg.id) != len(msgs) - 1:
-						self.MESSAGES[msgs.index(msg.id) - 1] = msg
-					else:
-						self.ANNOUNCE = msg
+		async for msg in self.CHANNEL.history(limit=100):
+			if msg.id in msgs:
+				if msgs.index(msg.id) != len(msgs) - 1:
+					self.MESSAGES[msgs.index(msg.id) - 1] = msg
+				else:
+					self.ANNOUNCE = msg
+			
+		self.CHANNEL = discord.utils.get(self.SERVER["MAIN"].channels, name=SIGNUPS_CHANNEL)
+		self.ANNOUNCE = await self.CHANNEL.fetch_message(UPDATES_MSG_ID)
 		
 		twow_list = self.db.get_entries("signuptwows")
 		twow_list = sorted(twow_list, key=lambda m: self.param["TIME_ORDER"] * m[4])
@@ -77,11 +82,16 @@ class EVENT:
 				new_announcement_list.append(f"`(<1 hour ago)` : Removed **{x}** from the signup list")
 			
 			if self.ANNOUNCE.content != "\u200b":
+
 				old_announcement_list = self.ANNOUNCE.content.split("\n")[2:]
 
 				if hour:
+
+					print ("TEST 2")
 					for z in range(len(old_announcement_list)):
+
 						halves = old_announcement_list[z].split(" : ")
+
 						halves[0] = halves[0].split(" ")
 						if halves[0][0][2:] == "<1":
 							halves[0] = "`(1 hour ago)`"
@@ -107,9 +117,11 @@ class EVENT:
 			for x in just_added:
 				verif = twow_list[new_twow_names.index(x)][-1]
 				if verif == 1:
+					print("Pinging for featured TWOW!")
 					msg = await self.CHANNEL.send("<@&488451010319220766> <@&723946317839073370>")
 				else:
 					msg = await self.CHANNEL.send("<@&723946317839073370>")
+					print("Pinging for TWOW!")
 				
 				await msg.delete()
 

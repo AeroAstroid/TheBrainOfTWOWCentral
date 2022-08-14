@@ -1,4 +1,4 @@
-import random, statistics, re, itertools
+import random, statistics, re, itertools, time, math
 import numpy as np
 
 try:
@@ -7,6 +7,9 @@ try:
 except ModuleNotFoundError:
 	from _const import ALPHABET
 	from _functions import is_float, is_whole, is_number, strip_alpha, match_count
+
+class ProgramDefinedException(Exception): # used in THROW
+	pass
 
 def express_array(l):
 	str_form = " ".join(["\"" + str(a) + "\"" for a in l])
@@ -17,6 +20,32 @@ def safe_cut(s):
 
 def COMMENT(*a): return ""
 
+def INDEXOF(a,b,c=None,d=None):
+	if not is_number(c) and c is not None and not isinstance(c,str):
+		raise TypeError(f"Optional third parameter of INDEXOF function must be a number: {safe_cut(c)}")
+	if not is_number(d) and d is not None and not isinstance(d,str):
+		raise TypeError(f"Optional fourth parameter of INDEXOF function must be a number: {safe_cut(d)}")
+	if isinstance(c,str):
+		try:
+			c = int(c)
+		except:
+			raise TypeError(f"Optional third parameter of INDEXOF function must be a number: {safe_cut(c)}")
+
+	if isinstance(d,str):
+		try:
+			d = int(d)
+		except:
+			raise TypeError(f"Optional third parameter of INDEXOF function must be a number: {safe_cut(d)}")
+	if type(a) != str and not isinstance(a,list):
+		raise TypeError(f"First parameter of INDEXOF function must be an array or string: {safe_cut(a)}")
+	if c is not None:
+		if d is not None:
+			return a.index(b,c,d)
+		return a.index(b,c)
+	return a.index(b)
+
+def TIMEFUNC(): return time.time()
+
 def USERNAME(): return ("n", )
 
 def USERID(): return ("id", )
@@ -26,6 +55,13 @@ def ABS(a):
 		raise TypeError(f"Parameter of ABS function must be a number: {safe_cut(a)}")
 
 	return abs(int(a) if is_whole(a) else float(a))
+
+def SPLIT(a,b):
+	if type(a) != str:
+		raise TypeError(f"Parameter of SPLIT function must be a string: {safe_cut(a)}")
+	if type(b) != str:
+		raise TypeError(f"Parameter of SPLIT function must be a string: {safe_cut(b)}")
+	return a.split(b)
 
 def REPLACE(a,b,c):
 	if type(a) != str:
@@ -74,9 +110,12 @@ def LENGTH(a):
 	if type(a) in [int, float]: a = str(a)
 	return len(a)
 
-def ARGS(a):
-	if not is_whole(a):
+def ARGS(a=None):
+	if not is_whole(a) and a is not None:
 		raise ValueError(f"ARGS function index must be an integer: {safe_cut(a)}")
+	
+	if a is None:
+		return ("aa", )
 	
 	return ("a", int(a))
 
@@ -144,7 +183,7 @@ def CHOOSECHAR(a):
 
 	return random.choice(list(a))
 
-def IF(a, b, c):
+def IF(a, b, c=""):
 	a = a not in [0, "0"]
 
 	if a:
@@ -153,7 +192,7 @@ def IF(a, b, c):
 		return c
 
 def COMPARE(a, b, c):
-	operations = [">", "<", ">=", "<=", "!=", "="]
+	operations = [">", "<", ">=", "<=", "!=", "=", "=="]
 	if b not in operations:
 		raise ValueError(f"Operation parameter of COMPARE function is not a comparison operator: {safe_cut(b)}")
 
@@ -168,13 +207,13 @@ def COMPARE(a, b, c):
 	if b == ">=": return int(a >= c)
 	if b == "<=": return int(a <= c)
 	if b == "!=": return int(a != c)
-	if b == "=": return int(a == c)
+	if b == "=" or b == "==": return int(a == c)
 
 def MOD(a, b):
 	if not is_number(a):
 		raise ValueError(f"First parameter of MOD function is not a number: {safe_cut(a)}")
 	if not is_number(b):
-		raise ValueError(f"First parameter of MOD function is not a number: {safe_cut(a)}")
+		raise ValueError(f"Second parameter of MOD function is not a number: {safe_cut(b)}")
 
 	a = int(a) if is_whole(a) else float(a)
 	b = int(b) if is_whole(b) else float(b)
@@ -183,8 +222,8 @@ def MOD(a, b):
 
 	return a % b
 
-def MATH(a, b, c):
-	operations = "+-*/^"
+def MATHFUNC(a, b, c):
+	operations = "+-*/^%"
 	if not is_number(a):
 		raise ValueError(f"First parameter of MATH function is not a number: {safe_cut(a)}")
 	if b not in operations:
@@ -209,12 +248,16 @@ def MATH(a, b, c):
 		if c == 0: raise ZeroDivisionError(f"Second parameter of MATH function in division cannot be zero")
 		return a/c
 	
+	if b == "%":
+		if c == 0: raise ZeroDivisionError(f"Second parameter of MATH function in modulo cannot be zero")
+		return a%c
+	
+	
 	if b == "^":
-		if abs(a) > 1024:
-			raise ValueError(f"First parameter of MATH function too large to safely exponentiate: {safe_cut(a)} (limit 1024)")
-		if abs(c) > 128:
-			raise ValueError(f"Second parameter of MATH function too large to safely exponentiate: {safe_cut(c)} (limit 128)")
-		return a**c
+		try:
+			return math.pow(a, c)
+		except OverflowError:
+			raise ValueError(f"Parameters of MATH function too large to safely exponentiate: {safe_cut(a)}, {safe_cut(c)}")
 
 def RANDINT(a, b):
 	if not is_whole(a):
@@ -240,26 +283,127 @@ def RANDOM(a, b):
 
 	return random.uniform(a, b)
 
-def ROUND(a):
+def THROW(a): # don't need to check, because either way it'll error
+	raise ProgramDefinedException(a)
+	
+def TYPEFUNC(a):
+	if is_whole(a): return "int"
+	if is_number(a): return "float"
+	return type(a).__name__
+	
+def ROUND(a, b=0):
 	if not is_number(a):
 		raise ValueError(f"ROUND function parameter is not a number: {safe_cut(a)}")
+	if not is_whole(b):
+		raise ValueError(f"ROUND function parameter is not an integer: {safe_cut(b)}")
 	
-	return int(round(float(a)))
+	rounded = round(float(a), int(b))
+	if rounded.is_integer(): return int(rounded)
+	return rounded
 
 def FLOOR(a):
 	if not is_number(a):
 		raise ValueError(f"FLOOR function parameter is not a number: {safe_cut(a)}")
 	
-	return int(float(a))
+	return math.floor(float(a))
 
 def CEIL(a):
 	if not is_number(a):
 		raise ValueError(f"CEIL function parameter is not a number: {safe_cut(a)}")
 	
-	return np.ceil(float(a))
+	return math.ceil(float(a))
+
+def LOG(a, b):
+	if not is_number(a):
+		raise ValueError(f"LOG function parameter is not a number: {safe_cut(a)}")
+	if not is_number(b):
+		raise ValueError(f"LOG function parameter is not a number: {safe_cut(b)}")
+		
+	if b == 0: raise ValueError("Second parameter of LOG function must not be zero")
+		
+	return math.log(float(a),float(b))
+
+def FACTORIAL(a):
+	if not is_number(a):
+		raise ValueError(f"FACTORIAL function parameter is not a number: {safe_cut(a)}")
+	
+	try:
+		return math.gamma(float(a)+1) # extension of the factorial function, allows floats too
+	except OverflowError:
+		raise ValueError(f"First parameter of FACTORIAL function too large to safely factorial: {safe_cut(a)}")
+
+def SIN(a):
+	if not is_number(a):
+		raise ValueError(f"SIN function parameter is not a number: {safe_cut(a)}")
+	
+	return math.sin(float(a))
+
+def TAN(a):
+	if not is_number(a):
+		raise ValueError(f"TAN function parameter is not a number: {safe_cut(a)}")
+	
+	return math.tan(float(a))
+
+def COS(a):
+	if not is_number(a):
+		raise ValueError(f"COS function parameter is not a number: {safe_cut(a)}")
+	
+	return math.cos(float(a))
+
+def MINFUNC(a):
+	if not type(a) == list:
+		raise ValueError(f"MIN function parameter is not a list: {safe_cut(a)}")
+	
+	if 0 not in [is_number(elem) for elem in a]:
+		a = [float(elem) for elem in a]
+	
+	return min(a)
+
+def MAXFUNC(a):
+	if not type(a) == list:
+		raise ValueError(f"MAX function parameter is not a list: {safe_cut(a)}")
+	
+	if 0 not in [is_number(elem) for elem in a]:
+		a = [float(elem) for elem in a]
+	
+	return max(a)
+
+def SHUFFLE(a):
+	if not type(a) == list:
+		raise ValueError(f"SHUFFLE function parameter is not a list: {safe_cut(a)}")
+		
+	return random.sample(a, k=len(a))
+
+def SORTFUNC(a):
+	if not type(a) == list:
+		raise ValueError(f"SORT function parameter is not a list: {safe_cut(a)}")
+	
+	if 0 not in [is_number(elem) for elem in a]:
+		a = [float(elem) for elem in a]
+	
+	return sorted(a)
+
+def JOIN(a, b=""):
+	if not type(a) == list:
+		raise ValueError(f"First JOIN function parameter is not a list: {safe_cut(a)}")
+	if not type(b) == str:
+		raise ValueError(f"Second JOIN function parameter is not a string: {safe_cut(b)}")
+	
+	a = [str(elem) for elem in a]
+	
+	return b.join(a)
+	
+def SETINDEX(a, b, c):
+	if not type(a) == list:
+		raise ValueError(f"SETINDEX function parameter is not a list: {safe_cut(a)}")
+	if not is_whole(b):
+		raise ValueError(f"SETINDEX function parameter is not an integer: {safe_cut(b)}")
+	mylist = a.copy()
+	mylist[int(b)] = c
+	return mylist
 
 FUNCTIONS = {
-	"MATH": MATH,
+	"MATH": MATHFUNC,
 	"RANDINT": RANDINT,
 	"RANDOM": RANDOM,
 	"FLOOR": FLOOR,
@@ -275,6 +419,7 @@ FUNCTIONS = {
 	"CONCAT": CONCAT,
 	"ARRAY": ARRAY,
 	"INDEX": INDEX,
+	"INDEXOF": INDEXOF,
 	"ARGS": ARGS,
 	"ABS": ABS,
 	"#": COMMENT,
@@ -285,5 +430,20 @@ FUNCTIONS = {
 	"USERNAME": USERNAME,
 	"USERID": USERID,
 	"SLICE": SLICE,
-	"REPLACE": REPLACE
+	"REPLACE": REPLACE,
+	"SPLIT": SPLIT,
+	"TIME": TIMEFUNC,
+	"LOG": LOG,
+	"FACTORIAL": FACTORIAL,
+	"SIN": SIN,
+	"COS": COS,
+	"TAN": TAN,
+	"TYPE": TYPEFUNC,
+	"THROW": THROW,
+	"MIN": MINFUNC,
+	"MAX": MAXFUNC,
+	"SHUFFLE": SHUFFLE,
+	"SORT": SORTFUNC,
+	"JOIN": JOIN,
+	"SETINDEX": SETINDEX
 }

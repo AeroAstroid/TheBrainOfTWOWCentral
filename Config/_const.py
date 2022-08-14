@@ -6,6 +6,8 @@ DB_LINK = os.getenv("BRAIN_DB") # Postgres DB link
 
 intents = discord.Intents.default()
 intents.members = True
+intents.message_content = True
+
 
 BRAIN = discord.Client(intents=intents) # The bot object
 
@@ -13,6 +15,9 @@ CURRENT_HOUR = datetime.now(timezone.utc).hour # For event handler purposes
 
 # For MMT purposes
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+ALPHANUM_UNDERSCORE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
+
 
 ORIGINAL_DECK = [
 	"10", "20", "30", "40", "11", "21", "31", "41", "12", "22", "32", "42", "13", "23", "33", "43",

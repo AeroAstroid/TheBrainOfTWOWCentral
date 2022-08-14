@@ -127,7 +127,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		embed.add_field(name="Description", value=data['desc'], inline=False)
 		embed.add_field(name="Proof", value=data['proof'])
 
-		embed.set_thumbnail(url=matched.avatar_url_as(static_format="png"))
+		embed.set_thumbnail(url=matched.display_avatar.url)
 
 		msg = await message.channel.send("**__Is this information correct?__**", embed=embed)
 		await msg.add_reaction("🇾")

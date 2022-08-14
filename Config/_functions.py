@@ -13,6 +13,10 @@ def font_italic(z): return ImageFont.truetype("Fonts/RobotoCondensed-Italic.ttf"
 def font_bold(z): return ImageFont.truetype("Fonts/RobotoCondensed-Bold.ttf", z)
 def font_boltalic(z): return ImageFont.truetype("Fonts/RobotoCondensed-BoldItalic.ttf", z)
 
+# m_line : Command to parse multiline strings within the code more nicely
+def m_line(line):
+	return line.replace("\t", "").replace("\n\n", "/n/n").replace("\n", "").replace("/n", "\n")
+
 # grammar_list : Simple function to properly list many strings
 def grammar_list(listed, c_or=False):
 	conjunction = f', {"or" if c_or else "and"} '
