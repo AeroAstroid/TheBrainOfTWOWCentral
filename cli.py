@@ -11,7 +11,6 @@ argparser = argparse.ArgumentParser(description='Run B* code in the terminal')
 exclgroup = argparser.add_mutually_exclusive_group()
 exclgroup.add_argument("-n", "--interactive",dest="interactive", action="store_true", help="Enable interactive/shell mode. Use CTRL+C to exit.")
 exclgroup.add_argument("-i", "--input", help="Take in an input file at INPUT.", type=pathlib.Path)
-argparser.add_argument("-o", "--output", help="Put the output into a file at OUTPUT. Only works if you are taking in a file.", type=pathlib.Path)
 argparser.add_argument('args', nargs="*")
 
 parsed = argparser.parse_args()
@@ -39,9 +38,4 @@ else:
     else:
         argparser.print_help()
         exit()
-    if parsed.output:
-        with parsed.output.open("w") as file:
-            text = file.write(result)
-            file.close()
-    else:
-        print(result)
+    print(result)
