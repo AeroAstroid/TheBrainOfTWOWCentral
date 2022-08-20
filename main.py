@@ -51,7 +51,7 @@ async def run(ctx, *, message=None):
     """Run B* code"""
     try:
         output = runCode(await accept_file_or_message(ctx, message), ctx.author)
-        await ctx.send(output)
+        await ctx.send(discord.Embed(description=output))
     except Exception as e:
         await ctx.send(e)
 
