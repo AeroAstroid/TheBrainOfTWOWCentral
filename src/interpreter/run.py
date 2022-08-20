@@ -45,8 +45,8 @@ def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments
     # print(codebase.output)
     if len(globals.codebase.output) == 0 or globals.codebase.output.isspace():
         return "⚠️: The code has ran successfully, but returned nothing!"
-    if len(globals.codebase.output) > 2000:
-        return f"⚠️: Output too long, only showing the first 1000 characters:\n\n```{globals.codebase.output[:1000]}```"
+    if len(globals.codebase.output) > 4000:
+        return f"⚠️: Output too long, only showing the first 3800 characters:\n\n```{globals.codebase.output[:3800]}```"
     return globals.codebase.output
 
 
