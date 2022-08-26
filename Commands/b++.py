@@ -325,8 +325,10 @@ async def MAIN(message, args, level, perms, SERVER):
 	try:
 		program_output = run_bpp_program(program, program_args, author, runner)
 		program_output = program_output.replace("<@", "<\\@")
+	except ProgramDefinedException as p:
+		program_output = p.replace("<@", "<\\@")
 	except Exception as e:
-		await message.channel.send(f'{type(e).__name__}:\n```{e}```')
+		await message.channel.send(f'{type(e).__name__}:\n```{e}```'.replace("<@", "<\\@"))
 		return
 
 	if len(program_output) > 1950:
