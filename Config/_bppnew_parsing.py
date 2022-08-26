@@ -238,6 +238,11 @@ def run_bpp_program(code, p_args, author, runner):
 			
 			elif result[0] == "aa":
 				result = p_args
+			
+			elif result[0] == "throw":
+				replacedoutput = result[1]
+				result = result[1]
+
 		
 		functions[k] = result
 		return result
@@ -256,7 +261,9 @@ def run_bpp_program(code, p_args, author, runner):
 			results.append(v)
 
 	output = output.replace("{}", "\t").replace("{", "{{").replace("}", "}}").replace("\t", "{}")
-
+	if replacedoutput: # throw overrides the error function for now
+		output = replacedoutput
+		replacedoutput = None # reset it
 	return output.format(*results).replace("\v", "{}")
 
 if __name__ == "__main__":
