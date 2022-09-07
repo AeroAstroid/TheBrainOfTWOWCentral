@@ -11,7 +11,7 @@ from discord.ui import Select, Button, View
 from Config._const import ALPHABET, BRAIN
 
 # The announcement channel (where the game is hosted) and the admin channel (where the game is customisable)
-EVENT_ANNOUNCE_CHANNEL = "tco-center-stage"
+EVENT_ANNOUNCE_CHANNEL = "staff-event-time"
 EVENT_ADMIN_CHANNEL = "staff•commands"
 
 # Default information that will be set to at the start of the game
@@ -293,7 +293,7 @@ class EVENT:
 		current_contestants, eliminations = len(self.info["CONTESTANTS"]), self.param["ELIMINATIONS"]
 		sets = self.param["SETS_PER_ROUND"]
 
-		await self.param["GAME_CHANNEL"].send(f"```ROUND {round_number}```\nThere are **{current_contestants}** contestants entering this round.\nThere are **{sets}** sets.\nThe slowest **{eliminations}** contestant(s) across this round are eliminated.")
+		await self.param["GAME_CHANNEL"].send(f"```ROUND {round_number}```\nThere are **{sets}** sets.\nOut of the **{current_contestants}** contestants entering this round, the slowest **{eliminations}** contestant(s) will be eliminated.")
 
 		# Reset each player's round data
 		for player_object in self.info["CONTESTANTS"].values():
@@ -541,38 +541,56 @@ class EVENT:
 		# Send leaderboard to administration channel
 		await self.param["ADMIN_CHANNEL"].send(content = "**Speed Counter - Round {} Leaderboard**".format(self.info["ROUND_NUMBER"]), file = discord.File(csv_filename))
 
-		# If there are any eliminations, send which contestants are eliminated in admin channel
+		# Find the people in last that are going to be eliminated
 		if self.param["ELIMINATIONS"] > 0:
-
-			# Find the people in last that are going to be eliminated
 			eliminated_contestants = sorted_contestant_list[-1 * self.param["ELIMINATIONS"]:]
-			
-			# Create a string of contestants who are eliminated (this string will be sent in a message)
-			elim_contestants_str = ""
-			for elim_contestant in eliminated_contestants:
-
-				contestant_obj = self.info["CONTESTANTS"][elim_contestant]
-				rank = contestant_obj.current_rank
-				round_time = contestant_obj.total_round_time
-				elim_contestants_str += "\n**#{0}:** {1} - **`{2:.2f}`**".format(rank, elim_contestant.mention, round_time)
-
-			# Send string in admin channel
-			await self.param["ADMIN_CHANNEL"].send("__**Round {} Eliminations**__\n".format(self.info["ROUND_NUMBER"]) + elim_contestants_str)
-
-			# Send message in game channel saying that the round has ended
-			await self.param["GAME_CHANNEL"].send("```ROUND {} COMPLETE```\n".format(self.info["ROUND_NUMBER"]) + "__**Round {} Eliminations**__\n".format(self.info["ROUND_NUMBER"]) + elim_contestants_str)
-
-			# Remove eliminated contestants from CONTESTANTS list
-			for elim_contestant in eliminated_contestants:
-
-				contestant_obj = self.info["CONTESTANTS"][elim_contestant]
-				self.info["ELIMINATED_CONTESTANTS"][elim_contestant] = contestant_obj
-				self.info["CONTESTANTS"].pop(elim_contestant)
-
 		else:
+			eliminated_contestants = []
+		
+		# Create a string of all the contestants for the leaderboard
+		leaderboard_strings = [""]
 
-			# Send message in game channel saying that the round has ended
-			await self.param["GAME_CHANNEL"].send("```ROUND {} COMPLETE```\n".format(self.info["ROUND_NUMBER"]))
+		for contestant in sorted_contestant_list:
+
+			contestant_obj = self.info["CONTESTANTS"][contestant]
+			rank = contestant_obj.current_rank
+			round_time = contestant_obj.total_round_time
+
+			if contestant in eliminated_contestants:
+				lb_symbol = "💀"
+			else:
+				lb_symbol = "✅"
+
+			contestant_lb_str = "\n**`[{0}]`** {1} {2} --- **`{3:.2f}`**".format(rank, lb_symbol, contestant.mention, round_time)
+
+			if len(leaderboard_strings[-1] + contestant_lb_str) > 2000:
+				leaderboard_strings.append("")
+
+			leaderboard_strings[-1] += contestant_lb_str
+
+		# Send message in game channel saying that the round has ended
+		round_number = self.info["ROUND_NUMBER"]
+		await self.param["GAME_CHANNEL"].send(f"```ROUND {round_number} COMPLETE```")
+
+		await asyncio.sleep(3)
+
+		# Send leaderboard
+		await self.param["GAME_CHANNEL"].send("This round's results are as follows:")
+		await asyncio.sleep(3)
+		for lb_string in leaderboard_strings:
+			await self.param["GAME_CHANNEL"].send(lb_string)			
+
+		# Remove eliminated contestants from CONTESTANTS list
+		for elim_contestant in eliminated_contestants:
+
+			contestant_obj = self.info["CONTESTANTS"][elim_contestant]
+			self.info["ELIMINATED_CONTESTANTS"][elim_contestant] = contestant_obj
+			self.info["CONTESTANTS"].pop(elim_contestant)
+
+			try:
+				await self.SERVER["MAIN"].get_member(elim_contestant.user.id).remove_roles(self.PLAYER_ROLE)
+			except:
+				continue
 
 		# Wait for admin to start next round
 		self.info["ROUND_NUMBER"] += 1
@@ -582,7 +600,7 @@ class EVENT:
 	async def admin_modify(self):
 
 		# Create embed
-		admin_embed = discord.Embed(title="Round {} - {} Contestants Remain".format(self.info["ROUND_NUMBER"], len(self.info["CONTESTANTS"])), description="Select a parameter to change for the round the dropdown menu, or select `Confirm` to start the round.", color=0x31d8b1)
+		admin_embed = discord.Embed(title="ROUND {} - {} contestants remain".format(self.info["ROUND_NUMBER"], len(self.info["CONTESTANTS"])), description="Select a parameter to change for the round the dropdown menu, or select `Confirm` to start the round.", color=0x31d8b1)
 
 		# Add fields to the embed
 		admin_embed.add_field(name="😀 Emoji sets", value="\n".join([", ".join(emoji_set) for emoji_set in self.param["EMOJI_SETS"]]), inline=False)
