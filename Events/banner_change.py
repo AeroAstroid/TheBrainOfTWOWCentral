@@ -12,7 +12,7 @@ class EVENT:
 		self.RUNNING = False
 		self.param = {
 			"HOUR_SPEED": 1,
-			"ALTERNATING_BANNER": True,
+			"ALTERNATING_BANNER": False,
 			"ALTERNATE_BANNER": "https://cdn.discordapp.com/attachments/716131405503004765/993814901606842378/TCO22_Banner.png",
 			"CURRENT_BANNER_ALTERNATE": False,
 		}
