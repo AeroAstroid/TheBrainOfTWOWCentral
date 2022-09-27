@@ -10,6 +10,7 @@ from discord.ui import Select, Button, View
 # Importing from other scripts within the repo
 from Config._const import ALPHABET, BRAIN
 
+#
 # The announcement channel (where the game is hosted) and the admin channel (where the game is customisable)
 EVENT_ANNOUNCE_CHANNEL = "event-stage"
 EVENT_ADMIN_CHANNEL = "staff•commands"
