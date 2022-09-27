@@ -383,21 +383,24 @@ class EVENT:
 			emojis_counting.append(emojis_in_set[i])
 
 		# Create the random string of emojis
-		emoji_str = ""
+		chunks = [""]
+		emojis_in_chunk = 0
 		correct_emoji_count = 0
 		for i in range(emoji_count):
 
 			# Get a random emoji from the emojis in set list
 			random_emoji = random.choice(emojis_in_set)
-			emoji_str += random_emoji
+			chunks[-1] += random_emoji
+			emojis_in_chunk += 1
+
+			if emojis_in_chunk >= MAX_EMOJIS_PER_MESSAGE:
+				chunks.append("")
+				emojis_in_chunk = 0
 
 			# Check if emoji is in the counting list, and add it to the correct emoji counter if so
 			if random_emoji in emojis_counting:
 				correct_emoji_count += 1
 
-		# Make emoji strings into list - only max of 100 emojis per message
-
-		chunks = [emoji_str[i:i + MAX_EMOJIS_PER_MESSAGE] for i in range(0, len(emoji_str), MAX_EMOJIS_PER_MESSAGE)]
 		################################################################
 
 		# Send set title to discord, along with what emoji they are counting
