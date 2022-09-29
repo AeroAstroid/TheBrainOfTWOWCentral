@@ -1,19 +1,55 @@
-def HELP(PREFIX):
-	return {
-		"COOLDOWN": 10,
-		"MAIN": "Restarts the bot. If it's running locally, updates the code automatically",
-		"FORMAT": "",
-		"CHANNEL": 2,
-		"USAGE": f"""Using `{PREFIX}restart` will trigger a bot restart. 
-		It'll report the time it took to restart once it's back up.""".replace("\n", "").replace("\t", ""),
-		"CATEGORY" : "Developer"
-	}
+from Commands.__comp import *
 
-PERMS = 3 # Developer
-ALIASES = ["R"]
-REQ = []
+import os
+import sys
+from time import time
+from datetime import datetime
 
-async def MAIN(message, args, level, perms, SERVER):
-	await message.channel.send("Restarting the bot.")
-	print(f"Restarting bot on command by {message.author.name} // {message.created_at} UTC.\n\n")
-	return [0] # Flag to restart the bot
+from Helper.__functions import m_line, command_user, is_dm, is_dev
+
+def setup(BOT):
+	BOT.add_cog(Restart(BOT))
+
+class Restart(cmd.Cog):
+	'''
+	Forces a bot restart upon usage. The bot will report the amount of time it took to restart 
+	in the channel this command was used in.
+
+	Including the literal argument `('debug')` in the command will make the bot restart in debug 
+	mode - by default, it restarts into the main Brain of TWOW Central.
+	'''
+
+	# Extra arguments to be passed to the command
+	FORMAT = "`('debug')`"
+	CATEGORY = "BRAIN"
+	EMOJI = CATEGORIES[CATEGORY]
+	ALIASES = ['r']
+
+	def __init__(self, BRAIN): self.BRAIN = BRAIN
+
+	@bridge.bridge_command(aliases=ALIASES)
+	@cmd.cooldown(1, 5)
+	@cmd.check(is_dev)
+	async def restart(self, ctx,
+		debug = ''):
+
+		file_ref = sys.argv[0]
+
+		debug_arg = 'debug' if debug == 'debug' else ''
+
+		report_guild = f"1_report_guild:{'' if ctx.guild is None else ctx.guild.id}"
+
+		report_chnl = m_line(f"""
+		2_report_chnl:{command_user(ctx).id if is_dm(ctx) else ctx.channel.id}""")
+
+		report_time = f"3_report_time:{int(time()*1000)}"
+
+		await self.BRAIN.change_presence(status=dc.Status.idle)
+		
+		await ctx.respond("♻️ **Restarting the Brain of TWOW Central!**")
+		print(f"Restarting on command from {command_user(ctx)} at {datetime.utcnow()}")
+
+		os.execl(
+		sys.executable, 'python', file_ref, report_guild, report_chnl, report_time, debug_arg)
+
+		return

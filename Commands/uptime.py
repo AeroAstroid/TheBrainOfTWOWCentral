@@ -1,36 +1,42 @@
-import time
+from Commands.__comp import *
 
-def HELP(PREFIX):
-	return {
-		"COOLDOWN": 1,
-		"MAIN": "Displays how long the bot has been up for",
-		"FORMAT": "",
-		"CHANNEL": 1,
-		"USAGE": f"""Using `{PREFIX}uptime` simply returns the amount of time since 
-		the bot last restarted.""".replace("\n", "").replace("\t", ""),
-		"CATEGORY" : "Utility"
-	}
+from time import time
 
-PERMS = 0 # Non-member
-ALIASES = ["UP"]
-REQ = ["LOGIN"]
+from Helper.__config import STARTUP
+from Helper.__functions import m_line
 
-async def MAIN(message, args, level, perms, SERVER, LOGIN):
-	# 1000 * seconds = milliseconds
-	delta = 1000 * (time.time() - LOGIN)
+def setup(BOT):
+	BOT.add_cog(Uptime(BOT))
 
-	abs_delta = [
-		int(delta), # Milliseconds
-		int(delta / 1000), # Seconds
-		int(delta / (1000 * 60)), # Minutes
-		int(delta / (1000 * 60 * 60)), # Hours
-		int(delta / (1000 * 60 * 60 * 24))] # Days
+class Uptime(cmd.Cog):
+	'''
+	Returns the amount of time since the bot was last started.
+	'''
 
-	ml = abs_delta[0] % 1000
-	sc = abs_delta[1] % 60
-	mi = abs_delta[2] % 60
-	hr = abs_delta[3] % 24
-	dy = abs_delta[4]
+	# Extra arguments to be passed to the command
+	FORMAT = ""
+	CATEGORY = "BRAIN"
+	EMOJI = CATEGORIES[CATEGORY]
+	ALIASES = ['up']
 
-	await message.channel.send(f"Bot has been up for {dy}d {hr}h {mi}m {sc}s {ml}ms.")
-	return
+	def __init__(self, BRAIN): self.BRAIN = BRAIN
+
+	@bridge.bridge_command(aliases=ALIASES)
+	@cmd.cooldown(1, 1)
+	async def uptime(self, ctx):
+
+		s = time() - STARTUP
+
+		s_indiv = (
+			int(s // 86400),
+			int(s // 3600) % 24,
+			int(s // 60) % 60,
+			int(s) % 60,
+			int(s * 1000) % 1000
+		)
+
+		await ctx.respond(m_line(f"""
+		⏳ **The Brain of TWOW Central** has been online for 
+		{s_indiv[0]}d {s_indiv[1]}h {s_indiv[2]}min {s_indiv[3]}s {s_indiv[4]}ms."""))
+
+		return
