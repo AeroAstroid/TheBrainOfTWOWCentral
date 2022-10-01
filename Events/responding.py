@@ -177,7 +177,7 @@ class EVENT:
 
 		# Write announcement message that responding has opened
 		announcement_str = "__**Responding is open!**__\n\n"
-		announcement_str += f"Send your response to {BRAIN.user.mention} using the command `tr/respond` followed by your response(s) in DMs.\n"
+		announcement_str += f"Send your response to {BRAIN.user.mention} using the command `qp/respond` followed by your response(s) in DMs.\n"
 		# If players have more than one response by default, tell them that
 		if default_responses > 1:
 			announcement_str += f"Everyone gets to send in **{default_responses}** responses!\n"
@@ -459,7 +459,7 @@ class EVENT:
 
 				###############################################################################
 				# RESPONDING COMMAND
-				if message_words[0].lower() == "tr/respond":
+				if message_words[0].lower() == "qp/respond":
 
 					# Check if user is able to respond, and if not return and send message
 					if user not in self.info["USERS_RESPONDING"]:
@@ -470,14 +470,14 @@ class EVENT:
 					response_list = self.info["RESPONSES"][user]
 					if not None in response_list:
 						if len(response_list) >= 2:
-							await channel.send("❌ You've already sent your responses! If you want to edit, use `tr/edit` followed by the number of the response you want to edit, followed by your new response.")
+							await channel.send("❌ You've already sent your responses! If you want to edit, use `qp/edit` followed by the number of the response you want to edit, followed by your new response.")
 						else:
-							await channel.send("❌ You've already sent a response! If you want to edit, use `tr/edit` followed by your new response.")
+							await channel.send("❌ You've already sent a response! If you want to edit, use `qp/edit` followed by your new response.")
 						return
 
 					# Check if user actually sent a response
 					if len(message_words) == 1:
-						await channel.send("❌ You need to send your response after the `tr/respond` command!")
+						await channel.send("❌ You need to send your response after the `qp/respond` command!")
 						return
 
 					# Get user's response and put it together
@@ -506,7 +506,7 @@ class EVENT:
 
 						# Send response recorded message if the user only has one response
 						if len(self.info["RESPONSES"][user]) == 1:
-							await message.reply(content = f"☑️ **Response recorded!** ☑️\n\nYour response was recorded as: `{response}`\n{response_info_string}\n\nTo edit your response, use the command `tr/edit` followed by your new response.", mention_author=False)
+							await message.reply(content = f"☑️ **Response recorded!** ☑️\n\nYour response was recorded as: `{response}`\n{response_info_string}\n\nTo edit your response, use the command `qp/edit` followed by your new response.", mention_author=False)
 						# Send response recorded message if the user has two or more responses
 						else:
 							# Add a list of the user's responses
@@ -529,7 +529,7 @@ class EVENT:
 								{response_info_string}
 								{resp_to_send_str}
 
-								To edit your response, use the command `tr/edit` followed by the number of the response you want to edit, followed by your new response.
+								To edit your response, use the command `qp/edit` followed by the number of the response you want to edit, followed by your new response.
 								
 								Your current responses are:
 								""") + user_resp_string, mention_author=False)
@@ -550,7 +550,7 @@ class EVENT:
 
 				###############################################################################
 				# EDITING RESPONSE COMMAND
-				if message_words[0].lower() == "tr/edit":
+				if message_words[0].lower() == "qp/edit":
 
 					message_words.pop(0)
 
@@ -564,7 +564,7 @@ class EVENT:
 
 						# Check if user has a response in this slot
 						if self.info["RESPONSES"][user][0] == None:
-							await channel.send("❌ You haven't submitted a response yet! To submit your response, use `tr/respond` followed by your response.")
+							await channel.send("❌ You haven't submitted a response yet! To submit your response, use `qp/respond` followed by your response.")
 							return
 
 						response_to_edit = 1
@@ -574,7 +574,7 @@ class EVENT:
 
 						# Check if user sent the number of the response they want to edit
 						if len(message_words) == 0:
-							await channel.send("❌ You need to specify which response you want to edit by using `tr/edit [response number]`!")
+							await channel.send("❌ You need to specify which response you want to edit by using `qp/edit [response number]`!")
 							return
 
 						try:
@@ -596,7 +596,7 @@ class EVENT:
 
 					# Check if user actually sent their response
 					if len(message_words) == 0:
-						await channel.send("❌ You need to send your response after the `tr/edit [response number]` command!")
+						await channel.send("❌ You need to send your response after the `qp/edit [response number]` command!")
 						return
 						
 					# Check response for validity and send response
@@ -618,7 +618,7 @@ class EVENT:
 
 						# Send response recorded message if the user only has one response
 						if len(self.info["RESPONSES"][user]) == 1:
-							await message.reply(content = f"☑️ **Response edited!** ☑️\n\nYour new response is recorded as: `{response}`\n{response_info_string}\n\nTo edit your response again, use the command `tr/edit` followed by your new response.", mention_author=False)
+							await message.reply(content = f"☑️ **Response edited!** ☑️\n\nYour new response is recorded as: `{response}`\n{response_info_string}\n\nTo edit your response again, use the command `qp/edit` followed by your new response.", mention_author=False)
 						# Send response recorded message if the user has two or more responses
 						else:
 							# Add a list of the user's responses
@@ -641,7 +641,7 @@ class EVENT:
 								{response_info_string}
 								{resp_to_send_str}
 
-								To edit your response again, use the command `tr/edit` followed by the number of the response you want to edit, followed by your new response.
+								To edit your response again, use the command `qp/edit` followed by the number of the response you want to edit, followed by your new response.
 								
 								Your current responses are:
 								""") + user_resp_string, mention_author=False)
