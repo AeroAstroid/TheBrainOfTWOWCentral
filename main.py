@@ -70,16 +70,16 @@ async def on_command_error(ctx, error): # For prefixed commands
 async def on_application_command_error(ctx, error): # For slash commands
 	await error_handler(ctx, error)
 
-async def error_handler(ctx, error):
-	if type(error) == cmd.errors.CommandNotFound:
+async def error_handler(ctx, err):
+	if type(err) == cmd.errors.CommandNotFound:
 		await ctx.respond(f"⚠️ This command or alias does not exist!")
 		return
 	
-	if type(error) in [dc.errors.CheckFailure, cmd.errors.CheckFailure]:
+	if type(err) in [dc.errors.CheckFailure, cmd.errors.CheckFailure]:
 		await ctx.respond("⚠️ You do not have permission to run this command!")
 		return
 	
-	if type(error) == cmd.errors.CommandOnCooldown:
+	if type(err) == cmd.errors.CommandOnCooldown:
 		if is_slash_cmd(ctx):
 			await ctx.respond("💬 **This command is on cooldown right now!**")
 		else:
@@ -87,11 +87,11 @@ async def error_handler(ctx, error):
 		return
 	
 	print("-[ERROR]- "*10)
-	tb.print_exception(type(error), error, None)
+	tb.print_exception(type(err), err, None)
 
 	try:
 		await ctx.respond(
-		f"⚠️ Uh oh! This command has raised an unexpected error: **`{type(error).__name__}`**")
+		f"⚠️ Uh oh! This command raised an unexpected error: **`{type(err.original).__name__}`**")
 	except Exception as e:
 		print(f"\nCouldn't inform user of error due to {type(e).__name__}!")
 	

@@ -77,20 +77,11 @@ if "staff" in checks:
 	staff_check = "\n\t@cmd.check(is_staff)"
 	staff_check_import = "\nfrom Helper.__server_functions import is_staff"
 
-help_description = input(m_line("""
-	Help description for the command: /n/
-	- write the description that'll show up on the command's help page (no newlines unless 
-	you edit this within the code itself later) /n/
-	/t/> """)
-).strip()
-print("\n")
-
 with open('Helper/template_cmd.txt', 'r', encoding='utf-8') as f:
 	original_code = f.read()
 
 filled_in = original_code.replace(
 	"{cog_name}", cog_name).replace(
-	"{help_description}", help_description).replace(
 	"{help_arguments}", help_arguments).replace(
 	"{aliases}", aliases).replace(
 	"{cooldown}", cooldown).replace(

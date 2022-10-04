@@ -201,7 +201,8 @@ class Database(cmd.Cog):
 				table_name = arg_matrix[line][arg_n].lower()
 			except IndexError:
 				await ctx.respond("💀 **You must include the name of the new table!**")
-			
+				return
+
 			columns = []
 
 			line, arg_n, _ = step_forward()

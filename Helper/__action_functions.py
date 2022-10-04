@@ -9,7 +9,8 @@ from Helper.__functions import command_user, smart_lookup
 from Helper.__server_functions import member_servers, staff_servers
 from Helper.__config import BRAIN
 
-async def specify_server(ctx, return_var, create=False, msg_view=None, staff=False, membership=True):
+async def specify_server(ctx, return_var, create=False, msg_view=None, staff=False, 
+membership=True):
 	'''
 	Prompts a menu to select the server to consider for a command when it's been left ambiguous, 
 	using a return variable reference to salvage the user's input within a command's code. Serves 
@@ -113,8 +114,6 @@ async def confirm_action(ctx, return_var, create=False, msg_view=None):
 		
 		selected = ctx.data['values'][0]
 
-		# Wherever this is implemented, use wait() on the original view and then check for whether 
-		# the view was cleared of items (which only happens when the command is confirmed)
 		if selected == "Y":
 			await ctx.response.edit_message(content="✅ **Command confirmed.**", view=None)
 			return_var[0] = True

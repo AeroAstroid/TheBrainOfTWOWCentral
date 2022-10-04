@@ -5,9 +5,46 @@ BOT_DEVELOPERS = [
 	179686717534502913  # Neonic#1410
 ]
 
+def split_escape(s, delimiter):
+	'''
+	Function to split strings but with a string-escape feature using quotation marks. Uses a tab 
+	character as a reserved character.
+	'''
+
+	if delimiter == '"':
+		return s.split('"')
+	
+	parsed = ""
+	escaped = ""
+	backslashed = False
+
+	for c in s:
+		add_to_parsed = True
+
+		if c == '"' and not backslashed:
+			escaped = not escaped
+			add_to_parsed = False
+		
+		if c == '\\' and not backslashed:
+			backslashed = True
+			continue
+	
+		if backslashed:
+			backslashed = False
+		
+		if not add_to_parsed:
+			continue
+		
+		if c == delimiter and not escaped:
+			parsed += "\t"
+		else:
+			parsed += c
+	
+	return [s.strip() for s in parsed.split("\t")]
+
 def f_caps(s):
 	'''
-	Shorthand to express any string in lowercase with the first character capitalized
+	Shorthand to express any string in lowercase with the first character capitalized.
 	'''
 
 	return s[0].upper() + s[1:].lower()
@@ -15,7 +52,7 @@ def f_caps(s):
 def smart_lookup(needle, haystack, case_ins=True, startstr=True, substr=True, aliases=[]):
 	'''
 	Lookup function that can optionally handle case sensitivity, ambiguity between substrings at 
-	the start or middle of a haystack entry, aliases for haystack entries. Returns an 
+	the start or middle of a haystack entry, and aliases for haystack entries. Returns an 
 	[index, value] pair or False if nothing is found.
 	'''
 
@@ -76,7 +113,7 @@ def smart_lookup(needle, haystack, case_ins=True, startstr=True, substr=True, al
 
 def grammar_list(listed, conj="and"):
 	'''
-	Returns a single string listing several elements with correct grammar and custom conjunction
+	Returns a single string listing several elements with correct grammar and custom conjunction.
 	'''
 
 	if len(listed) == 0: return "none"
@@ -91,14 +128,14 @@ def grammar_list(listed, conj="and"):
 
 def is_dm(ctx):
 	'''
-	Shortened form of the function to check whether or not a command was sent in DMs
+	Shortened form of the function to check whether or not a command was sent in DMs.
 	'''
 
 	return isinstance(ctx.channel, dc.DMChannel)
 
 def is_slash_cmd(ctx):
 	'''
-	Bridge function for determining whether a command usage is slash or prefixed
+	Bridge function for determining whether a command usage is slash or prefixed.
 	'''
 
 	return type(ctx).__name__.endswith('ApplicationContext')
@@ -106,8 +143,8 @@ def is_slash_cmd(ctx):
 
 def command_user(ctx):
 	'''
-	Bridge function for determining a command's author for both slash and prefixed commands as 
-	well as interactions
+	Bridge function for determining a command's author for both slash and prefixed commands, as 
+	well as component interactions.
 	'''
 
 	if not is_slash_cmd(ctx):
@@ -117,7 +154,8 @@ def command_user(ctx):
 
 def m_line(s):
 	'''
-	Function to parse multi-line strings in a more convenient way for code readability 
+	Function to parse multi-line strings in a more convenient way for code readability and 
+	to avoid long lines.
 	'''
 
 	return s.replace("\t", "").replace("\n\n", "/n//n/").replace("\n", "").replace(
@@ -125,21 +163,21 @@ def m_line(s):
 
 def plural(i, si='', pl='s'):
 	'''
-	Shorthand to correctly pluralize the word for some quantity i
+	Shorthand to correctly pluralize the word for some quantity i.
 	'''
 
 	return si if float(i) == 1 else pl
 
 def is_dev(ctx): 
 	'''
-	CMD module check for commands that need developer perms
+	CMD module check for commands that need developer perms.
 	'''
 
 	return command_user(ctx).id in BOT_DEVELOPERS
 
 def is_whole(s):
 	'''
-	Shorthand to check if a string or float is equivalent to an integer
+	Shorthand to check if a string or float is equivalent to an integer.
 	'''
 
 	try:
@@ -148,3 +186,14 @@ def is_whole(s):
 		return False
 	
 	return s_c.is_integer()
+
+def is_number(s):
+	'''
+	Shorthand to check if a string can be parsed as a number.
+	'''
+
+	try:
+		s_c = float(s)
+		return True
+	except ValueError:
+		return False

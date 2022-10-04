@@ -379,7 +379,7 @@ class Database:
 
 		# Error handling isn't really required, the class functions below already do it for us
 		if conditions is None: # No condition -> remove only true duplicates
-			matches = cls.get_entries(table)
+			matches = cls.get_entries(table, debug=debug)
 
 			for i, m in enumerate(matches):
 				if matches[:i].count(m) >= keep:
