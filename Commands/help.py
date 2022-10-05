@@ -5,7 +5,7 @@ from functools import partial
 import random as rng
 
 from Helper.__functions import is_slash_cmd, m_line, command_user, f_caps, plural, is_dev
-from Helper.__server_functions import is_staff
+from Helper.__server_functions import is_staff, is_staff_here
 from Helper.__config import PREFIX
 
 def setup(BOT):
@@ -193,7 +193,7 @@ class Help(cmd.Cog):
 
 					if is_dev in cmd_func.checks:
 						perm_value = "Developer"
-					elif is_staff in cmd_func.checks:
+					elif is_staff in cmd_func.checks or is_staff_here in cmd_func.checks:
 						perm_value = "Server Staff"
 					else:
 						perm_value = "Member"

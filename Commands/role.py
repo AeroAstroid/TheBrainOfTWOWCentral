@@ -139,7 +139,7 @@ class Role(cmd.Cog):
 			if a not in modifiers:
 				if len(modif_args) == 0:
 					await ctx.respond(
-					f"💀 **You must start the command with the {mode_picked.upper()} keyword!**")
+					f"💀 **You must start the command with the -{mode_picked} keyword!**")
 					return
 				
 				modif_args[-1][1] += (" " if len(modif_args[-1][1]) > 0 else "") + a

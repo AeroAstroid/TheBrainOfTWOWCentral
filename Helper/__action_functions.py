@@ -115,7 +115,8 @@ async def confirm_action(ctx, return_var, create=False, msg_view=None):
 		selected = ctx.data['values'][0]
 
 		if selected == "Y":
-			await ctx.response.edit_message(content="✅ **Command confirmed.**", view=None)
+			await ctx.response.edit_message(content="⌛ **Command confirmed. Please wait...**",
+			view=None)
 			return_var[0] = True
 			msg_view.stop()
 			return

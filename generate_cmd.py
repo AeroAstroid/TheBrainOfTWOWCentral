@@ -59,7 +59,7 @@ if cooldown == "":
 
 checks = input(m_line("""
 	Permission checks to apply to the command: /n/
-	- options: dev, staff /n/
+	- options: dev, staff_anywhere, staff_here /n/
 	- include all options wanted separated by spaces /n/ 
 	/t/> """)
 ).lower().strip().split()
@@ -73,9 +73,19 @@ if "dev" in checks:
 
 staff_check = ""
 staff_check_import = ""
-if "staff" in checks:
+if "staff_anywhere" in checks:
 	staff_check = "\n\t@cmd.check(is_staff)"
 	staff_check_import = "\nfrom Helper.__server_functions import is_staff"
+
+staff_h_check = ""
+staff_h_check_import = ""
+if "staff_here" in checks:
+	staff_h_check = "\n\t@cmd.check(is_staff_here)"
+
+	if staff_check_import:
+		staff_h_check_import = ", is_staff_here"
+	else:
+		staff_h_check_import = "\nfrom Helper.__server_functions import is_staff_here"
 
 with open('Helper/template_cmd.txt', 'r', encoding='utf-8') as f:
 	original_code = f.read()
@@ -89,7 +99,9 @@ filled_in = original_code.replace(
 	"{arguments}", arguments).replace(
 	"{dev_check}", dev_check).replace(
 	"{staff_check}", staff_check).replace(
+	"{staff_h_check}", staff_h_check).replace(
 	"{dev_check_import}", dev_check_import).replace(
+	"{staff_h_check_import}", staff_h_check_import).replace(
 	"{staff_check_import}", staff_check_import)
 
 with open(f'Commands/{cmd_name}.py', 'w', encoding='utf-8') as f:

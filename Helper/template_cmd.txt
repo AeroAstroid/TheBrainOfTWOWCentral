@@ -1,5 +1,5 @@
 from Commands.__comp import *
-{dev_check_import}{staff_check_import}
+{dev_check_import}{staff_check_import}{staff_h_check_import}
 
 def setup(BOT):
 	BOT.add_cog({cog_name}(BOT))
@@ -18,7 +18,7 @@ class {cog_name}(cmd.Cog):
 	def __init__(self, BRAIN): self.BRAIN = BRAIN
 
 	@bridge.bridge_command(aliases=ALIASES)
-	@cmd.cooldown(1, {cooldown}){dev_check}{staff_check}
+	@cmd.cooldown(1, {cooldown}){dev_check}{staff_check}{staff_h_check}
 	async def {cmd_name}(self, ctx{arguments}):
 
 		# Command code

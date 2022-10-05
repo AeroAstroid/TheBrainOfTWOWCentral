@@ -71,3 +71,10 @@ def is_staff(ctx):
 		return (len(staff_in) > 0)
 	else: # Is the member staff in the server
 		return (ctx.guild in staff_in)
+
+def is_staff_here(ctx):
+	'''
+	CMD module check for server-only commands that need staff perms in that server specifically
+	'''
+
+	return ctx.guild in staff_servers(ctx)
