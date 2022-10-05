@@ -152,6 +152,18 @@ def command_user(ctx):
 	else:
 		return ctx.user
 
+async def command_response_timestamp(ctx, response):
+	'''
+	Function to get a timestamp of the response message sent by the bot for both slash and prefixed
+	commands.
+	'''
+
+	if not is_slash_cmd(ctx):
+		return response.created_at.timestamp()
+	else:
+		response_msg = await response.original_response()
+		return response_msg.created_at.timestamp()
+
 def m_line(s):
 	'''
 	Function to parse multi-line strings in a more convenient way for code readability and 
