@@ -2,7 +2,8 @@ import discord as dc
 
 BOT_DEVELOPERS = [
 	184768535107469314, # Dark#7316
-	179686717534502913  # Neonic#1410
+	179686717534502913, # Neonic#1410
+	183331874670641152  # Purplegaze#0007
 ]
 
 def split_escape(s, delimiter):
