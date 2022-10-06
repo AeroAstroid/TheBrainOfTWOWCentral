@@ -54,7 +54,23 @@ class Clean(cmd.Cog):
 
 	def __init__(self, BRAIN): self.BRAIN = BRAIN
 
-	@bridge.bridge_command(aliases=ALIASES)
+	# Slash version of the command due to function signature incompatibility
+	@cmd.slash_command(name="clean")
+	@cmd.cooldown(1, 5)
+	@cmd.check(is_staff_here)
+	async def slash_clean(self, ctx,
+		clean_command = ''):
+		'''
+		Cleans out a channel of a certain amount of messages, using certain conditions.
+		'''
+
+		clean_args = clean_command.split()
+
+		await self.clean(ctx, *clean_args)
+
+		return
+
+	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 5)
 	@cmd.check(is_staff_here)
 	async def clean(self, ctx,
@@ -184,7 +200,7 @@ class Clean(cmd.Cog):
 		else:
 			if is_slash_cmd(ctx):
 				await ctx.send_followup(
-				content=f"✅ **Successfully deleted {len(deleted)} messages!**",
+				content=f"✅ **Successfully deleted {len(deleted)-2} messages!**",
 				ephemeral=True)
 
 		return

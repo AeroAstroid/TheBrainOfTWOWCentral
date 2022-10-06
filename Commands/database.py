@@ -231,7 +231,7 @@ class Database(cmd.Cog):
 
 				line, arg_n, _ = step_forward()
 			
-			DB.add_table(table_name, columns, debug=modes["debug"])
+			DB.add_table(table_name, columns, debug=modif["debug"])
 
 			columns_summary = "/n/".join(["> " + ": ".join(col) for col in columns])
 
@@ -258,7 +258,7 @@ class Database(cmd.Cog):
 			if not action_confirmed[0]:
 				return
 
-			DB.remove_table(table_name, debug=modes["debug"])
+			DB.remove_table(table_name, debug=modif["debug"])
 			
 			if is_slash_cmd(ctx):
 				await msg.edit_original_message(view=None, content=
