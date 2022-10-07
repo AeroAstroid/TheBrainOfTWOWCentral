@@ -15,7 +15,7 @@ class Modaltest(cmd.Cog):
 	'''
 
 	# Extra arguments to be passed to the command
-	FORMAT = "`[]`"
+	FORMAT = ""
 	CATEGORY = "BRAIN"
 	EMOJI = CATEGORIES[CATEGORY]
 	ALIASES = ['']

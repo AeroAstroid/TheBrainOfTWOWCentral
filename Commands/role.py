@@ -26,9 +26,9 @@ class Role(cmd.Cog):
 
 	The other available keywords are:
 	
-	**`-to`**: mandatory when used with the `-add` keyword; specifies whom the role(s) will be added 
-	to. Accepts member names, member IDs, role names, role IDs as well as an `everyone` keyword 
-	for everyone in the server, using the same comma separation as described earlier. /n/
+	**`-to`**: mandatory when used with the `-add` keyword; specifies whom the role(s) will be 
+	added to. Accepts member names, member IDs, role names, role IDs as well as an `everyone` 
+	keyword for everyone in the server, using the same comma separation as described earlier. /n/
 	> `{PREFIX}role -add Role 1 -to User 1, Role 2, User 2`
 	> `{PREFIX}role -add Role 1 -to everyone`
 
@@ -59,7 +59,7 @@ class Role(cmd.Cog):
 	'''
 
 	# Extra arguments to be passed to the command
-	FORMAT = "[-add/-remove] [*role_command_args]"
+	FORMAT = "[-add/-remove] (-to/-from) (-count) (-chance)"
 	CATEGORY = "SERVER"
 	EMOJI = CATEGORIES[CATEGORY]
 	ALIASES = ['roles', 'roledist']
