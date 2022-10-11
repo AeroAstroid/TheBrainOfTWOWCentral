@@ -1,4 +1,4 @@
-from Commands.__comp import *
+from Helper.__comp import *
 from Helper.__words import WORDS
 from Helper.__functions import m_line, command_user, command_response_timestamp
 import random
@@ -20,7 +20,8 @@ class Typingtest(cmd.Cog):
 	EMOJI = CATEGORIES[CATEGORY]
 	ALIASES = ['typetest', 'tt']
 
-	def __init__(self, BRAIN): self.BRAIN = BRAIN
+	def __init__(self, BRAIN):
+		self.BRAIN = BRAIN
 
 	@bridge.bridge_command(aliases=ALIASES)
 	@cmd.cooldown(1, 1)

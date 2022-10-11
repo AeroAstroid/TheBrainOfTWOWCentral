@@ -1,4 +1,4 @@
-from Commands.__comp import *
+from Helper.__comp import *
 
 import os
 import sys
@@ -25,7 +25,8 @@ class Restart(cmd.Cog):
 	EMOJI = CATEGORIES[CATEGORY]
 	ALIASES = ['r']
 
-	def __init__(self, BRAIN): self.BRAIN = BRAIN
+	def __init__(self, BRAIN):
+		self.BRAIN = BRAIN
 
 	@bridge.bridge_command(aliases=ALIASES)
 	@cmd.cooldown(1, 5)

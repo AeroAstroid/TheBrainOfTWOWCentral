@@ -1,4 +1,4 @@
-from Commands.__comp import *
+from Helper.__comp import *
 
 from Helper.__functions import is_dev, is_dm, is_slash_cmd
 from Helper.__server_functions import is_staff, staff_servers
@@ -17,7 +17,8 @@ class Talk(cmd.Cog):
 	EMOJI = CATEGORIES[CATEGORY]
 	ALIASES = []
 
-	def __init__(self, BRAIN): self.BRAIN = BRAIN
+	def __init__(self, BRAIN):
+		self.BRAIN = BRAIN
 
 	# Slash version of the command due to function signature incompatibility
 	@cmd.slash_command(name="talk")

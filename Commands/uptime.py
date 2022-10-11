@@ -1,4 +1,4 @@
-from Commands.__comp import *
+from Helper.__comp import *
 
 from time import time
 
@@ -19,7 +19,8 @@ class Uptime(cmd.Cog):
 	EMOJI = CATEGORIES[CATEGORY]
 	ALIASES = ['up']
 
-	def __init__(self, BRAIN): self.BRAIN = BRAIN
+	def __init__(self, BRAIN):
+		self.BRAIN = BRAIN
 
 	@bridge.bridge_command(aliases=ALIASES)
 	@cmd.cooldown(1, 1)

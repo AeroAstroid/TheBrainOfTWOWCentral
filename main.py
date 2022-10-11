@@ -62,6 +62,21 @@ async def on_ready():
 	await BRAIN.change_presence(status=dc.Status.online,
 	activity=dc.Activity(type=dc.ActivityType.watching, name="over TWOW Central"))
 
+	for cog_name in BRAIN.cogs:
+		cog_obj = BRAIN.get_cog(cog_name)
+
+		# Check for a task/event that could have a setting to be turned on while connecting
+		if not "ON_BY_DEFAULT" in dir(cog_obj) or not "set_loop" in dir(cog_obj):
+			continue
+		
+		getattr(cog_obj, "ON_BY_DEFAULT")
+		
+		if getattr(cog_obj, "ON_BY_DEFAULT"):
+			getattr(cog_obj, "set_loop")(True)
+			print(f"Automatically starting all loops in {type(cog_obj).__name__.upper()}")
+	
+	print("\n" + "="*50, '\n')
+
 @BRAIN.event
 async def on_command_error(ctx, error): # For prefixed commands
 	await error_handler(ctx, error)
@@ -89,9 +104,12 @@ async def error_handler(ctx, err):
 	print("-[ERROR]- "*10)
 	tb.print_exception(type(err), err, None)
 
+	if type(err).__name__ == "CommandInvokeError":
+		err = err.original
+
 	try:
 		await ctx.respond(
-		f"⚠️ Uh oh! This command raised an unexpected error: **`{type(err.original).__name__}`**")
+		f"⚠️ Uh oh! This command raised an unexpected error: **`{type(err).__name__}`**")
 	except Exception as e:
 		print(f"\nCouldn't inform user of error due to {type(e).__name__}!")
 	
@@ -113,6 +131,7 @@ async def on_command(ctx):
 @BRAIN.event
 async def on_application_command(ctx):
 	print("Slash command from", ctx.user)
+	print(datetime.utcnow(), "-", time())
 
 	try:
 		print(ctx.channel.name, f"({ctx.channel.id})")
@@ -121,8 +140,10 @@ async def on_application_command(ctx):
 		print("Sent in DMs")
 	
 	print("-->", ctx.command, "\n")
-
+	
 print("="*50, '\n')
+
+commands_loaded = []
 
 for cmd_name in os.listdir("Commands"):
 	if not cmd_name.endswith('py') or cmd_name.startswith('__'):
@@ -130,7 +151,23 @@ for cmd_name in os.listdir("Commands"):
 
 	BRAIN.load_extension(f"Commands.{cmd_name[:-3]}")
 
-print(f"Added the following commands: {', '.join(BRAIN.cogs.keys()).upper()}", '\n')
+	commands_loaded.append(cmd_name[:-3].upper())
+
+print(f"Added the following commands: {', '.join(commands_loaded)}", '\n')
+
+print("="*50, '\n')
+
+tasks_loaded = []
+
+for task_name in os.listdir("Tasks"):
+	if not task_name.endswith('py') or task_name.startswith('__'):
+		continue
+
+	BRAIN.load_extension(f"Tasks.{task_name[:-3]}")
+
+	tasks_loaded.append(task_name[:-3].upper())
+
+print(f"Loaded in the following tasks: {', '.join(tasks_loaded)}", '\n')
 
 print("="*50, '\n')
 

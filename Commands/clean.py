@@ -1,4 +1,4 @@
-from Commands.__comp import *
+from Helper.__comp import *
 
 from Helper.__functions import (is_whole, split_escape, is_dm, smart_lookup, is_slash_cmd, plural, 
 	m_line)
@@ -54,7 +54,8 @@ class Clean(cmd.Cog):
 	EMOJI = CATEGORIES[CATEGORY]
 	ALIASES = ['clear', 'purge', 'prune']
 
-	def __init__(self, BRAIN): self.BRAIN = BRAIN
+	def __init__(self, BRAIN):
+		self.BRAIN = BRAIN
 
 	# Slash version of the command due to function signature incompatibility
 	@cmd.slash_command(name="clean")

@@ -1,4 +1,4 @@
-from Commands.__comp import *
+from Helper.__comp import *
 
 from Helper.__functions import plural, is_whole, smart_lookup, is_dm
 from Helper.__action_functions import specify_server
@@ -19,7 +19,8 @@ class Membercount(cmd.Cog):
 	EMOJI = CATEGORIES[CATEGORY]
 	ALIASES = ['members', 'member', 'serversize']
 
-	def __init__(self, BRAIN): self.BRAIN = BRAIN
+	def __init__(self, BRAIN):
+		self.BRAIN = BRAIN
 
 	# Slash version of the command due to function signature incompatibility
 	@cmd.slash_command(name="membercount")

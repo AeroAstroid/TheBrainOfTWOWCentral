@@ -1,4 +1,4 @@
-from Commands.__comp import *
+from Helper.__comp import *
 
 import os
 from time import time
@@ -108,7 +108,8 @@ class Database(cmd.Cog):
 	EMOJI = CATEGORIES[CATEGORY]
 	ALIASES = ['db']
 
-	def __init__(self, BRAIN): self.BRAIN = BRAIN
+	def __init__(self, BRAIN):
+		self.BRAIN = BRAIN
 
 	# Slash version of the command due to function signature incompatibility
 	@cmd.slash_command(name="database")

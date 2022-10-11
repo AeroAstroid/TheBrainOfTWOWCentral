@@ -1,4 +1,4 @@
-from Commands.__comp import *
+from Helper.__comp import *
 
 from time import time
 from functools import partial
@@ -28,7 +28,8 @@ class Help(cmd.Cog):
 	EMOJI = CATEGORIES[CATEGORY]
 	ALIASES = ['h']
 
-	def __init__(self, BRAIN): self.BRAIN = BRAIN
+	def __init__(self, BRAIN):
+		self.BRAIN = BRAIN
 
 	@bridge.bridge_command(aliases=ALIASES)
 	@cmd.cooldown(1, 1)
@@ -39,6 +40,10 @@ class Help(cmd.Cog):
 			await ctx.interaction.response.defer()
 		
 		all_commands = self.BRAIN.cogs
+		all_commands = {
+			k: v for k, v in all_commands.items() 
+			if "ALIASES" in dir(self.BRAIN.get_cog(k))
+		}
 
 		found_term = False
 
@@ -141,7 +146,12 @@ class Help(cmd.Cog):
 				page_n = int(c_id_args[2][1:])
 
 		help_embed = dc.Embed(color=0x31D8B1)
+		
 		full_info = self.BRAIN.cogs
+		full_info = {
+			k: v for k, v in full_info.items() 
+			if "ALIASES" in dir(self.BRAIN.get_cog(k))
+		}
 
 		term = term.lower()
 

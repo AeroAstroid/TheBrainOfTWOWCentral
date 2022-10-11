@@ -1,4 +1,4 @@
-from Commands.__comp import *
+from Helper.__comp import *
 
 from functools import partial
 from discord.ui import Modal, InputText
@@ -20,7 +20,8 @@ class Modaltest(cmd.Cog):
 	EMOJI = CATEGORIES[CATEGORY]
 	ALIASES = ['']
 
-	def __init__(self, BRAIN): self.BRAIN = BRAIN
+	def __init__(self, BRAIN):
+		self.BRAIN = BRAIN
 
 	@bridge.bridge_command(aliases=ALIASES)
 	@cmd.cooldown(1, 1)
