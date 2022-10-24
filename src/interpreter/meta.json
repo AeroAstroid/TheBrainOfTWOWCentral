@@ -1,0 +1,3 @@
+{
+    "imports": ["functions/arrays/arrays.json", "functions/math/math.json", "functions/discord.json", "functions/core.json"]
+}

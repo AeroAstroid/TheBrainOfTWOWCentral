@@ -1,0 +1,24 @@
+{
+    "args": {
+        "aliases": ["args", "arguments"],
+        "program_file": "args.py",
+        "arguments": {
+            "parse_args": true,
+            "index": {
+                "argument_type": "not-required",
+                "default_value": ""
+            }
+        }
+    },
+    "array": {
+        "aliases": ["array"],
+        "program_file": "array.py",
+        "arguments": {
+            "parse_args": true,
+            "index": {
+                "argument_type": "not-required",
+                "default_value": []
+            }
+        }
+    }
+}
