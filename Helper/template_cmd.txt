@@ -1,0 +1,27 @@
+from Helper.__comp import *
+{dev_check_import}{staff_check_import}{staff_h_check_import}
+
+def setup(BOT):
+	BOT.add_cog({cog_name}(BOT))
+
+class {cog_name}(cmd.Cog):
+	'''
+	[Write help description here!]
+	'''
+
+	# Extra arguments to be passed to the command
+	FORMAT = "{help_arguments}"
+	CATEGORY = "BRAIN"
+	EMOJI = CATEGORIES[CATEGORY]
+	ALIASES = {aliases}
+
+	def __init__(self, BRAIN):
+		self.BRAIN = BRAIN
+
+	@bridge.bridge_command(aliases=ALIASES)
+	@cmd.cooldown(1, {cooldown}){dev_check}{staff_check}{staff_h_check}
+	async def {cmd_name}(self, ctx{arguments}):
+
+		# Command code
+
+		return

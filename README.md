@@ -1,4 +1,3 @@
-# TheBrainOfTWOWCentral
-The Brain of TWOW Central
+# The Brain of TWOW Central
 
-wow this is public now cool
+Currently W.I.P.

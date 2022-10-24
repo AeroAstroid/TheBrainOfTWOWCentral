@@ -1,61 +1,93 @@
-from Config._functions import is_whole
-import discord
+from Helper.__comp import *
 
-def HELP(PREFIX):
-	return {
-		"COOLDOWN": 0,
-		"HIDE": True,
-		"MAIN": "Talk.",
-		"FORMAT": "",
-		"CHANNEL": 0,
-		"USAGE": f"""Talk.""".replace("\n", "").replace("\t", ""),
-		"CATEGORY" : "Staff"
-	}
+from Helper.__functions import is_dev, is_dm, is_slash_cmd
+from Helper.__server_functions import is_staff, staff_servers
 
-PERMS = 3 # Developer
-ALIASES = []
-REQ = []
+def setup(BOT):
+	BOT.add_cog(Talk(BOT))
 
-async def MAIN(message, args, level, perms, SERVER):
-	if level == 1:
-		await message.channel.send("Include a channel ID.")
+class Talk(cmd.Cog):
+	'''
+	Sends a message in an arbitrary channel through Brain
+	'''
+
+	# Extra arguments to be passed to the command
+	FORMAT = "`[channel_id]` `[*message_content]`"
+	CATEGORY = "BRAIN"
+	EMOJI = CATEGORIES[CATEGORY]
+	ALIASES = []
+
+	def __init__(self, BRAIN):
+		self.BRAIN = BRAIN
+
+	# Slash version of the command due to function signature incompatibility
+	@cmd.slash_command(name="talk")
+	@cmd.cooldown(1, 1)
+	@cmd.check(is_dev)
+	@cmd.check(is_staff)
+	async def slash_talk(self, ctx,
+		channel_id,
+		message_content):
+		'''
+		Sends a message in an arbitrary channel through Brain
+		'''
+
+		msg_args = message_content.split(" ")
+
+		await self.talk(ctx, channel_id, *msg_args)
+
 		return
 	
-	if level == 2:
-		await message.channel.send("Can't send an empty message.")
-		return
-	
-	direct = False
-	if not is_whole(args[1]):
-		if args[1].lower() != "dm":
-			await message.channel.send("Invalid channel ID.")
-			return
+	@cmd.command(aliases=ALIASES)
+	@cmd.cooldown(1, 1)
+	@cmd.check(is_dev)
+	@cmd.check(is_staff)
+	async def talk(self, ctx,
+		channel_id,
+		*msg_args):
 
-		direct = True
-	
-	if direct:
-		if not is_whole(args[2]):
-			await message.channel.send("Invalid user ID.")
-			return
+		channel_id = int(channel_id)
+		chosen_channel = None
+
+		if is_dm(ctx):
+			staff_s = staff_servers(ctx)
+		else:
+			staff_s = [ctx.guild]
+
+		for s in staff_s:
+			s_channel_ids = [c.id for c in s.channels]
+			s_member_ids = [m.id for m in s.members]
+
+			if channel_id in s_channel_ids: # Choose either a channel...
+				chosen_channel = dc.utils.get(s.channels, id=channel_id)
+				break
+			
+			if channel_id in s_member_ids: # ...or a member to DM
+				chosen_channel = dc.utils.get(s.members, id=channel_id)
+				break
 		
-		user_id = int(args[2])
-		target = SERVER["MAIN"].get_member(user_id)
+		if chosen_channel is None:
+			if is_dm(ctx):
+				await ctx.respond(
+				"💀 **This channel/member can't be found** in any servers you moderate!")
+			
+			else:
+				await ctx.respond(
+				"💀 **This channel/member can't be found** in this server!")
+			
+			return
 
-	else:
-		channel_id = int(args[1])
-		target = discord.utils.get(SERVER["MAIN"].channels, id=channel_id)
+		if is_slash_cmd(ctx):
+			message_content = " ".join(msg_args).replace("\\n", "\n")
+		else:
+			message_content = ctx.message.content[ctx.message.content.find(msg_args[0]):]
 
-	if target is None:
-		await message.channel.send("Could not find a channel or user with that ID.")
+		if len(message_content) == 0:
+			await ctx.respond("💀 **The message to be sent cannot be empty!**")
+			return
+
+		await chosen_channel.send(message_content)
+		await ctx.respond(
+		f"✅ **Message successfully sent in `{channel_id}`:**\n> \t`{message_content}`")
+
 		return
-	
-	message_to_send = " ".join(args[2+int(direct):])
-
-	try:
-		await target.send(message_to_send)
-	except Exception as err:
-		await message.channel.send(f"`{err}`: Could not send")
-		return
-	
-	await message.channel.send(f"Sent successfully!\n>\t`{message_to_send[:1950]}`")
-	return
