@@ -135,26 +135,14 @@ class EVENT:
 			if time_left <= 0:
 				t_l_string = "SIGNUPS ARE OVER!"
 			else:
-				abs_delta = [
-					np.ceil(time_left / 3600), # Hours
-					int(np.ceil(time_left / 3600) / 24)] # Days
+				t_l_string = f"<t:{twow[4]}:R>"
 
-				hr = int(abs_delta[0] % 24)
-				dy = int(abs_delta[1])
-
-				t_l_string = f"Less than"
-				if dy != 0:
-					t_l_string += f" {dy} day{'s' if dy!=1 else ''}"
-				else:
+				day = int(np.ceil(time_left / 3600) / 24)
+				if day == 0:
 					signup_warning = "\n⏰  **SIGNUPS ARE ALMOST OVER! JOIN SOON!**"
-				if hr != 0:
-					if dy != 0:
-						t_l_string += ","
-					
-					t_l_string += f" {hr} hour{'s' if hr!=1 else ''}"
 			
+			deadline_string = f"<t:{twow[4]}:f>"
 			datetime_dl = datetime.datetime.utcfromtimestamp(twow[4])
-			deadline_string = datetime_dl.strftime("%B %d %Y %H:%M UTC")
 			
 			try:
 				chosen_emoji = time_emoji[datetime_dl.hour % 12]
@@ -172,7 +160,7 @@ class EVENT:
 			📖  **__{twow[0]}__** - Hosted by **{twow[1]}**
 			> {descrip}
 			{signup_warning}
-			{chosen_emoji}  **Signup Deadline** : **{t_l_string}** `({deadline_string})`
+			{chosen_emoji}  **Signup Deadline** : **{t_l_string}** ({deadline_string})
 			📥  **Server Link** : {twow[2]}""".replace("\t", "")
 
 			formatted_list.append(message)
