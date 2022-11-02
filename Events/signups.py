@@ -76,10 +76,11 @@ class EVENT:
 			just_removed = [x for x in old_twow_names if x not in new_twow_names]
 
 			new_announcement_list = []
+			current_time_string = f"<t:{time.time()}:R>"
 			for x in just_added:
-				new_announcement_list.append(f"`(<1 hour ago)` : Added **{x}** to the signup list")
+				new_announcement_list.append(f"{current_time_string} : Added **{x}** to the signup list")
 			for x in just_removed:
-				new_announcement_list.append(f"`(<1 hour ago)` : Removed **{x}** from the signup list")
+				new_announcement_list.append(f"{current_time_string} : Removed **{x}** from the signup list")
 			
 			if self.ANNOUNCE.content != "\u200b":
 
@@ -87,19 +88,16 @@ class EVENT:
 
 				if hour:
 
-					print ("TEST 2")
 					for z in range(len(old_announcement_list)):
+                        
+						time_start = old_announcement_list[z].find("<t:") + 3
+						time_end = old_announcement_list[z].find(":R>")
+						announcement_time = datetime.datetime.utcfromtimestamp(
+							int(old_announcement_list[z][time_start:time_end])
+						)
+						d_days = (datetime.datetime.now() - announcement_time).days
 
-						halves = old_announcement_list[z].split(" : ")
-
-						halves[0] = halves[0].split(" ")
-						if halves[0][0][2:] == "<1":
-							halves[0] = "`(1 hour ago)`"
-							old_announcement_list[z] = " : ".join(halves)
-						elif halves[0][0][2:] != "23":
-							halves[0] = f"`({int(halves[0][0][2:])+1} hours ago)`"
-							old_announcement_list[z] = " : ".join(halves)
-						else:
+						if d_days >= 1:
 							old_announcement_list[z] = ""
 				
 				old_announcement_list = [x for x in old_announcement_list if x != ""]
