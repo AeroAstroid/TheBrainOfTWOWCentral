@@ -76,10 +76,11 @@ class EVENT:
 			just_removed = [x for x in old_twow_names if x not in new_twow_names]
 
 			new_announcement_list = []
+			current_time_string = f"<t:{time.time()}:R>"
 			for x in just_added:
-				new_announcement_list.append(f"`(<1 hour ago)` : Added **{x}** to the signup list")
+				new_announcement_list.append(f"{current_time_string} : Added **{x}** to the signup list")
 			for x in just_removed:
-				new_announcement_list.append(f"`(<1 hour ago)` : Removed **{x}** from the signup list")
+				new_announcement_list.append(f"{current_time_string} : Removed **{x}** from the signup list")
 			
 			if self.ANNOUNCE.content != "\u200b":
 
@@ -87,19 +88,16 @@ class EVENT:
 
 				if hour:
 
-					print ("TEST 2")
 					for z in range(len(old_announcement_list)):
+                        
+						time_start = old_announcement_list[z].find("<t:") + 3
+						time_end = old_announcement_list[z].find(":R>")
+						announcement_time = datetime.datetime.utcfromtimestamp(
+							int(old_announcement_list[z][time_start:time_end])
+						)
+						d_days = (datetime.datetime.now() - announcement_time).days
 
-						halves = old_announcement_list[z].split(" : ")
-
-						halves[0] = halves[0].split(" ")
-						if halves[0][0][2:] == "<1":
-							halves[0] = "`(1 hour ago)`"
-							old_announcement_list[z] = " : ".join(halves)
-						elif halves[0][0][2:] != "23":
-							halves[0] = f"`({int(halves[0][0][2:])+1} hours ago)`"
-							old_announcement_list[z] = " : ".join(halves)
-						else:
+						if d_days >= 1:
 							old_announcement_list[z] = ""
 				
 				old_announcement_list = [x for x in old_announcement_list if x != ""]
@@ -135,26 +133,14 @@ class EVENT:
 			if time_left <= 0:
 				t_l_string = "SIGNUPS ARE OVER!"
 			else:
-				abs_delta = [
-					np.ceil(time_left / 3600), # Hours
-					int(np.ceil(time_left / 3600) / 24)] # Days
+				t_l_string = f"<t:{twow[4]}:R>"
 
-				hr = int(abs_delta[0] % 24)
-				dy = int(abs_delta[1])
-
-				t_l_string = f"Less than"
-				if dy != 0:
-					t_l_string += f" {dy} day{'s' if dy!=1 else ''}"
-				else:
+				day = int(np.ceil(time_left / 3600) / 24)
+				if day == 0:
 					signup_warning = "\n⏰  **SIGNUPS ARE ALMOST OVER! JOIN SOON!**"
-				if hr != 0:
-					if dy != 0:
-						t_l_string += ","
-					
-					t_l_string += f" {hr} hour{'s' if hr!=1 else ''}"
 			
+			deadline_string = f"<t:{twow[4]}:f>"
 			datetime_dl = datetime.datetime.utcfromtimestamp(twow[4])
-			deadline_string = datetime_dl.strftime("%B %d %Y %H:%M UTC")
 			
 			try:
 				chosen_emoji = time_emoji[datetime_dl.hour % 12]
@@ -172,7 +158,7 @@ class EVENT:
 			📖  **__{twow[0]}__** - Hosted by **{twow[1]}**
 			> {descrip}
 			{signup_warning}
-			{chosen_emoji}  **Signup Deadline** : **{t_l_string}** `({deadline_string})`
+			{chosen_emoji}  **Signup Deadline** : **{t_l_string}** ({deadline_string})
 			📥  **Server Link** : {twow[2]}""".replace("\t", "")
 
 			formatted_list.append(message)
