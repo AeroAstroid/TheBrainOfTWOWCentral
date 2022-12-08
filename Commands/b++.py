@@ -2,6 +2,8 @@ from Config._functions import strip_alpha, find_all, is_whole, strip_front
 
 from Config._bppnew_parsing import *
 
+from Config._bppnew_functions import ProgramDefinedException
+
 from Config._db import Database
 
 import discord, os, re, time
