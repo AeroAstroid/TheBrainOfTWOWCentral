@@ -50,7 +50,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		channel_id = int(id_list[0])
 		recent_list_id = int(id_list[-1])
 		
-		ch = discord.utils.get(self.SERVER["MAIN"].channels, id=channel_id)
+		ch = discord.utils.get(SERVER["MAIN"].channels, id=channel_id)
 		r_list_msg = None
 		
 		async for msg in ch.history(limit=100):
