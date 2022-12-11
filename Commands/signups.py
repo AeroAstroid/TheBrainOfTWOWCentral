@@ -58,7 +58,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				r_list_msg = msg
 		
 		if r_list_msg is not None:
-			await self.ANNOUNCE.edit(content="__**Recent list changes:**__")
+			await r_list_msg.edit(content="__**Recent list changes:**__")
 			await message.channel.send("Updated list!")
 		return
 	
