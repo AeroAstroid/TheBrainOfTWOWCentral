@@ -76,7 +76,7 @@ class EVENT:
 			just_removed = [x for x in old_twow_names if x not in new_twow_names]
 
 			new_announcement_list = []
-			current_time_string = f"<t:{time.time()}:R>"
+			current_time_string = f"<t:{int(time.time())}:R>"
 			for x in just_added:
 				new_announcement_list.append(f"{current_time_string} : Added **{x}** to the signup list")
 			for x in just_removed:
