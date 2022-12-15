@@ -333,15 +333,15 @@ async def MAIN(message, args, level, perms, SERVER):
 		await message.channel.send(f'{type(e).__name__}:\n```{e}```'.replace("<@", "<\\@"))
 		return
 	
-	toolong = false
-	if len(program_output) > 2000:
-		toolong = true
-		open(f"Config/{message.id}out.txt", "w", encoding="utf-8").write(program_output[:100000])
-		program_output = "⚠️ `Output too long! Sending first 100k characters in text file."
-	
 	if len(program_output.strip()) == 0: program_output = "\u200b"
+		
+	if len(program_output) <= 2000:
+		await message.channel.send(program_output)
+	elif len(program_output) <= 4096:
+		await message.channel.send(embed = discord.Embed(description = program_output, type = "rich"))
+	else:
+		open(f"Config/{message.id}out.txt", "w", encoding="utf-8").write(program_output[:150000])
+		outfile = discord.File(f"Config/{message.id}out.txt"))
+		await message.channel.send("⚠️ `Output too long! Sending first 150k characters in text file.", file=outfile)
+		
 	
-	await message.channel.send(program_output)
-	if toolong: file=discord.File(f"Config/{message.id}out.txt"))
-	if toolong: os.remove(f"Config/{message.id}out.txt")
-	return
