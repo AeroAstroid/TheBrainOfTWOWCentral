@@ -54,8 +54,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				await message.channel.send(f"There is no page {args[2]} on the New B++ program list!")
 				return
 		
-			else: # This means the user specified a val
-				page number
+			else: # This means the user specified a valid page number
 				lower = (int(args[2]) - 1) * 10
 				upper = int(args[2]) * 10
 				tag_list = tag_list[lower:upper]
