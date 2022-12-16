@@ -341,7 +341,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		await message.channel.send(embed = discord.Embed(description = program_output, type = "rich"))
 	else:
 		open(f"Config/{message.id}out.txt", "w", encoding="utf-8").write(program_output[:150000])
-		outfile = discord.File(f"Config/{message.id}out.txt"))
+		outfile = discord.File(f"Config/{message.id}out.txt")
 		await message.channel.send("⚠️ `Output too long! Sending first 150k characters in text file.", file=outfile)
 		
 	
