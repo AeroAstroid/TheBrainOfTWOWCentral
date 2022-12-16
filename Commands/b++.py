@@ -332,11 +332,16 @@ async def MAIN(message, args, level, perms, SERVER):
 	except Exception as e:
 		await message.channel.send(f'{type(e).__name__}:\n```{e}```'.replace("<@", "<\\@"))
 		return
-
-	if len(program_output) > 1950:
-		program_output = "⚠️ `Output too long! First 1900 characters:`\n\n" + program_output[:1900]
 	
 	if len(program_output.strip()) == 0: program_output = "\u200b"
+		
+	if len(program_output) <= 2000:
+		await message.channel.send(program_output)
+	elif len(program_output) <= 4096:
+		await message.channel.send(embed = discord.Embed(description = program_output, type = "rich"))
+	else:
+		open(f"Config/{message.id}out.txt", "w", encoding="utf-8").write(program_output[:150000])
+		outfile = discord.File(f"Config/{message.id}out.txt"))
+		await message.channel.send("⚠️ `Output too long! Sending first 150k characters in text file.", file=outfile)
+		
 	
-	await message.channel.send(program_output)
-	return
