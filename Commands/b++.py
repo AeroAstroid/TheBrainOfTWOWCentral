@@ -326,12 +326,11 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 	try:
 		program_output = run_bpp_program(program, program_args, author, runner)
-		program_output = program_output.replace("<@", "<\\@")
-	except ProgramDefinedException as p:
-		program_output = p.replace("<@", "<\\@")
 	except Exception as e:
 		await message.channel.send(f'{type(e).__name__}:\n```{e}```'.replace("<@", "<\\@"))
 		return
+	
+	program_output = program_output.replace("<@", "<\\@")
 	
 	if len(program_output.strip()) == 0: program_output = "\u200b"
 		
@@ -342,6 +341,6 @@ async def MAIN(message, args, level, perms, SERVER):
 	else:
 		open(f"Config/{message.id}out.txt", "w", encoding="utf-8").write(program_output[:150000])
 		outfile = discord.File(f"Config/{message.id}out.txt")
-		await message.channel.send("⚠️ `Output too long! Sending first 150k characters in text file.", file=outfile)
+		await message.channel.send("⚠️ `Output too long! Sending first 150k characters in text file.`", file=outfile)
 		
 	
