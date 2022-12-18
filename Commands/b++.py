@@ -326,8 +326,11 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 	try:
 		program_output = run_bpp_program(program, program_args, author, runner)
-	except Exception as e:
+	except ProgramDefinedException as e:
 		await message.channel.send(embed=discord.Embed(title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
+		return
+	except Exception as e:
+		await message.channel.send(embed=discord.Embed(color=discord.Color.red(),title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
 		return
 	
 	program_output = program_output.replace("<@", "<\\@")
