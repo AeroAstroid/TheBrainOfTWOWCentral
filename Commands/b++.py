@@ -20,7 +20,7 @@ def HELP(PREFIX):
 		(page)` displays a paged list of all B++ programs by use count, while using `tc/b++ info (program)` 
 		displays information and the source code of a specific program. `tc/b++ create [program] [code]` can be used 
 		to save code into a specific program name, which can be edited by its creator with `tc/b++ edit [program] 
-		[newcode]` or deleted with `tc/b++ delete [program]`. You can check your existing programs with `tc/b++ mytags`.
+		[newcode]` or deleted with `tc/b++ delete [program]`. You can check your existing programs with `tc/b++ tags`.
 		Finally, `tc/b++ [program] (args)` allows you to run any saved program.^n^n
 		The full documentation for all B++ program functionality is displayed in this document:^n
 		https://docs.google.com/document/d/1pU2ezYE505sAPEmnSMNx9yfzD7FT4_KmICOkEUpMSA8/edit?usp=sharing
