@@ -41,10 +41,10 @@ async def MAIN(message, args, level, perms, SERVER):
 	
 	if args[1].lower() == "tags":
 		tag_list = db.get_entries("b++2programs", columns=["name", "program", "author", "uses"])
-		for tag in tag_list:
-			if tag[2] = message.author.id:
-				tag_list_2 += tag
-		tag_list = sorted(tag_list_2, reverse=True, key=lambda m: m[3])
+		
+		tag_list = [tag for tag in tag_list if tag[2] == str(message.author.id)]
+		tag_list = sorted(tag_list, reverse=True, key=lambda m: m[3])
+		
 		# basically the same as info here
 		tag_leaderboard = False
 		if level == 2: # If it's not specified, assume it's the first page
@@ -53,7 +53,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			tag_leaderboard = True
 		elif is_whole(args[2]):
 			if (int(args[2]) - 1) * 10 >= len(tag_list): # Detect if the page number is too big
-				await message.channel.send(f"There is no page {args[2]} on the New B++ program list!")
+				await message.channel.send(f"There is no page {args[2]} on your tags list!")
 				return
 		
 			else: # This means the user specified a valid page number
@@ -78,10 +78,6 @@ async def MAIN(message, args, level, perms, SERVER):
 
 			await message.channel.send(beginning)
 		return
-	
-
-		
-		
 		
 	if args[1].lower() == "info":
 		tag_list = db.get_entries("b++2programs", columns=["name", "program", "author", "uses", "created", "lastused"])
