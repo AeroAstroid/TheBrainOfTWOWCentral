@@ -20,8 +20,8 @@ def HELP(PREFIX):
 		(page)` displays a paged list of all B++ programs by use count, while using `tc/b++ info (program)` 
 		displays information and the source code of a specific program. `tc/b++ create [program] [code]` can be used 
 		to save code into a specific program name, which can be edited by its creator with `tc/b++ edit [program] 
-		[newcode]` or deleted with `tc/b++ delete [program]`. Finally, `tc/b++ [program] (args)` allows you to run any 
-		saved program.^n^n
+		[newcode]` or deleted with `tc/b++ delete [program]`. You can check your existing programs with `tc/b++ tags`.
+		Finally, `tc/b++ [program] (args)` allows you to run any saved program.^n^n
 		The full documentation for all B++ program functionality is displayed in this document:^n
 		https://docs.google.com/document/d/1pU2ezYE505sAPEmnSMNx9yfzD7FT4_KmICOkEUpMSA8/edit?usp=sharing
 		""".replace("\n", "").replace("\t", "").replace("^n", "\n"),
@@ -39,6 +39,46 @@ async def MAIN(message, args, level, perms, SERVER):
 	
 	db = Database()
 	
+	if args[1].lower() == "tags":
+		tag_list = db.get_entries("b++2programs", columns=["name", "program", "author", "uses"])
+		
+		tag_list = [tag for tag in tag_list if tag[2] == str(message.author.id)]
+		tag_list = sorted(tag_list, reverse=True, key=lambda m: m[3])
+		
+		# basically the same as info here
+		tag_leaderboard = False
+		if level == 2: # If it's not specified, assume it's the first page
+			tag_list = tag_list[:10]
+			page = 1
+			tag_leaderboard = True
+		elif is_whole(args[2]):
+			if (int(args[2]) - 1) * 10 >= len(tag_list): # Detect if the page number is too big
+				await message.channel.send(f"There is no page {args[2]} on your tags list!")
+				return
+		
+			else: # This means the user specified a valid page number
+				lower = (int(args[2]) - 1) * 10
+				upper = int(args[2]) * 10
+				tag_list = tag_list[lower:upper]
+				page = int(args[2])
+				tag_leaderboard = True
+	
+		if tag_leaderboard:
+			beginning = f"```diff\nB++ Programs Page {page} for user {message.author.username}\n\n"
+
+			for program in tag_list:
+				r = tag_list.index(program) + 1 + (page - 1) * 10
+				
+				line = f"{r}{' '*(2-len(str(r)))}: {program[0]} :: {program[3]} use{'s' if program[3] != 1 else ''}"
+
+				created_on = dt.utcfromtimestamp(program[4]).strftime('%Y-%m-%d %H:%M:%S UTC')
+				beginning += line # Add this line to the final message
+			
+			beginning += "```" # Close off code block
+
+			await message.channel.send(beginning)
+		return
+		
 	if args[1].lower() == "info":
 		tag_list = db.get_entries("b++2programs", columns=["name", "program", "author", "uses", "created", "lastused"])
 		tag_list = sorted(tag_list, reverse=True, key=lambda m: m[3])
@@ -153,7 +193,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			"Tag name can only contain letters, numbers and underscores, and cannot start with a number!")
 			return
 		
-		if tag_name in ["create", "edit", "delete", "info", "run", "help"]:
+		if tag_name in ["create", "edit", "delete", "info", "run", "help", "tags"]:
 			await message.channel.send("The tag name must not be a reserved keyword!")
 			return
 
