@@ -180,7 +180,7 @@ async def leaderboards(page: int):
     return board
 
 
-async def infoTag(message, name: str):
+async def infoTag(name: str):
     response = getTag(name)
     user = await IDtoUser(response["author"])
     return f"""**{name}** -- by {user.name} -- {response["uses"]} uses
