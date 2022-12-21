@@ -72,6 +72,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				line = f"{r}{' '*(2-len(str(r)))}: {program[0]} :: {program[3]} use{'s' if program[3] != 1 else ''}"
 
 				created_on = dt.utcfromtimestamp(program[4]).strftime('%Y-%m-%d %H:%M:%S UTC')
+				line += f" (written at {created_on})\n"
 				beginning += line # Add this line to the final message
 			
 			beginning += "```" # Close off code block
