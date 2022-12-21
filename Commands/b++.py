@@ -40,7 +40,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	db = Database()
 	
 	if args[1].lower() == "tags":
-		tag_list = db.get_entries("b++2programs", columns=["name", "program", "author", "uses"])
+		tag_list = db.get_entries("b++2programs", columns=["name", "program", "author", "uses", "created"])
 		
 		tag_list = [tag for tag in tag_list if tag[2] == str(message.author.id)]
 		tag_list = sorted(tag_list, reverse=True, key=lambda m: m[3])
