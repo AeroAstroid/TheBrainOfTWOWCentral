@@ -11,7 +11,10 @@ class EVENT:
 	def __init__(self):
 		self.RUNNING = False
 		self.param = {
-			"HOUR_SPEED": 1
+			"HOUR_SPEED": 1,
+			"ALTERNATING_BANNER": False,
+			"ALTERNATE_BANNER": "https://cdn.discordapp.com/attachments/716131405503004765/993814901606842378/TCO22_Banner.png",
+			"CURRENT_BANNER_ALTERNATE": False,
 		}
 
 	# Executes when activated
@@ -34,16 +37,26 @@ class EVENT:
 
 		if hour % self.param["HOUR_SPEED"] != 0:
 			return
+
+		new_banner = ""
+
+		if self.param["ALTERNATING_BANNER"] == True and self.param["CURRENT_BANNER_ALTERNATE"] == False:
+
+			self.param["CURRENT_BANNER_ALTERNATE"] = True
+			new_banner = self.param["ALTERNATE_BANNER"]
+
+		else:
 		
-		banner_ind, banner_list = self.db.get_entries("tcbanner")[0]
-		banner_list = banner_list.split(" ")
+			self.param["CURRENT_BANNER_ALTERNATE"] = False
+			banner_ind, banner_list = self.db.get_entries("tcbanner")[0]
+			banner_list = banner_list.split(" ")
 
-		banner_ind += 1
-		banner_ind %= len(banner_list)
+			banner_ind += 1
+			banner_ind %= len(banner_list)
 
-		new_banner = banner_list[banner_ind]
+			new_banner = banner_list[banner_ind]
 
-		self.db.edit_entry("tcbanner", entry={"current": banner_ind, "url": " ".join(banner_list)})
+			self.db.edit_entry("tcbanner", entry={"current": banner_ind, "url": " ".join(banner_list)})
 
 		async with aiohttp.ClientSession() as session:
 			try:

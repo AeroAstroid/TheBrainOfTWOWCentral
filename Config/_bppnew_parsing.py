@@ -173,6 +173,10 @@ def run_bpp_program(code, p_args, author, runner):
 		# Tuples indicate special behavior necessary
 		if type(result) == tuple:
 			if result[0] == "d":
+				if len(str(result[1])) > 100000:
+					raise MemoryError(
+					f"The variable {safe_cut(args[0])} is too large: {safe_cut(result[1])} (limit 100kb)")
+					
 				VARIABLES[args[0]] = result[1]
 				result = ""
 
@@ -190,6 +194,10 @@ def run_bpp_program(code, p_args, author, runner):
 
 			elif result[0] == "gd":
 				v_name = args[0]
+				if len(str(result[1])) > 100000:
+					raise MemoryError(
+					f"The global variable {safe_cut(v_name)} is too large: {safe_cut(result[1])} (limit 100kb)")
+				
 				if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
 					v_value = express_array(result[1]) if type(result[1]) == list else result[1]
 
@@ -227,6 +235,9 @@ def run_bpp_program(code, p_args, author, runner):
 
 			elif result[0] == "id":
 				result = runner.id
+			
+			elif result[0] == "aa":
+				result = p_args
 		
 		functions[k] = result
 		return result

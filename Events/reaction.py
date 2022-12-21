@@ -1,4 +1,4 @@
-import time, discord
+import time, discord, traceback
 from Config._functions import grammar_list
 
 class EVENT:
@@ -27,6 +27,9 @@ class EVENT:
 
 	# Function that runs on each message
 	async def on_message(self, message):
+		print(self.param["CHANNEL"])
+		print(self.param["EMOJIS"])
+		
 		if message.channel.mention != self.param["CHANNEL"]:
 			return # Only messages that are in the channel
 
@@ -34,6 +37,8 @@ class EVENT:
 			try: # Add the reactions
 				await message.add_reaction(emoji)
 			except Exception: # If a reaction is invalid, skip it
+				print(emoji)
+				traceback.print_exc()
 				continue
 	
 

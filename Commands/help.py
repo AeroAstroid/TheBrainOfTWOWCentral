@@ -47,7 +47,7 @@ async def MAIN(message, args, level, perms, SERVER, COMMANDS):
 		\u200b""".replace("\t", "")
 
 		# Set Brain PFP for the default help page
-		embed.set_thumbnail(url=BRAIN.user.avatar_url_as(static_format="png"))
+		embed.set_thumbnail(url=BRAIN.user.display_avatar.url)
 
 		comlist = {}
 
