@@ -1,4 +1,4 @@
-import random, statistics, re, itertools, time, math
+import random, statistics, re, itertools, time, math, requests
 import numpy as np
 
 try:
@@ -55,6 +55,10 @@ def ABS(a):
 		raise TypeError(f"Parameter of ABS function must be a number: {safe_cut(a)}")
 
 	return abs(int(a) if is_whole(a) else float(a))
+
+def REQUEST(a,b):
+	req = requests.request(str(a), str(b))
+	return [req.status_code, req.text]
 
 def SPLIT(a,b):
 	if type(a) != str:
