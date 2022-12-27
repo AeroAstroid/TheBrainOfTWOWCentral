@@ -1,6 +1,8 @@
 import os
 
 import discord
+
+from Commands.bstar.interpreter.function_deco import setupFunctions
 from Commands.bstar.interpreter.run import runCode
 
 from Commands.bstar.database.s3 import getTag, updateTag, createTag, infoTag, leaderboards, isOwnerProgram, editTag, \
@@ -28,7 +30,9 @@ def HELP(PREFIX):
 
 PERMS = 1 # Member
 ALIASES = ["B*", "BSTAR"]
-REQ = []
+REQ = ["LOGIN"]
+
+setupFunctions()
 
 
 async def accept_file_or_message(message):
@@ -45,7 +49,7 @@ async def accept_file_or_message(message):
 		else:
 			return file
 	else:
-		return message
+		return " ".join(message.content.split(" ")[2:])
 
 
 async def MAIN(message, args, level, perms, SERVER, LOGIN):
@@ -141,18 +145,3 @@ async def MAIN(message, args, level, perms, SERVER, LOGIN):
 			await message.channel.send(f"Tag `{name}` deleted!")
 		else:
 			await message.channel.send(f"You aren't the owner of tag `{name}`!")
-
-
-	# @bot.command()
-	# async def ping(ctx):
-	# 	"""Pings the bot"""
-	# if subcommand == "ping":
-	# 	await message.channel.send("pong! " + str(round(bot.latency * 1000, 2)) + "ms")
-
-
-	# @bot.command()
-	# async def uptime(ctx):
-	# 	"""Responds with uptime."""
-	# if subcommand == "uptime":
-	# 	uptime = str(datetime.timedelta(seconds=int(round(time.time() - startTime))))
-	# 	await message.channel.send("Uptime: " + uptime)
