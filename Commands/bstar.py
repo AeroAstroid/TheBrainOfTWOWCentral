@@ -19,11 +19,11 @@ def HELP(PREFIX):
 		"MAIN": "Allows you to write short tags and/or programs",
 		"FORMAT": "[subcommand]",
 		"CHANNEL": 0,
-		"USAGE": f"""Using `tc/b* run [code]` allows you to run `[code]` as B* source code. Using `tc/b* info 
-		(page)` displays a paged list of all B* programs by use count, while using `tc/b* info (program)` 
-		displays information and the source code of a specific program. `tc/b* create [program] [code]` can be used 
-		to save code into a specific program name, which can be edited by its creator with `tc/b* edit [program] 
-		[newcode]` or deleted with `tc/b* delete [program]`. Finally, `tc/b* [program] (args)` allows you to run any 
+		"USAGE": f"""Using `tc/bstar run [code]` allows you to run `[code]` as B* source code. Using `tc/bstar info 
+		(page)` displays a paged list of all B* programs by use count, while using `tc/bstar info (program)` 
+		displays information and the source code of a specific program. `tc/bstar create [program] [code]` can be used 
+		to save code into a specific program name, which can be edited by its creator with `tc/bstar edit [program] 
+		[newcode]` or deleted with `tc/bstar delete [program]`. Finally, `tc/bstar [program] (args)` allows you to run any 
 		saved program.^n^n
 		The full documentation for all B* program functionality is displayed in this document:^n
 		https://github.com/b-Development-Team/b-star/wiki
@@ -33,7 +33,7 @@ def HELP(PREFIX):
 
 
 PERMS = 1  # Member
-ALIASES = ["B*", "BSTAR"]
+ALIASES = ["B*"]
 REQ = ["LOGIN"]
 
 setupFunctions()
@@ -57,7 +57,7 @@ async def accept_file_or_message(message):
 
 
 async def MAIN(message, args, level, perms, SERVER, LOGIN):
-	bs_version = 0
+	bs_version = 1  # 0 = b++, 1 = b* (1.0)
 
 	if level == 1:
 		await message.channel.send("Include a subcommand!")
