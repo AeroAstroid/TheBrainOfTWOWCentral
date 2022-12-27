@@ -26,7 +26,7 @@ def HELP(PREFIX):
 		[newcode]` or deleted with `tc/b* delete [program]`. Finally, `tc/b* [program] (args)` allows you to run any 
 		saved program.^n^n
 		The full documentation for all B* program functionality is displayed in this document:^n
-		https://www.google.com/
+		https://github.com/b-Development-Team/b-star/wiki
 		""".replace("\n", "").replace("\t", "").replace("^n", "\n"),
 		"CATEGORY": "Fun"
 	}
@@ -57,6 +57,8 @@ async def accept_file_or_message(message):
 
 
 async def MAIN(message, args, level, perms, SERVER, LOGIN):
+	bs_version = 0
+
 	if level == 1:
 		await message.channel.send("Include a subcommand!")
 		return
@@ -126,7 +128,7 @@ async def MAIN(message, args, level, perms, SERVER, LOGIN):
 			return
 
 		# db.add_entry("bsprograms", [0, int(time.time()), 0, tag_name, program, message.author.id])
-		db.add_entry("bsprograms", [tag_name, program, message.author.id, 0, int(time.time()), 0])
+		db.add_entry("bsprograms", [tag_name, program, message.author.id, 0, int(time.time()), 0, 0, bs_version])
 		await message.channel.send(f"Successfully created program `{tag_name}`!")
 		return
 
@@ -146,7 +148,7 @@ async def MAIN(message, args, level, perms, SERVER, LOGIN):
 
 		elif is_whole(args[2]):
 			if (int(args[2]) - 1) * 10 >= len(tag_list):  # Detect if the page number is too big
-				await message.channel.send(f"There is no page {args[2]} on the New B++ program list!")
+				await message.channel.send(f"There is no page {args[2]} on the B* program list!")
 				return
 
 			else:  # This means the user specified a valid page number
