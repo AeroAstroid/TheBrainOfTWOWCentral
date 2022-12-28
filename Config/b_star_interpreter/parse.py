@@ -19,7 +19,7 @@ start: b_star*
 
 string.-2 : ESCAPED_STRING
 block: ALPHANUMERIC
-float.-0: DECIMAL
+float.-0: DECIMAL2
 integer.-1: SIGNED_INT
 array: "{" [arg ("," arg)*] "}"
 function: ("[") (block | function) (arg | _WS)* ("]")
@@ -39,6 +39,7 @@ WHITESPACEEXCEPTNEWLINE: /[^\S\r\n]/
 NEWLINE: /[\r\n]/
 ESCAPED_STRING : "\"" ALLEXCEPTQUOTES* "\""
 _WS: WS
+DECIMAL2: ["+"|"-"]DECIMAL
 
 // common lib stuff
 // imports from common library my beloved
