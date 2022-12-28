@@ -23,15 +23,13 @@ def global_func(use, name, value):
                 globals.codebase.global_limit += 1
 
         elif use == "VAR":
-            possible_global = getGlobal(db, name)
-            globals.codebase.global_limit += 1
+            if globalExists(db, name):
+                possible_global = getGlobal(db, name)
+                globals.codebase.global_limit += 1
 
-            if possible_global is None:
-                raise ValueError(f"Global '{name}' does not exist!")
+                return to_type(possible_global[0], int(possible_global[1]))
             else:
-                # TODO: Create an easier & faster way to find the type of a string
-                val = parseCode("[BLOCK " + possible_global + "]").children[0].children[1]
-                return Expression(val, globals.codebase)
+                raise ValueError(f"Global '{name}' does not exist!")
     else:
         raise ValueError(
             "You have reached the __temporary__ global read/write limit of 50! Please make sure you're only using GLOBAL blocks when absolutely necessary.")
@@ -43,6 +41,19 @@ def var_type(v):
         return [int, float, str, list].index(type(v))
     except IndexError:
         raise TypeError(f"Value {safe_cut(v)} could not be attributed to any valid data type")
+
+
+def to_type(value, type):
+    if type == 0:
+        return int(value)
+    elif type == 1:
+        return float(value)
+    elif type == 2:
+        return str(value)
+    elif type == 3:
+        return list(value)
+    else:
+        raise ValueError("Global has invalid type!")
 
 
 def globalExists(db, name):
@@ -65,8 +76,8 @@ def editGlobal(db, name, value):
 
 
 def getGlobal(db, name):
-    var = db.get_entries("bsvariables", columns=["name", "value"], conditions={"name": name})[0]
-    return var[1]
+    var = db.get_entries("bsvariables", columns=["name", "value", "type"], conditions={"name": name})[0]
+    return (var[1], var[2])
 
 
 def check_filesize(value):
