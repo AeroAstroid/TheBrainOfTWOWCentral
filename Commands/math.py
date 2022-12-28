@@ -25,7 +25,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			{"pi": math.pi, "e": math.e, "phi": (1 + math.sqrt(5))/2}
 		)
 		if output % 1 == 0: output = int(output)
-		else: output = math.round(output,15)
+		else: output = round(output,15)
 			
 		await message.channel.send(embed=discord.Embed(title=f"Expression result:", description=str(output[:100])))
 	except:
