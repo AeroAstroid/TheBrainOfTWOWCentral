@@ -4,8 +4,8 @@ import time
 
 import discord
 
-from Commands.b_star.interpreter.function_deco import setupFunctions
-from Commands.b_star.interpreter.run import runCode
+from Config.b_star_interpreter.function_deco import setupFunctions
+from Config.b_star_interpreter.run import runCode
 
 from Config._functions import is_whole
 from Config._db import Database
