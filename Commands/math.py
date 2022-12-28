@@ -28,5 +28,5 @@ async def MAIN(message, args, level, perms, SERVER):
 		await message.channel.send(embed=discord.Embed(title=f"Expression result:", description=str(output)[:15]))
 	except:
 		await message.channel.send("Something went wrong. Please try again.")
-    return
+	return
   
