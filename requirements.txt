@@ -4,3 +4,7 @@ Pillow==9.3.0
 psycopg2==2.8.6
 requests==2.23.0
 aiohttp==3.7.4
+
+# b-star
+func_timeout==4.3.5
+lark==1.1.2
