@@ -22,7 +22,7 @@ ALIASES = ["OLDTAG", "OLDB++", "TAGOLD"]
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
-	await message.channel.send("**__This version of B++ is now disabled!__** Use `tc/b++` or `tc/bstar` instead.__**")
+	await message.channel.send("**__This version of B++ is now disabled!__** Use `tc/b++` or `tc/bstar` instead.")
 	return
 
 	if level == 1:
