@@ -25,7 +25,7 @@ array: "{" [arg ("," arg)*] "}"
 function: ("[") (block | function) (arg | _WS)* ("]")
 COMMENT: ("[# ") ALLBUTBRACKETS ("]")
 unescaped_string.-3: ALPHANUMERIC
-ALLBUTBRACKETS: ALLEXCEPTBRACKETS+
+ALLBUTBRACKETS: (ESCAPED_CHAR|ALLEXCEPTBRACKETS+)
 DIGIT: "0".."9"
 LCASE_LETTER: "a".."z"
 UCASE_LETTER: "A".."Z"
@@ -33,11 +33,12 @@ LETTER: UCASE_LETTER | LCASE_LETTER
 ALPHANUMERIC: (ALLNONCONFLICTING)+
 ALLNONCONFLICTINGWITHNEWLINES: /([^\[\]\{\}\"\s\,\-]|[\n\-])/
 ALLNONCONFLICTING: /([^\[\]\{\}\"\s\,\-]|[\-])/
-ALLEXCEPTBRACKETS: /[^\[\]]/
+ALLEXCEPTBRACKETS: /[^\[\]\\]/
 ALLEXCEPTQUOTES: /[^\"]/
 WHITESPACEEXCEPTNEWLINE: /[^\S\r\n]/
 NEWLINE: /[\r\n]/
-ESCAPED_STRING : "\"" ALLEXCEPTQUOTES* "\""
+ESCAPED_STRING: "\"" ALLEXCEPTQUOTES* "\""
+ESCAPED_CHAR: /\\./
 _WS: WS
 DECIMAL2: ["+"|"-"]DECIMAL
 
@@ -49,7 +50,8 @@ DECIMAL2: ["+"|"-"]DECIMAL
 %import common.WS
 %ignore WHITESPACEEXCEPTNEWLINE
 %ignore C_COMMENT
-%ignore COMMENT"""
+%ignore COMMENT
+"""
 parser = Lark(bstargrammar)
 
 
