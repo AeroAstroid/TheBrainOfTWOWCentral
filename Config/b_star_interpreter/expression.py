@@ -56,7 +56,7 @@ def Expression(block: Union[Tree, Token], codebase):
     # print(block, block.pretty())
     match block.data:
         case "function":
-            alias = block.children[0].children[0]
+            alias = Expression(block.children[0], globals.codebase)
 
             # this gets the argument values from the block
             # arguments = list(map(lambda x: Expression(x, codebase), block.children[1].children))
