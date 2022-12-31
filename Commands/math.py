@@ -27,8 +27,9 @@ async def MAIN(message, args, level, perms, SERVER):
 		if output % 1 == 0: output = int(output)
 		else: output = round(output,15)
 			
-		await message.channel.send(embed=discord.Embed(title=f"Expression result:", description=str(output[:100])))
-	except:
+		await message.channel.send(embed=discord.Embed(title=f"Expression result:", description=str(output)[:100]))
+	except Exception as e:
 		await message.channel.send("Something went wrong. Please try again.")
+		raise e
 	return
   
