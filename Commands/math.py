@@ -1,4 +1,4 @@
-import discord, cexprtk, math
+import discord, cexprtk, math, random
 
 def HELP(PREFIX):
 	return {
@@ -21,9 +21,9 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 	
 	try:
-		output = cexprtk.evaluate_expression(" ".join(args[1:]),
-			{"pi": math.pi, "e": math.e, "phi": (1 + math.sqrt(5))/2}
-		)
+		st = cexprtk.Symbol_Table(variables={"e": math.e, "phi": (1 + math.sqrt(5))/2},add_constants=True, functions={"rand":random.uniform})
+		e = cexprtk.Expression(" ".join(args[1:]), st)
+		output = e()
 		if output % 1 == 0: output = int(output)
 		else: output = round(output,15)
 			
