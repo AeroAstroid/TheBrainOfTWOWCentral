@@ -24,7 +24,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 	
 	try:
-		expression_string = " ".join(args[1:])
+		expression_string = " ".join(args[1:]).strip()
 		while expression_string.startswith("`") and expression_string.endswith("`"):
 			expression_string = expression_string[1:-1]
 			
