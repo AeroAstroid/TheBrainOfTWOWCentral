@@ -27,9 +27,9 @@ async def MAIN(message, args, level, perms, SERVER):
 		if output % 1 == 0: output = int(output)
 		else: output = round(output,15)
 		
-		if math.isnan(output) and len(e.results()) != 0: output = str(e.results()
+		if math.isnan(output) and len(e.results()) != 0: output = str(e.results())[1:-1]
 		
-		await message.channel.send(embed=discord.Embed(title=f"Expression result:", description=str(output)[:1000]))
+		await message.channel.send(embed=discord.Embed(title=f"Expression result:", description=str(output)[:2000]))
 	except Exception as e:
 		await message.channel.send("There was an error in parsing your statement.")
 		raise e
