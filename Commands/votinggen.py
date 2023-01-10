@@ -72,14 +72,14 @@ async def boolean_input (user, channel, message: str):
 		try:
 
 			if msg.content.lower() == "cancel":
-				return
+				break
 
 			if msg.content.lower() in ["y", "yes", "true"]:
 				input = True
-				return
+				break
 			elif msg.content.lower() in ["n", "no", "false"]:
 				input = False
-				return
+				break
 			else:
 				raise ValueError
 
