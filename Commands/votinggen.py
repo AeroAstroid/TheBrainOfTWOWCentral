@@ -161,7 +161,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	# Ask for amount of screens
 	joined_section_titles = ", ".join(normal_section_titles)
 	screen_size_target = await integer_input(message.author, message.channel, f"For sections **{joined_section_titles}, what screen size are you aiming for?**", 1, response_amount)
-	if screen_size == None:
+	if screen_size_target == None:
 		await message.channel.send("Voting generation cancelled.")
 		return
 
@@ -183,7 +183,6 @@ async def MAIN(message, args, level, perms, SERVER):
 		responses_shuffled = copy.deepcopy(list(responses_dict.keys()))
 		random.shuffle(responses_shuffled)
 	
-
 		section_screen_amounts = []
 		if megascreen == True and sec_n + 1 == sections:
 			section_screen_amounts.append(section_amount)
@@ -192,7 +191,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		# Go through every screen
 		section_dict = {}
-		for screen_size in screen_division:
+		for screen_size in section_screen_amounts:
 			# Get screen name
 			screen_name_lowercase = random.choice(section_screen_names) # Randomize screen name
 			section_screen_names.remove(screen_name_lowercase) # Remove screen name from list
