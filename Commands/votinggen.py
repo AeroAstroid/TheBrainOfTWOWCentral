@@ -184,7 +184,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		random.shuffle(responses_shuffled)
 	
 		section_screen_amounts = []
-		if megascreen_generation == True and sec_n + 1 == sections:
+		if megascreen_generation == True and sec_n + 1 == section_amount:
 			section_screen_amounts.append(section_amount)
 		else:
 			section_screen_amounts = screen_division
