@@ -23,7 +23,8 @@ def HELP(PREFIX):
 	}
 
 PERMS = 2
-ALIASES: ["GENVOTING", "GENERATEVOTING"]
+ALIASES = ["GENVOTING", "GENERATEVOTING"]
+REQ = []
 
 RESPONSES_SAVE_PATH = "Commands/votinggenresponses.tsv"
 RESPONSE_IDS_SAVE_PATH = "Commands/vottinggenresponseids.tsv"
