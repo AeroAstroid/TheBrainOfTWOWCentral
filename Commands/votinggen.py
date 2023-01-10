@@ -166,7 +166,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 
 	# Calculate amount of responses for each screen
-	screen_amount = round(response_amount / amount)
+	screen_amount = round(response_amount / screen_size_target)
 
 	screen_division = [0] * screen_amount
 	screen_increment = 0
