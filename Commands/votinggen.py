@@ -158,7 +158,8 @@ async def MAIN(message, args, level, perms, SERVER):
 		megascreen_section_title = normal_section_titles.pop(-1)
 
 	# Ask for amount of screens
-	screen_size_target = integer_input(message.author, message.channel, f"For sections **{", ".join(normal_section_titles)}, what screen size are you aiming for?**", 1, response_amount)
+	joined_section_titles = ", ".join(normal_section_titles)
+	screen_size_target = integer_input(message.author, message.channel, f"For sections **{joined_section_titles}, what screen size are you aiming for?**", 1, response_amount)
 	if screen_size == None:
 		await message.channel.send("Voting generation cancelled.")
 		return
