@@ -139,7 +139,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 	# Let user input the amount of sections they want
 	response_amount = len(responses_dict)
-	section_amount = integer_input(message.author, message.channel, "**How many sections should be created?** (Must be between 1 and 6)", 1, 6)
+	section_amount = await integer_input(message.author, message.channel, "**How many sections should be created?** (Must be between 1 and 6)", 1, 6)
 	if section_amount == None:
 		await message.channel.send("Voting generation cancelled.")
 		return
@@ -147,7 +147,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	section_titles = [ALPHABET[i] for i in range(section_amount)]
 
 	# Let user decide whether they want to generate a megascreen or not
-	megascreen_generation = boolean_input(message.author, message.channel, "**Should a megascreen be generated?** (Y/N)")
+	megascreen_generation = await boolean_input(message.author, message.channel, "**Should a megascreen be generated?** (Y/N)")
 	if megascreen_generation == None:
 		await message.channel.send("Voting generation cancelled.")
 		return
@@ -160,7 +160,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 	# Ask for amount of screens
 	joined_section_titles = ", ".join(normal_section_titles)
-	screen_size_target = integer_input(message.author, message.channel, f"For sections **{joined_section_titles}, what screen size are you aiming for?**", 1, response_amount)
+	screen_size_target = await integer_input(message.author, message.channel, f"For sections **{joined_section_titles}, what screen size are you aiming for?**", 1, response_amount)
 	if screen_size == None:
 		await message.channel.send("Voting generation cancelled.")
 		return
