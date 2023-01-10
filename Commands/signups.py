@@ -43,6 +43,25 @@ async def MAIN(message, args, level, perms, SERVER):
 		await message.channel.send("Updated list!")
 		return
 	
+	if args[1].lower() == "clearrecent":
+		db = Database()
+		id_list = db.get_entries("signupmessages")[0][0].split(" ")
+		
+		channel_id = int(id_list[0])
+		recent_list_id = int(id_list[-1])
+		
+		ch = discord.utils.get(SERVER["MAIN"].channels, id=channel_id)
+		r_list_msg = None
+		
+		async for msg in ch.history(limit=100):
+			if msg.id == recent_list_id:
+				r_list_msg = msg
+		
+		if r_list_msg is not None:
+			await r_list_msg.edit(content="__**Recent list changes:**__")
+			await message.channel.send("Updated list!")
+		return
+	
 	if args[1].lower() == "edit":
 		msg = message.content
 

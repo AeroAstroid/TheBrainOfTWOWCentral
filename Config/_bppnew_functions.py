@@ -16,7 +16,7 @@ def express_array(l):
 	return f'[ARRAY {str_form}]'
 
 def safe_cut(s):
-	return str(s)[:15] + ("..." if len(s) > 15 else "")
+	return str(s)[:15] + ("..." if len(str(s)) > 15 else "")
 
 def COMMENT(*a): return ""
 
