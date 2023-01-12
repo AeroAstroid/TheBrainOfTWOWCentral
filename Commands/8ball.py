@@ -94,3 +94,4 @@ def parse_brackets(string):
 	string = string.replace("[letterCapital]",
 		random.choice("QWERTYUIOPASDFGHJKLZXCVBNM")	       
 	)
+	return string
