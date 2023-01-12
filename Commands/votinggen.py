@@ -185,7 +185,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	
 		section_screen_amounts = []
 		if megascreen_generation == True and sec_n + 1 == section_amount:
-			section_screen_amounts.append(section_amount)
+			section_screen_amounts.append(response_amount)
 		else:
 			section_screen_amounts = screen_division
 
@@ -265,9 +265,74 @@ async def MAIN(message, args, level, perms, SERVER):
 	]
 
 	await message.channel.send(content = "**Generated voting!**", files = file_list)
+
+	# Ask if user wants to create channels and sections
+	section_amount = await boolean_input(message.author, message.channel, "**Do you wish for the bot to send the screens?** (Y/N)")
+	if section_amount == None or section_amount == False:
+		await message.channel.send("Voting generation is complete.")
+		return
 	
+	# Ask which text channel category to generate them
+	category_found = None
+	while category_found == None:
+		await message.channel.send("**What category should the categories be created in? (Provide Channel ID)**")
+		msg = await BRAIN.wait_for('message', check=lambda m: (m.author == message.author and m.channel == message.channel))
+		try:
+			if msg.content.lower() == "cancel":
+				break
 
+			id = int(msg.content)
+			category = discord.utils.get(message.author.guild.categories, id=id)
+			if guild == None:
+				raise ValueError
+			category_found = category
 
+		except ValueError:
+			message.channel.send(f"You must provide a Category Channel ID!")
+			
+	if category_found == None:
+		await message.channel.send("Voting generation cancelled.")
+		return
+
+	# Create text channels in the category
+	for section in sections_list: # Go through each section
+		
+		section_name = f"SECTION {list(section.keys())[0][0]}" # Title of section
+		# Create channel in category
+		overwrites = {
+			message.guild.default_role: discord.PermissionOverwrite(read_messages=False),
+		}
+		category_channel = category_found.create_text_channel(section_name, overwrites = overwrites)
+
+		screens_strings = []
+		for screen_name in list(section.keys()): # Go through each screen
+
+			screen_string = ""
+
+			screen_string += f"__**{screen_name}**__\n" # Write the screen name at the top 
+			screen_dict = section[screen_name]
+
+			for response_letter in list(screen_dict.keys()): # Go through each response
+				response_id = screen_dict[response_letter]
+				# Find the response that correlates to the response id
+				response = responses_dict[response_id][1]
+				# Find the validity of the response and the emoji correlating to it 
+				if responses_dict[response_id][2].upper() == "TRUE":
+					valid_emoji = VALID_RESPONSE
+				elif responses_dict[response_id][2].upper() == "FALSE":
+					valid_emoji = NOT_VALID_RESPONSE
+				else:
+					valid_emoji = ""
+				screen_string += f"**`{response_letter}`**`{valid_emoji}` {response}\n"
+			# Add a line break
+			screen_string += "\n"
+
+		# Send messages
+		messages_to_send = [""]
+
+		for screen_string in screen_strings:
+			pass
+		
 
 	
 
