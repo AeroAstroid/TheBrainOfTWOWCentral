@@ -1,5 +1,6 @@
 import discord, time, asyncio, os, sys, traceback, importlib, copy
 from datetime import datetime, timedelta
+from func_timeout import func_timeout, FunctionTimedOut
 
 from Config._functions import *
 
@@ -297,8 +298,12 @@ async def on_ready():
 			requisites = [PARAMS[name] for name in PARAMS["COMMANDS"][command]["REQ"]]
 
 			# Run the command's main function, also specified in the command's script
-			state = await PARAMS["COMMANDS"][command]["MAIN"](message, args, level, perms, msg_guild, *requisites)
-
+			try:
+				state = await func_timeout(60, PARAMS["COMMANDS"][command]["MAIN"], args=(message, args, level, perms, msg_guild, *requisites))
+			except FunctionTimedOut as e:
+				await message.channel.send(embed=discord.Embed(color=0xFF0000, title="Command timed out!", description=f'Command `{command}` took more than 60 seconds to run.'.replace("<@", "<\\@")))
+				pass
+				
 			if state is not None:
 				if state[0] == 0: # The restart command returns a [0] flag, signaling that the bot should be restarted
 					extra_args = []
@@ -347,9 +352,9 @@ async def on_ready():
 			
 			return
 
-		except Exception: # Detect errors when commands are used
+		except Exception as e: # Detect errors when commands are used
 			traceback.print_exc() # Print the error
-
+			await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@"))) # let's tell the user, too	
 			try:
 				await MAIN_SERVER["LOGS"].send(
 					f"**Error occured in {msg_guild['MAIN'].name}!**```python\n{traceback.format_exc()}```")
