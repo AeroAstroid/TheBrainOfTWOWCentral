@@ -29,7 +29,7 @@ def HELP(PREFIX):
 	}
 
 PERMS = 1 # Member
-ALIASES = ["TAG", "B++NEW", "TAGNEW", "NEWB++", "NEWTAG"]
+ALIASES = ["TAG", "B++NEW", "TAGNEW", "NEWB++", "NEWTAG", "BPP", "B++"]
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
