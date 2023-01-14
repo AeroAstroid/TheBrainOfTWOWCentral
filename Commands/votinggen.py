@@ -355,16 +355,13 @@ async def MAIN(message, args, level, perms, SERVER):
 				if len(messages_to_send[-1]) + 2 + len(screen_string) > 1950:
 					messages_to_send.append("")
 				else:
-					if len(messages_to_send) == 1:
-						messages_to_send[-1] += "\n\n"
-					else:
-						messages_to_send[-1] += "\n"
+					messages_to_send[-1] += "\n"
 				messages_to_send[-1] += screen_string
 
 		for message_string in messages_to_send:
 			await section_channel.send(message_string)
 
-		await message.channel.send(f"Successfully generated **{section_name}** in channel {section_channel}.")
+		await message.channel.send(f"Successfully generated **{section_name}** in channel {section_channel.mention}")
 
 	await message.channel.send(f"Section text channel generation complete.")
 		
