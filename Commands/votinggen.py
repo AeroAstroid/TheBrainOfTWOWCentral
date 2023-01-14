@@ -355,7 +355,10 @@ async def MAIN(message, args, level, perms, SERVER):
 				if len(messages_to_send[-1]) + 2 + len(screen_string) > 1950:
 					messages_to_send.append("")
 				else:
-					messages_to_send[-1] += "\n"
+					if len(messages_to_send) == 1:
+						messages_to_send[-1] += "\n"
+					else:
+						messages_to_send[-1] += "\n\n"
 				messages_to_send[-1] += screen_string
 
 		for message_string in messages_to_send:
