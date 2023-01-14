@@ -160,7 +160,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 	# Ask for amount of screens
 	joined_section_titles = ", ".join(normal_section_titles)
-	screen_size_target = await integer_input(message.author, message.channel, f"For sections **{joined_section_titles}, what screen size are you aiming for?**", 1, response_amount)
+	screen_size_target = await integer_input(message.author, message.channel, f"There are **{response_amount}** responses.\nFor sections **{joined_section_titles}, what screen size are you aiming for?**", 1, response_amount)
 	if screen_size_target == None:
 		await message.channel.send("Voting generation cancelled.")
 		return
@@ -303,7 +303,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		overwrites = {
 			message.guild.default_role: discord.PermissionOverwrite(read_messages=False),
 		}
-		section_channel = category_found.create_text_channel(section_name, overwrites = overwrites)
+		section_channel = await category_found.create_text_channel(section_name, overwrites = overwrites)
 
 		screens_lines = []
 		for screen_name in list(section.keys()): # Go through each screen
