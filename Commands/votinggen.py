@@ -334,7 +334,10 @@ async def MAIN(message, args, level, perms, SERVER):
 		# Send messages
 		messages_to_send = [f"```{section_name}```"]
 
+		screen_number = 0
 		for screen_line_strings in screens_lines:
+
+			screen_number += 1
 			screen_string = "\n".join(screen_line_strings)
 
 			# Check if the screen string is larger than 1950 characters
@@ -348,14 +351,14 @@ async def MAIN(message, args, level, perms, SERVER):
 					else:
 						screen_messages[-1] += "\n"
 					screen_messages[-1] += line
-				for message in screen_messages:
-					messages_to_send.append(message)
+				for m in screen_messages:
+					messages_to_send.append(m)
 			else:
 				# Check if the current screen can fit in the next message
 				if len(messages_to_send[-1]) + 2 + len(screen_string) > 1950:
 					messages_to_send.append("")
 				else:
-					if len(messages_to_send) == 1:
+					if screen_number == 1:
 						messages_to_send[-1] += "\n"
 					else:
 						messages_to_send[-1] += "\n\n"
