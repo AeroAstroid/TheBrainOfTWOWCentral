@@ -8,8 +8,10 @@ from discord.ui import Button, View, Select
 from Config._functions import grammar_list, word_count, formatting_fix
 from Config._const import ALPHABET, BRAIN, ALPHANUM_UNDERSCORE
 
-EVENT_ANNOUNCE_CHANNEL = "event-stage"
-EVENT_ADMIN_CHANNEL = "staff•commands"
+EVENT_ANNOUNCE_CHANNEL = "event-time"
+TESTING_ANNOUNCE_CHANNEL = "staff-event-time"
+ADMIN_CHANNEL = "staff•commands"
+
 EVENT_PREFIX = "twow/"
 
 DEFAULT_INFO = { # Define all the game information - This dictionary will be copied whenever there is a reset
@@ -26,6 +28,7 @@ DEFAULT_INFO = { # Define all the game information - This dictionary will be cop
 }
 
 DEFAULT_PARAM = { # Define all the parameters necessary that could be changed
+	"TESTING": False,
 	"WORD_LIMIT": 10, # Word limit - if set to 0, there is none
 	"CHARACTER_LIMIT": 0, # Character limit - if set to 0, there is none
 	"TECHNICALS": [], # Functions used for technicals
@@ -737,6 +740,8 @@ class EVENT:
 		admin_embed = discord.Embed(title="Responding - Modify Parameters", description="Select a parameter to change in the dropdown menu, or select `Confirm` to confirm the parameters.", color=0x31d8b1)
 		
 		# Add fields listing the word/character limits
+		admin_embed.add_field(name="🧪 Testing event", value=string(self.param["TESTING"]), inline=False)
+
 		limits_description = ""
 		if self.param["WORD_LIMIT"] > 0:
 			limits_description += "Word limit: **{}**".format(self.param["WORD_LIMIT"])
@@ -794,6 +799,7 @@ class EVENT:
 		select_view = View(timeout = None)
 
 		options_list = [
+			discord.SelectOption(label = "Toggle testing", value = "toggletesting", emoji = "🧪"),
 			discord.SelectOption(label = "Modify word limit", value = "wordlimit", emoji = "❗"),
 			discord.SelectOption(label = "Modify character limit", value = "characterlimit", emoji = "❗"),
 			discord.SelectOption(label = "Modify responding deadline", value = "deadline", emoji = "⌛"),
@@ -823,7 +829,19 @@ class EVENT:
 				await interaction.response.edit_message(embed = interaction.message.embeds[0], view = None)
 
 				# Make an action depending on the option selected
-				if option_selected == "wordlimit":
+				if option_selected == "toggletesting":
+					# TOGGLE TESTING
+					if self.param["TESTING"] == True:
+						self.param["TESTING"] = False
+						self.param["ANNOUNCE_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name=EVENT_ANNOUNCE_CHANNEL)
+						await self.param["ADMIN_CHANNEL"].send("Testing has been set to **False**")
+					else:
+						self.param["TESTING"] = True
+						self.param["ANNOUNCE_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name=TESTING_ANNOUNCE_CHANNEL)
+						await self.param["ADMIN_CHANNEL"].send("Testing has been set to **True**")
+					await self.admin_modify()
+
+				elif option_selected == "wordlimit":
 					# WORD LIMIT - Get user to select word limit
 					await self.param["ADMIN_CHANNEL"].send("Set a word limit by typing an integer amount of words that players are limited to or say `cancel` to go back.")
 					admin_input = await get_positive_integer(interaction.user, self.param["ADMIN_CHANNEL"])
