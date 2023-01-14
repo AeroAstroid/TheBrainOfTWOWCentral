@@ -833,11 +833,11 @@ class EVENT:
 					# TOGGLE TESTING
 					if self.param["TESTING"] == True:
 						self.param["TESTING"] = False
-						self.param["ANNOUNCE_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name=EVENT_ANNOUNCE_CHANNEL)
+						self.param["ANNOUNCE_CHANNEL"] = discord.utils.get(self.SERVER["MAIN"].channels, name=EVENT_ANNOUNCE_CHANNEL)
 						await self.param["ADMIN_CHANNEL"].send("Testing has been set to **False**")
 					else:
 						self.param["TESTING"] = True
-						self.param["ANNOUNCE_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name=TESTING_ANNOUNCE_CHANNEL)
+						self.param["ANNOUNCE_CHANNEL"] = discord.utils.get(self.SERVER["MAIN"].channels, name=TESTING_ANNOUNCE_CHANNEL)
 						await self.param["ADMIN_CHANNEL"].send("Testing has been set to **True**")
 					await self.admin_modify()
 
