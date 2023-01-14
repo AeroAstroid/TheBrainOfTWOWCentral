@@ -22,7 +22,7 @@ DEFAULT_INFO = { # Define all the game information - This dictionary will be cop
 	"DEADLINE_PASSED": False, # Whether the deadline has passed or not
 	"RESPONSES_RECEIVED": 0, # The amount of responses that have been sent by users
 	"TOTAL_RESPONSES": 0, # The amount of total responses that the bot expects to get by the end of the responding period
-	"CSV_TITLE_ROWS": ["ID", "Username", "Response", "Timestamp", "Relative Timestamp"] # The title rows for the information CSV file to be produced
+	"TSV_TITLE_ROWS": ["ID", "Username", "Response", "Timestamp", "Relative Timestamp"] # The title rows for the information TSV file to be produced
 }
 
 DEFAULT_PARAM = { # Define all the parameters necessary that could be changed
@@ -165,7 +165,7 @@ class EVENT:
 			try:
 				technical_object = IMPORTED_TECHNICALS[technical](self)
 				self.info["TECHNICALS"].append(technical_object)
-				self.info["CSV_TITLE_ROWS"] += technical_object.extra_csv_title_rows
+				self.info["TSV_TITLE_ROWS"] += technical_object.extra_tsv_title_rows
 				if hasattr(technical_object, "responding_start"):
 					technical_object.responding_start()
 				
@@ -224,10 +224,10 @@ class EVENT:
 		#await self.param["ANNOUNCE_CHANNEL"].send("__**Responding has closed!**__\nWe received **{}/{}** responses.\nThe DNPers were (sent in no responses): {}".format(responses_recorded, total_responses, dnp_list_mention_str))
 		await self.param["ANNOUNCE_CHANNEL"].send("__**Responding has closed!**__")
 
-		# CREATING CSV FILES
+		# CREATING TSV FILES
 		################################################
-		# Ask user for file names for CSV file
-		await self.param["ADMIN_CHANNEL"].send("Set the file name of the CSV files by typing in the chat. It must be only letters, numbers or an underscore. (Don't include the filetype)")
+		# Ask user for file names for TSV file
+		await self.param["ADMIN_CHANNEL"].send("Set the file name of the TSV files by typing in the chat. It must be only letters, numbers or an underscore. (Don't include the filetype)")
 		file_name = None
 		while True:
 
@@ -241,17 +241,17 @@ class EVENT:
 				# Tell admin that there is invalid input
 				await self.param["ADMIN_CHANNEL"].send("Invalid input. Please try again.")
 
-		# Creating the Response Information CSV file
-		resp_info_file_name = "Events/" + file_name + "_INFO.csv"
-		# Write to CSV
+		# Creating the Response Information TSV file
+		resp_info_file_name = "Events/" + file_name + "_INFO.tsv"
+		# Write to TSV
 		with open(resp_info_file_name, 'w', encoding="UTF-8", newline='') as f:
 
 			f.write('\ufeff')
 
-			writer = csv.writer(f)
+			writer = csv.writer(f, delimiter = "\t")
 
 			# Write first row of titles
-			title_row = self.info["CSV_TITLE_ROWS"]
+			title_row = self.info["TSV_TITLE_ROWS"]
 
 			writer.writerow(title_row)
 
@@ -263,28 +263,28 @@ class EVENT:
 
 					if response == None: continue
 
-					# Add each response to the CSV
-					resp_csv_list = []
-					resp_csv_list.append(str(user.id)) # User's ID
-					resp_csv_list.append(user.name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
-					resp_csv_list.append(response[0]) # The user's actual response
-					resp_csv_list.append(str(round(response[2], 2))) # The timestamp of the user's response - when it was sent
-					resp_csv_list.append(str(round(response[2] - self.info["RESPONDING_START_TIME"], 2))) # The relative timestamp of the user's response - how long ago they sent a response
+					# Add each response to the TSV
+					resp_tsv_list = []
+					resp_tsv_list.append(str(user.id)) # User's ID
+					resp_tsv_list.append(user.name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
+					resp_tsv_list.append(response[0]) # The user's actual response
+					resp_tsv_list.append(str(round(response[2], 2))) # The timestamp of the user's response - when it was sent
+					resp_tsv_list.append(str(round(response[2] - self.info["RESPONDING_START_TIME"], 2))) # The relative timestamp of the user's response - how long ago they sent a response
 					# If any special information was passed onto the response
 					if len(response) > 3:
-						resp_csv_list += response[3:] # Add any special information and write it in the CSV
+						resp_tsv_list += response[3:] # Add any special information and write it in the TSV
 
-					# Write to CSV
-					writer.writerow(resp_csv_list)
+					# Write to TSV
+					writer.writerow(resp_tsv_list)
 
-		# Creating the Voting Generation CSV file
-		voting_gen_file_name = "Events/" + file_name + "_VOTING.csv"
-		# Write to CSV
+		# Creating the Voting Generation TSV file
+		voting_gen_file_name = "Events/" + file_name + "_VOTING.tsv"
+		# Write to TSV
 		with open(voting_gen_file_name, 'w', encoding="UTF-8", newline='') as f: 
 
 			f.write('\ufeff')
 
-			writer = csv.writer(f)
+			writer = csv.writer(f, delimiter = "\t")
 
 			# Write first row of titles
 			writer.writerow(["RESPONSE ID", "NAME", "RESPONSE", "VALIDITY"])
@@ -301,19 +301,19 @@ class EVENT:
 
 					response_id += 1
 
-					# Add each response to the CSV
-					resp_csv_list = []
-					resp_csv_list.append(str(response_id)) # The number of the response
-					resp_csv_list.append(user.name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
-					resp_csv_list.append(response[0]) # The user's actual response
-					resp_csv_list.append(str(response[1])) # Whether or not the user's response was valid or not (in limits), either True or False
-					# Write to CSV
-					writer.writerow(resp_csv_list)
+					# Add each response to the TSV
+					resp_tsv_list = []
+					resp_tsv_list.append(str(response_id)) # The number of the response
+					resp_tsv_list.append(user.name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
+					resp_tsv_list.append(response[0]) # The user's actual response
+					resp_tsv_list.append(str(response[1])) # Whether or not the user's response was valid or not (in limits), either True or False
+					# Write to TSV
+					writer.writerow(resp_tsv_list)
 
-		# Send CSV's to user and end event
+		# Send TSV's to user and end event
 		resp_info_file = discord.File(resp_info_file_name)
 		voting_gen_file = discord.File(voting_gen_file_name)
-		await self.param["ADMIN_CHANNEL"].send(content = "Here are the CSV files from this Responding event.", files = [resp_info_file, voting_gen_file])
+		await self.param["ADMIN_CHANNEL"].send(content = "Here are the TSV files from this Responding event.", files = [resp_info_file, voting_gen_file])
 
 	# Function that runs every two seconds
 	async def on_two_second(self):
