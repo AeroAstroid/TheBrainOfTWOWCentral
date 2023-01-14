@@ -283,7 +283,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 			id = int(msg.content)
 			category = discord.utils.get(message.author.guild.categories, id=id)
-			if guild == None:
+			if category == None:
 				raise ValueError
 			category_found = category
 
