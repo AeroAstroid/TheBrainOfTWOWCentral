@@ -740,7 +740,7 @@ class EVENT:
 		admin_embed = discord.Embed(title="Responding - Modify Parameters", description="Select a parameter to change in the dropdown menu, or select `Confirm` to confirm the parameters.", color=0x31d8b1)
 		
 		# Add fields listing the word/character limits
-		admin_embed.add_field(name="🧪 Testing event", value=string(self.param["TESTING"]), inline=False)
+		admin_embed.add_field(name="🧪 Testing event", value=str(self.param["TESTING"]), inline=False)
 
 		limits_description = ""
 		if self.param["WORD_LIMIT"] > 0:
