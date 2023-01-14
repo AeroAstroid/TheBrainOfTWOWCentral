@@ -295,13 +295,16 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
 
 	await message.channel.send("Creating section channels and sending voting messages...")
+
 	# Create text channels in the category
 	for section in sections_list: # Go through each section
 		
 		section_name = f"SECTION {list(section.keys())[0][0]}" # Title of section
 		# Create channel in category
+
 		overwrites = {
-			message.guild.default_role: discord.PermissionOverwrite(read_messages=False),
+			message.guild.default_role: discord.PermissionOverwrite(read_messages=False)
+			BRAIN.user: discord.PermissionOverwrite(read_messages=True,send_messages=True),
 		}
 		section_channel = await category_found.create_text_channel(section_name, overwrites = overwrites)
 
@@ -310,7 +313,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 			screen_lines = []
 
-			screen_lines.append("__**{screen_name}**__") # Write the screen name at the top 
+			screen_lines.append(f"__**{screen_name}**__") # Write the screen name at the top 
 			screen_dict = section[screen_name]
 
 			for response_letter in list(screen_dict.keys()): # Go through each response
