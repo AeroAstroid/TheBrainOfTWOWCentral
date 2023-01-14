@@ -303,7 +303,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		# Create channel in category
 
 		overwrites = {
-			message.guild.default_role: discord.PermissionOverwrite(read_messages=False)
+			message.guild.default_role: discord.PermissionOverwrite(read_messages=False),
 			BRAIN.user: discord.PermissionOverwrite(read_messages=True,send_messages=True),
 		}
 		section_channel = await category_found.create_text_channel(section_name, overwrites = overwrites)
