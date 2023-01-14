@@ -288,12 +288,13 @@ async def MAIN(message, args, level, perms, SERVER):
 			category_found = category
 
 		except ValueError:
-			message.channel.send(f"You must provide a Category Channel ID!")
+			message.channel.send(f"You must provide a category channel ID!")
 			
 	if category_found == None:
 		await message.channel.send("Voting generation cancelled.")
 		return
 
+	await message.channel.send("Creating section channels and sending voting messages...")
 	# Create text channels in the category
 	for section in sections_list: # Go through each section
 		
@@ -302,14 +303,14 @@ async def MAIN(message, args, level, perms, SERVER):
 		overwrites = {
 			message.guild.default_role: discord.PermissionOverwrite(read_messages=False),
 		}
-		category_channel = category_found.create_text_channel(section_name, overwrites = overwrites)
+		section_channel = category_found.create_text_channel(section_name, overwrites = overwrites)
 
-		screens_strings = []
+		screens_lines = []
 		for screen_name in list(section.keys()): # Go through each screen
 
-			screen_string = ""
+			screen_lines = []
 
-			screen_string += f"__**{screen_name}**__\n" # Write the screen name at the top 
+			screen_lines.append("__**{screen_name}**__") # Write the screen name at the top 
 			screen_dict = section[screen_name]
 
 			for response_letter in list(screen_dict.keys()): # Go through each response
@@ -323,15 +324,46 @@ async def MAIN(message, args, level, perms, SERVER):
 					valid_emoji = NOT_VALID_RESPONSE
 				else:
 					valid_emoji = ""
-				screen_string += f"**`{response_letter}`**`{valid_emoji}` {response}\n"
-			# Add a line break
-			screen_string += "\n"
+				screen_lines.append(f"**`{response_letter}`**`{valid_emoji}` {response}")
+			
+			screens_lines.append(screen_lines)
 
 		# Send messages
-		messages_to_send = [""]
+		messages_to_send = [f"```{section_name}```"]
 
-		for screen_string in screen_strings:
-			pass
+		for screen_line_strings in screens_lines:
+			screen_string = "\n".join(screen_line_strings)
+
+			# Check if the screen string is larger than 1950 characters
+			if len(screen_string) > 1950:
+				# Go through each line
+				screen_messages = [""]
+				for line in screen_line_strings:
+					# Check if the current screen can fit in the next message
+					if len(screen_messages[-1]) + 2 + len(line) > 1950:
+						screen_messages.append("")
+					else:
+						screen_messages[-1] += "\n"
+					screen_messages[-1] += line
+				for message in screen_messages:
+					messages_to_send.append(message)
+			else:
+				# Check if the current screen can fit in the next message
+				if len(messages_to_send[-1]) + 2 + len(screen_string) > 1950:
+					messages_to_send.append("")
+				else:
+					if len(messages_to_send) == 1:
+						messages_to_send[-1] += "\n\n"
+					else:
+						messages_to_send[-1] += "\n"
+				messages_to_send[-1] += screen_string
+
+		for message_string in messages_to_send:
+			await section_channel.send(message_string)
+
+		await message.channel.send(f"Successfully generated **{section_name}** in channel {section_channel}.")
+
+	await message.channel.send(f"Section text channel generation complete.")
 		
 
 	
