@@ -1,7 +1,6 @@
-
+# VOTINGGEN command - Generates voting screens for TWOW Central SpeedTWOWs
+# Code written by Neonic
 ################################
-
-
 from Config._const import ALPHABET, ALPHANUM_UNDERSCORE, BRAIN
 from Config._words import WORDS
 from Config._screennames import SCREEN_NAMES
@@ -12,14 +11,14 @@ from discord.ui import Button, View, Select
 def HELP(PREFIX):
 	return {
 		"COOLDOWN": 1,
-		"MAIN": "Test your typing speed",
+		"MAIN": "Generating voting screens for TWOW Central SpeedTWOWs",
 		"FORMAT": "",
 		"CHANNEL": 0,
-		"USAGE": f"""Using `{PREFIX}typingtest` will prompt you to type a sequence of random common English words,
-		and will report your speed and accuracy when you finish. Using `{PREFIX}typingtest top (page)` will show 
-		the all-time personal best leaderboard.""".replace("\n", "").replace("\t", ""),
+		"USAGE": f"""Using `{PREFIX}votinggen` with a .tsv file attached will generate voting 
+			screens for you! This command is best used when it is used with the `tc/event responding` 
+			event, which gives you a VOTING tsv that you can attach in the usage of this command.""".replace("\n", "").replace("\t", ""),
 		"HIDE" : 0,
-		"CATEGORY" : "Fun"
+		"CATEGORY" : "Utility"
 	}
 
 PERMS = 2
