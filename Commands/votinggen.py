@@ -297,6 +297,9 @@ async def MAIN(message, args, level, perms, SERVER):
 	await message.channel.send("Creating section channels and sending voting messages...")
 
 	# Create text channels in the category
+
+	section_channels = []
+
 	for section in sections_list: # Go through each section
 		
 		section_name = f"SECTION {list(section.keys())[0][0]}" # Title of section
@@ -307,6 +310,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			BRAIN.user: discord.PermissionOverwrite(read_messages=True,send_messages=True),
 		}
 		section_channel = await category_found.create_text_channel(section_name, overwrites = overwrites)
+		section_channels.append(section_channel)
 
 		screens_lines = []
 		for screen_name in list(section.keys()): # Go through each screen
@@ -369,8 +373,48 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		await message.channel.send(f"Successfully generated **{section_name}** in channel {section_channel.mention}")
 
-	await message.channel.send(f"Section text channel generation complete.")
-		
+	button_view = View(timeout = None)
+	button_view_only_delete = View(timeout = None)
+
+	async def delete_channels(interaction):
+		if interaction.user not in self.param["ADMIN_ROLE"].members:
+			await interaction.response.defer()
+			return
+		# Delete the section channels
+		for channel in section_channels:
+			try:
+				await channel.delete()
+			except:
+				pass
+		await interaction.response.edit_message(content = f"Deleted section channels (courtesy of **{interaction.user.name}**).", view = None)
+
+	delete_button = Button(style = discord.ButtonStyle.red, label = "Delete channels")
+	delete_button.callback = delete_channels				
+	button_view.add_item(delete_button)
+
+	delete_button_only = Button(style = discord.ButtonStyle.red, label = "Delete channels")
+	delete_button_only.callback = delete_channels	
+	button_view_only_delete.add_item(delete_button_only)
+
+	# Creating buttons
+	async def unlock_channels_button_pressed(interaction):
+		if interaction.user not in self.param["ADMIN_ROLE"].members:
+			await interaction.response.defer()
+			return
+		# Unlock the section channels
+		for channel in section_channels:
+			try:
+				await channel.set_permissions(message.guild.default_role, read_messages = True, send_messages = False, add_reactions = False)
+			except:
+				pass
+		await interaction.response.edit_message(content = f"Unlocked the section channels (courtesy of **{interaction.user.name}**).", view = button_view_only_delete)
+
+	# Creating button objects
+	unlock_button = Button(style = discord.ButtonStyle.green, label = "Unlock channels")
+	unlock_button.callback = unlock_channels_button_pressed				
+	button_view.add_item(unlock_button)
+
+	await message.channel.send("**Generated voting channels!**\nUse the button below to control the channels.")
 
 	
 
