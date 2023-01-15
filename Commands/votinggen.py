@@ -377,7 +377,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	button_view_only_delete = View(timeout = None)
 
 	async def delete_channels(interaction):
-		if interaction.user not in self.param["ADMIN_ROLE"].members:
+		if interaction.user.id != message.author.id:
 			await interaction.response.defer()
 			return
 		# Delete the section channels
@@ -398,7 +398,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 	# Creating buttons
 	async def unlock_channels_button_pressed(interaction):
-		if interaction.user not in self.param["ADMIN_ROLE"].members:
+		if interaction.user.id != message.author.id:
 			await interaction.response.defer()
 			return
 		# Unlock the section channels
