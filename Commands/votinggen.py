@@ -414,7 +414,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	unlock_button.callback = unlock_channels_button_pressed				
 	button_view.add_item(unlock_button)
 
-	await message.channel.send("**Generated voting channels!**\nUse the button below to control the channels.")
+	await message.channel.send("**Generated voting channels!**\nUse the button below to control the channels.", view = button_view)
 
 	
 
