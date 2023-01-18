@@ -8,4 +8,4 @@ def while_func(condition, body):
         res = Expression(body, globals.codebase)
         if res is not None:
             result.append(res)
-    return result
+    return result or None
