@@ -57,17 +57,16 @@ def ABS(a):
 	return abs(int(a) if is_whole(a) else float(a))
 
 def SPLIT(a,b):
-	if type(a) != str:
-		raise TypeError(f"Parameter of SPLIT function must be a string: {safe_cut(a)}")
-	if type(b) != str:
-		raise TypeError(f"Parameter of SPLIT function must be a string: {safe_cut(b)}")
-	return a.split(b)
+	if type(a) == list:
+		raise TypeError(f"Parameter of SPLIT function cannot be an array: {safe_cut(a)}")
+	if type(b) == list:
+		raise TypeError(f"Parameter of SPLIT function cannot be an array: {safe_cut(b)}")
+	return str(a).split(str(b))
 
 def REPLACE(a,b,c):
-	if type(a) != str:
-		raise TypeError(f"Parameter of REPLACE function must be a string: {safe_cut(a)}")
-
-	return a.replace(b,c)
+	if type(a) == list:
+		raise TypeError(f"Parameter of REPLACE function cannot be an array: {safe_cut(a)}")
+	return str(a).replace(str(b),str(c))
 
 def INDEX(a, b):
 	if type(a) not in [list, str]:
@@ -77,13 +76,16 @@ def INDEX(a, b):
 	return a[int(b)]
 
 def SLICE(a, b, c):
-	if type(a) not in [list, str]:
-		raise TypeError(f"First parameter of SLICE function must be a string or an array: {safe_cut(a)}")
 	if not is_whole(b):
 		raise TypeError(f"Second parameter of SLICE function must be an integer: {safe_cut(b)}")
 	if not is_whole(c):
 		raise TypeError(f"Third parameter of SLICE function must be an integer: {safe_cut(c)}")
-	return a[int(b):int(c)]
+	if type(a) == list:
+		to_cut = a
+	else:
+		to_cut = str(a)
+		
+	return to_cut[int(b):int(c)]
 
 def ARRAY(*a):
 	return list(a)
