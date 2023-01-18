@@ -1,6 +1,6 @@
 from random import choice
 
-github_devs = ["Infernity", "Digin", "LegitSi", "Zelo101", "weee50", "woooowoooo", "BowlingPizzaBall", "pepsi", "Nv7", "Dark"] 
+github_devs = ["Infernity", "Digin", "LegitSi", "Zelo101", "Zettex", "woooowoooo", "pepsi", "Nv7", "Dark"] 
 unfunny_errmsg = [
     "GOD FUCKING DAMMIT! **crashing noises**",
     "Whoops. You broke it.",
