@@ -4,7 +4,6 @@ from Config.b_star_interpreter.function import Function
 from Config.b_star_interpreter.functions.args import args
 from Config.b_star_interpreter.functions.array import array
 from Config.b_star_interpreter.functions.choose import choose
-from Config.b_star_interpreter.functions.choosechar import choosechar
 from Config.b_star_interpreter.functions.comment import comment
 from Config.b_star_interpreter.functions.compare import compare
 from Config.b_star_interpreter.functions.concat import concat
@@ -91,8 +90,7 @@ def setupFunctions():
 
     Function(["args"], {"index": ""}, args)
     Function(["array"], {"arr": ArgumentType.Variadic}, array)
-    Function(["choose"], {"arr": ArgumentType.Variadic}, choose)
-    Function(["choosechar"], {"string": ArgumentType.Required}, choosechar)
+    Function(["choose", "choosechar"], {"arr": ArgumentType.Variadic}, choose)
     Function(["compare"], {"v1": ArgumentType.Required, "operator": ArgumentType.Required, "v2": ArgumentType.Required}, compare)
     Function(["concat"], {"items": ArgumentType.Variadic}, concat)
     Function(["define", "def"], {"name": ArgumentType.Required, "item": ArgumentType.Required}, define)
