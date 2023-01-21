@@ -4,7 +4,8 @@ from datetime import datetime
 
 
 def user_func(userItemToGet):
-    match userItemToGet:
+    useritem = userItemToGet.lower()
+    match useritem:
         case "name":
             return globals.codebase.user.name
         case "id":
@@ -12,7 +13,7 @@ def user_func(userItemToGet):
         case "discriminator":
             return globals.codebase.user.discriminator
         case "avatar":
-            return str(globals.codebase.user.avatar_url)
+            return str(globals.codebase.user.avatar.url)
         case "created_at":
             return datetime.timestamp(globals.codebase.user.created_at)
         case "display_name":
