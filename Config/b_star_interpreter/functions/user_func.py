@@ -18,5 +18,7 @@ def user_func(userItemToGet):
             return datetime.timestamp(globals.codebase.user.created_at)
         case "display_name":
             return globals.codebase.user.display_name
+        case "":
+            return [globals.codebase.user.name, globals.codebase.user.id, globals.codebase.user.discriminator, str(globals.codebase.user.avatar.url), datetime.timestamp(globals.codebase.user.created_at) globals.codebase.user.display_name]
         case _:
             raise NotImplementedError("Currently, user only supports `name`, `id`, `discriminator`, `avatar`, `created_at`, and `display_name`.")
