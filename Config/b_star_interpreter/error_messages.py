@@ -101,5 +101,16 @@ unfunny_errmsg = [
     "This may be caused by temporary technical problems, bugs, or widespread political revolution.",
     "It's gotta be widespread political revolution that's causing this.",
     "*distant sounds of a catastrophic car crash*",
-    "Just stick a random reference in there. They'll never figure out the source."
+    "Just stick a random reference in there. They'll never figure out the source.",
+    "ProgramDefinedException except broken code now counts as a [THROW].",
+    "You know what? No. I'm not even gonna try and say anything funny, this is just atrocious.",
+    "It's not like I can read this anyway.",
+    "helicopter variables much?",
+    "Either you've been at this for far too long, or you just got this error for the first time. In either case, welcome to this purgatory.",
+    "bruh moment",
+    "We need to talk. It's not about you, it's the code. It's absolutely awful and I can't stand it anymore!",
+    "Read over your code again. Maybe you missed something.",
+    "I don't know what you tried to give me, but it ain't working. Try again.",
+    "u good?",
+    "Just know that it's perfectly acceptable to take a break for as long you need."
     ]
