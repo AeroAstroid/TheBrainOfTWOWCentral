@@ -18,13 +18,14 @@ class OutputClass:
         self.text += other
 
 class Codebase:
-    def __init__(self, lines, user, arguments):
+    def __init__(self, lines, user, arguments, author):
         self.lines: List[str] = lines
         self.variables: List[Dict[str, str]] = [{}]
         self.functions: Dict[str, UserFunction] = {}
         self.user: Union[discord.User, None] = user
         self.arguments: Union[List[str], None] = arguments
         self.output: OutputClass(False) = ""
+        self.author: author = -1
 
         # TODO: This is temporary while s3.py gets revamped in 1.1
         self.global_limit: int = 0
