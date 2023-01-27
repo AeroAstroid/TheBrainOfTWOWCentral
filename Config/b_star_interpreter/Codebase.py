@@ -25,7 +25,7 @@ class Codebase:
         self.user: Union[discord.User, None] = user
         self.arguments: Union[List[str], None] = arguments
         self.output: OutputClass(False) = ""
-        self.author: author = -1
+        self.author: int = author if author != "" else -1
 
         # TODO: This is temporary while s3.py gets revamped in 1.1
         self.global_limit: int = 0
