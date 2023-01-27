@@ -69,8 +69,9 @@ async def MAIN(message, args, level, perms, SERVER, LOGIN):
 	# """Run B* code"""
 	if subcommand == "run":
 		# TODO: Does this need to be replaced with b++.py version?
+		# probably
 		try:
-			output = runCode(await accept_file_or_message(message), message.author)
+			output = runCode(await accept_file_or_message(message), message.author, [], message.author.id)
 			await message.channel.send(embed=discord.Embed(description=output))
 		except Exception as e:
 			await message.channel.send(e)
@@ -340,11 +341,12 @@ async def MAIN(message, args, level, perms, SERVER, LOGIN):
 
 	tag_info = [x for x in tag_list if x[0] == tag_name][0]
 	program = tag_info[1]
+	author = int(tag_info[2])
 
 	uses = tag_info[3] + 1
 	db.edit_entry("bsprograms", entry={"uses": uses, "lastused": time.time()}, conditions={"name": tag_name})
 
 	program_args = args[2:]
 
-	output = runCode(program, message.author, program_args)
+	output = runCode(program, message.author, program_args, author)
 	await message.channel.send(output)
