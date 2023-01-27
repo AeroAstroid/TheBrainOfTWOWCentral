@@ -18,19 +18,19 @@ from Config.b_star_interpreter.tempFunctionsFile import functions
 from Config.b_star_interpreter.functions.raise_func import BStarProgramDefinedException
 
 
-def runCode(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = []):
+def runCode(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = [], author: int = -1):
     try:
-        return func_timeout(30, runCodeSandbox, args=(code, user, arguments))
+        return func_timeout(30, runCodeSandbox, args=(code, user, arguments, author))
     except FunctionTimedOut:
         return returnError("RUNTIME", "Timed out! (More than 30 seconds)")
     except Exception as error:
         return error
 
 
-def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = []):
+def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = [], author: int = -1):
     # TODO: Trim up to three backticks from beginning and end of code
     parsed_code = parseCode(code).children
-    globals.codebase = Codebase(parsed_code, user, arguments)
+    globals.codebase = Codebase(parsed_code, user, arguments, author)
     globals.codebase.functions = globals.codebase.functions | functions
 
     for i, statement in enumerate(parsed_code):
