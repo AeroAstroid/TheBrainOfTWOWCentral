@@ -340,11 +340,12 @@ async def MAIN(message, args, level, perms, SERVER, LOGIN):
 
 	tag_info = [x for x in tag_list if x[0] == tag_name][0]
 	program = tag_info[1]
+	author = tag_info[2]
 
 	uses = tag_info[3] + 1
 	db.edit_entry("bsprograms", entry={"uses": uses, "lastused": time.time()}, conditions={"name": tag_name})
 
 	program_args = args[2:]
 
-	output = runCode(program, message.author, program_args)
+	output = runCode(program, message.author, program_args, author)
 	await message.channel.send(output)
