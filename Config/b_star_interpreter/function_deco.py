@@ -128,7 +128,7 @@ def setupFunctions():
     Function(["time"], {}, time_func)
     Function(["try"], {"attempt": ArgumentType.Required, "on_error": ArgumentType.Required}, try_func, parse_args=False)
     Function(["type"], {"a": ArgumentType.Required}, type_func, parse_args=False)
-    Function(["user"], {"userItemToGet": ArgumentType.Required}, user_func)
+    Function(["user"], {"userItemToGet": ""}, user_func)
     Function(["username"], {}, username)
     Function(["userid"], {}, userid)
     Function(["var"], {"item": ArgumentType.Required, "index": ""}, var)
