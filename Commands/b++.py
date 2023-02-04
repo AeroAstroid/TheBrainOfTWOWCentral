@@ -172,9 +172,9 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		if len(program[1]) > 1700:
 			msg += f"The program is too long to be included in the message, so it's in the file below:"
-			open(f'program_{program[0]}.txt', 'w', encoding="utf-8").write(program[1])
-			await message.channel.send(msg, file=discord.File(f'program_{program[0]}.txt'))
-			os.remove(f'program_{program[0]}.txt')
+			open(f'program_{program[0]}.bpp', 'w', encoding="utf-8").write(program[1])
+			await message.channel.send(msg, file=discord.File(f'program_{program[0]}.bpp'))
+			os.remove(f'program_{program[0]}.bpp')
 		else:
 			msg += f"```{program[1]}```"
 			await message.channel.send(msg)
@@ -211,14 +211,14 @@ async def MAIN(message, args, level, perms, SERVER):
 					await message.channel.send("Your program must be under **60KB**.")
 					return
 				
-				await message.attachments[0].save(f"Config/{message.id}.txt")
+				await message.attachments[0].save(f"Config/{message.id}.bpp")
 				
 			except Exception:
 				await message.channel.send("Include a valid program to save!")
 				return
 			
-			program = open(f"Config/{message.id}.txt", "r", encoding="utf-8").read()
-			os.remove(f"Config/{message.id}.txt")
+			program = open(f"Config/{message.id}.bpp", "r", encoding="utf-8").read()
+			os.remove(f"Config/{message.id}.bpp")
 		
 		else:
 			await message.channel.send("Include a valid program to save!")
@@ -264,14 +264,14 @@ async def MAIN(message, args, level, perms, SERVER):
 					await message.channel.send("Your program must be under **60KB**.")
 					return
 				
-				await message.attachments[0].save(f"Config/{message.id}.txt")
+				await message.attachments[0].save(f"Config/{message.id}.bpp")
 
 			except Exception:
 				await message.channel.send("Include a valid program to run!")
 				return
 			
-			program = open(f"Config/{message.id}.txt", "r", encoding="utf-8").read()
-			os.remove(f"Config/{message.id}.txt")
+			program = open(f"Config/{message.id}.bpp", "r", encoding="utf-8").read()
+			os.remove(f"Config/{message.id}.bpp")
 		
 		else:
 			await message.channel.send("Include a valid program to run!")
@@ -320,14 +320,14 @@ async def MAIN(message, args, level, perms, SERVER):
 					await message.channel.send("Your program must be under **60KB**.")
 					return
 
-				await message.attachments[0].save(f"Config/{message.id}.txt")
+				await message.attachments[0].save(f"Config/{message.id}.bpp")
 
 			except Exception:
 				await message.channel.send("Include a valid program to run!")
 				return
 			
-			program = open(f"Config/{message.id}.txt", "r", encoding="utf-8").read()
-			os.remove(f"Config/{message.id}.txt")
+			program = open(f"Config/{message.id}.bpp", "r", encoding="utf-8").read()
+			os.remove(f"Config/{message.id}.bpp")
 		
 		else:
 			await message.channel.send("Include a valid program to run!")
