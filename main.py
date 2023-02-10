@@ -227,10 +227,6 @@ async def on_ready():
 			elif message.author in msg_guild["MEMBER_ROLE"].members: perms = 1
 			else: perms = 0
 
-			if perms == 3 and message.content == f"{msg_PREFIX}hourup":
-				PARAMS["HOUR"] += 1
-				return
-
 			if perms < 2 and (message.guild is not None and message.channel not in msg_guild["BOT_CHANNELS"]):
 				return # Ignore commands from non-staff that are not in bot channels'
 			
