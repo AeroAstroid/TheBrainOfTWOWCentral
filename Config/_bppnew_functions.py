@@ -396,14 +396,17 @@ def JOIN(a, b=""):
 	return b.join(a)
 	
 def SETINDEX(a, b, c):
-	if not type(a) == list:
-		raise ValueError(f"SETINDEX function parameter is not a list: {safe_cut(a)}")
 	if not is_whole(b):
 		raise ValueError(f"SETINDEX function parameter is not an integer: {safe_cut(b)}")
-	mylist = a.copy()
-	mylist[int(b)] = c
-	return mylist
-
+	if type(a) == list:
+		mylist = a.copy()
+		mylist[int(b)] = c
+		return mylist
+	a = str(a)
+	if len(str(c)) > 1:
+		raise ValueError(f"SETINDEX function paramater is not a character: {safe_cut(c)}")
+	return a[0:b] + c + a[b+1:]
+	
 FUNCTIONS = {
 	"MATH": MATHFUNC,
 	"RANDINT": RANDINT,
