@@ -398,9 +398,10 @@ def JOIN(a, b=""):
 def SETINDEX(a, b, c):
 	if not is_whole(b):
 		raise ValueError(f"SETINDEX function parameter is not an integer: {safe_cut(b)}")
+	b = int(b)
 	if type(a) == list:
 		mylist = a.copy()
-		mylist[int(b)] = c
+		mylist[b] = c
 		return mylist
 	a = str(a)
 	if len(str(c)) > 1:
