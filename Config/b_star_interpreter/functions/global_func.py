@@ -12,7 +12,7 @@ def global_func(use, name, value):
         if use == "DEFINE":
             check_filesize(value)
             if globalExists(db, name):
-                if isOwnerGlobal(db, name, str(globals.codebase.user.id)):
+                if isOwnerGlobal(db, name, str(globals.codebase.author)): # author is an id #
                     editGlobal(db, name, value)
                     globals.codebase.global_limit += 1
 

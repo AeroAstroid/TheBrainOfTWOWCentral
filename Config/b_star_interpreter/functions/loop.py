@@ -9,5 +9,4 @@ def loop(amount, func):
         if result is not None:  # VOID Function
             results.append(result)
 
-    if len(results) > 0:
-        return results
+    return results or None

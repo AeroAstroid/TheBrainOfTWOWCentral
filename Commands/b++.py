@@ -29,7 +29,7 @@ def HELP(PREFIX):
 	}
 
 PERMS = 1 # Member
-ALIASES = ["TAG", "B++NEW", "TAGNEW", "NEWB++", "NEWTAG"]
+ALIASES = ["TAG", "B++NEW", "TAGNEW", "NEWB++", "NEWTAG", "BPP"]
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
@@ -171,10 +171,15 @@ async def MAIN(message, args, level, perms, SERVER):
 			msg += f"Last used on {last_used} `({u_d} ago)`\n"
 
 		if len(program[1]) > 1700:
+			fprefix = "txt"
+			
+			if level >= 3 and args[-1].lower() == "bpp":
+				fprefix = "bpp"
+			
 			msg += f"The program is too long to be included in the message, so it's in the file below:"
-			open(f'program_{program[0]}.txt', 'w', encoding="utf-8").write(program[1])
-			await message.channel.send(msg, file=discord.File(f'program_{program[0]}.txt'))
-			os.remove(f'program_{program[0]}.txt')
+			open(f'program_{program[0]}.{fprefix}', 'w', encoding="utf-8").write(program[1])
+			await message.channel.send(msg, file=discord.File(f'program_{program[0]}.{fprefix}'))
+			os.remove(f'program_{program[0]}.{fprefix}')
 		else:
 			msg += f"```{program[1]}```"
 			await message.channel.send(msg)
