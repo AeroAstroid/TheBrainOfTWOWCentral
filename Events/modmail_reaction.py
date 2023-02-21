@@ -30,6 +30,9 @@ class EVENT:
 		if message.channel == None: return # Do not run if message was not sent in channel
 		print("test 2")
 
+		print(message.channel.category_id)
+		print(self.param["MODMAIL_CATEGORY"].id)
+
 		if message.channel.category_id == self.param["MODMAIL_CATEGORY"].id:
 			print("test 3")
 
