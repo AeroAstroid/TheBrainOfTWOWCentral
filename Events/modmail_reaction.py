@@ -14,7 +14,7 @@ class EVENT:
 		self.SERVER = SERVER
 		self.RUNNING = True
 
-        self.param["MODMAIL_CATEGORY"] = discord.utils.get(SERVER["MAIN"].categories, name = "ModMail Logs")
+		self.param["MODMAIL_CATEGORY"] = discord.utils.get(SERVER["MAIN"].categories, name = "ModMail Logs")
 
 	# Executes when deactivated
 	def end(self): # Reset the parameters
@@ -23,22 +23,22 @@ class EVENT:
 	# Function that runs on each message
 	async def on_message(self, message):
 
-        if self.param["MODMAIL_CATEGORY"] == None: return # Do not run if modmail category does not exist
-        if message.channel == None: return # Do not run if message was not sent in channel
+		if self.param["MODMAIL_CATEGORY"] == None: return # Do not run if modmail category does not exist
+		if message.channel == None: return # Do not run if message was not sent in channel
 
-        if message.channel in self.param["MODMAIL_CATEGORY"].text_channels:
+		if message.channel in self.param["MODMAIL_CATEGORY"].text_channels:
 
-            # Count amount of messages in channel
-            count = 0
-            async for _ in channel.history(limit=3):
-                count += 1
+			# Count amount of messages in channel
+			count = 0
+			async for _ in channel.history(limit=3):
+				count += 1
 
-            if count == 2:
+			if count == 2:
 
-                # Add reactions to message
-                for emoji in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "❔"]:
-                    await message.add_reaction(emoji)
-                    await asyncio.sleep(2)
+				# Add reactions to message
+				for emoji in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "❔"]:
+					await message.add_reaction(emoji)
+					await asyncio.sleep(2)
 
 	# Change a parameter of the event
 	async def edit_event(self, message, new_params):
