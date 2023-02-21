@@ -30,7 +30,7 @@ class EVENT:
 		if message.channel == None: return # Do not run if message was not sent in channel
 		print("test 2")
 
-		if message.channel in self.param["MODMAIL_CATEGORY"].text_channels:
+		if message.channel.category_id == self.param["MODMAIL_CATEGORY"].id:
 			print("test 3")
 
 			# Count amount of messages in channel
