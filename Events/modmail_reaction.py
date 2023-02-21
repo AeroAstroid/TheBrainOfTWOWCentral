@@ -38,7 +38,7 @@ class EVENT:
 
 			# Count amount of messages in channel
 			count = 0
-			async for _ in channel.history(limit=3):
+			async for _ in message.channel.history(limit=3):
 				count += 1
 
 			if count == 2:
