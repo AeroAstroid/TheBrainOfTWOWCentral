@@ -23,10 +23,15 @@ class EVENT:
 	# Function that runs on each message
 	async def on_message(self, message):
 
+		print("test")
+
 		if self.param["MODMAIL_CATEGORY"] == None: return # Do not run if modmail category does not exist
+		print("test 1")
 		if message.channel == None: return # Do not run if message was not sent in channel
+		print("test 2")
 
 		if message.channel in self.param["MODMAIL_CATEGORY"].text_channels:
+			print("test 3")
 
 			# Count amount of messages in channel
 			count = 0
@@ -34,6 +39,8 @@ class EVENT:
 				count += 1
 
 			if count == 2:
+
+				print("test 4")
 
 				# Add reactions to message
 				for emoji in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "❔"]:
