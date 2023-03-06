@@ -60,7 +60,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			for i in range(2, number):
 				if number % i == 0:
 					factors.append(i)
-			if number == 0:
+			if number == 1:
 				hint = "The number is a perfect square (only one non-trivial factor)." # probably the best hint without entirely giving it away
 			elif len(factors) == 0:
 				hint = "The number is prime!"
