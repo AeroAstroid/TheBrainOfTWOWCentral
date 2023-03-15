@@ -405,8 +405,22 @@ def SETINDEX(a, b, c):
 	a = str(a)
 	if len(str(c)) > 1:
 		raise ValueError(f"SETINDEX function paramater is not a character: {safe_cut(c)}")
-	return a[0:b] + c + a[b+1:]
-	
+	return a[0:int(b)] + c + a[int(b)+1:]
+
+def UNICODE(a):
+	if len(str(a)) != 1:
+		ValueError(f"CHAR function paramater is not a character: {safe_cut(a)}")
+	return ord(str(a))
+
+def CHARFUNC(a):
+	if not is_whole(a):
+		raise ValueError(f"CHAR function parameter is not an integer: {safe_cut(a)}")
+	try:
+		out = chr(a)
+	except:
+		raise ValueError(f"CHAR function parameter is not a valid character: {safe_cut(a)}")
+	return out
+
 FUNCTIONS = {
 	"MATH": MATHFUNC,
 	"RANDINT": RANDINT,
@@ -451,4 +465,6 @@ FUNCTIONS = {
 	"SORT": SORTFUNC,
 	"JOIN": JOIN,
 	"SETINDEX": SETINDEX
+	"CHAR" : CHARFUNC
+	"UNICODE" : UNICODE
 }
