@@ -409,7 +409,7 @@ def SETINDEX(a, b, c):
 
 def UNICODE(a):
 	if len(str(a)) > 1:
-		ValueError(f"CHAR function paramater is not a character: {safe_cut(a)}")
+		ValueError(f"UNICODE function paramater is not a character: {safe_cut(a)}")
 	return ord(str(a))
 
 def CHARFUNC(a):
