@@ -27,12 +27,15 @@ class Function:
             functions[alias.upper()] = self
             functions[alias.lower()] = self
 
-    def run(self, codebase: Codebase, args: List[Any], alias_used: str):
+    def run(self, codebase: Codebase, block, args: List[Any], alias_used: str):
+        # This will Expression() all arguments if the function wants it.
         if self.parse_args:
             parsedArgs = list(map(lambda arg: Expression(arg, codebase), args))
         else:
             parsedArgs = args
-        parsedArgs = [arg for arg in parsedArgs if arg is not None] # TODO: Remove this once arg bug is fixed in Expression
+
+        # TODO: Remove this once arg bug is fixed in Expression
+        # parsedArgs = [arg for arg in parsedArgs if arg is not None]
 
         parsedArgsLength = len(parsedArgs)
 
@@ -41,11 +44,11 @@ class Function:
 
         if parsedArgsLength < self.argumentsRequired:
             raise Exception(
-                f"Not enough arguments for function **{alias_used.upper()}** (expected {len(self.args)}, got {len(parsedArgs)})")
+                f"{alias_used.upper()} requires {len(self.args)} argument(s), but got {len(parsedArgs)}.")
 
         if parsedArgsLength > len(self.args) and (self.infiniteArgs is False):
             raise Exception(
-                f"Too many arguments for function **{alias_used.upper()}** (expected {len(self.args)}, got {len(parsedArgs)})")
+                f"{alias_used.upper()} requires {len(self.args)} argument(s), but got {len(parsedArgs)}.")
 
         return self.runner(*parsedArgs)
 
