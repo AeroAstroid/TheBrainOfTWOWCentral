@@ -112,5 +112,8 @@ unfunny_errmsg = [
     "Read over your code again. Maybe you missed something.",
     "I don't know what you tried to give me, but it ain't working. Try again.",
     "u good?",
-    "Just know that it's perfectly acceptable to take a break for as long you need."
+    "Just know that it's perfectly acceptable to take a break for as long you need.",
+    "Holy s**t you did it!",
+    "How the hell did you get over here mate?",
+    "Apologies for the inconvenience, but we have absolutely no idea how you came here."
     ]
