@@ -1,5 +1,8 @@
+import inspect
 import math
 from typing import Dict, Any, Union, Callable, List
+
+import bstarparser
 
 from Config.b_star_interpreter.expression import Expression
 from Config.b_star_interpreter.tempFunctionsFile import functions
@@ -13,7 +16,8 @@ def isUniqueValue(value: Any):
 
 
 class Function:
-    def __init__(self, aliases: List[str], args: Dict[str, Union[None, Union[int, float, str]]], runner: Callable, parse_args: bool = True):
+    def __init__(self, aliases: List[str], args: Dict[str, Union[None, Union[int, float, str]]], runner: Callable,
+                 parse_args: bool = True):
         self.aliases = aliases
         self.args = args
         self.infiniteArgs = False
@@ -28,9 +32,39 @@ class Function:
             functions[alias.lower()] = self
 
     def run(self, codebase: Codebase, block, args: List[Any], alias_used: str):
+        #
+        # TODO: Make this optional with strict mode
+        # This is type coercion, mandatory for now.
+        # get all parameters from the function
+        parameters = list(inspect.signature(self.runner).parameters.values())
+        parsedArgs = []
+
+        # iterate through all arguments given
+        for i, arg in enumerate(args):
+            # parameters[i] would be something like int() or str()
+            # raw = parameters[i].annotation(arg.raw)
+            # arg.raw = raw
+            match parameters[i].annotation.__name__:
+                case int.__name__:
+                    arg.val_type = bstarparser.Type.INTEGER
+                case float.__name__:
+                    arg.val_type = bstarparser.Type.FLOAT
+                # case function.__class__:
+                #     arg.val_type = bstarparser.Type.FUNCTION
+                case str.__name__:
+                    arg.val_type = bstarparser.Type.STRING
+                case _:
+                    arg.val_type = bstarparser.Type.FUNCTION
+
+
+            parsedArgs.append(arg)
+
+        #
         # This will Expression() all arguments if the function wants it.
         if self.parse_args:
-            parsedArgs = list(map(lambda arg: Expression(arg, codebase), args))
+
+            parsedArgs = list(map(lambda arg: Expression(arg, codebase), parsedArgs))
+
         else:
             parsedArgs = args
 
