@@ -35,10 +35,11 @@ def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments
     globals.codebase.functions = globals.codebase.functions | functions
 
     for i, statement in enumerate(parsed_code):
-        globals.codebase.output += "\n"
-
         try:
-            readLine(statement)
+            result = readLine(statement)
+            if result is not None:
+                if not result:
+                    globals.codebase.output += "\n"
         # except BStarProgramDefinedException as error:
         #     return f"{error}"
         except Exception as error:
@@ -63,6 +64,9 @@ def readLine(statement):
     # print(result)
     if result is not None:
         globals.codebase.output += str(result)
+        return str(result)
+    else:
+        return None
 
 
 # def parseArguments(args: List[str]):
@@ -84,6 +88,7 @@ def returnError(code, block, error):
     line = code.split("\n")[block.line - 1]
     before = line[block.start - 11:block.start - 1]
     problem_code = line[block.start - 1:block.end]
+    problem_code_length = max(len(problem_code), 1)
     # problem_code = block.raw
     after = line[block.end:block.end + 10]
 
@@ -103,7 +108,7 @@ def returnError(code, block, error):
 [0;34m  --> [0;37m[1;37mline {block.line}, {block.start}:{block.end}[0m[0;37m[0m[0;34m
    |
  {block.line} |    {before_el}[0;37m{before}[0m[0;34m[0;31m{problem_code}[0m[0;34m[0;37m{after}[0m[0;34m{after_el}[0m[0;37m[0m[0;34m
-   |    {" "*len(before_el_real + before)}[0;31m[1;31m{"^"*len(problem_code)} {error}[0m[0;31m[0m[0;34m[0m[0;37m
+   |    {" "*len(before_el_real + before)}[0;31m[1;31m{"^"*problem_code_length} {error}[0m[0;31m[0m[0;34m[0m[0;37m
 [0m[0;31m[0m[0;31m[0m[0;31m[0m[0;31m[0m[0;31m[0m[0;31m[0m[0;31m[0m[0;31m[0m[2;31m[0m[2;31m[0m
 ```"""
 
