@@ -136,7 +136,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		inspector = number_key(3)
 
 		db.edit_entry("bigredbutton", entry={"button": button_number + 1, 
-		"info": f"{serial_number} {exploding_chance} {inspector}")
+		"info": f"{serial_number} {exploding_chance} {inspector}"})
 		
 		await message.channel.send(
 		f"""<:bigredbutton:654042578617892893> This is **Big Red Button #{button_number + 1}**
