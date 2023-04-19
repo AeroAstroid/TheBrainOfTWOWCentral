@@ -1,4 +1,4 @@
 import math
 
-def tan(number):
+def tan(number: float):
     return math.tan(number)

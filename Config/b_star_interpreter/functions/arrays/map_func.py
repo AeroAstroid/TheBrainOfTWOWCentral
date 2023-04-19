@@ -2,7 +2,8 @@ import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.expression import Expression
 
 
-def map_func(function, listToEdit):
+# TODO: Inspect types further
+def map_func(function: any, listToEdit: any):
     parsedListToEdit = Expression(listToEdit, globals.codebase)
 
     resultArray = []

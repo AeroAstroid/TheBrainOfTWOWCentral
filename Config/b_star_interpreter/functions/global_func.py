@@ -5,7 +5,7 @@ from Config._bppnew_functions import safe_cut
 from Config._db import Database
 
 
-def global_func(use, name, value):
+def global_func(use: str, name: str, value: any):
     db = Database()
 
     if globals.codebase.global_limit < 50:
