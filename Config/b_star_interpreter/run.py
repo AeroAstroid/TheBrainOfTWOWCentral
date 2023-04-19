@@ -35,6 +35,8 @@ def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments
     globals.codebase.functions = globals.codebase.functions | functions
 
     for i, statement in enumerate(parsed_code):
+        globals.codebase.output += "\n"
+
         try:
             result = readLine(statement)
             if result is not None:
