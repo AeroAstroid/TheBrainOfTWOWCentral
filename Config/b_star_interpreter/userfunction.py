@@ -1,12 +1,10 @@
-from typing import List
-
 import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.expression import Expression
 from Config.b_star_interpreter.functions.define import define
 
 
 class UserFunction:
-    def __init__(self, name: str, args: List[str], block: List[str], global_func: bool):
+    def __init__(self, name: str, args: list[str], block: list[str], global_func: bool):
         self.args = args
         self.block = block
 
@@ -14,7 +12,7 @@ class UserFunction:
 
         # if global_func is True:
 
-    def run(self, run_args: List[str]):
+    def run(self, run_args: list[str]):
         # print(f"{run_args} > {self.args} > {self.block} > {self.block[0]} > {self.block[0][0]}")
 
         # for example maybe creating a lambda that already knows where to replace the variables
