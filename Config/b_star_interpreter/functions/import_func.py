@@ -4,7 +4,7 @@ from Config.b_star_interpreter.parse import parseCode
 from Config._db import Database
 
 
-def import_func(name):
+def import_func(name: str):
     # TODO: tag.func import syntax
     # tag_name, func = name.split(".")
 

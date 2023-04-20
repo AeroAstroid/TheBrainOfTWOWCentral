@@ -6,7 +6,7 @@ from Config.b_star_interpreter.functions.math.pow import pow_func
 from Config.b_star_interpreter.functions.math.sub import sub
 
 
-def math_func(number, operator: str, by):
+def math_func(number: float, operator: str, by: float):
     operator = operator.strip()
     if operator == "+":
         return add(number, by)

@@ -1,8 +1,6 @@
 from random import choice
 from traceback import format_exc
 
-from typing import List, Union
-
 import discord
 from func_timeout import func_timeout, FunctionTimedOut
 from lark import Tree
@@ -18,7 +16,7 @@ from Config.b_star_interpreter.tempFunctionsFile import functions
 from Config.b_star_interpreter.functions.raise_func import BStarProgramDefinedException
 
 
-def runCode(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = []):
+def runCode(code: Tree, user: discord.User | None = None, arguments: list[str] = []):
     try:
         # return func_timeout(30, runCodeSandbox, args=(code, user, arguments))
         return runCodeSandbox(code, user, arguments)
@@ -28,7 +26,7 @@ def runCode(code: Tree, user: Union[discord.User, None] = None, arguments: List[
         return error
 
 
-def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = []):
+def runCodeSandbox(code: Tree, user: discord.User | None = None, arguments: list[str] = []):
     # TODO: Trim up to three backticks from beginning and end of code
     parsed_code = parseCode(code).children
     globals.codebase = Codebase(parsed_code, user, arguments)

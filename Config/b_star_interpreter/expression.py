@@ -1,6 +1,4 @@
-import types
 from enum import Enum
-from typing import Union
 
 import bstarparser
 from lark import Tree, Token

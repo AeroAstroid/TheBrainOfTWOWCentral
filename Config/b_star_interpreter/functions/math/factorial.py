@@ -1,4 +1,5 @@
 import math
 
-def factorial(number):
+
+def factorial(number: float):
     return math.gamma(float(number) + 1)

@@ -1,7 +1,7 @@
 import Config.b_star_interpreter.globals as globals
 
 
-def define(name, item):
+def define(name: str, item: any):
     if name in globals.codebase.variables[0]:
         globals.codebase.variables[0][name] = item
         return

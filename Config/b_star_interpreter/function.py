@@ -1,6 +1,7 @@
 import inspect
 import math
-from typing import Dict, Any, Union, Callable, List
+
+import bstarparser
 
 import bstarparser
 
@@ -11,12 +12,12 @@ from Config.b_star_interpreter.globals import debug
 
 
 # Returns true if the value is not "None" or "Infinite"
-def isUniqueValue(value: Any):
+def isUniqueValue(value: any):
     return False if value is (None or math.inf) else True
 
 
 class Function:
-    def __init__(self, aliases: List[str], args: Dict[str, Union[None, Union[int, float, str]]], runner: Callable,
+    def __init__(self, aliases: list[str], args: dict[str, int | float | str | None], runner: callable,
                  parse_args: bool = True):
         self.aliases = aliases
         self.args = args
@@ -31,7 +32,7 @@ class Function:
             functions[alias.upper()] = self
             functions[alias.lower()] = self
 
-    def run(self, codebase: Codebase, block, args: List[Any], alias_used: str):
+    def run(self, codebase: Codebase, block, args: list[any], alias_used: str):
         #
         # TODO: Make this optional with strict mode
         # This is type coercion, mandatory for now.
@@ -98,7 +99,7 @@ class Function:
         return result
 
     # Fills in optional default values if they are not provided
-    def __fillArgs(self, arr: List[str]):
+    def __fillArgs(self, arr: list[str]):
         for i, value in enumerate(self.args.values()):
             if isUniqueValue(value) and len(arr[i:i + 1]) == 0:
                 arr.append(value)
