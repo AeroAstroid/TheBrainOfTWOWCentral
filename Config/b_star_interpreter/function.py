@@ -3,6 +3,8 @@ import math
 
 import bstarparser
 
+import bstarparser
+
 from Config.b_star_interpreter.expression import Expression
 from Config.b_star_interpreter.tempFunctionsFile import functions
 from Config.b_star_interpreter.run import Codebase
