@@ -121,7 +121,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		return
 
-	if args[1].lower() == "forcegenerate" and perms == 2:
+	if args[1].lower() == "forcegenerate" and perms >= 2:
 		
 		try:
 			# "public.bigredbutton" always has a single entry unless there has never been a button. If len(button_info)
