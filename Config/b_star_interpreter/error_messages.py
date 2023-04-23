@@ -115,5 +115,6 @@ unfunny_errmsg = [
     "Just know that it's perfectly acceptable to take a break for as long you need.",
     "Holy s**t you did it!",
     "How the hell did you get over here mate?",
-    "Apologies for the inconvenience, but we have absolutely no idea how you came here."
+    "Apologies for the inconvenience, but we have absolutely no idea how you came here.",
+    "name 'BStarProgramDefinedException' is not defined"
     ]
