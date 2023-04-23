@@ -1,4 +1,5 @@
 import Config.b_star_interpreter.globals as globals
+from Config.b_star_interpreter.exceptions import BStarUndefinedVariableException
 
 
 def var(item, index):
@@ -9,4 +10,4 @@ def var(item, index):
             else:
                 return val[item][index]
 
-    raise KeyError(f"variable not found: {item}")
+    raise BStarUndefinedVariableException(f"variable not found: {item}")

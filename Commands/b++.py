@@ -1,8 +1,8 @@
 from Config._functions import strip_alpha, find_all, is_whole, strip_front
 
-from Config._bppnew_parsing import *
+from Config._bpp_parsing import *
 
-from Config._bppnew_functions import ProgramDefinedException
+from Config._bpp_functions import ProgramDefinedException
 
 from Config._db import Database
 
