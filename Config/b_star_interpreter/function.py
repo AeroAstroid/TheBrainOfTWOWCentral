@@ -16,6 +16,33 @@ def isUniqueValue(value: any):
     return False if value is (None or math.inf) else True
 
 
+def coerceArgument(parameter_type: str, argument: any):
+    match parameter_type:
+        case int.__name__:
+            argument.val_type = bstarparser.Type.INTEGER
+        case float.__name__:
+            argument.val_type = bstarparser.Type.FLOAT
+        # case function.__class__:
+        #     arg.val_type = bstarparser.Type.FUNCTION
+        case str.__name__:
+            argument.val_type = bstarparser.Type.STRING
+        case _:
+            # argument.val_type = bstarparser.Type.FUNCTION
+            pass
+
+    return argument
+
+
+def coerceTupleArgument(parameter: inspect.Parameter, arguments: tuple[any]):
+    # tuple[T] -> T
+    for argument in arguments:
+        # TODO: only works for Tuple[T] so far, not Tuple[T | K]
+        parameterType = str(parameter.annotation).split("[")[1][:-1]
+        coerceArgument(parameterType, argument)
+
+    return arguments
+
+
 class Function:
     def __init__(self, aliases: list[str], args: dict[str, int | float | str | None], runner: callable,
                  parse_args: bool = True):
@@ -37,35 +64,20 @@ class Function:
         # TODO: Make this optional with strict mode
         # This is type coercion, mandatory for now.
         # get all parameters from the function
-        parameters = list(inspect.signature(self.runner).parameters.values())
-        parsedArgs = []
 
-        # iterate through all arguments given
-        for i, arg in enumerate(args):
-            # parameters[i] would be something like int() or str()
-            # raw = parameters[i].annotation(arg.raw)
-            # arg.raw = raw
-            match parameters[i].annotation.__name__:
-                case int.__name__:
-                    arg.val_type = bstarparser.Type.INTEGER
-                case float.__name__:
-                    arg.val_type = bstarparser.Type.FLOAT
-                # case function.__class__:
-                #     arg.val_type = bstarparser.Type.FUNCTION
-                case str.__name__:
-                    arg.val_type = bstarparser.Type.STRING
-                case _:
-                    arg.val_type = bstarparser.Type.FUNCTION
-
-
-            parsedArgs.append(arg)
-
-        #
         # This will Expression() all arguments if the function wants it.
         if self.parse_args:
+            parameters = list(inspect.signature(self.runner).parameters.values())
+
+            # iterate through all arguments given, coerce them to the type the function wants
+            parsedArgs = []
+            for i, parameter in enumerate(parameters):
+                if parameter.kind == inspect.Parameter.VAR_POSITIONAL:
+                    parsedArgs.extend(coerceTupleArgument(parameter, args[i:]))
+                else:
+                    parsedArgs.append(coerceArgument(parameter.annotation.__name__, args[i]))
 
             parsedArgs = list(map(lambda arg: Expression(arg, codebase), parsedArgs))
-
         else:
             parsedArgs = args
 
