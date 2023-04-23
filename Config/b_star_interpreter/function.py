@@ -37,8 +37,8 @@ def coerceTupleArgument(parameter: inspect.Parameter, arguments: tuple[any]):
     # tuple[T] -> T
     for argument in arguments:
         # TODO: only works for Tuple[T] so far, not Tuple[T | K]
-        parameterType = str(parameter.annotation).split("[")[1][:-1]
-        coerceArgument(parameterType, argument)
+        parameter_type = str(parameter.annotation).split("[")[1][:-1]
+        coerceArgument(parameter_type, argument)
 
     return arguments
 
@@ -48,8 +48,8 @@ class Function:
                  parse_args: bool = True):
         self.aliases = aliases
         self.args = args
-        self.infiniteArgs = False
-        self.argumentsRequired = self.__getArgumentsRequired()
+        self.infinite_args = False
+        self.arguments_required = self.__getArgumentsRequired()
         self.runner = runner
         self.parse_args = parse_args
 
@@ -70,34 +70,34 @@ class Function:
             parameters = list(inspect.signature(self.runner).parameters.values())
 
             # iterate through all arguments given, coerce them to the type the function wants
-            parsedArgs = []
+            parsed_args = []
             for i, parameter in enumerate(parameters):
                 if parameter.kind == inspect.Parameter.VAR_POSITIONAL:
-                    parsedArgs.extend(coerceTupleArgument(parameter, args[i:]))
+                    parsed_args.extend(coerceTupleArgument(parameter, args[i:]))
                 else:
-                    parsedArgs.append(coerceArgument(parameter.annotation.__name__, args[i]))
+                    parsed_args.append(coerceArgument(parameter.annotation.__name__, args[i]))
 
-            parsedArgs = list(map(lambda arg: Expression(arg, codebase), parsedArgs))
+            parsed_args = list(map(lambda arg: Expression(arg, codebase), parsed_args))
         else:
-            parsedArgs = args
+            parsed_args = args
 
         # TODO: Remove this once arg bug is fixed in Expression
-        # parsedArgs = [arg for arg in parsedArgs if arg is not None]
+        # parsed_args = [arg for arg in parsed_args if arg is not None]
 
-        parsedArgsLength = len(parsedArgs)
+        parsedArgsLength = len(parsed_args)
 
-        # TODO: Make it so that it doesnt change the original list (parsedArgs)
-        self.__fillArgs(parsedArgs)
+        # TODO: Make it so that it doesnt change the original list (parsed_args)
+        self.__fillArgs(parsed_args)
 
-        if parsedArgsLength < self.argumentsRequired:
+        if parsedArgsLength < self.arguments_required:
             raise Exception(
-                f"{alias_used.upper()} requires {len(self.args)} argument(s), but got {len(parsedArgs)}.")
+                f"{alias_used.upper()} requires {len(self.args)} argument(s), but got {len(parsed_args)}.")
 
-        if parsedArgsLength > len(self.args) and (self.infiniteArgs is False):
+        if parsedArgsLength > len(self.args) and (self.infinite_args is False):
             raise Exception(
-                f"{alias_used.upper()} requires {len(self.args)} argument(s), but got {len(parsedArgs)}.")
+                f"{alias_used.upper()} requires {len(self.args)} argument(s), but got {len(parsed_args)}.")
 
-        return self.runner(*parsedArgs)
+        return self.runner(*parsed_args)
 
     def __getArgumentsRequired(self):
         result = 0
@@ -105,7 +105,7 @@ class Function:
             if arg is None:
                 result += 1
             elif arg is math.inf:
-                self.infiniteArgs = True
+                self.infinite_args = True
                 result += 1
 
         return result
