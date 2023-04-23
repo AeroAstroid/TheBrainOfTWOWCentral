@@ -1,10 +1,10 @@
 try:
 	from Config._functions import is_whole
-	from Config._bppnew_functions import express_array, safe_cut, FUNCTIONS
+	from Config._bpp_functions import express_array, safe_cut, FUNCTIONS
 	from Config._db import Database
 except ModuleNotFoundError:
 	from _functions import is_whole
-	from _bppnew_functions import express_array, safe_cut, FUNCTIONS
+	from _bpp_functions import express_array, safe_cut, FUNCTIONS
 	from _db import Database
 
 def run_bpp_program(code, p_args, author, runner):
