@@ -15,7 +15,7 @@ from Config.b_star_interpreter.expression import Expression
 import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.parse import parseCode
 from Config.b_star_interpreter.tempFunctionsFile import functions
-from Config.b_star_interpreter.functions.raise_func import BStarProgramDefinedException
+from Config.b_star_interpreter.exceptions import BStarProgramRaisedException
 
 
 def runCode(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = [], author: int = -1):
