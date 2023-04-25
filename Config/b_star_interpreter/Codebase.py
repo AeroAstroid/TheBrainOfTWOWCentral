@@ -24,7 +24,7 @@ class OutputClass:
 class Codebase:
     def __init__(self, lines, user, arguments, author):
         self.lines: list[str] = lines
-        self.variables: list[dict[str, str]] = [{}]
+        self.variables: dict[str, str] = {}
         self.functions: dict[str, UserFunction] = {}
         self.user: discord.User | None = user
         self.arguments: list[str] | None = arguments

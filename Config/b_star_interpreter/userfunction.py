@@ -20,12 +20,12 @@ class UserFunction:
         # (interpreting within interpreting)
 
         # Temporary variables for use in function (lexical scope)
-        globals.codebase.variables.append({})
+        # globals.codebase.variables.append({})
         for i, arg in enumerate(self.args):
             define(arg, Expression(run_args[i], globals.codebase))
 
         result = Expression(self.block, globals.codebase)
-        globals.codebase.variables.pop()
+        # globals.codebase.variables.pop()
 
         # Early return
         if globals.codebase.ret is not None:

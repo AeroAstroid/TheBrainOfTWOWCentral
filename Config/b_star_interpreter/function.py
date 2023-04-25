@@ -3,8 +3,6 @@ import math
 
 import bstarparser
 
-import bstarparser
-
 from Config.b_star_interpreter.expression import Expression
 from Config.b_star_interpreter.tempFunctionsFile import functions
 from Config.b_star_interpreter.run import Codebase
@@ -72,10 +70,16 @@ class Function:
             # iterate through all arguments given, coerce them to the type the function wants
             parsed_args = []
             for i, parameter in enumerate(parameters):
-                if parameter.kind == inspect.Parameter.VAR_POSITIONAL:
-                    parsed_args.extend(coerceTupleArgument(parameter, args[i:]))
-                else:
-                    parsed_args.append(coerceArgument(parameter.annotation.__name__, args[i]))
+                match getParameterType(parameter):
+                    case ParameterKind.NORMAL:
+                        parsed_args.append(coerceArgument(parameter.annotation.__name__, args[i]))
+
+                    case ParameterKind.OPTIONAL:
+                        if i < len(args):
+                            parsed_args.append(coerceArgument(parameter.annotation.__name__, args[i]))
+
+                    case ParameterKind.KEYWORD:
+                        parsed_args.extend(coerceTupleArgument(parameter, args[i:]))
 
             parsed_args = list(map(lambda arg: Expression(arg, codebase), parsed_args))
         else:

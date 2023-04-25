@@ -8,8 +8,8 @@ def map_func(function: any, listToEdit: any):
 
     resultArray = []
     for item in parsedListToEdit:
-        globals.codebase.variables[0]["map.iterator"] = item
-        globals.codebase.variables[0]["map.i"] = item
+        globals.codebase.variables["map.iterator"] = item
+        globals.codebase.variables["map.i"] = item
         res = Expression(function, globals.codebase)
         if res is not None:
             resultArray.append(res)
