@@ -36,7 +36,7 @@ def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments
     for i, statement in enumerate(parsed_code):
         try:
             readLine(statement)
-        except BStarProgramDefinedException as error:
+        except BStarProgramRaisedException as error:
             return f"{error}"
         except Exception as error:
             return returnError(statement, error, i)
