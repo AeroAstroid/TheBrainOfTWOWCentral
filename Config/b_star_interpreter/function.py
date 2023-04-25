@@ -41,6 +41,22 @@ def coerceTupleArgument(parameter: inspect.Parameter, arguments: tuple[any]):
     return arguments
 
 
+class ParameterKind:
+    NORMAL = 0
+    KEYWORD = 1
+    OPTIONAL = 2
+
+
+def getParameterType(parameter: inspect.Parameter) -> ParameterKind:
+    if parameter.kind == inspect.Parameter.VAR_POSITIONAL:
+        return ParameterKind.KEYWORD
+
+    if "| None" in str(parameter.annotation):
+        return ParameterKind.OPTIONAL
+
+    return ParameterKind.NORMAL
+
+
 class Function:
     def __init__(self, aliases: list[str], args: dict[str, int | float | str | None], runner: callable,
                  parse_args: bool = True):
