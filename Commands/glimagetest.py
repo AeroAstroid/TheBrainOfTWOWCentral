@@ -1,11 +1,6 @@
 import os, discord
-from Config._functions import make_book
 
-from PIL import Image, ImageDraw, ImageFilter, ImageChops
-import csv
-import random
-import numpy
-import colorsys
+from PIL import Image, ImageDraw
 import time
 
 # Importing from const file
