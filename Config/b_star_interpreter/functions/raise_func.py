@@ -1,6 +1,5 @@
-class BStarProgramDefinedException(Exception):
-  pass
+from Config.b_star_interpreter.exceptions import BStarProgramRaisedException
 
 
 def raise_func(msg):
-  raise BStarProgramDefinedException(msg)
+  raise BStarProgramRaisedException(msg)

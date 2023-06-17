@@ -1,7 +1,7 @@
 import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.expression import Expression
 from Config.b_star_interpreter.parse import parseCode
-from Config._bppnew_functions import safe_cut
+from Config._bpp_functions import safe_cut
 from Config._db import Database
 
 

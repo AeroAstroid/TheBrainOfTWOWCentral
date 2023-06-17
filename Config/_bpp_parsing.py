@@ -1,159 +1,266 @@
-from Config._bpp_functions import *
-from Config._functions import grammar_list
+try:
+	from Config._functions import is_whole
+	from Config._bpp_functions import express_array, safe_cut, FUNCTIONS
+	from Config._db import Database
+except ModuleNotFoundError:
+	from _functions import is_whole
+	from _bpp_functions import express_array, safe_cut, FUNCTIONS
+	from _db import Database
 
-# Breaks code up into the operations/variables in parentheses for them to be interpreted by other functions
-def parenthesis_parser(raw, VARIABLES, OUTPUT, var=False):
-	expression = [[0, ""]] # List of all expressions and their parenthesis level
-	current_level = 0 # List of the current level in parsing
-	backslash = False # Is the next character backslashed?
+def run_bpp_program(code, p_args, author, runner):
+	# Pointers for tag and function organization
+	tag_level = 0
+	tag_code = []
+	tag_str = lambda: ' '.join([str(s) for s in tag_code])
 
-	for char in list(raw): # Analyze character by character
-
-		# Which expression is the one being analyzed currently? It's always gonna be the last one on the current level
-		current_var_index = [x for x in range(len(expression)) if expression[x][0] == current_level][-1]
-
-		if char == "\\": # If it's a backslash character...
-			if backslash: # If it's backslashed itself, include it normally
-				expression[current_var_index][1] += char
-				backslash = False
-			else: # If it's not, the next character will be backslashed
-				backslash = True
-			continue
-		
-		if char == "(":
-			if backslash: # If the parenthesis is backslashed, append it as a normal character
-				expression[current_var_index][1] += "\\"
-				expression[current_var_index][1] += char
-				backslash = False # End the backslash
-			else: # If it's not backslashed, it's a level rise
-				current_level += 1 # Increase the current level
-
-				expression[current_var_index][1] += "{res}" # There's an operation to solve for this expression now
-
-				expression.append([current_level, "("]) # Add a new expression with the new level
-			continue
-		
-		if char == ")":
-			if backslash: # Again, if the parenthesis is backslashed, append it as a normal character
-				expression[current_var_index][1] += "\\"
-				expression[current_var_index][1] += char
-				backslash = False # End the backslash
-
-			elif current_level == 0: # Throw an error if there's an imbalance in the parenthesis level
-				raise SyntaxError("Unbackslashed closing parentheses without any opening parentheses.")
-			
-			# If it's not backslashed and it's valid...
-			expression[current_var_index][1] += ")" # Append it to the end of the current expression
-			current_level -= 1 # Go a level down
-			continue
-		
-		if char == ";":
-			expression[current_var_index][1] += char
-			backslash = False
-			continue
-		
-		if backslash: # If this character is backslashed but it's not a character that needs special escaping
-			# with backslashes (like parentheses), just add the backslash before adding the character
-			expression[current_var_index][1] += "\\"
-			backslash = False # End the backslash
-
-		expression[current_var_index][1] += char # Add the character
+	backslashed = False	# Flag for whether to unconditionally escape the next character
 	
-	# We're going to move top down for this, so start with the highest index in the whole expression array
-	starting_index = max([x[0] for x in expression])
+	functions = {}	# Dict flattening a tree of all functions to be evaluated
 
-	for counting_up in range(starting_index + 1):
-		# Across iterations, will range from starting_index to 0
-		parsing_level = starting_index - counting_up
+	current = ["", False] # Raw text of what's being parsed right now + whether it's a string
 
-		for r in range(len(expression)): # Search through each expression
-			if expression[r][0] == parsing_level: # If it's on the same level as the current parsing level...
+	output = "" # Stores the final output of the program
 
-				expression_to_solve = expression[r][1] # The expression is the one specified...
-				if parsing_level != 0: # But if the level is above zero, there are parentheses, so get rid of them
-					expression_to_solve = expression_to_solve[1:-1]
+	goto = 0 # Skip characters in evaluating the code
 
-				operation_info = operation_check(expression_to_solve) # operation() defined above
+	for ind, char in enumerate(list(code)):
+		normal_case = True
 
-				if operation_info[0]: # There is an operation
-					if operation_info[0] == "out": # If that operation is out{}...
-						if var:
-							raise TypeError("Cannot call variable as an out{} operation")
-						
-						new_op_info = operation_check(operation_info[1][1:-1]) # Run the operation checker in the
-						# contents of out{} to solve an operation inside (this is not meant to be done for variables)
-						
-						if new_op_info[0]: # If the operation went fine
+		if ind < goto:
+			continue
 
-							if type(new_op_info[1]) == list:
-								new_op_info[1] = list_to_array(new_op_info[1])
+		if backslashed:
+			if tag_code == []:
+				output += char
+			else:
+				current[0] += char
+			
+			backslashed = False
+			continue
 
-							try:
-								if "\t" in new_op_info[1]:
-									new_op_info[1] = new_op_info[1].replace("\t", ";")
-							except TypeError:
-								pass
-							
-							OUTPUT += str(new_op_info[1]) # Add the result of above to the output
-							return [new_op_info[1], OUTPUT] # End the line here - out{} operations are final
+		if char == "\\":
+			backslashed = True
+			continue
 
-						elif not new_op_info[0]: # If there's no operation, just add the old result to OUTPUT
+		if char == "[" and not current[1]:
+			tag_level += 1
 
-							if type(new_op_info[1]) == list:
-								new_op_info[1] = list_to_array(new_op_info[1])
-
-							try:
-								if "\t" in operation_info[1]:
-									operation_info[1] = operation_info[1].replace("\t", ";")
-							except TypeError:
-								pass
-							
-							OUTPUT += str(operation_info[1][1:-1]) # When there's no operation, parentheses are removed
-							return [operation_info[1][1:-1], OUTPUT]
-
-						# If it gets here, that means there was an operation but there was an error
-						operation_info = new_op_info # Replace new_op_info with operation_info
-						# It'll go through the if operation_info[2] checker below and the error will be reported
-					
-					'''if operation_info[2]: # If there was an error with the operation...
-						operation = operation_info[1][0]
-						operation_f = operation.replace("_", " ").strip().replace("\\", "")
-						param_name = operation_info[1][1]
-						expected_types = grammar_list(FUNCTIONS[operation]["TYPES"][param_name], c_or=True)
-						param = operation_info[1][2]
-
-						raise TypeError( # Raise the error
-						f"Operation `{operation_f}` expected type {expected_types}, but `{param}` can't fit said type")
-						'''
-					
-					# If it got here, that means the operation was successful and is not out{}
-					result = operation_info[1] # Define the result
-					if type(result) == list: 
-						result = list_to_array(result) # Converts result to b++ array format if operation result is a list
-				elif r != 0: # If there was no matching operation, try to interpret it as a variable
-					# Do this if and only if r != 0, because if r == 0 the expression is outside parentheses, and
-					# variables are not meant to be called outside parentheses even when there's only a variable call
-					variable_info = variables(expression_to_solve, VARIABLES) # variables() defined above
-
-					if variable_info[0]: # If the variable was found in the dict
-						result = variable_info[1] # Define the results
-					else: # If it wasn't found, return a KeyError
-						raise KeyError(f"Variable {expression_to_solve} called but not defined")
-
-				else: # If r == 0 and it's not an operation, pass the expression unchanged
-					result = expression_to_solve
+			if tag_level == 1:
+				try:
+					tag_code = [max([int(k) for k in functions if is_whole(k)]) + 1]
+				except ValueError:
+					tag_code = [0]
 				
-				if r == 0: # If r == 0, last operation; whatever the result, it's the result of the entire line
-					final_result = result
+				output += "{}"
 
-				# If r != 0 change the expression that originated this operation/variable
-				for back in range(r): # For every element before the current one in expression array
-					# r-back-1 means to go backwards from r to the start
-					if expression[r-back-1][0] == expression[r][0] - 1: # If it's the first one that has the level
-						# 1 under the level of the current expression, it means that's the expression that called
-						# for the current expression
-						# Replace {res} placeholder with the result from the operation/variable
-						expression[r-back-1][1] = expression[r-back-1][1].replace("{res}", str(result), 1)
-						break
+				found_f = ""
 
-	return [final_result, OUTPUT]
+				for f_name in FUNCTIONS.keys():
+					try:
+						attempted_f = ''.join(code[ind+1:ind+len(f_name)+2]).upper()
+						if attempted_f == f_name + " ":
+							found_f = f_name
+							goto = ind + len(f_name) + 2
+						elif attempted_f == f_name + "]":
+							found_f = f_name
+							goto = ind + len(f_name) + 1
+					except IndexError: pass
+				
+				if found_f == "":
+					end_of_f = min(code.find(" ", ind+1), code.find("]", ind+1))
+					called_f = ''.join(code[ind+1:end_of_f])
+					raise NameError(f"Function {called_f} does not exist")
+				
+				functions[tag_str()] = [found_f]
+			
+			else:
+				old_tag_code = tag_str()
+				
+				k = 1
+				while old_tag_code + f" {k}" in functions.keys():
+					k += 1
+
+				new_tag_code = old_tag_code + f" {k}"
+
+				found_f = ""
+
+				for f_name in FUNCTIONS.keys():
+					try:
+						attempted_f = ''.join(code[ind+1:ind+len(f_name)+2]).upper()
+						if attempted_f == f_name + " ":
+							found_f = f_name
+							goto = ind + len(f_name) + 2
+						elif attempted_f == f_name + "]":
+							found_f = f_name
+							goto = ind + len(f_name) + 1
+					except IndexError: pass
+				
+				if found_f == "":
+					end_of_f = min(code.find(" ", ind+1), code.find("]", ind+1))
+					called_f = ''.join(code[ind+1:end_of_f])
+					raise NameError(f"Function {called_f} does not exist")
+
+				functions[new_tag_code] = [found_f]
+				functions[tag_str()].append((new_tag_code,))
+
+				tag_code.append(k)
+			
+			normal_case = False
+		
+		if char == "]" and not current[1]:
+			if current[0] != "":
+				functions[tag_str()].append(current[0])
+				current = ["", False]
+			tag_level -= 1
+			normal_case = False
+		
+		if char == " ":
+			if not current[1] and tag_level != 0:
+				if current[0] != "":
+					functions[tag_str()].append(current[0])
+					current = ["", False]
+				normal_case = False
+		
+		if char in '"“”':
+			if current[0] == "" and not current[1]:
+				current[1] = True
+			elif current[1]:
+				functions[tag_str()].append(current[0])
+				current = ["", False]
+			normal_case = False
+		
+		if normal_case:
+			if tag_level == 0: output += char
+			else: current[0] += char
+		
+		tag_code = tag_code[:tag_level]
+		tag_code += [1] * (tag_level - len(tag_code))
+
+	VARIABLES = {}
+
+	base_keys = [k for k in functions if is_whole(k)]
+
+	db = Database()
+
+	type_list = [int, float, str, list]
+	def var_type(v):
+		try:
+			return type_list.index(type(v))
+		except IndexError:
+			raise TypeError(f"Value {safe_cut(v)} could not be attributed to any valid data type")
+	
+	def evaluate_result(k):
+		v = functions[k]
+
+		if type(v) == tuple:
+			k1 = v[0]
+			functions[k] = evaluate_result(k1)
+			return functions[k]
+		
+		args = v[1:]
+
+		for i, a in enumerate(args):
+			if v[0] == "IF" and is_whole(v[1]) and int(v[1]) != 2-i:
+				continue
+			if type(a) == tuple:
+				k1 = a[0]
+				functions[k][i+1] = evaluate_result(k1)
+		
+		args = v[1:]
+
+		result = FUNCTIONS[v[0]](*args)
+
+		# Tuples indicate special behavior necessary
+		if type(result) == tuple:
+			if result[0] == "d":
+				if len(str(result[1])) > 100000:
+					raise MemoryError(
+					f"The variable {safe_cut(args[0])} is too large: {safe_cut(result[1])} (limit 100kb)")
+					
+				VARIABLES[args[0]] = result[1]
+				result = ""
+
+			elif result[0] == "v":
+				try:
+					result = VARIABLES[args[0]]
+				except KeyError:
+					raise NameError(f"No variable by the name {safe_cut(args[0])} defined")
+
+			elif result[0] == "a":
+				if result[1] >= len(p_args) or -result[1] >= len(p_args) + 1:
+					result = ""
+				else:
+					result = p_args[result[1]]
+
+			elif result[0] == "gd":
+				v_name = args[0]
+				if len(str(result[1])) > 100000:
+					raise MemoryError(
+					f"The global variable {safe_cut(v_name)} is too large: {safe_cut(result[1])} (limit 100kb)")
+				
+				if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
+					v_value = express_array(result[1]) if type(result[1]) == list else result[1]
+
+					db.add_entry("b++2variables", [v_name, str(v_value), var_type(v_value), str(author)])
+					result = ""
+
+				else:
+					v_list = db.get_entries("b++2variables", columns=["name", "owner"])
+					v_owner = [v for v in v_list if v_name == v[0]][0][1]
+
+					if v_owner != str(author):
+						raise PermissionError(
+						f"Only the author of the {v_name} variable can edit its value ({v_owner})")
+					
+					db.edit_entry(
+						"b++2variables",
+						entry={"value": str(result[1]), "type": var_type(result[1])},
+						conditions={"name": v_name})
+					result = ""
+				
+			elif result[0] == "gv":
+				v_name = args[0]
+
+				if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
+					raise NameError(f"No global variable by the name {safe_cut(v_name)} defined")
+
+				v_list = db.get_entries("b++2variables", columns=["name", "value", "type"])
+				v_value, v_type = [v[1:3] for v in v_list if v[0] == v_name][0]
+				v_value = type_list[v_type](v_value)
+
+				result = v_value
+
+			elif result[0] == "n":
+				result = runner.name
+
+			elif result[0] == "id":
+				result = runner.id
+			
+			elif result[0] == "aa":
+				result = p_args
+		
+		functions[k] = result
+		return result
+
+	for k in base_keys:
+		evaluate_result(k)
+	
+	for k in base_keys:
+		if type(functions[k]) == tuple:
+			evaluate_result(k)
+
+	results = []
+	for k, v in functions.items():
+		if is_whole(k):
+			if type(v) == list: v = express_array(v)
+			results.append(v)
+
+	output = output.replace("{}", "\t").replace("{", "{{").replace("}", "}}").replace("\t", "{}")
+
+	return output.format(*results).replace("\v", "{}")
+
+if __name__ == "__main__":
+	program = input("Program:\n\t")
+	print("\n")
+	program = program.replace("{}", "\v")
+	print(run_bpp_program(program, [], 184768535107469314))

@@ -15,7 +15,7 @@ from datetime import datetime as dt
 
 def HELP(PREFIX):
 	return {
-		"COOLDOWN": 3,
+		"COOLDOWN": 15,
 		"MAIN": "Allows you to write short tags and/or programs",
 		"FORMAT": "[subcommand]",
 		"CHANNEL": 0,
@@ -349,4 +349,5 @@ async def MAIN(message, args, level, perms, SERVER, LOGIN):
 	program_args = args[2:]
 
 	output = runCode(program, message.author, program_args, author)
-	await message.channel.send(output)
+	if len(output) > 1900: await message.channel.send(embed=discord.Embed(description=output[:4096]))
+	else: await message.channel.send(output)

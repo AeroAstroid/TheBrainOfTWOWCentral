@@ -121,7 +121,32 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		return
 
+	if args[1].lower() == "forcegenerate" and perms >= 2:
+		
+		try:
+			# "public.bigredbutton" always has a single entry unless there has never been a button. If len(button_info)
+			# is 0, that's the case, and this will throw an error caught by the try except block.
+			button_info = db.get_entries("bigredbutton", columns=["button", "info"])[0]
+		except IndexError:
+			button_info = db.get_entries("bigredbutton", columns=["button", "info"])
+		
+		button_number = button_info[0]
+		serial_number = key_generator(random.randrange(8, 15))
+		exploding_chance = random.randrange(15, 51)
+		inspector = number_key(3)
 
+		db.edit_entry("bigredbutton", entry={"button": button_number + 1, 
+		"info": f"{serial_number} {exploding_chance} {inspector}"})
+		
+		await message.channel.send(
+		f"""<:bigredbutton:654042578617892893> This is **Big Red Button #{button_number + 1}**
+
+		It has a **{exploding_chance}%** chance of exploding. The serial number is `{serial_number}`.
+		It was inspected and approved by Factory Inspector #{inspector}.
+		Use `tc/bigredbutton press` to press this button!""".replace("\t", ""))
+		
+		return
+			
 	if args[1].lower() == "top": # Points leaderboard
 
 		unformatted_points = db.get_entries("bigredbutton", columns=["points"])[0]

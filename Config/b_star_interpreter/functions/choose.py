@@ -2,9 +2,15 @@ import random
 
 
 def choose(*arr):
-    if len(arr) == 1 and type(arr[0]) == list or type(arr[0]) == str:
-        rand = random.randint(0, len(arr[0]) - 1)
-        return arr[0][rand]
+    # Check if the first element of arr is a list or tuple
+    if len(arr) == 1 and isinstance(arr[0], (list, tuple)):
+        # Use the elements of the list or tuple for random selection
+        items = arr[0]
     else:
-        rand = random.randint(0, len(arr) - 1)
-        return arr[rand]
+        # Use the elements of arr for random selection
+        items = arr
+
+    # Get a random index within the range of the items' length
+    rand = random.randint(0, len(items) - 1)
+    # Return the randomly selected item
+    return items[rand]
