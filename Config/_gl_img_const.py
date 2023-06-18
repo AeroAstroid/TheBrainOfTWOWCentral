@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 
 # FONTS
-ROW_COLUMN_FONT = ImageFont.truetype("fonts/Barlow-ExtraBoldItalic.ttf", 24)
+ROW_COLUMN_FONT = ImageFont.truetype("Fonts/Barlow-ExtraBoldItalic.ttf", 24)
 
 # Symbols for rows and columns
 COLUMN_SYMBOLS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"]
