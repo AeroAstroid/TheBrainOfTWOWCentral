@@ -1,5 +1,7 @@
-# TODO: Inspect types further
-def compare(v1: float, operator: str, v2: float):
+import typing
+
+
+def compare(v1: str | int | float | bool, operator: str, v2: str | int | float | bool):
     match operator:
         case ">":
             result = v1 > v2
