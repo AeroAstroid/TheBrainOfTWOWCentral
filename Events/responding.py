@@ -9,10 +9,10 @@ from Config._functions import grammar_list, word_count, formatting_fix
 from Config._const import ALPHABET, BRAIN, ALPHANUM_UNDERSCORE
 
 EVENT_ANNOUNCE_CHANNEL = "event-time"
-TESTING_ANNOUNCE_CHANNEL = "staff-event-time"
+TESTING_ANNOUNCE_CHANNEL = "mod-event-time"
 ADMIN_CHANNEL = "staff•commands"
 
-EVENT_PREFIX = "twow/"
+EVENT_PREFIX = "ewow/"
 
 DEFAULT_INFO = { # Define all the game information - This dictionary will be copied whenever there is a reset
 	"MODIFICATION_OPEN": False, # Whether or not admins can still modify or not
