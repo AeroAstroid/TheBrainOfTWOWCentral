@@ -58,7 +58,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		for m in s_roles[ind].members:
 
 			# Add each response to the TSV
-			userobj = BRAIN.get_user(user.id)
+			userobj = BRAIN.get_user(m.id)
 
 			csv_result += f"{m.display_avatar.url},{m.id},{userobj.display_name}\n"
 
