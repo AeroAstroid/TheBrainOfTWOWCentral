@@ -105,7 +105,7 @@ class EVENT:
 
 		# Set the parameter for the event announcement channel and admin channel
 		self.param["ANNOUNCE_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name=EVENT_ANNOUNCE_CHANNEL) # Post messages in here
-		self.param["ADMIN_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff•commands")
+		self.param["ADMIN_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name=ADMIN_CHANNEL)
 
 		# Add participating role
 		self.param["ROLES_IN_RESPONDING"].append(discord.utils.get(SERVER["MAIN"].roles, name="Participating"))
