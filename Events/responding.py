@@ -8,7 +8,7 @@ from discord.ui import Button, View, Select
 from Config._functions import grammar_list, word_count, formatting_fix
 from Config._const import ALPHABET, BRAIN, ALPHANUM_UNDERSCORE
 
-EVENT_ANNOUNCE_CHANNEL = "event-time"
+EVENT_ANNOUNCE_CHANNEL = "event-stage"
 TESTING_ANNOUNCE_CHANNEL = "mod-event-time"
 ADMIN_CHANNEL = "event-hosts"
 
