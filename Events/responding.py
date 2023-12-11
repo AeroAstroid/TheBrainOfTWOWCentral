@@ -10,7 +10,7 @@ from Config._const import ALPHABET, BRAIN, ALPHANUM_UNDERSCORE
 
 EVENT_ANNOUNCE_CHANNEL = "event-time"
 TESTING_ANNOUNCE_CHANNEL = "mod-event-time"
-ADMIN_CHANNEL = "staff•commands"
+ADMIN_CHANNEL = "event-hosts"
 
 EVENT_PREFIX = "ewow/"
 
@@ -267,9 +267,11 @@ class EVENT:
 					if response == None: continue
 
 					# Add each response to the TSV
+					userobj = BRAIN.get_user(user.id)
+
 					resp_tsv_list = []
 					resp_tsv_list.append(str(user.id)) # User's ID
-					resp_tsv_list.append(user.display_name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
+					resp_tsv_list.append(userobj.display_name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
 					resp_tsv_list.append(response[0]) # The user's actual response
 					resp_tsv_list.append(str(round(response[2], 2))) # The timestamp of the user's response - when it was sent
 					resp_tsv_list.append(str(round(response[2] - self.info["RESPONDING_START_TIME"], 2))) # The relative timestamp of the user's response - how long ago they sent a response
@@ -305,9 +307,12 @@ class EVENT:
 					response_id += 1
 
 					# Add each response to the TSV
+					userobj = BRAIN.get_user(user.id)
+
+					# Add each response to the TSV
 					resp_tsv_list = []
 					resp_tsv_list.append(str(response_id)) # The number of the response
-					resp_tsv_list.append(user.display_name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
+					resp_tsv_list.append(userobj.display_name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
 					resp_tsv_list.append(response[0]) # The user's actual response
 					resp_tsv_list.append(str(response[1])) # Whether or not the user's response was valid or not (in limits), either True or False
 					# Write to TSV
