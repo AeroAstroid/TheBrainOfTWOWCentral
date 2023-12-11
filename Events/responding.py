@@ -269,7 +269,7 @@ class EVENT:
 					# Add each response to the TSV
 					resp_tsv_list = []
 					resp_tsv_list.append(str(user.id)) # User's ID
-					resp_tsv_list.append(user.name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
+					resp_tsv_list.append(user.display_name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
 					resp_tsv_list.append(response[0]) # The user's actual response
 					resp_tsv_list.append(str(round(response[2], 2))) # The timestamp of the user's response - when it was sent
 					resp_tsv_list.append(str(round(response[2] - self.info["RESPONDING_START_TIME"], 2))) # The relative timestamp of the user's response - how long ago they sent a response
@@ -307,7 +307,7 @@ class EVENT:
 					# Add each response to the TSV
 					resp_tsv_list = []
 					resp_tsv_list.append(str(response_id)) # The number of the response
-					resp_tsv_list.append(user.name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
+					resp_tsv_list.append(user.display_name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
 					resp_tsv_list.append(response[0]) # The user's actual response
 					resp_tsv_list.append(str(response[1])) # Whether or not the user's response was valid or not (in limits), either True or False
 					# Write to TSV

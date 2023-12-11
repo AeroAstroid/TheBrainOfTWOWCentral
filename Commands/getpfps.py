@@ -55,7 +55,7 @@ async def MAIN(message, args, level, perms, SERVER):
         csv_result = ""
         
         for m in s_roles[ind].members:
-            csv_result += f"{m.display_avatar.url},{m.id},{m.name}\n"
+            csv_result += f"{m.display_avatar.url},{m.id},{m.display_name}\n"
 
         with open("getpfps.csv", "w", encoding="utf-8") as f:
             f.write('\ufeff')
