@@ -1,4 +1,4 @@
-def find(list, value):
-    if value not in list:
+def find(list_to_find: list[any], value: any):
+    if value not in list_to_find:
         return -1
-    return list.index(value)
+    return list_to_find.index(value)

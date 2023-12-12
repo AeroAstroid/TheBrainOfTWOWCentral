@@ -1,8 +1,6 @@
 from random import choice
 from traceback import format_exc
 
-from typing import List, Union
-
 import discord
 from func_timeout import func_timeout, FunctionTimedOut
 from lark import Tree
@@ -15,31 +13,37 @@ from Config.b_star_interpreter.expression import Expression
 import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.parse import parseCode
 from Config.b_star_interpreter.tempFunctionsFile import functions
-from Config.b_star_interpreter.exceptions import BStarProgramRaisedException
+from Config.b_star_interpreter.functions.raise_func import BStarProgramRaisedException
 
 
-def runCode(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = [], author: int = -1):
+def runCode(code: Tree, user: discord.User | None = None, arguments: list[str] = []):
     try:
-        return func_timeout(30, runCodeSandbox, args=(code, user, arguments, author))
+        # return func_timeout(30, runCodeSandbox, args=(code, user, arguments))
+        return runCodeSandbox(code, user, arguments)
     except FunctionTimedOut:
-        return returnError("RUNTIME", "Timed out! (More than 30 seconds)")
+        return returnError(code, "RUNTIME", "Timed out! (More than 30 seconds)")
     except Exception as error:
         return error
 
 
-def runCodeSandbox(code: Tree, user: Union[discord.User, None] = None, arguments: List[str] = [], author: int = -1):
+def runCodeSandbox(code: Tree, user: discord.User | None = None, arguments: list[str] = []):
     # TODO: Trim up to three backticks from beginning and end of code
     parsed_code = parseCode(code).children
-    globals.codebase = Codebase(parsed_code, user, arguments, author)
+    globals.codebase = Codebase(parsed_code, user, arguments)
     globals.codebase.functions = globals.codebase.functions | functions
 
     for i, statement in enumerate(parsed_code):
+        globals.codebase.output += "\n"
+
         try:
-            readLine(statement)
-        except BStarProgramRaisedException as error:
-            return f"{error}"
+            result = readLine(statement)
+            if result is not None:
+                if not result:
+                    globals.codebase.output += "\n"
+        # except BStarProgramDefinedException as error:
+        #     return f"{error}"
         except Exception as error:
-            return returnError(statement, error, i)
+            return returnError(code, statement, error)
 
     # print(codebase.variables)
     # print(codebase.output)
@@ -60,14 +64,54 @@ def readLine(statement):
     # print(result)
     if result is not None:
         globals.codebase.output += str(result)
+        return str(result)
+    else:
+        return None
 
 
-def returnError(statement, error, i):
-    section = statement.pretty()
+# def parseArguments(args: List[str]):
+#     result = []
+#     for arg in args:
+#         match type(arg):
+#             case "int":
+#                 result.append(int(arg))
+#
+#             case "float":
+#
+#             case _:
+#                 result.append(arg)
 
-    errmsg = f"{choice(unfunny_errmsg)}\n\nError of type {type(error).__name__} at ```scala" \
-             f"\n{section}" \
-             f"```\n**{error}** (Error occurred at code block {i + 1})"
+
+def returnError(code, block, error):
+    # s = f"Line **{block.line}**, (**{block.start}**:**{block.end}**)"
+    # section = block.pretty()
+    line = code.split("\n")[block.line - 1]
+    before = line[block.start - 11:block.start - 1]
+    problem_code = line[block.start - 1:block.end]
+    problem_code_length = max(len(problem_code), 1)
+    # problem_code = block.raw
+    after = line[block.end:block.end + 10]
+
+    type_name = type(error).__name__
+    # errmsg = f"{choice(unfunny_errmsg)}\n\nError of type {type_name} at ```scala" \
+    #          f"```\n**{error}** ({s})"
+
+    before_el = "[2;31m[2;30m...[0m[2;31m[2;37m[0m[2;31m[0m" if len(before) >= 10 else ""
+    after_el = "[2;31m[2;30m...[0m[2;31m[2;37m[0m[2;31m[0m" if len(after) >= 10 else ""
+
+    before_el_real = "..." if len(before) >= 10 else ""
+
+    errmsg = f"""
+    {choice(unfunny_errmsg)}
+    ```ansi
+[0;31m[2;31merror[0;31m[0;31m[0;31m[0;31m[0;31m[0;31m[0;31m[0;31m[0;37m[1;37m: {type_name}[0m[0;37m
+[0;34m  --> [0;37m[1;37mline {block.line}, {block.start}:{block.end}[0m[0;37m[0m[0;34m
+   |
+ {block.line} |    {before_el}[0;37m{before}[0m[0;34m[0;31m{problem_code}[0m[0;34m[0;37m{after}[0m[0;34m{after_el}[0m[0;37m[0m[0;34m
+   |    {" "*len(before_el_real + before)}[0;31m[1;31m{"^"*problem_code_length} {error}[0m[0;31m[0m[0;34m[0m[0;37m
+[0m[0;31m[0m[0;31m[0m[0;31m[0m[0;31m[0m[0;31m[0m[0;31m[0m[0;31m[0m[0;31m[0m[2;31m[0m[2;31m[0m
+```"""
+
     if globals.debug.print_error:
         print(f"{errmsg}\n\n{format_exc()}")  # print stack trace too
     return errmsg
