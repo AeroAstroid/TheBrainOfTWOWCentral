@@ -1,9 +1,10 @@
 from enum import Enum
 
 import bstarparser
-from lark import Tree, Token
+# from lark import Tree, Token
 import Config.b_star_interpreter.globals as globals
 import Config.b_star_interpreter.tempFunctionsFile
+from Config.b_star_interpreter.newpasta import Node, Token
 
 
 class Type(Enum):
@@ -42,7 +43,7 @@ class Type(Enum):
 """
 
 
-def Expression(block: bstarparser.Property, codebase):
+def Expression(node: Node, codebase):
     if globals.codebase.ret is not None:
         return
 
@@ -54,31 +55,33 @@ def Expression(block: bstarparser.Property, codebase):
         # return block
 
     # print(block, block.pretty())
-    match block.val_type:
-        case bstarparser.Type.FUNCTION:
-            alias = Expression(block.children[0], globals.codebase)
 
-            # this gets the argument values from the block
-            # arguments = list(map(lambda x: Expression(x, codebase), block.children[1].children))
-            # arguments = list(map(lambda x: x, block.children[1:]))
-            arguments = block.children[1:]
-            # arguments = list(map(lambda x: x.children[0], arguments))
-            functionWanted = findFunction(alias, codebase)
-            if functionWanted is not None:
-                if hasattr(functionWanted, "block"):  # check if it's a user-made function
-                    return functionWanted.run(arguments)
-                else:
-                    return functionWanted.run(codebase, block, arguments, alias)
+    if node.type is None: # function
+        alias = Expression(node.children[0], globals.codebase)
+
+        # this gets the argument values from the block
+        # arguments = list(map(lambda x: Expression(x, codebase), block.children[1].children))
+        # arguments = list(map(lambda x: x, block.children[1:]))
+        arguments = node.children[1:]
+        # arguments = list(map(lambda x: x.children[0], arguments))
+        functionWanted = findFunction(alias, codebase)
+        if functionWanted is not None:
+            if hasattr(functionWanted, "block"):  # check if it's a user-made function
+                return functionWanted.run(arguments)
             else:
-                raise NotImplementedError(f"Function not found: {alias}")
-        case bstarparser.Type.INTEGER:
-            return int(block.raw)
-        case bstarparser.Type.FLOAT:
-            return float(block.raw)
-        case bstarparser.Type.STRING:
-            return block.raw.strip()
+                return functionWanted.run(codebase, node, arguments, alias)
+        else:
+            raise NotImplementedError(f"Function not found: {alias}")
+
+    match node.type.__class__:
+        case Token.INTEGER:
+            return int(node.type.value)
+        case Token.FLOAT:
+            return float(node.type.value)
+        case Token.SYMBOL:
+            return node.type.value.strip()
         case _:
-            raise NotImplementedError(f"Type not found: {block.val_type}")
+            raise NotImplementedError(f"Type not found: {node.type.__class__.__name__}")
             # unstring = block.raw
             # try:
             #     return unstring
