@@ -223,8 +223,8 @@ def uno_image(b_type, tag, PREFIX, hand=None, last=None, draw_c=None, name=None,
 			(int(round(x_coord - card_image.width / 2)), int(round(y_coord - card_image.height / 2))),
 			card_image)
 
-			size_t = draw.textsize(str(card + 1), font_bold(40)) # Draw the card code above the card
-			draw.text((x_coord - size_t[0] / 2, y_coord - 150), str(card + 1), (255, 255, 255), font_bold(40))
+			size_t = draw.textlength(str(card + 1), font_bold(40)) # Draw the card code above the card
+			draw.text((x_coord - size_t / 2, y_coord - 150), str(card + 1), (255, 255, 255), font_bold(40))
 		
 		# Paste the last card played
 		last_played = Image.open("Images/Uno/{}.png".format(last)).convert('RGBA').resize((210, 337))
@@ -236,8 +236,8 @@ def uno_image(b_type, tag, PREFIX, hand=None, last=None, draw_c=None, name=None,
 		else:
 			texty = "This is your hand!"
 
-		size_t = draw.textsize(texty, font_bold(40)) # Draw the text, centered
-		draw.text((600 - size_t[0] / 2, 10),
+		size_t = draw.textlength(texty, font_bold(40)) # Draw the text, centered
+		draw.text((600 - size_t / 2, 10),
 		texty,
 		(255, 255, 255),
 		font_bold(40))
