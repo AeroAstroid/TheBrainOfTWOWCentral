@@ -23,8 +23,6 @@ class EVENT:
 	# Function that runs on each message
 	async def on_message(self, message):
 
-		print("test")
-
 		if self.param["MODMAIL_CATEGORY"] == None: return # Do not run if modmail category does not exist
 		if message.channel == None: return # Do not run if message was not sent in channel
 

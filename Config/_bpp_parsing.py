@@ -114,7 +114,7 @@ def run_bpp_program(code, p_args, author, runner):
 			tag_level -= 1
 			normal_case = False
 		
-		if char == " ":
+		if char in " \n":
 			if not current[1] and tag_level != 0:
 				if current[0] != "":
 					functions[tag_str()].append(current[0])

@@ -8,11 +8,11 @@ from discord.ui import Button, View, Select
 from Config._functions import grammar_list, word_count, formatting_fix
 from Config._const import ALPHABET, BRAIN, ALPHANUM_UNDERSCORE
 
-EVENT_ANNOUNCE_CHANNEL = "event-time"
-TESTING_ANNOUNCE_CHANNEL = "staff-event-time"
-ADMIN_CHANNEL = "staff•commands"
+EVENT_ANNOUNCE_CHANNEL = "event-stage"
+TESTING_ANNOUNCE_CHANNEL = "mod-event-time"
+ADMIN_CHANNEL = "event-hosts"
 
-EVENT_PREFIX = "twow/"
+EVENT_PREFIX = "ewow/"
 
 DEFAULT_INFO = { # Define all the game information - This dictionary will be copied whenever there is a reset
 	"MODIFICATION_OPEN": False, # Whether or not admins can still modify or not
@@ -105,7 +105,7 @@ class EVENT:
 
 		# Set the parameter for the event announcement channel and admin channel
 		self.param["ANNOUNCE_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name=EVENT_ANNOUNCE_CHANNEL) # Post messages in here
-		self.param["ADMIN_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff•commands")
+		self.param["ADMIN_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name=ADMIN_CHANNEL)
 
 		# Add participating role
 		self.param["ROLES_IN_RESPONDING"].append(discord.utils.get(SERVER["MAIN"].roles, name="Participating"))
@@ -267,9 +267,11 @@ class EVENT:
 					if response == None: continue
 
 					# Add each response to the TSV
+					userobj = BRAIN.get_user(user.id)
+
 					resp_tsv_list = []
 					resp_tsv_list.append(str(user.id)) # User's ID
-					resp_tsv_list.append(user.name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
+					resp_tsv_list.append(userobj.display_name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
 					resp_tsv_list.append(response[0]) # The user's actual response
 					resp_tsv_list.append(str(round(response[2], 2))) # The timestamp of the user's response - when it was sent
 					resp_tsv_list.append(str(round(response[2] - self.info["RESPONDING_START_TIME"], 2))) # The relative timestamp of the user's response - how long ago they sent a response
@@ -305,9 +307,12 @@ class EVENT:
 					response_id += 1
 
 					# Add each response to the TSV
+					userobj = BRAIN.get_user(user.id)
+
+					# Add each response to the TSV
 					resp_tsv_list = []
 					resp_tsv_list.append(str(response_id)) # The number of the response
-					resp_tsv_list.append(user.name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
+					resp_tsv_list.append(userobj.display_name.encode('UTF-8', 'ignore').decode("UTF-8")) # User's username, which has all non UTF-8 characters filtered out
 					resp_tsv_list.append(response[0]) # The user's actual response
 					resp_tsv_list.append(str(response[1])) # Whether or not the user's response was valid or not (in limits), either True or False
 					# Write to TSV

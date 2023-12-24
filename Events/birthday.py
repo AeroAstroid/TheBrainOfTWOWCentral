@@ -12,7 +12,7 @@ class EVENT:
 	def __init__(self):
 		self.RUNNING = False
 		self.param = { # Define all the parameters necessary
-			"CHANNEL": "general"
+			"CHANNEL": 481509602035236865
 		}
 
 
@@ -26,7 +26,7 @@ class EVENT:
 	# Executes when deactivated
 	def end(self): # Reset the parameters
 		self.param = {
-			"CHANNEL": "general",
+			"CHANNEL": 481509602035236865
 		}
 		self.RUNNING = False
 	
@@ -35,7 +35,7 @@ class EVENT:
 		current_time = datetime.utcnow()
 		hour = current_time.hour
 
-		self.CHANNEL = discord.utils.get(self.SERVER["MAIN"].channels, name=self.param["CHANNEL"])
+		self.CHANNEL = discord.utils.get(self.SERVER["MAIN"].channels, id=self.param["CHANNEL"])
 
 		day_change_tz = []
 		for timezone in range(-12, 15): # For each timezone

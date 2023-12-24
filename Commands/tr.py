@@ -83,7 +83,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		"Medium Dog House": 0.65,
 		"Hedgehog": 0.12,
 		"Pine Tree": 15,
-		"All Diary of a Wimpy Kid Books Stacked on Top of Each Other": 0.27,
+		"All Diary of a Wimpy Kid Books Stacked on Top of Each Other": 0.3543,
 		"Brazil": 4292000,
 		"Earth": 12742000,
 		"Empire State Building": 441,
