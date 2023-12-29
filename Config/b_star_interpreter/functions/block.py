@@ -1,11 +1,12 @@
-import bstarparser
+# import bstarparser
 
 import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.expression import Expression
+from Config.b_star_interpreter.newpasta import Node
 
 
 # TODO: Inspect types further
-def block(*functions: tuple[bstarparser.Property]):
+def block(*functions: tuple[Node]):
     ret = None
     for fn in functions:
         if ret is not None:  # print everything that isn't returned
