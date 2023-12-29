@@ -37,11 +37,11 @@ class TestManager:
             output = test.output()
 
             if correct:
-                print(test.name + bcolors.OKGREEN, ":", "SUCCESS!")
+                print(bcolors.HEADER + test.name + bcolors.OKGREEN, ":", "SUCCESS!")
             elif output is Exception:
-                print(test.name + bcolors.FAIL, ":", output)
+                print(bcolors.HEADER + test.name + bcolors.FAIL, ":", output)
             else:
-                print(test.name + bcolors.WARNING, ":", "Failure...", output, "!=", test.expected)
+                print(bcolors.HEADER + test.name + bcolors.WARNING, ":", "Failure...", output, "!=", test.expected)
 
 
 if __name__ == "__main__":

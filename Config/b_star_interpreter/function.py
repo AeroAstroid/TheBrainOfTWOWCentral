@@ -1,9 +1,8 @@
 import inspect
 import math
 
-import bstarparser
-
 from Config.b_star_interpreter.expression import Expression
+from Config.b_star_interpreter.newpasta import Token
 from Config.b_star_interpreter.tempFunctionsFile import functions
 from Config.b_star_interpreter.run import Codebase
 from Config.b_star_interpreter.globals import debug
@@ -17,13 +16,13 @@ def isUniqueValue(value: any):
 def coerceArgument(parameter_type: str, argument: any):
     match parameter_type:
         case int.__name__:
-            argument.val_type = bstarparser.Type.INTEGER
+            argument.val_type = Token.INTEGER
         case float.__name__:
-            argument.val_type = bstarparser.Type.FLOAT
+            argument.val_type = Token.FLOAT
         # case function.__class__:
         #     arg.val_type = bstarparser.Type.FUNCTION
         case str.__name__:
-            argument.val_type = bstarparser.Type.STRING
+            argument.val_type = Token.STRING
         case _:
             # argument.val_type = bstarparser.Type.FUNCTION
             pass
@@ -35,7 +34,8 @@ def coerceTupleArgument(parameter: inspect.Parameter, arguments: tuple[any]):
     # tuple[T] -> T
     for argument in arguments:
         # TODO: only works for Tuple[T] so far, not Tuple[T | K]
-        parameter_type = str(parameter.annotation).split("[")[1][:-1]
+        # parameter_type = str(parameter.annotation).split("[")[1][:-1]
+        parameter_type = parameter.annotation.__name__
         coerceArgument(parameter_type, argument)
 
     return arguments
@@ -81,23 +81,24 @@ class Function:
 
         # This will Expression() all arguments if the function wants it.
         if self.parse_args:
-            parameters = list(inspect.signature(self.runner).parameters.values())
+            # parameters = list(inspect.signature(self.runner).parameters.values())
 
             # iterate through all arguments given, coerce them to the type the function wants
-            parsed_args = []
-            for i, parameter in enumerate(parameters):
-                match getParameterType(parameter):
-                    case ParameterKind.NORMAL:
-                        parsed_args.append(coerceArgument(parameter.annotation.__name__, args[i]))
+            # parsed_args = args
+            # for i, parameter in enumerate(parameters):
+            #     match getParameterType(parameter):
+            #         case ParameterKind.NORMAL:
+            #             parsed_args.append(coerceArgument(parameter.annotation.__name__, args[i]))
+            #
+            #         case ParameterKind.OPTIONAL:
+            #             if i < len(args):
+            #                 # Assuming "x | None" where x is not None
+            #                 parsed_args.append(coerceArgument(parameter.annotation.__args__[0].__name__, args[i]))
+            #
+            #         case ParameterKind.KEYWORD:
+            #             parsed_args.extend(coerceTupleArgument(parameter, args[i:]))
 
-                    case ParameterKind.OPTIONAL:
-                        if i < len(args):
-                            parsed_args.append(coerceArgument(parameter.annotation.__name__, args[i]))
-
-                    case ParameterKind.KEYWORD:
-                        parsed_args.extend(coerceTupleArgument(parameter, args[i:]))
-
-            parsed_args = list(map(lambda arg: Expression(arg, codebase), parsed_args))
+            parsed_args = list(map(lambda arg: Expression(arg, codebase), args))
         else:
             parsed_args = args
 

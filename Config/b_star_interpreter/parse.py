@@ -1,5 +1,5 @@
-import bstarparser
+# import bstarparser
 
 
-def parseCode(code):
-    return bstarparser.parse_wrapped(code)
+# def parseCode(code):
+#     return bstarparser.parse_wrapped(code)

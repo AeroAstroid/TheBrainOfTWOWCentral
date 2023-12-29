@@ -12,7 +12,7 @@ from Config.b_star_interpreter.expression import Expression
 # the discord user property is used for global ownership checking
 import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.newpasta import parser, Node
-from Config.b_star_interpreter.parse import parseCode
+# from Config.b_star_interpreter.parse import parseCode
 from Config.b_star_interpreter.tempFunctionsFile import functions
 from Config.b_star_interpreter.functions.raise_func import BStarProgramRaisedException
 
