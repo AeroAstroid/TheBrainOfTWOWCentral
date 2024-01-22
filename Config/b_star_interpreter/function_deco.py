@@ -77,7 +77,7 @@ def setupFunctions():
     Function(["factorial"], {"number": ArgumentType.Required}, factorial)
     Function(["floor"], {"number": ArgumentType.Required}, floor)
     Function(["log"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, log)
-    Function(["math"], {"number": ArgumentType.Required, "operator": ArgumentType.Required, "by": ArgumentType.Required}, math_func)
+    Function(["math"], {"equation_strings":  ArgumentType.Variadic}, math_func)
     Function(["mod", "%"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, mod)
     Function(["mul", "multiply", "product", "*"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, mul)
     Function(["pow", "^"], {"number": ArgumentType.Required, "bys": ArgumentType.Variadic}, pow_func)

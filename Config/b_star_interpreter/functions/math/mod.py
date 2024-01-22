@@ -1,4 +1,4 @@
-def mod(number, *bys):
+def mod(number: float, *bys: tuple[float]):
     result = number
 
     for num in bys:

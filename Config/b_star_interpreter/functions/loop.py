@@ -2,7 +2,8 @@ import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.expression import Expression
 
 
-def loop(amount, func):
+# TODO: Inspect types further
+def loop(amount: any, func: any):
     results = []
     for _ in range(Expression(amount, globals.codebase)):
         result = Expression(func, globals.codebase)

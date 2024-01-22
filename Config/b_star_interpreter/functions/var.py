@@ -2,12 +2,13 @@ import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.exceptions import BStarUndefinedVariableException
 
 
-def var(item, index):
-    for val in reversed(globals.codebase.variables):
-        if item in val:
-            if index == "":
-                return val[item]
-            else:
-                return val[item][index]
+# TODO: Inspect types further
+def var(name: any, index: int | None = None):
+    variable = globals.codebase.variables[name]
+    if variable is None:
+        raise BStarUndefinedVariableException(f"variable not found: {name}")
 
-    raise BStarUndefinedVariableException(f"variable not found: {item}")
+    if index == "":
+        return variable
+    else:
+        return variable[index]

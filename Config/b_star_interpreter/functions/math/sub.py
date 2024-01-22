@@ -1,4 +1,4 @@
-def sub(number, *bys):
+def sub(number: float, *bys: tuple[float]):
     result = number
 
     for num in bys:
