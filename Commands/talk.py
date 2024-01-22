@@ -1,4 +1,5 @@
 from Config._functions import is_whole
+from Config._const import BRAIN
 import discord
 
 def HELP(PREFIX):
@@ -42,8 +43,11 @@ async def MAIN(message, args, level, perms, SERVER):
 		target = SERVER["MAIN"].get_member(user_id)
 
 	else:
+		channel_list_2d = [sv.channels for sv in BRAIN.guilds]
+		channel_list = [ch for server_channels in channel_list_2d for ch in server_channels]
+		
 		channel_id = int(args[1])
-		target = discord.utils.get(SERVER["MAIN"].channels, id=channel_id)
+		target = discord.utils.get(channel_list, id=channel_id)
 
 	if target is None:
 		await message.channel.send("Could not find a channel or user with that ID.")
