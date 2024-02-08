@@ -301,7 +301,7 @@ class EVENT:
                     await self.ANNOUNCE_CHANNEL.send(f"🔍 **Stand by! Round {new_round} will begin in 20 seconds!**")
                     await self.ANNOUNCE_CHANNEL.send(f"This round is worth **{self.GAME['MAX_POINTS'][self.GAME['ROUND']+1]}** points.")
                     self.GAME["PERIOD_STEP"] = -1
-                    self.GAME["NEXT_PERIOD"] = int(time() + 2) # should be 20
+                    self.GAME["NEXT_PERIOD"] = int(time() + 20)
                     self.GAME["ROUND"] = -new_round
 
                 else:
@@ -470,7 +470,7 @@ class EVENT:
 
                 if ind >= len(lines):
                     self.GAME["ROUND"] = -1 if self.GAME['PHASE'] == 1 else -(self.PARAM['PHASE_1_LEN']+1)
-                    self.GAME["NEXT_PERIOD"] = int(time() + 2) # should be 30
+                    self.GAME["NEXT_PERIOD"] = int(time() + 30)
                     self.GAME["PERIOD_STEP"] = 0
 
                     phase_msg = f"Phase {self.GAME['PHASE']} and " if self.PARAM['PHASE_1_LEN'] > 0 and self.PARAM['PHASE_2_LEN'] > 0 else ''
