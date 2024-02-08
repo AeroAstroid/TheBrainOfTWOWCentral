@@ -129,8 +129,6 @@ class EVENT:
         if not self.GAME_STARTED:
             return
         
-        print(self.GAME)
-        
         # Within a period
         if time() <= self.GAME["NEXT_PERIOD"]:
             if self.GAME["ROUND_RUNNING"]:
