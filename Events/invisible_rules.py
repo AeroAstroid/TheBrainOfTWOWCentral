@@ -22,9 +22,9 @@ def DEFAULT_PARAM():
         "PHASE_1_LEN": 0,
         "PHASE_2_LEN": 4,
         "PHASE_1_TEST_LEN": 10,
-        "PHASE_2_TEST_STREAK": 8,
+        "PHASE_2_TEST_STREAK": 9,
         
-        "WRONG_ANSWER_PENALTY": 0.01,
+        "WRONG_ANSWER_PENALTY": 0.02,
         "MAX_TIME_PENALTY": 0.45
     }
 
@@ -70,8 +70,8 @@ class EVENT:
         self.RUNNING = True
 
         self.PARAM["PLAYER_ROLE_ID"] = 498254150044352514
-        self.PARAM["ANNOUNCE_CHANNEL_ID"] = 994452515594702868
-        self.PARAM["GAME_CHANNEL_ID"] = 990881801641807892
+        self.PARAM["ANNOUNCE_CHANNEL_ID"] = 598613590190325760
+        self.PARAM["GAME_CHANNEL_ID"] = 587077170036211779
         self.PARAM["EVENT_ADMIN_ID"] = 959155078844010546
 
         self.EVENT_ADMIN = dc.utils.get(SERVER["MAIN"].roles, id=self.PARAM["EVENT_ADMIN_ID"])
