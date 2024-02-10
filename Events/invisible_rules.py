@@ -20,11 +20,11 @@ def DEFAULT_PARAM():
         "PHASE_2_ROUND_TIME": 900,
 
         "PHASE_1_LEN": 0,
-        "PHASE_2_LEN": 4,
+        "PHASE_2_LEN": 5,
         "PHASE_1_TEST_LEN": 10,
-        "PHASE_2_TEST_STREAK": 9,
+        "PHASE_2_TEST_LEN": 10,
         
-        "WRONG_ANSWER_PENALTY": 0.02,
+        "WRONG_ANSWER_PENALTY": 0.025,
         "MAX_TIME_PENALTY": 0.45
     }
 
@@ -71,7 +71,7 @@ class EVENT:
 
         self.PARAM["PLAYER_ROLE_ID"] = 498254150044352514
         self.PARAM["ANNOUNCE_CHANNEL_ID"] = 598613590190325760
-        self.PARAM["GAME_CHANNEL_ID"] = 587077170036211779
+        self.PARAM["GAME_CHANNEL_ID"] = 830232343331209216
         self.PARAM["EVENT_ADMIN_ID"] = 959155078844010546
 
         self.EVENT_ADMIN = dc.utils.get(SERVER["MAIN"].roles, id=self.PARAM["EVENT_ADMIN_ID"])
@@ -222,13 +222,13 @@ class EVENT:
                         
                     if p_test[5] != 0:
                         if self.GAME["PHASE"] == 1:
-                            score = p_test[3].count(True)
+                            score = p_test[3].count(1)
                             
                             if score >= self.PARAM["PHASE_1_TEST_LEN"]-1:
                                 results_list[ind][2] = self.GAME["MAX_POINTS"][self.GAME["ROUND"]]
 
                         else:
-                            score = p_test[3].count(False)
+                            score = p_test[3].count(0)
                             
                             if results_list[ind][4] < 9999999:
                                 results_list[ind][2] = max(ceil(self.GAME["MAX_POINTS"][self.GAME["ROUND"]]*(1
@@ -381,7 +381,8 @@ class EVENT:
 					that doesn't use invalid characters with a ✅ **if it passes the rule**, or a ❌ **if it 
 					breaks the rule.** If a message **has invalid characters**, the bot will react with ❔ regardless 
 					of whether it passes the rule or not. You may send as many messages as you want. There is no 
-					penalty or reward for specifically sending messages that break or pass the rule."""),
+					penalty or reward for specifically sending messages that break or pass the rule. Valid characters 
+					are letters are spaces. Rules are case-insensitive. All other characters are invalid"""),
 
 					m_line(f"""> A player who is confident they figured out the rule can **DM me with the command 
 					`ir/test`** to stop INSPECTING and start **TESTING**. This command is **final** - you will be 
@@ -424,23 +425,19 @@ class EVENT:
 					as many messages as you want, and you'll be told whether or not they break the rule, 
 					without any penalty."""),
 
-					m_line("""> To start **TESTING**, DM me with **`ir/test`** as normal. In the PHASE TWO TEST, 
-					you will be sequentially shown a series of messages, one by one, and must answer whether or not 
-					they PASS or BREAK the current rule as they come."""),
+					m_line(f"""> To start **TESTING**, DM me with **`ir/test`**. In the PHASE TWO TEST, you will be
+					sequentially shown a series of {self.PARAM['PHASE_2_TEST_LEN']} messages, one by one, and must
+					answer whether or not they PASS or BREAK the current rule as they come."""),
 
-					m_line(f"""> The test is considered to be passed once a player gives 
-					**{self.PARAM['PHASE_2_TEST_STREAK']} correct answers IN A ROW**. Therefore, making a mistake 
-					will reset your correct answer count back to 0, and make the test longer. You will be given no 
+					m_line(f"""> The test is considered to be passed if the player gives correct answers for all
+					messages. If you fail the test, **you will be sent back to INSPECTING**. You will be given no 
 					immediate feedback on whether or not your answers are correct (that is, until you're notified 
-					that you passed the test). The test has 100 messages maximum. If it's not solved by then, it is 
-					considered to be unfinished."""),
+					that you passed the test). You may take the test at most 10 times."""),
 
 					m_line(f"""> However, for this PHASE, **you may go back to INSPECTING even after starting a 
 					TEST** by DMing me with **`ir/inspect`**. You will be given access to <#{self.GAME_CHANNEL.id}> 
-					again and will be allowed to read/send more messages."""),
-
-					m_line("""> You can go back to TESTING using **`ir/test`** as usual. However, leaving the test 
-					to go back to INSPECTION will also reset your correct answer streak back to 0."""),
+					again and will be allowed to read/send more messages. Once you go back to TESTING using
+					**`ir/test`** as usual, you will be given a completely new test."""),
 
 					m_line(f"""> Players that pass the test will receive an amount of points that decays by **{decay_str} 
 					every minute** and by **{wa_str} for every incorrect answer** they give at any point in the test. 
@@ -456,13 +453,15 @@ class EVENT:
 					that doesn't use invalid characters with a ✅ **if it passes the rule**, or a ❌ **if it 
 					breaks the rule.** If a message **has invalid characters**, the bot will react with ❔ regardless 
 					of whether it passes the rule or not. You may send as many messages as you want. There is no 
-					penalty or reward for specifically sending messages that break or pass the rule.""")
-                    lines[2] = m_line("""> To start **TESTING**, DM me with **`ir/test`** as normal. In the test, 
-					you will be sequentially shown a series of messages, one by one, and must answer whether or not 
-					they PASS or BREAK the current rule as they come.""")
+					penalty or reward for specifically sending messages that break or pass the rule. Valid characters 
+					are letters are spaces. Rules are case-insensitive. All other characters are invalid""")
+                    lines[2] = m_line(f"""> To start **TESTING**, DM me with **`ir/test`**. You will be
+					sequentially shown a series of {self.PARAM['PHASE_2_TEST_LEN']} messages, one by one, and must
+					answer whether or not they PASS or BREAK the current rule as they come.""")
                     lines[4] = m_line(f"""> **You may go back to INSPECTING even after starting a 
 					TEST** by DMing me with **`ir/inspect`**. You will be given access to <#{self.GAME_CHANNEL.id}> 
-					again and will be allowed to read/send more messages.""")
+					again and will be allowed to read/send more messages. Once you go back to TESTING using
+					**`ir/test`** as usual, you will be given a completely new test.""")
 
             # Post the messages every [message_delay] iterations
             if self.GAME["PERIOD_STEP"] % message_delay == 0:
@@ -743,7 +742,7 @@ class EVENT:
                             n = len(self.GAME["PLAYER_TESTS"][u_ind][1])
                         
                         test_dm_msg = await message.channel.send((f"📝 **Round {rnd} Rules Test!**\n"
-                        +f"Answer {self.PARAM['PHASE_2_TEST_STREAK']} questions correctly in a row to finish the test!"
+                        +f"Answer all questions correctly to finish the test!"
                         +f"\n\n{self.format_test_msg(new_msg, n)}"),
                         view=test_view)
 
@@ -764,20 +763,29 @@ class EVENT:
                     if self.GAME["PHASE"] == 1:
                         await message.channel.send("You can't go back to inspecting after starting the test!")
                         return
-
+                    
                     u_ind = [
                         ind for ind in range(len(self.GAME["PLAYER_TESTS"]))
                         if self.GAME["PLAYER_TESTS"][ind][0] == int(message.author.id)
                     ]
-
+                    
                     try:
                         u_ind = u_ind[0]
                     except IndexError:
                         return
                     
+                    if len(self.GAME["PLAYER_TESTS"][u_ind][3]) >= 9*self.PARAM["PHASE_2_TEST_LEN"]:
+                        await message.channel.send("If you go back to inspecting now you'll run out of tests!")
+                        return
+
                     self.GAME["INSPECTING"].append(message.author)
 
-                    self.GAME["PLAYER_TESTS"][u_ind][3].append(False)
+                    # Skip the remaining questions in the test
+                    self.GAME["PLAYER_TESTS"][u_ind][3].append(-1)
+                    while len(self.GAME["PLAYER_TESTS"][u_ind][3])%self.PARAM["PHASE_2_TEST_LEN"] != 0:
+                        self.GAME["PLAYER_TESTS"][u_ind][1].append('')
+                        self.GAME["PLAYER_TESTS"][u_ind][2].append(-1)
+                        self.GAME["PLAYER_TESTS"][u_ind][3].append(-1)
 
                     await self.GAME_CHANNEL.set_permissions(message.author, overwrite=None)
                     await self.GAME["PLAYER_TESTS"][u_ind][4].edit(content="**Test hidden!**", view=None)
@@ -786,8 +794,8 @@ class EVENT:
                     m_line(f"""You have gone back to **inspecting** this round's rule! The test has been hidden 
 					from you.
 
-					Use **`ir/test`** to stop inspecting and go back to testing. Once you return to the test, **the 
-					last question and your correct answer streak will have reset.**
+					Use **`ir/test`** to stop inspecting and go back to testing. Once you return to the test, **you 
+					will be presented with a new test.**
 
 					You are now able to see and talk in <#{self.GAME_CHANNEL.id}> again."""))
 
@@ -804,7 +812,8 @@ class EVENT:
             if self.GAME["PHASE"] == 1:
                 info = f"__**TEST - Message #{n}/{self.PARAM['PHASE_1_TEST_LEN']}**__\n"
             else:
-                info = f"__**TEST - Message #{n}**__\n"
+                info = (f"__**TEST #{(n-1)//self.PARAM['PHASE_2_TEST_LEN']+1} - "
+                +f"Message #{(n-1)%self.PARAM['PHASE_2_TEST_LEN']+1}**__\n")
             
         info += m_line(f"""
             > **```{msg}```**/n
@@ -840,9 +849,9 @@ class EVENT:
         n = len(self.GAME["PLAYER_TESTS"][user_test_ind][3])
 
         if int(answer) == int(self.GAME["PLAYER_TESTS"][user_test_ind][2][n]):
-            self.GAME["PLAYER_TESTS"][user_test_ind][3].append(True)
+            self.GAME["PLAYER_TESTS"][user_test_ind][3].append(1)
         else:
-            self.GAME["PLAYER_TESTS"][user_test_ind][3].append(False)
+            self.GAME["PLAYER_TESTS"][user_test_ind][3].append(0)
         
         n += 1
 
@@ -878,12 +887,42 @@ class EVENT:
                 return
         
         else:
-            required = self.PARAM["PHASE_2_TEST_STREAK"]
+            required = self.PARAM["PHASE_2_TEST_LEN"]
             last_answers = self.GAME["PLAYER_TESTS"][user_test_ind][3][-required:]
+            
+            if 0 in last_answers or len(last_answers) < required or n%self.PARAM["PHASE_2_TEST_LEN"] != 0:
+                if n >= 10*required:
+					t_msg = m_line(f"""📝 **Round {rnd} Rules Test!**
 
-            if False in last_answers or len(last_answers) < required:
-                if n < 100:
-                    if len(last_answers) > 0 and last_answers[-1] == False:
+					**You have ran out of tests (10) without being able to pass one.**""")
+
+                    await ctx.response.edit_message(content=t_msg, view=None)
+                elif n%self.PARAM["PHASE_2_TEST_LEN"] == 0:
+                    player = [
+                        p for p in self.GAME["PLAYERS"]
+                        if p.id == int(user)
+                    ]
+
+                    try:
+                        player = player[0]
+                    except IndexError:
+                        return
+                    
+                    self.GAME["INSPECTING"].append(player)
+
+                    await self.GAME_CHANNEL.set_permissions(player, overwrite=None)
+                    await self.GAME["PLAYER_TESTS"][user_test_ind][4].edit(content="**Test hidden!**", view=None)
+
+                    await player.send(
+                    m_line(f"""You have failed the test, so you have been sent back to **inspecting** 
+					this round's rule.
+
+					Use **`ir/test`** to stop inspecting and go back to testing. Once you return to the test, **you 
+					will be presented with a new test.**
+
+					You are now able to see and talk in <#{self.GAME_CHANNEL.id}> again."""))
+                else:
+                    if len(last_answers) > 0 and last_answers[-1] != 1:
                         self.reset_test(int(user))
                     new_msg = self.generate_test_msg(int(user), rnd)
 
@@ -893,17 +932,10 @@ class EVENT:
                         self.GAME["RULES"][rnd - 1](new_msg))
 
                     t_msg = (f"📝 **Round {rnd} Rules Test!**\n"
-                    +f"Answer {required} questions correctly in a row to finish the test!"
+                    +f"Answer all the questions to finish the test!"
                     +f"\n\n{self.format_test_msg(new_msg, n+1)}")
 
                     await ctx.response.edit_message(content=t_msg)
-                    
-                else:
-                    t_msg = m_line(f"""📝 **Round {rnd} Rules Test!**
-                    
-					**You have ran out of test messages (100) without being able to finish the test!**""")
-
-                    await ctx.response.edit_message(content=t_msg, view=None)
 
                 return
             
@@ -922,7 +954,7 @@ class EVENT:
                 f"""📝 You have finished **Round {rnd}** in **{m_str}**!
 
 				Your last {required} answers were all correct. 
-				It took you {len(self.GAME["PLAYER_TESTS"][user_test_ind][1])} attempts."""))
+				It took you {len(self.GAME["PLAYER_TESTS"][user_test_ind][1])//self.PARAM["PHASE_2_TEST_LEN"]} attempts."""))
 
                 await ctx.response.edit_message(content=t_msg, view=None)
                 return
