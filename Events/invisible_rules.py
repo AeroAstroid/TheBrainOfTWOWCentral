@@ -895,7 +895,7 @@ class EVENT:
             
             if 0 in last_answers or len(last_answers) < required or n%self.PARAM["PHASE_2_TEST_LEN"] != 0:
                 if n >= 10*required:
-					t_msg = m_line(f"""📝 **Round {rnd} Rules Test!**
+                    t_msg = m_line(f"""📝 **Round {rnd} Rules Test!**
 
 					**You have ran out of tests (10) without being able to pass one.**""")
 
