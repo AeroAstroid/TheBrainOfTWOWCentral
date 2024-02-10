@@ -327,6 +327,9 @@ class EVENT:
             self.GAME["PLAYER_TESTS"] = []
 
             self.GAME["NEXT_PERIOD"] = int(time() + round_t)
+            # Round 1 gets less time bc it's a practice round
+            if self.GAME["ROUND"] == 1:
+                self.GAME["NEXT_PERIOD"] = int(time() + min(300, round_t))
             self.GAME["PERIOD_STEP"] = 0
             self.GAME["ROUND_RUNNING"] = True
             
