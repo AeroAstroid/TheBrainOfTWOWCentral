@@ -1,5 +1,5 @@
 import os, discord
-from math import *
+from math import floor, ceil
 
 def HELP(PREFIX):
 	return {
