@@ -1,4 +1,5 @@
-import os, discord, math
+import os, discord
+from math import *
 
 def HELP(PREFIX):
 	return {
