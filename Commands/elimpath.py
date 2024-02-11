@@ -2,12 +2,15 @@ import os, discord, math
 
 def HELP(PREFIX):
 	return {
-		"COOLDOWN": 5,
-		"MAIN": "Generate a booksona with the given name",
-		"FORMAT": "",
+		"COOLDOWN": 3,
+		"MAIN": "Calculate a TWOW elimination path given a contestant count and elimination rate.",
+		"FORMAT": "(contestants) (elim rate) (dx) (limit)",
 		"CHANNEL": 0,
-		"USAGE": f"""Using `{PREFIX}book` will generate a booksona image with colors taking into account the first 
-		two letters of the name provided, as is customary for TWOW books.""".replace("\n", "").replace("\t", ""),
+		"USAGE": f"""Contestants refers to the initial player count, which defaults to 491. 
+  			Elim rate refers to the initial elimination rate of the TWOW, which defaults to 20%. 
+     			DX is the change (positive or negative) in the elimination rate each round. This defaults to 0. 
+			Limit is the limit of the elimination rate. It will never go above or below this number depending on if the elimination rate is positive or negative. This defaults to 1.
+""".replace("\n", "").replace("\t", ""),
 		"CATEGORY" : "Utility"
 	}
 
