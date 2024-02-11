@@ -1,4 +1,5 @@
-import os, discord, math
+import os, discord
+from math import floor, ceil
 
 def HELP(PREFIX):
 	return {
