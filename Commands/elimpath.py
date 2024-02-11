@@ -9,7 +9,7 @@ def HELP(PREFIX):
 		"USAGE": f"""Contestants refers to the initial player count, which defaults to 491. 
   			Elim rate refers to the initial elimination rate of the TWOW, which defaults to 20%. 
      			DX is the change (positive or negative) in the elimination rate each round. This defaults to 0. 
-			Limit is the limit of the elimination rate. It will never go above or below this number depending on if the elimination rate is positive or negative. This defaults to 1.
+			Limit is the limit of the elimination rate. It will never go above or below this number depending on if DX is positive or negative. This defaults to 1.
 """.replace("\n", "").replace("\t", ""),
 		"CATEGORY" : "Utility"
 	}
