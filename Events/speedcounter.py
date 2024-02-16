@@ -402,6 +402,10 @@ class EVENT:
 			# Check if emoji is in the counting list, and add it to the correct emoji counter if so
 			if random_emoji in emojis_counting:
 				correct_emoji_count += 1
+		
+		# Make sure that all the emojis are small
+		for i in range(len(chunks)):
+			chunks[i] += "_ _"
 
 		################################################################
 
