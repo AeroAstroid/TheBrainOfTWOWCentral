@@ -24,7 +24,7 @@ def DEFAULT_PARAM():
         "PHASE_1_TEST_LEN": 10,
         "PHASE_2_TEST_LEN": 10,
         
-        "WRONG_ANSWER_PENALTY": 0.025,
+        "WRONG_ANSWER_PENALTY": 0.02,
         "MAX_TIME_PENALTY": 0.45
     }
 
@@ -385,7 +385,7 @@ class EVENT:
 					breaks the rule.** If a message **has invalid characters**, the bot will react with ❔ regardless 
 					of whether it passes the rule or not. You may send as many messages as you want. There is no 
 					penalty or reward for specifically sending messages that break or pass the rule. Valid characters 
-					are letters are spaces. Rules are case-insensitive. All other characters are invalid"""),
+					are letters and spaces. Rules are case-insensitive. All other characters are invalid"""),
 
 					m_line(f"""> A player who is confident they figured out the rule can **DM me with the command 
 					`ir/test`** to stop INSPECTING and start **TESTING**. This command is **final** - you will be 
@@ -428,18 +428,18 @@ class EVENT:
 					as many messages as you want, and you'll be told whether or not they break the rule, 
 					without any penalty."""),
 
-					m_line(f"""> To start **TESTING**, DM me with **`ir/test`**. In the PHASE TWO TEST, you will be
-					sequentially shown a series of {self.PARAM['PHASE_2_TEST_LEN']} messages, one by one, and must
+					m_line(f"""> To start **TESTING**, DM me with **`ir/test`**. In the PHASE TWO TEST, you will be 
+					sequentially shown a series of {self.PARAM['PHASE_2_TEST_LEN']} messages, one by one, and must 
 					answer whether or not they PASS or BREAK the current rule as they come."""),
 
-					m_line(f"""> The test is considered to be passed if the player gives correct answers for all
+					m_line(f"""> The test is considered to be passed if the player gives correct answers for all 
 					messages. If you fail the test, **you will be sent back to INSPECTING**. You will be given no 
 					immediate feedback on whether or not your answers are correct (that is, until you're notified 
 					that you passed the test). You may take the test at most 10 times."""),
 
 					m_line(f"""> However, for this PHASE, **you may go back to INSPECTING even after starting a 
 					TEST** by DMing me with **`ir/inspect`**. You will be given access to <#{self.GAME_CHANNEL.id}> 
-					again and will be allowed to read/send more messages. Once you go back to TESTING using
+					again and will be allowed to read/send more messages. Once you go back to TESTING using 
 					**`ir/test`** as usual, you will be given a completely new test."""),
 
 					m_line(f"""> Players that pass the test will receive an amount of points that decays by **{decay_str} 
@@ -457,13 +457,13 @@ class EVENT:
 					breaks the rule.** If a message **has invalid characters**, the bot will react with ❔ regardless 
 					of whether it passes the rule or not. You may send as many messages as you want. There is no 
 					penalty or reward for specifically sending messages that break or pass the rule. Valid characters 
-					are letters are spaces. Rules are case-insensitive. All other characters are invalid""")
-                    lines[2] = m_line(f"""> To start **TESTING**, DM me with **`ir/test`**. You will be
-					sequentially shown a series of {self.PARAM['PHASE_2_TEST_LEN']} messages, one by one, and must
+					are letters and spaces. Rules are case-insensitive. All other characters are invalid""")
+                    lines[2] = m_line(f"""> To start **TESTING**, DM me with **`ir/test`**. You will be 
+					sequentially shown a series of {self.PARAM['PHASE_2_TEST_LEN']} messages, one by one, and must 
 					answer whether or not they PASS or BREAK the current rule as they come.""")
                     lines[4] = m_line(f"""> **You may go back to INSPECTING even after starting a 
 					TEST** by DMing me with **`ir/inspect`**. You will be given access to <#{self.GAME_CHANNEL.id}> 
-					again and will be allowed to read/send more messages. Once you go back to TESTING using
+					again and will be allowed to read/send more messages. Once you go back to TESTING using 
 					**`ir/test`** as usual, you will be given a completely new test.""")
 
             # Post the messages every [message_delay] iterations
