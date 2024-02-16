@@ -399,9 +399,6 @@ class EVENT:
 			else:
 				weights[i] *= weight_non_counting/non_counting_factor
 
-		print(weight_counting, weight_non_counting, weights)
-		print(emojis_counting, emojis_in_set)
-
 		# Create the random string of emojis
 		chunks = [""]
 		emojis_in_chunk = 0
