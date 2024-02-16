@@ -711,6 +711,7 @@ class EVENT:
                         answer_sheet, [], test_dm_msg, 0])
                     
                     else:
+                        self.reset_test(message.author.id)
                         new_msg = self.generate_test_msg(message.author.id, self.GAME["ROUND"])
                         new_answer = self.GAME["RULES"][rnd - 1](new_msg)
 
@@ -925,8 +926,6 @@ class EVENT:
 
 					You are now able to see and talk in <#{self.GAME_CHANNEL.id}> again."""))
                 else:
-                    if len(last_answers) > 0 and last_answers[-1] != 1:
-                        self.reset_test(int(user))
                     new_msg = self.generate_test_msg(int(user), rnd)
 
                     self.GAME["PLAYER_TESTS"][user_test_ind][1].append(new_msg)
