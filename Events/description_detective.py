@@ -451,17 +451,11 @@ The game will start in ten seconds."""
 
 				if message.content != "DESCRIPTION DETECTIVE CSV": return
 
-				print("TEST1")
-
-				print(len(message.attachments))
 				attachment = message.attachments[0]
 
 				# Check if attachment is actually a csv file
 				attachment_url = attachment.url
-				print(attachment_url)
 					
-				if not attachment_url.endswith(".csv"): return
-
 				# This is a CSV file, now attempt to read it and if any errors come up just return
 				try:
 
