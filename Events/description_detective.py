@@ -347,6 +347,8 @@ The game will start in ten seconds."""
 				player_id = player.user.id
 				player_guess = player.guesses[self.info["CLUE_NUM"] - 1]
 
+				player_name.replace("_", "\_")
+
 				if player_guess:
 					player_string = ""
 					if player.correct == True:
