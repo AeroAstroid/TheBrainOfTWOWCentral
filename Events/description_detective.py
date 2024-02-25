@@ -451,6 +451,8 @@ The game will start in ten seconds."""
 
 				if message.content != "DESCRIPTION DETECTIVE CSV": return
 
+				print("TEST1")
+
 				attachment = message.attachments[0]
 
 				# Check if attachment is actually a csv file
