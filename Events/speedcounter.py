@@ -384,6 +384,21 @@ class EVENT:
 		for i in range(emoji_counting_types):
 			emojis_counting.append(emojis_in_set[i])
 
+		# Generate probabilities for each emoji
+		# This adds variety to the counts of each emoji
+		weight_counting = 1/random.uniform(max(1, self.param["EMOJI_TYPE_RANGE"][0]-1), self.param["EMOJI_TYPE_RANGE"][1]+1)
+		weight_non_counting = 1 - weight_counting
+		weights = []
+		for i in range(emoji_type_amount):
+			weights.append(1/random.uniform(max(1, self.param["EMOJI_TYPE_RANGE"][0]-1), self.param["EMOJI_TYPE_RANGE"][1]+1))
+		counting_factor = sum(weights[:emoji_counting_types])
+		non_counting_factor = sum(weights[emoji_counting_types:])
+		for i in range(emoji_type_amount):
+			if i < emoji_counting_types:
+				weights[i] *= weight_counting/counting_factor
+			else:
+				weights[i] *= weight_non_counting/non_counting_factor
+
 		# Create the random string of emojis
 		chunks = [""]
 		emojis_in_chunk = 0
@@ -391,7 +406,7 @@ class EVENT:
 		for i in range(emoji_count):
 
 			# Get a random emoji from the emojis in set list
-			random_emoji = random.choice(emojis_in_set)
+			random_emoji = random.choices(emojis_in_set, weights, k=1)[0]
 			chunks[-1] += random_emoji
 			emojis_in_chunk += 1
 
@@ -402,6 +417,10 @@ class EVENT:
 			# Check if emoji is in the counting list, and add it to the correct emoji counter if so
 			if random_emoji in emojis_counting:
 				correct_emoji_count += 1
+		
+		# Make sure that all the emojis are small
+		for i in range(len(chunks)):
+			chunks[i] += "_ _"
 
 		################################################################
 
