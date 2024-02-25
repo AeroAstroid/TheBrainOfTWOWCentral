@@ -124,7 +124,7 @@ class EVENT:
 		self.param["ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ROLE)
 		self.param["ADMIN_ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ADMIN_ROLE)
 		self.param["GAME_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="mod-event-time") # Post messages in here
-		self.param["ADMIN_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff•commands")
+		self.param["ADMIN_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="event-hosts")
 
 	# Begin the game
 	async def start_game(self):
