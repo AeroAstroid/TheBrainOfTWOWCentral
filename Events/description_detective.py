@@ -485,6 +485,8 @@ The game will start in ten seconds."""
 					self.param["CSV_MESSAGE"] = 1
 
 				except Exception as e: 
+					
+					print("ERROR")
 					return
 					
 				# If the command has not yet returned, a valid CSV file has been sent!
