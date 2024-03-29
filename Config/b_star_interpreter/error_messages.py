@@ -1,4 +1,4 @@
-from random import choice
+from random import choice, randint
 
 github_devs = ["Infernity", "Digin", "LegitSi", "Zelo101", "Zettex", "woooowoooo", "pepsi", "Nv7", "Dark"] 
 unfunny_errmsg = [
@@ -116,5 +116,7 @@ unfunny_errmsg = [
     "Holy s**t you did it!",
     "How the hell did you get over here mate?",
     "Apologies for the inconvenience, but we have absolutely no idea how you came here.",
-    "name 'BStarProgramDefinedException' is not defined"
+    "name 'BStarProgramDefinedException' is not defined",
+    "Tag element damage detected! ~ Anti-Code by BStar Programs",
+    f"Error detected, shutting down in T-({random.randint(0,31)}) ~ Anti-Code by BStar Programs - Kung fu fighting errors since 2021"
     ]
