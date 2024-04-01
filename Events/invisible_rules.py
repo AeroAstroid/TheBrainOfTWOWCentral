@@ -69,10 +69,10 @@ class EVENT:
     def start(self, SERVER):
         self.RUNNING = True
 
-        self.PARAM["PLAYER_ROLE_ID"] = 498254150044352514
-        self.PARAM["ANNOUNCE_CHANNEL_ID"] = 598613590190325760
-        self.PARAM["GAME_CHANNEL_ID"] = 830232343331209216
-        self.PARAM["EVENT_ADMIN_ID"] = 959155078844010546
+        self.PARAM["PLAYER_ROLE_ID"] = 1204357348009975818#498254150044352514
+        self.PARAM["ANNOUNCE_CHANNEL_ID"] = 1204357465203019797#598613590190325760
+        self.PARAM["GAME_CHANNEL_ID"] = 1204357450577223680#830232343331209216
+        self.PARAM["EVENT_ADMIN_ID"] = 1067512238497349753#959155078844010546
 
         self.EVENT_ADMIN = dc.utils.get(SERVER["MAIN"].roles, id=self.PARAM["EVENT_ADMIN_ID"])
 
@@ -662,13 +662,7 @@ class EVENT:
                 
                 rule = self.GAME["RULES"][rnd - 1]
                 
-                verdict = rule(msg)
-                if verdict == 1:
-                    passed = "✅"
-                elif verdict == 0:
-                    passed = "❌"
-                else:
-                    passed = "❔"
+                verdict, passed = rule(msg)
 
                 await message.add_reaction(passed)
 
@@ -687,7 +681,7 @@ class EVENT:
                         for _ in range(10):
                             test_msgs.append(self.generate_test_msg(message.author.id, self.GAME["ROUND"]))
                         
-                        answer_sheet = [self.GAME["RULES"][rnd - 1](msg) for msg in test_msgs]
+                        answer_sheet = [self.GAME["RULES"][rnd - 1](msg)[0] for msg in test_msgs]
 
                         test_view = View()
 
@@ -713,7 +707,7 @@ class EVENT:
                     else:
                         self.reset_test(message.author.id)
                         new_msg = self.generate_test_msg(message.author.id, self.GAME["ROUND"])
-                        new_answer = self.GAME["RULES"][rnd - 1](new_msg)
+                        new_answer = self.GAME["RULES"][rnd - 1](new_msg)[0]
 
                         test_view = View()
 
@@ -931,7 +925,7 @@ class EVENT:
                     self.GAME["PLAYER_TESTS"][user_test_ind][1].append(new_msg)
 
                     self.GAME["PLAYER_TESTS"][user_test_ind][2].append(
-                        self.GAME["RULES"][rnd - 1](new_msg))
+                        self.GAME["RULES"][rnd - 1](new_msg)[0])
 
                     t_msg = (f"📝 **Round {rnd} Rules Test!**\n"
                     +f"Answer all the questions to finish the test!"
