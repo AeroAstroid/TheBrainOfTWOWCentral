@@ -116,8 +116,11 @@ async def MAIN(message, args, level, perms, SERVER):
 		if "deadline:[" in msg:
 			starting_bound = msg[msg.find("deadline:[") + 10:]
 			dl_string = starting_bound[:starting_bound.find("]")]
-			deadline = datetime.datetime.strptime(dl_string, "%d/%m/%Y %H:%M")
-			deadline = deadline.replace(tzinfo=datetime.timezone.utc).timestamp()
+			if is_whole(dl_string):
+				deadline = int(dl_string)
+			else:
+				deadline = datetime.datetime.strptime(dl_string, "%d/%m/%Y %H:%M")
+				deadline = deadline.replace(tzinfo=datetime.timezone.utc).timestamp()
 			entry["time"] = deadline
 		
 		if "verified:[" in msg:
@@ -262,8 +265,12 @@ async def MAIN(message, args, level, perms, SERVER):
 			starting_bound = msg[msg.find("deadline:[") + 10:]
 			deadline = starting_bound[:starting_bound.find("]")]
 			entry[6] = deadline
-			deadline = datetime.datetime.strptime(deadline, "%d/%m/%Y %H:%M")
-			deadline = deadline.replace(tzinfo=datetime.timezone.utc).timestamp()
+			if is_whole(deadline):
+				deadline = int(deadline)
+			else:
+				deadline = datetime.datetime.strptime(deadline, "%d/%m/%Y %H:%M")
+				deadline = deadline.replace(tzinfo=datetime.timezone.utc).timestamp()
+				
 			entry[4] = deadline
 			if deadline < time.time():
 				await message.channel.send(f"Please enter a time in the future. The time you have input is <t:{deadline}:F>")
