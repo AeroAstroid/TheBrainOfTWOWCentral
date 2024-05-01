@@ -22,7 +22,7 @@ class Uptime(cmd.Cog):
 	def __init__(self, BRAIN):
 		self.BRAIN = BRAIN
 
-	@bridge.bridge_command(aliases=ALIASES)
+	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 1)
 	async def uptime(self, ctx):
 
@@ -36,7 +36,7 @@ class Uptime(cmd.Cog):
 			int(s * 1000) % 1000
 		)
 
-		await ctx.respond(m_line(f"""
+		await ctx.reply(m_line(f"""
 		⏳ **The Brain of TWOW Central** has been online for 
 		{s_indiv[0]}d {s_indiv[1]}h {s_indiv[2]}min {s_indiv[3]}s {s_indiv[4]}ms."""))
 

@@ -1,5 +1,5 @@
 from Helper.__db import Database as DB
-from Helper.__functions import command_user, is_dm
+from Helper.__functions import is_dm
 from Helper.__config import BRAIN
 
 import discord as dc
@@ -29,11 +29,16 @@ def member_servers(ctx):
 
 	for server_id, members_id in servers:
 		server_obj = dc.utils.get(BRAIN.guilds, id=int(server_id))
-		role_obj = dc.utils.get(server_obj.roles, id=int(members_id))
 
-		if command_user(ctx) in role_obj.members:
-			member_of.append(server_obj)
-			break
+		if members_id:
+			role_obj = dc.utils.get(server_obj.roles, id=int(members_id))
+
+			if ctx.message.author in role_obj.members:
+				member_of.append(server_obj)
+		
+		else:
+			if ctx.message.author in server_obj.members:
+				member_of.append(server_obj)
 	
 	return member_of
 
@@ -54,7 +59,7 @@ def staff_servers(ctx):
 		role_obj = [dc.utils.get(server_obj.roles, id=int(role_id)) for role_id in s[1].split(" ")]
 
 		for r in role_obj:
-			if command_user(ctx) in r.members:
+			if ctx.message.author in r.members:
 				staff_in.append(server_obj)
 				break
 	
@@ -67,8 +72,8 @@ def is_staff(ctx):
 
 	staff_in = staff_servers(ctx)
 
-	if is_dm(ctx): # Is the member staff somewhere
-		return (len(staff_in) > 0)
+	if is_dm(ctx): # Is the member staff *anywhere*
+		return staff_in
 	else: # Is the member staff in the server
 		return (ctx.guild in staff_in)
 

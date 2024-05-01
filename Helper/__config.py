@@ -1,5 +1,5 @@
 from discord import *
-from discord.ext import bridge
+import discord.ext.commands as cmd
 
 import sys
 import os
@@ -25,7 +25,7 @@ intents = Intents.default()
 intents.members = True
 intents.message_content = True
 
-BRAIN = bridge.Bot(command_prefix=PREFIX, intents=intents, debug_guilds=[653673010821201920])
+BRAIN = cmd.Bot(command_prefix=PREFIX, intents=intents, debug_guilds=[653673010821201920])
 BRAIN.allowed_mentions = AllowedMentions(replied_user=False, everyone=False)
 BRAIN.remove_command('help')
 

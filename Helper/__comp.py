@@ -19,5 +19,4 @@ CATEGORIES = {
 import discord as dc
 import discord.ext.commands as cmd
 from discord.ext import tasks
-from discord.ext import bridge
 from discord.ui import View, Select, Button

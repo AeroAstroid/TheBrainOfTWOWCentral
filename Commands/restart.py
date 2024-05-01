@@ -5,7 +5,7 @@ import sys
 from time import time
 from datetime import datetime
 
-from Helper.__functions import m_line, command_user, is_dm, is_dev
+from Helper.__functions import m_line, is_dm, is_dev
 
 def setup(BOT):
 	BOT.add_cog(Restart(BOT))
@@ -28,7 +28,7 @@ class Restart(cmd.Cog):
 	def __init__(self, BRAIN):
 		self.BRAIN = BRAIN
 
-	@bridge.bridge_command(aliases=ALIASES)
+	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 5)
 	@cmd.check(is_dev)
 	async def restart(self, ctx,
@@ -41,14 +41,14 @@ class Restart(cmd.Cog):
 		report_guild = f"1_report_guild:{'' if ctx.guild is None else ctx.guild.id}"
 
 		report_chnl = m_line(f"""
-		2_report_chnl:{command_user(ctx).id if is_dm(ctx) else ctx.channel.id}""")
+		2_report_chnl:{ctx.message.author.id if is_dm(ctx) else ctx.channel.id}""")
 
 		report_time = f"3_report_time:{int(time()*1000)}"
 
 		await self.BRAIN.change_presence(status=dc.Status.idle)
 		
-		await ctx.respond("♻️ **Restarting the Brain of TWOW Central!**")
-		print(f"Restarting on command from {command_user(ctx)} at {datetime.utcnow()}")
+		await ctx.reply("♻️ **Restarting the Brain of TWOW Central!**")
+		print(f"Restarting on command from {ctx.message.author} at {datetime.utcnow()}")
 
 		os.execl(
 		sys.executable, 'python', file_ref, report_guild, report_chnl, report_time, debug_arg)

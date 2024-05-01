@@ -3,7 +3,7 @@ from Helper.__comp import *
 import os
 from time import time
 
-from Helper.__functions import is_slash_cmd, m_line, is_dev
+from Helper.__functions import m_line, is_dev
 
 def setup(BOT):
 	BOT.add_cog(Reimport(BOT))
@@ -29,28 +29,24 @@ class Reimport(cmd.Cog):
 	def __init__(self, BRAIN):
 		self.BRAIN = BRAIN
 
-	@bridge.bridge_command(aliases=ALIASES)
+	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 5)
 	@cmd.check(is_dev)
 	async def reimport(self, ctx,
 		cmd_name):
 
 		if cmd_name is None:
-			await ctx.respond("💀 Include the name of the command to import.")
+			await ctx.reply("💀 Include the name of the command to import.")
 			return
 		
 		cmd_name = cmd_name.lower()
 
 		if f"{cmd_name}.py" not in os.listdir("Commands"):
-			if is_slash_cmd(ctx):
-				await ctx.respond("💀 That command does not exist.")
-				return
-			
 			if len(ctx.message.attachments) != 0:
 				await ctx.message.attachments[0].save(f"Commands/{cmd_name}.py")
 
 			else:
-				await ctx.respond(
+				await ctx.reply(
 				"💀 That command does not exist. Include a script file to create it!"
 				)
 				return
@@ -61,20 +57,20 @@ class Reimport(cmd.Cog):
 			except Exception as e:
 				os.remove(f"Commands/{cmd_name}.py")
 
-				await ctx.respond(m_line(f"""
+				await ctx.reply(m_line(f"""
 				⚠️ **An error ({type(e).__name__}) occured with the new command script!** 
 				The import command has been cancelled.
 				"""))
 				return
 
-			await ctx.respond("✅ **Command file created successfully.**")
+			await ctx.reply("✅ **Command file created successfully.**")
 			return
 		
 		else:
 			with open(f"Commands/{cmd_name}.py", "r", encoding="utf-8") as f:
 				backup_cmd = f.read()
 
-			if not is_slash_cmd(ctx) and len(ctx.message.attachments) != 0:
+			if len(ctx.message.attachments) != 0:
 				await ctx.message.attachments[0].save(f"Commands/{cmd_name}.py")
 
 			try:
@@ -91,7 +87,7 @@ class Reimport(cmd.Cog):
 
 				self.BRAIN.load_extension(f"Commands.{cmd_name}")
 
-				await ctx.respond(m_line(f"""
+				await ctx.reply(m_line(f"""
 				⚠️ **An error ({type(e).__name__}) occured with the new command script!**
 				The reimport command has been cancelled.
 				"""))
@@ -102,7 +98,7 @@ class Reimport(cmd.Cog):
 			with open(f_name, 'w', encoding='utf-8') as f:
 				f.write(backup_cmd)
 
-			await ctx.respond(m_line("""✅ **Command file updated successfully.** 
+			await ctx.reply(m_line("""✅ **Command file updated successfully.** 
 			Below is a backup of its previous version."""), file=dc.File(f_name))
 
 			os.remove(f_name)

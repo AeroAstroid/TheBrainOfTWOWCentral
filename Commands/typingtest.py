@@ -1,6 +1,6 @@
 from Helper.__comp import *
 from Helper.__words import WORDS
-from Helper.__functions import m_line, command_user, command_response_timestamp
+from Helper.__functions import m_line
 import random
 
 MIN_WORDS = 45
@@ -23,12 +23,12 @@ class Typingtest(cmd.Cog):
 	def __init__(self, BRAIN):
 		self.BRAIN = BRAIN
 
-	@bridge.bridge_command(aliases=ALIASES)
+	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 1)
 	async def typingtest(self, ctx,
 		):
 
-		user = command_user(ctx)
+		user = ctx.message.author
 
 		# Command code
 		to_type = " ".join(random.sample(WORDS, random.randint(MIN_WORDS, MAX_WORDS))) # creates list of words
@@ -42,9 +42,9 @@ class Typingtest(cmd.Cog):
 			if to_type[i] == " ":
 				spaced_text += "\u200b"
 
-		tt = await ctx.respond(f"**{user.mention} Type these {count} words in any order:**\n\n{spaced_text}")
+		tt = await ctx.reply(f"**⌨️ Type these {count} words in any order:**\n\n{spaced_text}")
 
-		start_timestamp = await command_response_timestamp(ctx, tt)
+		start_timestamp = tt.created_at.timestamp()
 
 		msg = await self.BRAIN.wait_for('message', check=(lambda m: m.channel == tt.channel and m.author == user))
 		

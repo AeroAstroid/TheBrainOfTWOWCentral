@@ -2,7 +2,7 @@ import discord as dc
 from discord import *
 
 from Helper.__config import TOKEN, BRAIN, STARTUP
-from Helper.__functions import m_line, is_slash_cmd
+from Helper.__functions import m_line
 
 from discord.ext import commands as cmd
 
@@ -78,27 +78,17 @@ async def on_ready():
 	print("\n" + "="*50, '\n')
 
 @BRAIN.event
-async def on_command_error(ctx, error): # For prefixed commands
-	await error_handler(ctx, error)
-
-@BRAIN.event
-async def on_application_command_error(ctx, error): # For slash commands
-	await error_handler(ctx, error)
-
-async def error_handler(ctx, err):
+async def on_command_error(ctx, err):
 	if type(err) == cmd.errors.CommandNotFound:
-		await ctx.respond(f"⚠️ This command or alias does not exist!")
+		await ctx.reply(f"⚠️ This command or alias does not exist!")
 		return
 	
 	if type(err) in [dc.errors.CheckFailure, cmd.errors.CheckFailure]:
-		await ctx.respond("⚠️ You do not have permission to run this command!")
+		await ctx.reply("⚠️ You do not have permission to run this command!")
 		return
 	
 	if type(err) == cmd.errors.CommandOnCooldown:
-		if is_slash_cmd(ctx):
-			await ctx.respond("💬 **This command is on cooldown right now!**")
-		else:
-			await ctx.message.add_reaction("💬")
+		await ctx.message.add_reaction("💬")
 		return
 	
 	print("-[ERROR]- "*10)
@@ -108,10 +98,11 @@ async def error_handler(ctx, err):
 		err = err.original
 
 	try:
-		await ctx.respond(
+		await ctx.reply(
 		f"⚠️ Uh oh! This command raised an unexpected error: **`{type(err).__name__}`**")
 	except Exception as e:
 		print(f"\nCouldn't inform user of error due to {type(e).__name__}!")
+		tb.print_exception(type(e), e, None)
 	
 	print("-[ERROR]- "*10, '\n')
 

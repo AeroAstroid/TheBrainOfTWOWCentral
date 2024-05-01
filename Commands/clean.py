@@ -1,7 +1,6 @@
 from Helper.__comp import *
 
-from Helper.__functions import (is_whole, split_escape, is_dm, smart_lookup, is_slash_cmd, plural, 
-	m_line)
+from Helper.__functions import is_whole, split_escape, is_dm, smart_lookup, plural, m_line
 from Helper.__server_functions import is_staff_here
 from Helper.__action_functions import confirm_action
 
@@ -49,30 +48,13 @@ class Clean(cmd.Cog):
 	'''
 
 	# Extra arguments to be passed to the command
-	FORMAT = "`[-limit/-since]` `(-from')` `(-silent)`"
+	FORMAT = "`[-limit/-since]` `(-from)` `(-silent)`"
 	CATEGORY = "SERVER"
 	EMOJI = CATEGORIES[CATEGORY]
 	ALIASES = ['clear', 'purge', 'prune']
 
 	def __init__(self, BRAIN):
 		self.BRAIN = BRAIN
-
-	# Slash version of the command due to function signature incompatibility
-	@cmd.slash_command(name="clean")
-	@cmd.cooldown(1, 5)
-	@cmd.check(is_staff_here)
-	async def slash_clean(self, ctx,
-		_limit = None,
-		_since = None,
-		_from = None,
-		is_silent = False):
-		'''
-		Cleans out a channel of a certain amount of messages, using certain conditions.
-		'''
-
-		await self.clean(ctx, _limit=_limit, _since=_since, _from=_from, is_silent=is_silent)
-
-		return
 
 	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 5)
@@ -84,15 +66,9 @@ class Clean(cmd.Cog):
 		_from = None,
 		is_silent = False):
 
-		print(clean_args)
-		print(_limit, _since, _from, is_silent)
-
 		if is_dm(ctx):
-			await ctx.respond("💀 **This command is only usable in a server channel!**")
+			await ctx.reply("💀 **This command is only usable in a server channel!**")
 			return
-		
-		if is_slash_cmd(ctx):
-			await ctx.interaction.response.defer()
 
 		keyword_info = {
 			"-limit": "",
@@ -126,24 +102,24 @@ class Clean(cmd.Cog):
 					pass
 		
 		if not keyword_info["-limit"] and not keyword_info["-since"]:
-			await ctx.respond("💀 **You must include a `-limit` keyword or a `-since` keyword!**")
+			await ctx.reply("💀 **You must include a `-limit` keyword or a `-since` keyword!**")
 			return
 		
 		if keyword_info["-limit"] and not is_whole(keyword_info["-limit"]):
-			await ctx.respond("💀 **The message limit (`-limit`) must be a whole number!**")
+			await ctx.reply("💀 **The message limit (`-limit`) must be a whole number!**")
 			return
 		
 		if keyword_info["-limit"]:
 			limit = int(keyword_info["-limit"])
 
 			if limit > 1000:
-				await ctx.respond("💀 **The message limit (`-limit`) must be 1000 at most!**")
+				await ctx.reply("💀 **The message limit (`-limit`) must be 1000 at most!**")
 				return
 		else:
 			limit = 1000
 		
 		if keyword_info["-since"] and not is_whole(keyword_info["-since"]):
-			await ctx.respond("💀 **The `-since` parameter must be an ID!**")
+			await ctx.reply("💀 **The `-since` parameter must be an ID!**")
 			return
 		
 		if keyword_info["-since"]:
@@ -194,9 +170,8 @@ class Clean(cmd.Cog):
 		def check(msg):
 			status = True
 
-			if not is_slash_cmd(ctx):
-				if not keyword_info["-silent"] and msg.id in [c_msg.id, ctx.message.id]:
-					status = False
+			if not keyword_info["-silent"] and msg.id in [c_msg.id, ctx.message.id]:
+				status = False
 			
 			if since is not None:
 				status = status and msg.id >= since
@@ -214,12 +189,5 @@ class Clean(cmd.Cog):
 			await c_msg.edit(content=m_line(f"""
 			✅ **Successfully searched {limit} message{plural(limit)}, deleted {len(deleted)}!**
 			"""))
-		
-		else:
-			if is_slash_cmd(ctx):
-				# TODO: make sure this line sends the correct amount in every case
-				await ctx.send_followup(
-				content=f"✅ **Successfully deleted {len(deleted)-2} messages!**",
-				ephemeral=True)
 
 		return

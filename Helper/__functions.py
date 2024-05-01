@@ -1,9 +1,12 @@
 import discord as dc
 
+import time
+import datetime as dt
+
 BOT_DEVELOPERS = [
-	184768535107469314, # Dark#7316
-	179686717534502913, # Neonic#1410
-	183331874670641152  # Purplegaze#0007
+	184768535107469314, # Dark
+	179686717534502913, # Neonic
+	183331874670641152  # Purplegaze
 ]
 
 def split_escape(s, delimiter):
@@ -134,37 +137,6 @@ def is_dm(ctx):
 
 	return isinstance(ctx.channel, dc.DMChannel)
 
-def is_slash_cmd(ctx):
-	'''
-	Bridge function for determining whether a command usage is slash or prefixed.
-	'''
-
-	return type(ctx).__name__.endswith('ApplicationContext')
-
-
-def command_user(ctx):
-	'''
-	Bridge function for determining a command's author for both slash and prefixed commands, as 
-	well as component interactions.
-	'''
-
-	if not is_slash_cmd(ctx):
-		return ctx.message.author
-	else:
-		return ctx.user
-
-async def command_response_timestamp(ctx, response):
-	'''
-	Function to get a timestamp of the response message sent by the bot for both slash and prefixed
-	commands.
-	'''
-
-	if not is_slash_cmd(ctx):
-		return response.created_at.timestamp()
-	else:
-		response_msg = await response.original_response()
-		return response_msg.created_at.timestamp()
-
 def m_line(s):
 	'''
 	Function to parse multi-line strings in a more convenient way for code readability and 
@@ -186,7 +158,7 @@ def is_dev(ctx):
 	CMD module check for commands that need developer perms.
 	'''
 
-	return command_user(ctx).id in BOT_DEVELOPERS
+	return ctx.message.author.id in BOT_DEVELOPERS
 
 def is_whole(s):
 	'''
@@ -210,3 +182,13 @@ def is_number(s):
 		return True
 	except ValueError:
 		return False
+
+def clock_scheduler(interval):
+	'''
+	Snaps the current time to the next instance of an interval (e.g. next hour, next 30 minutes)
+	'''
+
+	timestamp = interval * (time.time() // interval + 1)
+	time_obj = dt.datetime.fromtimestamp(timestamp, dt.UTC).time()
+
+	return time_obj

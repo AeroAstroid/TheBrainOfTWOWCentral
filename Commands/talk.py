@@ -1,6 +1,6 @@
 from Helper.__comp import *
 
-from Helper.__functions import is_dev, is_dm, is_slash_cmd
+from Helper.__functions import is_dev, is_dm
 from Helper.__server_functions import is_staff, staff_servers
 
 def setup(BOT):
@@ -19,24 +19,6 @@ class Talk(cmd.Cog):
 
 	def __init__(self, BRAIN):
 		self.BRAIN = BRAIN
-
-	# Slash version of the command due to function signature incompatibility
-	@cmd.slash_command(name="talk")
-	@cmd.cooldown(1, 1)
-	@cmd.check(is_dev)
-	@cmd.check(is_staff)
-	async def slash_talk(self, ctx,
-		channel_id,
-		message_content):
-		'''
-		Sends a message in an arbitrary channel through Brain
-		'''
-
-		msg_args = message_content.split(" ")
-
-		await self.talk(ctx, channel_id, *msg_args)
-
-		return
 	
 	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 1)
@@ -68,26 +50,23 @@ class Talk(cmd.Cog):
 		
 		if chosen_channel is None:
 			if is_dm(ctx):
-				await ctx.respond(
+				await ctx.reply(
 				"💀 **This channel/member can't be found** in any servers you moderate!")
 			
 			else:
-				await ctx.respond(
+				await ctx.reply(
 				"💀 **This channel/member can't be found** in this server!")
 			
 			return
 
-		if is_slash_cmd(ctx):
-			message_content = " ".join(msg_args).replace("\\n", "\n")
-		else:
-			message_content = ctx.message.content[ctx.message.content.find(msg_args[0]):]
+		message_content = ctx.message.content[ctx.message.content.find(msg_args[0]):]
 
 		if len(message_content) == 0:
-			await ctx.respond("💀 **The message to be sent cannot be empty!**")
+			await ctx.reply("💀 **The message to be sent cannot be empty!**")
 			return
 
 		await chosen_channel.send(message_content)
-		await ctx.respond(
+		await ctx.reply(
 		f"✅ **Message successfully sent in `{channel_id}`:**\n> \t`{message_content}`")
 
 		return

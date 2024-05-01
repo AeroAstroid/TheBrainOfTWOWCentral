@@ -1,7 +1,8 @@
 from Helper.__comp import *
 import inspect
+from io import StringIO as sIO
 
-from Helper.__functions import is_dev, plural, m_line, is_number, is_whole, split_escape
+from Helper.__functions import is_dev, plural, m_line, is_number, is_whole, split_escape, clock_scheduler
 
 def setup(BOT):
 	BOT.add_cog({cog_name}(BOT))
@@ -33,12 +34,14 @@ class {cog_name}(cmd.Cog):
 	############# END TASK CODE! #############
 
 	# Below is all boilerplate task code -- preferrably do not edit it at all
+	
+	def get_parameters(self):
+		'''
+		Returns a list of all task-specific parameters and values
+		'''
 
-	@cmd.command()
-	@cmd.check(is_dev)
-	async def edit(self, ctx, parameter, *value):
-		cog_attrs = [m[0] for m in inspect.getmembers(cmd.Cog)]
 		task_attrs = [m for m in inspect.getmembers(self)]
+		cog_attrs = [m[0] for m in inspect.getmembers(cmd.Cog)]
 
 		# Hardcoded here are default parameters that the command user shouldn't have access to
 		attrs = [m for m in task_attrs if m[0] not in (cog_attrs + 
@@ -52,10 +55,40 @@ class {cog_name}(cmd.Cog):
 			not type(m[1]) == cmd.core.Command
 		)]
 
+		return attrs
+	
+	@cmd.command()
+	@cmd.check(is_dev)
+	async def params(self, ctx):
+		'''
+		Command to display all task-specific parameters and values
+		'''
+
+		params = self.get_parameters()
+
+		param_msg = sIO()
+		param_msg.write(f"**Editable parameters in the `{self.qualified_name}` task:**\n\n")
+
+		for name, value in params:
+			param_msg.write(f"> **{name}** ({type(value)})\n")
+			param_msg.write(f"> `{value}`\n\n")
+
+		await ctx.reply(param_msg.getvalue())
+		return
+
+	@cmd.command()
+	@cmd.check(is_dev)
+	async def edit(self, ctx, parameter, *value):
+		'''
+		Command to edit a parameter's value
+		'''
+
+		attrs = self.get_parameters()
+
 		param_list = [p[0] for p in attrs]
 
 		if parameter.upper() not in param_list:
-			await ctx.respond(m_line(f"""💀 **Invalid parameter `{parameter.upper()}`!** 
+			await ctx.reply(m_line(f"""💀 **Invalid parameter `{parameter.upper()}`!** 
 			Available parameters are: /n/> **`{", ".join(param_list)}`**"""))
 			return
 		
@@ -77,78 +110,123 @@ class {cog_name}(cmd.Cog):
 
 		setattr(self, parameter.upper(), value)
 
-		await ctx.respond(m_line(f"""
+		await ctx.reply(m_line(f"""
 		**Successfully edited parameter `{parameter.upper()}`** to the value: /n/> **`{value}`**
 		"""))
 		return
 	
 	def get_loops(self):
+		'''
+		Returns all loops from the task
+		'''
+
 		return [m for m in inspect.getmembers(self) if type(m[1]) == tasks.Loop]
+	
+	def get_a_loop(self, name):
+		'''
+		Returns a specific named loop from the task, or False if it doesn't exist
+		'''
+
+		matching_loops = [m for m in self.get_loops() if m[0].lower() == name.lower()]
+
+		if matching_loops:
+			return matching_loops[0]
+		else:
+			return False
 	
 	@cmd.command()
 	@cmd.check(is_dev)
 	async def status(self, ctx):
-		loop_msgs = "\n".join([
-			f"> **{l.upper()}** - {'Running' if obj.is_running() else 'Not Running'}"
-			for l, obj in self.get_loops()])
+		'''
+		Command to check the status of every loop in the task
+		'''
+
+		loop_msg = sIO()
+		loop_msg.write(f"**Status for loops in the `{self.qualified_name}` task:**\n\n")
+
+		for l, obj in self.get_loops():
+			loop_msg.write(
+			f"> **{l.upper()}** - {'Running' if obj.is_running() else 'Not Running'}\n")
+
+			if obj.is_running():
+				loop_msg.write(m_line(f"""
+				> Next iteration: **<t:{obj.next_iteration.timestamp():.0f}:f>** 
+				(**<t:{obj.next_iteration.timestamp():.0f}:R>**)/n//n/"""
+				))
 		
-		await ctx.respond(
-			f"**Status report for loops in the `{self.qualified_name}` task:**\n{loop_msgs}")
+		await ctx.reply(loop_msg.getvalue())
 		return
 	
 	def set_loop(self, start, loop_name=''):
-		all_loops = self.get_loops()
-		
+		'''
+		Sets the status of one (or all) of the loops to either running or not running
+		'''
+
 		if not loop_name:
+			all_loops = self.get_loops()
+
 			for loop_tuple in all_loops:
 				if start:
 					loop_tuple[1].start()
 				else:
 					loop_tuple[1].cancel()
+			
 			return all_loops
 		
-		all_loop_names = [m[0] for m in all_loops]
+		found_loop_tuple = self.get_a_loop(loop_name)
 
-		if loop_name.lower() not in all_loop_names:
+		if not found_loop_tuple:
 			return False
-		
-		i = all_loop_names.index(loop_name.lower())
 
 		if start:
-			all_loops[i][1].start()
+			found_loop_tuple[1].start()
 		else:
-			all_loops[i][1].cancel()
+			found_loop_tuple[1].cancel()
 		
-		return all_loops[i]
+		return found_loop_tuple
 
 	@cmd.command()
 	@cmd.check(is_dev)
 	async def start(self, ctx, loop_name=''):
-		result = self.set_loop(True, loop_name=loop_name)
+		'''
+		Command to start one (or all) loop(s)
+		'''
+
+		try:
+			result = self.set_loop(True, loop_name=loop_name)
+		except RuntimeError:
+			pass
 
 		if not result:
-			await ctx.respond(f"💀 **Loop `{loop_name}` wasn't found in `{self.qualified_name}`!**")
+			await ctx.reply(f"💀 **Loop `{loop_name}` wasn't found in `{self.qualified_name}`!**")
 			return
 		
 		if type(result) == list:
-			await ctx.respond(f"**Successfully started {len(result)} loop{plural(len(result))}!**")
+			await ctx.reply(f"**Successfully started {len(result)} loop{plural(len(result))}!**")
 			return
 
-		await ctx.respond(f"**Successfully started loop `{result[0]}`!**")
+		await ctx.reply(f"**Successfully started loop `{result[0]}`!**")
 		return
 
 	@cmd.command()
 	@cmd.check(is_dev)
 	async def end(self, ctx, loop_name=''):
-		result = self.set_loop(False, loop_name=loop_name)
+		'''
+		Command to end one (or all) loop(s)
+		'''
+
+		try:
+			result = self.set_loop(False, loop_name=loop_name)
+		except RuntimeError:
+			pass
 
 		if not result:
-			await ctx.respond(f"💀 **Loop `{loop_name}` wasn't found in `{self.qualified_name}`!**")
+			await ctx.reply(f"💀 **Loop `{loop_name}` wasn't found in `{self.qualified_name}`!**")
 			return
 		
 		if type(result) == list:
-			await ctx.respond(f"**Successfully ended {len(result)} loop{plural(len(result))}!**")
+			await ctx.reply(f"**Successfully ended {len(result)} loop{plural(len(result))}!**")
 			return
 
-		await ctx.respond(f"**Successfully ended loop `{result[0]}`!**")
+		await ctx.reply(f"**Successfully ended loop `{result[0]}`!**")
 		return

@@ -4,7 +4,7 @@ from functools import partial
 from discord.ui import Modal, InputText
 from discord import InputTextStyle
 
-from Helper.__functions import command_user, m_line
+from Helper.__functions import m_line
 
 def setup(BOT):
 	BOT.add_cog(Modaltest(BOT))
@@ -23,7 +23,7 @@ class Modaltest(cmd.Cog):
 	def __init__(self, BRAIN):
 		self.BRAIN = BRAIN
 
-	@bridge.bridge_command(aliases=ALIASES)
+	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 1)
 	async def modaltest(self, ctx):
 		activator = Button(
@@ -33,9 +33,9 @@ class Modaltest(cmd.Cog):
 
 		full_view = View(activator)
 
-		msg = await ctx.respond("Press the button to open a Modal!", view=full_view)
+		msg = await ctx.reply("Press the button to open a Modal!", view=full_view)
 
-		activator.callback = partial(self.button_funct, msg=msg, user=command_user(ctx))
+		activator.callback = partial(self.button_funct, msg=msg, user=ctx.message.author)
 
 		return
 	

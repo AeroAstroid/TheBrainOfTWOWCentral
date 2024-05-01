@@ -2,8 +2,7 @@ from Helper.__comp import *
 
 import random as rng
 
-from Helper.__functions import (is_dm, smart_lookup, is_number, is_whole, is_slash_cmd, plural, 
-	split_escape)
+from Helper.__functions import is_dm, smart_lookup, is_number, is_whole, plural, split_escape
 from Helper.__server_functions import is_staff
 from Helper.__action_functions import specify_server
 
@@ -67,22 +66,6 @@ class Role(cmd.Cog):
 	def __init__(self, BRAIN):
 		self.BRAIN = BRAIN
 
-	# Slash version of the command due to function signature incompatibility
-	@cmd.slash_command(name="role")
-	@cmd.cooldown(1, 5)
-	@cmd.check(is_staff)
-	async def slash_role(self, ctx,
-		role_command = ''):
-		'''
-		Staff command for streamlined large-scale role management within a server.
-		'''
-
-		role_args = role_command.split()
-
-		await self.role(ctx, *role_args)
-
-		return
-
 	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 5)
 	@cmd.check(is_staff)
@@ -109,7 +92,7 @@ class Role(cmd.Cog):
 
 		if len(roles) == 0:
 			if msg is None:
-				await ctx.respond(f"💀 **The server `{server_picked.name}` has no roles!**")
+				await ctx.reply(f"💀 **The server `{server_picked.name}` has no roles!**")
 			else:
 				await msg.edit(content=f"💀 **The server `{server_picked.name}` has no roles!**")
 			return
@@ -125,7 +108,7 @@ class Role(cmd.Cog):
 				break
 		
 		if mode_picked is None:
-			await ctx.respond(
+			await ctx.reply(
 			f"💀 **You must include one of the following keywords:**\n> {', '.join(modes)}")
 			return
 		
@@ -139,7 +122,7 @@ class Role(cmd.Cog):
 		for a in l_args:
 			if a not in modifiers:
 				if len(modif_args) == 0:
-					await ctx.respond(
+					await ctx.reply(
 					f"💀 **You must start the command with the -{mode_picked} keyword!**")
 					return
 				
@@ -166,7 +149,7 @@ class Role(cmd.Cog):
 
 					if r is None:
 						if msg is None:
-							await ctx.respond(
+							await ctx.reply(
 							f"💀 **Could not narrow down `{indiv_r}` to a role!**")
 						else:
 							await msg.edit(
@@ -175,7 +158,7 @@ class Role(cmd.Cog):
 					
 					if r >= highest_bot_role:
 						if msg is None:
-							await ctx.respond(
+							await ctx.reply(
 							f"💀 **I don't have permission to assign the `{r.name}` role!**")
 						else:
 							await msg.edit(content=
@@ -227,7 +210,7 @@ class Role(cmd.Cog):
 						continue
 
 					if msg is None:
-						await ctx.respond(
+						await ctx.reply(
 						f"💀 **Could not narrow down `{indiv_r}` to a role or member!**")
 					else:
 						await msg.edit(content=
@@ -243,7 +226,7 @@ class Role(cmd.Cog):
 
 					if not r:
 						if msg is None:
-							await ctx.respond(
+							await ctx.reply(
 							f"💀 **Could not narrow down `{indiv_r}` to a role!**")
 						else:
 							await msg.edit(content=
@@ -259,7 +242,7 @@ class Role(cmd.Cog):
 
 				if not count_percent and not is_whole(value):
 					if msg is None:
-						await ctx.respond(f"💀 **Could not interpret `{spec}` as a whole number!**")
+						await ctx.reply(f"💀 **Could not interpret `{spec}` as a whole number!**")
 					else:
 						await msg.edit(content=
 						f"💀 **Could not interpret `{spec}` as a whole number!**")
@@ -267,7 +250,7 @@ class Role(cmd.Cog):
 				
 				if count_percent and not is_number(value):
 					if msg is None:
-						await ctx.respond(f"💀 **Could not interpret `{spec}` as a percentage!**")
+						await ctx.reply(f"💀 **Could not interpret `{spec}` as a percentage!**")
 					else:
 						await msg.edit(content=
 						f"💀 **Could not interpret `{spec}` as a percentage!**")
@@ -281,7 +264,7 @@ class Role(cmd.Cog):
 		
 				if not is_number(value):
 					if msg is None:
-						await ctx.respond(f"💀 **Could not interpret `{spec}` as a number!**")
+						await ctx.reply(f"💀 **Could not interpret `{spec}` as a number!**")
 					else:
 						await msg.edit(content=
 						f"💀 **Could not interpret `{spec}` as a number!**")
@@ -306,13 +289,10 @@ class Role(cmd.Cog):
 		
 		if len(targets) == 0:
 			if msg is None:
-				await ctx.respond("💀 **This role command selected 0 people!**")
+				await ctx.reply("💀 **This role command selected 0 people!**")
 			else:
 				await msg.edit(content="💀 **This role command selected 0 people!**")
 			return
-		
-		if is_slash_cmd(ctx):
-			await ctx.interaction.response.defer()
 		
 		if mode_picked == "add":
 			msg_text = f"⌛ **Adding roles to {len(targets)} member{plural(len(targets))}...**"
@@ -320,7 +300,7 @@ class Role(cmd.Cog):
 			msg_text = f"⌛ **Removing roles from {len(targets)} member{plural(len(targets))}...**"
 		
 		if msg is None:
-			msg = await ctx.respond(msg_text)
+			msg = await ctx.reply(msg_text)
 		else:
 			await msg.edit(content=msg_text)
 		

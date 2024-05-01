@@ -5,7 +5,7 @@ from functools import partial
 
 from discord.ui import View, Select
 
-from Helper.__functions import command_user, smart_lookup
+from Helper.__functions import smart_lookup
 from Helper.__server_functions import member_servers, staff_servers
 from Helper.__config import BRAIN
 
@@ -26,6 +26,8 @@ membership=True):
 		else:
 			possible_servers = BRAIN.guilds
 		
+		print(member_servers(ctx))
+		
 		if len(possible_servers) == 1:
 			return_var[0] = possible_servers[0]
 			return [None, None]
@@ -41,11 +43,11 @@ membership=True):
 		]
 
 		select_menu = Select(options=options_list, placeholder="Select a server!",
-			custom_id=f"{command_user(ctx).id} {int(time()*1000)}")
+			custom_id=f"{ctx.message.author.id} {int(time()*1000)}")
 		
 		msg_view.add_item(select_menu)
 
-		msg = await ctx.respond("⁉️ **Which server will you execute this command for?**",
+		msg = await ctx.reply("⁉️ **Which server will you execute this command for?**",
 			view=msg_view)
 		
 		# Pre-fill callback with this message view so that it can be referenced later
@@ -92,11 +94,11 @@ async def confirm_action(ctx, return_var, create=False, msg_view=None):
 		random.shuffle(options_list)
 
 		select_menu = Select(options=options_list, placeholder="Do you confirm this command?",
-			custom_id=f"{command_user(ctx).id} {int(time()*1000)}")
+			custom_id=f"{ctx.message.author.id} {int(time()*1000)}")
 		
 		msg_view.add_item(select_menu)
 
-		msg = await ctx.respond(
+		msg = await ctx.reply(
 			"⁉️ **Are you sure you want to execute this command?** Confirm below:",
 			view=msg_view)
 		

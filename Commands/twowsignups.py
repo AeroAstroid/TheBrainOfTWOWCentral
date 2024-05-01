@@ -4,7 +4,7 @@ from functools import partial
 from discord.ui import Modal, InputText
 from discord import InputTextStyle
 
-from Helper.__functions import command_user, m_line
+from Helper.__functions import m_line
 
 import datetime, time
 
@@ -28,7 +28,7 @@ class Twowsignups(cmd.Cog):
 	def __init__(self, BRAIN):
 		self.BRAIN = BRAIN
 
-	@bridge.bridge_command(aliases=ALIASES)
+	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 1)
 	async def twowsignups(self, ctx,
 		subcommand):
@@ -37,7 +37,7 @@ class Twowsignups(cmd.Cog):
 		subcommands = ["send"]
 
 		if subcommand not in subcommands:
-			await ctx.respond("💀 **You must include a subcommand!**")
+			await ctx.reply("💀 **You must include a subcommand!**")
 			return
 		
 		if subcommand == "send":
@@ -50,12 +50,12 @@ class Twowsignups(cmd.Cog):
 
 			full_view = View(activator)
 
-			msg = await ctx.respond(
+			msg = await ctx.reply(
 				"Click the button to open the modal form to send your information for your TWOW!", 
 				view = full_view
 			)
 
-			activator.callback = partial(self.button_funct, msg=msg, user=command_user(ctx))
+			activator.callback = partial(self.button_funct, msg=msg, user=ctx.message.author)
 
 		return
 

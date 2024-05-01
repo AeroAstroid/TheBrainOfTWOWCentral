@@ -3,14 +3,12 @@ from Helper.__comp import *
 import os
 from time import time
 
-from Helper.__functions import is_dev, is_slash_cmd, m_line, plural
+from Helper.__functions import is_dev, m_line, plural
 from Helper.__action_functions import confirm_action
 from Helper.__db import Database as DB
 
 def setup(BOT):
 	BOT.add_cog(Database(BOT))
-
-# TODO: Add db entries add, db entries edit, db entries remove
 
 class Database(cmd.Cog):
 	'''
@@ -111,45 +109,20 @@ class Database(cmd.Cog):
 	def __init__(self, BRAIN):
 		self.BRAIN = BRAIN
 
-	# Slash version of the command due to function signature incompatibility
-	@cmd.slash_command(name="database")
-	@cmd.cooldown(1, 3)
-	@cmd.check(is_dev)
-	async def slash_database(self, ctx,
-		query_subcommand = None):
-		'''
-		Wrapper command to edit the different database tables through the bot.
-		'''
-
-		cmd_args = query_subcommand.split(" ")
-
-		await self.database(ctx, *cmd_args)
-
-		return
-
 	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 3)
 	@cmd.check(is_dev)
 	async def database(self, ctx,
 		*cmd_args):
 
-		# This block reconstructs the intended structure of the command with line breaks
-		# This is important since although Discord API treats them as argument breaks like spaces,
-		# they have different functions in a command like this
-		if is_slash_cmd(ctx):
-			original_query = "".join(
-				[a + " " if a != "\\n" else "\n" for a in cmd_args]
-			).strip()
+		# Test for both `tc/database subcommand` AND `tc/database\nsubcommand`
+		space_split = ctx.message.content.split(" ")
+		line_split = ctx.message.content.splitlines()
 
+		if len(space_split[0]) < len(line_split[0]):
+			original_query = " ".join(space_split[1:])
 		else:
-			# Test for both `tc/database subcommand` AND `tc/database\nsubcommand`
-			space_split = ctx.message.content.split(" ")
-			line_split = ctx.message.content.splitlines()
-
-			if len(space_split[0]) < len(line_split[0]):
-				original_query = " ".join(space_split[1:])
-			else:
-				original_query = "\n".join(line_split[1:])
+			original_query = "\n".join(line_split[1:])
 
 		# Make a matrix out of arguments, with space column splits and newline row splits
 		arg_matrix = [l.split(" ") for l in original_query.splitlines()]
@@ -174,7 +147,7 @@ class Database(cmd.Cog):
 			tables = DB.get_tables(debug=modif["debug"])
 			tables = ", ".join([f"**{t.upper()}**" for t in tables])
 
-			await ctx.respond(f"🗂️ **Here are all the tables in the database:**\n> {tables}")
+			await ctx.reply(f"🗂️ **Here are all the tables in the database:**\n> {tables}")
 			return
 		
 		# Position in the argument matrix
@@ -190,7 +163,7 @@ class Database(cmd.Cog):
 		if arg_matrix[line][arg_n].lower() not in subcommands:
 			v_subcmds = ", ".join([f"**{sc.upper()}**" for sc in subcommands])
 
-			await ctx.respond(
+			await ctx.reply(
 			f"💀 **This is not a valid subcommand!** Valid subcommands are:\n> {v_subcmds}")
 			return
 		
@@ -201,7 +174,7 @@ class Database(cmd.Cog):
 			try:
 				table_name = arg_matrix[line][arg_n].lower()
 			except IndexError:
-				await ctx.respond("💀 **You must include the name of the new table!**")
+				await ctx.reply("💀 **You must include the name of the new table!**")
 				return
 
 			columns = []
@@ -214,7 +187,7 @@ class Database(cmd.Cog):
 					column_name = arg_matrix[line][arg_n].lower()
 				except IndexError:
 					if len(columns) == 0:
-						await ctx.respond("💀 **You must include the new table's columns!**")
+						await ctx.reply("💀 **You must include the new table's columns!**")
 						return
 					else:
 						break
@@ -224,7 +197,7 @@ class Database(cmd.Cog):
 				try:
 					column_type = arg_matrix[line][arg_n].lower()
 				except IndexError:
-					await ctx.respond(
+					await ctx.reply(
 					f"💀 **Column `{column_name.upper()}` has no specified data type!**")
 					return
 				
@@ -236,7 +209,7 @@ class Database(cmd.Cog):
 
 			columns_summary = "/n/".join(["> " + ": ".join(col) for col in columns])
 
-			await ctx.respond(m_line(f"""
+			await ctx.reply(m_line(f"""
 				✅ **Table {table_name.upper()} has been created** with the columns:/n/
 				{columns_summary}"""))
 			return
@@ -248,7 +221,7 @@ class Database(cmd.Cog):
 			try:
 				table_name = arg_matrix[line][arg_n].lower()
 			except IndexError:
-				await ctx.respond("💀 **You must include the name of the table to remove!**")
+				await ctx.reply("💀 **You must include the name of the table to remove!**")
 				return
 			
 			action_confirmed = [None]
@@ -260,13 +233,9 @@ class Database(cmd.Cog):
 				return
 
 			DB.remove_table(table_name, debug=modif["debug"])
-			
-			if is_slash_cmd(ctx):
-				await msg.edit_original_message(view=None, content=
-				f"✅ **Table {table_name.upper()} has been removed** from the database!")
-			else:
-				await msg.edit(view=None, content=
-				f"✅ **Table {table_name.upper()} has been removed** from the database!")
+
+			await msg.edit(view=None, content=
+			f"✅ **Table {table_name.upper()} has been removed** from the database!")
 			
 			return
 
@@ -277,14 +246,14 @@ class Database(cmd.Cog):
 			try:
 				table_name = arg_matrix[line][arg_n].lower()
 			except IndexError:
-				await ctx.respond("💀 **You must include the name of the table to inspect!**")
+				await ctx.reply("💀 **You must include the name of the table to inspect!**")
 				return
 			
 			layout = DB.get_columns(table_name, include_type=True, debug=modif["debug"])
 
 			columns_summary = "\n".join(["> " + ": ".join(col) for col in layout])
 
-			await ctx.respond(
+			await ctx.reply(
 			f"📋 **Table {table_name.upper()} has the following layout:**\n{columns_summary}")
 			return
 		
@@ -295,7 +264,7 @@ class Database(cmd.Cog):
 			try:
 				table_name = arg_matrix[line][arg_n].lower()
 			except IndexError:
-				await ctx.respond("💀 **You must include the name of the table!**")
+				await ctx.reply("💀 **You must include the name of the table!**")
 				return
 			
 			submodes = ["add", "remove", "edit"]
@@ -319,7 +288,7 @@ class Database(cmd.Cog):
 
 						arg_matrix = arg_matrix[:-1]
 					except ValueError:
-						await ctx.respond(m_line(f"""
+						await ctx.reply(m_line(f"""
 						💀 **Your entry limit must be a valid integer!**/n/
 						> `{''.join(arg_matrix[-1])}`"""))
 						return
@@ -329,10 +298,13 @@ class Database(cmd.Cog):
 
 					# Loop to encounter each condition
 					while True:
-						full_condition = arg_matrix[line]
+						try:
+							full_condition = arg_matrix[line]
+						except IndexError:
+							break
 
 						if "=" not in full_condition:
-							await ctx.respond(m_line(f"""
+							await ctx.reply(m_line(f"""
 							💀 **You must separate the condition column and value with an equals 
 							sign!**/n/> `{''.join(full_condition)}`"""))
 							return
@@ -343,13 +315,13 @@ class Database(cmd.Cog):
 						condition_value = " ".join(full_condition[eq_index+1:])
 						
 						if len(condition_column) == 0:
-							await ctx.respond(m_line(f"""
+							await ctx.reply(m_line(f"""
 							💀 **You must include a column in your condition!**/n/
 							> `{''.join(full_condition)}`"""))
 							return
 						
 						if len(condition_value) == 0:
-							await ctx.respond(m_line(f"""
+							await ctx.reply(m_line(f"""
 							💀 **You must include a value in your condition!**/n/
 							> `{''.join(full_condition)}`"""))
 							return
@@ -395,7 +367,7 @@ class Database(cmd.Cog):
 
 					open(f_name, 'w', encoding='utf-8').write(message_lines)
 
-					await ctx.respond(m_line(f"""
+					await ctx.reply(m_line(f"""
 					📋 Displaying **{entry_count}** entr{plural(entry_count, si='ies', pl='y')} 
 					from table **{table_name.upper()}:**"""
 					), file=dc.File(f_name))
@@ -404,11 +376,182 @@ class Database(cmd.Cog):
 				
 					return
 
-				await ctx.respond(m_line(f"""
+				await ctx.reply(m_line(f"""
 				📋 Displaying **{entry_count}** entr{plural(entry_count, si='ies', pl='y')} 
 				from table **{table_name.upper()}:**
 					
 				"""
 				) + f"```{message_lines}```")
+				
+				return
+			
+			if submode_chosen == "add":
+				entry_row = []
 
+				while True:
+					line, arg_n, new_entry = step_forward()
+
+					if line >= len(arg_matrix):
+						break
+
+					if new_entry:
+						entry_row.append("")
+					else:
+						entry_row[-1] += " "
+					
+					entry_row[-1] += arg_matrix[line][arg_n]
+
+				DB.add_entry(table_name, entry_row, debug=modif["debug"])
+
+				await ctx.reply(f"✅ **Entry has been added** to table **{table_name.upper()}**.")
+				return
+
+			# Remove and edit both gain an optional limit argument
+			# Parse it ahead of time if we reach this point
+			entry_limit = None
+			if arg_matrix[-1][0].lower() == 'limit' and len(arg_matrix[-1] == 2):
+				try:
+					entry_limit = int(arg_matrix[-1][1])
+
+					arg_matrix = arg_matrix[:-1]
+				except ValueError:
+					await ctx.reply(m_line(f"""
+					💀 **Your entry limit must be a valid integer!**/n/
+					> `{''.join(arg_matrix[-1])}`"""))
+					return
+
+			if submode_chosen == "remove":
+				line, arg_n, _ = step_forward()
+				
+				conditions_get = {}
+
+				# Loop to encounter each removal condition
+				while True:
+					try:
+						full_condition = arg_matrix[line]
+					except IndexError:
+						break
+
+					if "=" not in full_condition:
+						await ctx.reply(m_line(f"""
+						💀 **You must separate the condition column and value with an equals 
+						sign!**/n/> `{''.join(full_condition)}`"""))
+						return
+					
+					eq_index = full_condition.index("=")
+					
+					condition_column = " ".join(full_condition[:eq_index])
+					condition_value = " ".join(full_condition[eq_index+1:])
+					
+					if len(condition_column) == 0:
+						await ctx.reply(m_line(f"""
+						💀 **You must include a column in your condition!**/n/
+						> `{''.join(full_condition)}`"""))
+						return
+					
+					if len(condition_value) == 0:
+						await ctx.reply(m_line(f"""
+						💀 **You must include a value in your condition!**/n/
+						> `{''.join(full_condition)}`"""))
+						return
+
+					conditions_get[condition_column] = condition_value
+
+					line += 1
+				
+				action_confirmed = [None]
+				msg, msg_view = await confirm_action(ctx, action_confirmed, create=True)
+
+				await msg_view.wait()
+
+				if not action_confirmed[0]:
+					return
+				
+				DB.remove_entry(table_name, conditions=conditions_get,
+				debug=modif["debug"], limit=entry_limit)
+
+				await msg.edit(view=None, content=
+				f"✅ **Matching entries removed** from table **{table_name.upper()}**.")
+				return
+			
+			if submode_chosen == "edit":
+				line, arg_n, _ = step_forward()
+				
+				conditions_get = {}
+				new_values_get = {}
+
+				# Loop to encounter each condition and change
+				while True:
+					try:
+						full_condition = arg_matrix[line]
+					except IndexError:
+						break
+
+					is_condition = "=" in full_condition
+					is_value_change = ">" in full_condition
+
+					if is_condition and is_value_change:
+						if full_condition.index("=") < full_condition.index(">"):
+							is_value_change = False
+						else:
+							is_condition = False
+					
+					if is_condition:
+						eq_index = full_condition.index("=")
+						
+						condition_column = " ".join(full_condition[:eq_index])
+						condition_value = " ".join(full_condition[eq_index+1:])
+						
+						if len(condition_column) == 0:
+							await ctx.reply(m_line(f"""
+							💀 **You must include a column in your condition!**/n/
+							> `{''.join(full_condition)}`"""))
+							return
+						
+						if len(condition_value) == 0:
+							await ctx.reply(m_line(f"""
+							💀 **You must include a value in your condition!**/n/
+							> `{''.join(full_condition)}`"""))
+							return
+
+						conditions_get[condition_column] = condition_value
+
+					elif is_value_change:
+						vc_index = full_condition.index(">")
+
+						value_column = " ".join(full_condition[:vc_index])
+						new_value = " ".join(full_condition[vc_index+1:])
+						
+						if len(value_column) == 0:
+							await ctx.reply(m_line(f"""
+							💀 **You must include a column in edit statements!**/n/
+							> `{''.join(full_condition)}`"""))
+							return
+
+						new_values_get[value_column] = new_value
+					
+					else:
+						await ctx.reply(m_line(f"""
+						💀 **You must separate the condition column and value with an equals 
+						sign, or an edit statement with an arrow bracket (`>`)!**
+						/n/> `{''.join(full_condition)}`"""))
+						return
+
+					line += 1
+				
+				action_confirmed = [None]
+				msg, msg_view = await confirm_action(ctx, action_confirmed, create=True)
+
+				await msg_view.wait()
+
+				if not action_confirmed[0]:
+					return
+				
+				DB.edit_entry(table_name, columns=new_values_get, conditions=conditions_get,
+				debug=modif["debug"], limit=entry_limit)
+
+				await msg.edit(view=None, content=
+				f"✅ **Matching entries removed** from table **{table_name.upper()}**.")
+				return
+					
 		return

@@ -4,7 +4,7 @@ from time import time
 from functools import partial
 import random as rng
 
-from Helper.__functions import is_slash_cmd, m_line, command_user, f_caps, plural, is_dev
+from Helper.__functions import m_line, f_caps, plural, is_dev
 from Helper.__server_functions import is_staff, is_staff_here
 from Helper.__config import PREFIX
 
@@ -31,13 +31,10 @@ class Help(cmd.Cog):
 	def __init__(self, BRAIN):
 		self.BRAIN = BRAIN
 
-	@bridge.bridge_command(aliases=ALIASES)
+	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 1)
 	async def help(self, ctx,
 		command_or_page = ''):
-
-		if is_slash_cmd(ctx):
-			await ctx.interaction.response.defer()
 		
 		all_commands = self.BRAIN.cogs
 		all_commands = {
@@ -71,24 +68,24 @@ class Help(cmd.Cog):
 					found_term = cmd_n.lower()
 
 		if not found_term:
-			await ctx.respond("💀 Could not find a command or category under that search term!")
+			await ctx.reply("💀 Could not find a command or category under that search term!")
 			return
 		
 		help_dropdown = Select(
 			placeholder = "Choose a category or command to get info on!",
 			options = page_options,
-			custom_id = f"{command_user(ctx).id} {int(time() * 1000)}",
+			custom_id = f"{ctx.message.author.id} {int(time() * 1000)}",
 			row = 1 # Second row; leave space for page buttons in case of multi-page help text
 		)
 
 		prev_page_button = Button(
 			label = "Previous Page", emoji = "⬅️", style = dc.ButtonStyle.blurple,
-			disabled = True, custom_id = f"{command_user(ctx).id} {int(time() * 1000)} p0"
+			disabled = True, custom_id = f"{ctx.message.author.id} {int(time() * 1000)} p0"
 		)
 
 		next_page_button = Button(
 			label = "Next Page", emoji = "➡️", style = dc.ButtonStyle.blurple, 
-			custom_id = f"{command_user(ctx).id} {int(time() * 1000)} p2"
+			custom_id = f"{ctx.message.author.id} {int(time() * 1000)} p2"
 		)
 
 		help_dropdown.callback = self.help_page
@@ -102,9 +99,9 @@ class Help(cmd.Cog):
 		full_view.add_item(next_page_button)
 
 		help_embed, full_view, display_view = await self.help_page(term=found_term,
-		cmd_user=command_user(ctx), full_view=full_view)
+		cmd_user=ctx.message.author, full_view=full_view)
 		
-		help_msg = await ctx.respond(embed=help_embed, view=display_view)
+		help_msg = await ctx.reply(embed=help_embed, view=display_view)
 
 		# Update the callback to have the full message view baked in for compatibility
 		cb_help = partial(self.help_page, full_view = full_view)
@@ -114,7 +111,10 @@ class Help(cmd.Cog):
 
 		await display_view.wait()
 		
-		await help_msg.edit(view=None)
+		try:
+			await help_msg.edit(view=None)
+		except dc.errors.NotFound: # Assume the message has been deleted
+			pass
 
 		return
 	

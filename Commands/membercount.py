@@ -17,25 +17,10 @@ class Membercount(cmd.Cog):
 	FORMAT = "`(*server_args)`"
 	CATEGORY = "SERVER"
 	EMOJI = CATEGORIES[CATEGORY]
-	ALIASES = ['members', 'member', 'serversize']
+	ALIASES = ['members', 'member', 'serversize', 'm']
 
 	def __init__(self, BRAIN):
 		self.BRAIN = BRAIN
-
-	# Slash version of the command due to function signature incompatibility
-	@cmd.slash_command(name="membercount")
-	@cmd.cooldown(1, 2)
-	async def slash_membercount(self, ctx,
-		server = ''):
-		'''
-		Returns the member count of the server this command was used in.
-		'''
-
-		server_args = server.split(" ")
-
-		await self.membercount(ctx, *server_args)
-
-		return
 	
 	@cmd.command(aliases=ALIASES)
 	@cmd.cooldown(1, 2)
@@ -81,5 +66,5 @@ class Membercount(cmd.Cog):
 		if msg is not None:
 			await msg.edit(content=response)
 		else:
-			await ctx.respond(response)
+			await ctx.reply(response)
 		return

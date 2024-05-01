@@ -106,7 +106,7 @@ class Database:
 		'''
 		Removes (drops) a table from the current schema.
 		'''
-		
+
 		# Check if table is in the working schema
 		if table not in cls.get_tables(debug=debug):
 			raise NameError(f"Table named {table} is not in the {cls.schema(debug)} schema.")
