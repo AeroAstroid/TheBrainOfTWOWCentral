@@ -240,7 +240,7 @@ def run_bpp_program(code, p_args, author, runner, channel):
 				result = p_args
 
 			elif result[0] == "c_id":
-				result = runner.channel.id
+				result = channel.id
 		
 		functions[k] = result
 		return result
