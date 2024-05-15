@@ -238,6 +238,9 @@ def run_bpp_program(code, p_args, author, runner):
 			
 			elif result[0] == "aa":
 				result = p_args
+
+			elif result[0] == "c_id":
+				result = runner.channel.id
 		
 		functions[k] = result
 		return result
