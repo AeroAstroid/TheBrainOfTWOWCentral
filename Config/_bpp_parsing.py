@@ -7,7 +7,7 @@ except ModuleNotFoundError:
 	from _bpp_functions import express_array, safe_cut, FUNCTIONS
 	from _db import Database
 
-def run_bpp_program(code, p_args, author, runner):
+def run_bpp_program(code, p_args, author, runner, channel):
 	# Pointers for tag and function organization
 	tag_level = 0
 	tag_code = []
