@@ -662,13 +662,7 @@ class EVENT:
                 
                 rule = self.GAME["RULES"][rnd - 1]
                 
-                verdict = rule(msg)
-                if verdict == 1:
-                    passed = "✅"
-                elif verdict == 0:
-                    passed = "❌"
-                else:
-                    passed = "❔"
+                verdict, passed = rule(msg)
 
                 await message.add_reaction(passed)
 
@@ -687,7 +681,7 @@ class EVENT:
                         for _ in range(10):
                             test_msgs.append(self.generate_test_msg(message.author.id, self.GAME["ROUND"]))
                         
-                        answer_sheet = [self.GAME["RULES"][rnd - 1](msg) for msg in test_msgs]
+                        answer_sheet = [self.GAME["RULES"][rnd - 1](msg)[0] for msg in test_msgs]
 
                         test_view = View()
 
@@ -713,7 +707,7 @@ class EVENT:
                     else:
                         self.reset_test(message.author.id)
                         new_msg = self.generate_test_msg(message.author.id, self.GAME["ROUND"])
-                        new_answer = self.GAME["RULES"][rnd - 1](new_msg)
+                        new_answer = self.GAME["RULES"][rnd - 1](new_msg)[0]
 
                         test_view = View()
 
@@ -931,7 +925,7 @@ class EVENT:
                     self.GAME["PLAYER_TESTS"][user_test_ind][1].append(new_msg)
 
                     self.GAME["PLAYER_TESTS"][user_test_ind][2].append(
-                        self.GAME["RULES"][rnd - 1](new_msg))
+                        self.GAME["RULES"][rnd - 1](new_msg)[0])
 
                     t_msg = (f"📝 **Round {rnd} Rules Test!**\n"
                     +f"Answer all the questions to finish the test!"

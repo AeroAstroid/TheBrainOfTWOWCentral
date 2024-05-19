@@ -15,7 +15,7 @@ from datetime import datetime as dt
 
 def HELP(PREFIX):
 	return {
-		"COOLDOWN": 15,
+		"COOLDOWN": 5,
 		"MAIN": "Allows you to write short tags and/or programs",
 		"FORMAT": "[subcommand]",
 		"CHANNEL": 0,
