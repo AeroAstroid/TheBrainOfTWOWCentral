@@ -49,9 +49,9 @@ async def MAIN(message, args, level, perms, SERVER):
 	reference_obj = category_list[category_names.index(reference.lower())]
 
 	if mode_picked == "-above":
-		await to_move_obj.move(above=reference_obj)
+		await to_move_obj.move(before=reference_obj)
 	elif mode_picked == "-below":
-		await to_move_obj.move(below=reference_obj)
+		await to_move_obj.move(after=reference_obj)
 	
 	await message.channel.send("Successfully moved category!")
 	return
