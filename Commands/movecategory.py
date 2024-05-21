@@ -31,7 +31,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	mode_picked = mode_picked[0]
 
 	delimiter_ind = args.index(mode_picked)
-	to_move = " ".join(args[:delimiter_ind])
+	to_move = " ".join(args[1:delimiter_ind])
 	reference = " ".join(args[(delimiter_ind+1):])
 
 	category_list = [c for c, ch_list in SERVER["MAIN"].by_category() if c is not None]
