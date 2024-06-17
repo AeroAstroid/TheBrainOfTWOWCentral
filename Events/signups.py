@@ -49,18 +49,18 @@ class EVENT:
 		self.ANNOUNCE = await self.CHANNEL.fetch_message(UPDATES_MSG_ID)
 		
 		twow_list = self.db.get_entries("signuptwows")
-		twow_list = sorted(twow_list, key=lambda m: self.param["TIME_ORDER"] * m[0])
+		twow_list = sorted(twow_list, key=lambda m: self.param["TIME_ORDER"] * m[4])
 
 		for ind, twow in enumerate(twow_list):
-			if twow[0] <= time.time():
+			if twow[4] <= time.time():
 				twow_list[ind] = ""
-				self.db.remove_entry("signuptwows", {"time": twow[0]})
+				self.db.remove_entry("signuptwows", {"time": twow[4]})
 		
 		twow_list = [x for x in twow_list if x != ""]
 		
 		if announce:
 			try:
-				new_twow_names = list(zip(*twow_list))[2]
+				new_twow_names = list(zip(*twow_list))[0]
 			except IndexError:
 				new_twow_names = []
 			old_twow_names = [
@@ -110,7 +110,7 @@ class EVENT:
 				await self.ANNOUNCE.edit(content=announce_msg)
 			
 			for x in just_added:
-				verif = twow_list[new_twow_names.index(x)][1]
+				verif = twow_list[new_twow_names.index(x)][-1]
 				if verif == 1:
 					print("Pinging for featured TWOW!")
 					msg = await self.CHANNEL.send("<@&488451010319220766> <@&723946317839073370>")
@@ -122,7 +122,7 @@ class EVENT:
 
 		formatted_list = []
 		for twow in twow_list:
-			time_left = twow[0] - time.time()
+			time_left = twow[4] - time.time()
 
 			signup_warning = ""
 			time_emoji = "🕛🕐🕑🕒🕓🕔🕕🕖🕗🕘🕙🕚"
@@ -130,14 +130,14 @@ class EVENT:
 			if time_left <= 0:
 				t_l_string = "SIGNUPS ARE OVER!"
 			else:
-				t_l_string = f"<t:{twow[0]}:R>"
+				t_l_string = f"<t:{twow[4]}:R>"
 
 				day = int(np.ceil(time_left / 3600) / 24)
 				if day == 0:
 					signup_warning = "\n⏰  **SIGNUPS ARE ALMOST OVER! JOIN SOON!**"
 			
-			deadline_string = f"<t:{twow[0]}:f>"
-			datetime_dl = datetime.datetime.utcfromtimestamp(twow[0])
+			deadline_string = f"<t:{twow[4]}:f>"
+			datetime_dl = datetime.datetime.utcfromtimestamp(twow[4])
 			
 			try:
 				chosen_emoji = time_emoji[datetime_dl.hour % 12]
@@ -145,18 +145,18 @@ class EVENT:
 				chosen_emoji = time_emoji[0]
 
 			verified_string = ""
-			if twow[1] > 0:
+			if twow[5] > 0:
 				verified_string = "\n⭐  **FEATURED TWOW!** (<@&488451010319220766>)"
 			
-			descrip = twow[5].replace('\n', '\n> ')
+			descrip = twow[3].replace('\n', '\n> ')
 			
 			message = f"""\u200b
 			\u200b{verified_string}
-			📖  **__{twow[2]}__** - Hosted by **{twow[3]}**
+			📖  **__{twow[0]}__** - Hosted by **{twow[1]}**
 			> {descrip}
 			{signup_warning}
 			{chosen_emoji}  **Signup Deadline** : **{t_l_string}** ({deadline_string})
-			📥  **Server Link** : {twow[4]}""".replace("\t", "")
+			📥  **Server Link** : {twow[2]}""".replace("\t", "")
 
 			formatted_list.append(message)
 		

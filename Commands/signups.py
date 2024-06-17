@@ -81,7 +81,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			return
 		
 		old_entry = twow_list[0]
-		old_entry = dict(zip(["time", "verified", "name", "hosts", "link", "description"], old_entry))
+		old_entry = dict(zip(["name", "hosts", "link", "description", "time", "verified"], old_entry))
 		
 		entry = {
 			"name": None,
@@ -203,22 +203,22 @@ async def MAIN(message, args, level, perms, SERVER):
 			return
 		
 		twow_info = twow_list[0]
-		dl_format = datetime.datetime.utcfromtimestamp(twow_info[0]).strftime("%d/%m/%Y %H:%M")
+		dl_format = datetime.datetime.utcfromtimestamp(twow_info[4]).strftime("%d/%m/%Y %H:%M")
 
 		db.remove_entry("signuptwows", conditions={"name": twow_name})
 
 		announce = "dont_announce" not in msg
 		await SERVER["EVENTS"]["SIGNUPS"].update_list(announce=announce)
 
-		await message.channel.send(f"""**{twow_info[2]}** has been removed from the signup list!
+		await message.channel.send(f"""**{twow_info[0]}** has been removed from the signup list!
 		
 		**TWOW Info**:
-		""".replace("\t", "") + f"""name:[{twow_info[2]}] 
-		host:[{twow_info[3]}] 
-		link:[{twow_info[4]}] 
-		desc:[{twow_info[5]}] 
+		""".replace("\t", "") + f"""name:[{twow_info[0]}] 
+		host:[{twow_info[1]}] 
+		link:[{twow_info[2]}] 
+		desc:[{twow_info[3]}] 
 		deadline:[{dl_format}] 
-		{'is_verified' if bool(twow_info[1]) else ''}""".replace("\n", "").replace("\t", ""))
+		{'is_verified' if bool(twow_info[5]) else ''}""".replace("\n", "").replace("\t", ""))
 
 		return
 		
@@ -234,12 +234,12 @@ async def MAIN(message, args, level, perms, SERVER):
 		starting_bound = msg[msg.find("name:[") + 6:]
 		twow_name = starting_bound[:starting_bound.find("]")]
 
-		entry = [0, 0, twow_name, "", "", "", ""]
+		entry = [twow_name, "", "", "", 0, 0, ""]
 		
 		if "host:[" in msg:
 			starting_bound = msg[msg.find("host:[") + 6:]
 			hosts = starting_bound[:starting_bound.find("]")]
-			entry[3] = hosts
+			entry[1] = hosts
 		else:
 			await message.channel.send("Include the host of the TWOW you want to add!")
 			return
@@ -247,7 +247,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		if "link:[" in msg:
 			starting_bound = msg[msg.find("link:[") + 6:]
 			link = starting_bound[:starting_bound.find("]")].replace("<", "").replace(">", "")
-			entry[4] = link
+			entry[2] = link
 		else:
 			await message.channel.send("Include the invite link of the TWOW you want to add!")
 			return
@@ -255,7 +255,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		if "desc:[" in msg:
 			starting_bound = msg[msg.find("desc:[") + 6:]
 			desc = starting_bound[:starting_bound.find("]")]
-			entry[5] = desc
+			entry[3] = desc
 		else:
 			await message.channel.send("Include the description of the TWOW you want to add!")
 			return
@@ -271,7 +271,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				deadline = datetime.datetime.strptime(deadline, "%d/%m/%Y %H:%M")
 				deadline = deadline.replace(tzinfo=datetime.timezone.utc).timestamp()
 				
-			entry[0] = deadline
+			entry[4] = deadline
 			if deadline < time.time():
 				await message.channel.send(f"Please enter a time in the future. The time you have input is <t:{deadline}:F>")
 				return
@@ -286,16 +286,16 @@ async def MAIN(message, args, level, perms, SERVER):
 			verified = starting_bound[:starting_bound.find("]")]
 			if verified.lower() not in ["0", "", "false"]:
 				vf = 1
-		entry[1] = vf
+		entry[5] = vf
 
 		db.add_entry("signuptwows", entry[:6])
 		
 		announce = "dont_announce" not in msg
 		await SERVER["EVENTS"]["SIGNUPS"].update_list(announce=announce)
 
-		await message.channel.send(f"""**{entry[2]}** has been added to the list of TWOWs in signups!
-		**Host:** {entry[3]}
-		**Description:** {entry[5]}
+		await message.channel.send(f"""**{entry[0]}** has been added to the list of TWOWs in signups!
+		**Host:** {entry[1]}
+		**Description:** {entry[3]}
 		**Deadline:** {entry[6]}
-		**Deadline Timestamp:** {entry[0]}
-		**Link:** <{entry[4]}>""".replace("\t", ""))
+		**Deadline Timestamp:** {entry[4]}
+		**Link:** <{entry[2]}>""".replace("\t", ""))
