@@ -104,7 +104,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	
 	try: hue = max(0,min(1,(total-minval)/(maxval-minval))*0.42)
 	except: hue = 0.21
-	color = dc.Colour.from_hsv(hue,.80,.80)
+	color = discord.Colour.from_hsv(hue,.80,.80)
 	print(color.r, color.g, color.b, color.value)
 	e = discord.Embed(title=f"🎲 Rolling {args.strip()} 🎲",description=outStr, color=color.value)
 	await message.reply(embed=e)
