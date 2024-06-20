@@ -81,7 +81,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	
 					except Exception as ignored:
 						print(ignored)
-						aawait message.reply(f"Sorry, but {s} is not a valid die roll.")
+						await message.reply(f"Sorry, but {s} is not a valid die roll.")
 						return
 	
 				
