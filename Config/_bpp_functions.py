@@ -74,18 +74,34 @@ def INDEX(a, b):
 	if not is_whole(b):
 		raise TypeError(f"Second parameter of INDEX function must be an integer: {safe_cut(b)}")
 	return a[int(b)]
+	
+def SLICE(a, b='', c='', d=''):
 
-def SLICE(a, b, c):
-	if not is_whole(b):
+	if b == '':
+		b = None
+	if c == '':
+		c = None
+	if d == '':
+		d = None
+
+
+	if not is_whole(b) and b is not None:
 		raise TypeError(f"Second parameter of SLICE function must be an integer: {safe_cut(b)}")
-	if not is_whole(c):
+	if not is_whole(c) and c is not None:
 		raise TypeError(f"Third parameter of SLICE function must be an integer: {safe_cut(c)}")
+	if not is_whole(d) and d is not None:
+		raise TypeError(f"Fourth parameter of SLICE function must be an integer: {safe_cut(d)}")
+
+	if b is not None: b = int(b)
+	if c is not None: c = int(c)
+	if d is not None: d = int(d)
+
 	if type(a) == list:
 		to_cut = a
 	else:
 		to_cut = str(a)
 		
-	return to_cut[int(b):int(c)]
+	return to_cut[b:c:d]
 
 def ARRAY(*a):
 	return list(a)
