@@ -22,11 +22,14 @@ ALIASES = ["dice"]
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
-	if level == 1:
-		await message.reply("Please enter a roll! Example: `2d6`")
+
+	noMentions = discord.AllowedMentions.none()
+	
+	if level <= 1:
+		await message.reply("Please enter a roll! Example: `2d6`.",allowed_mentions=noMentions)
 		return
   
-	args = args[1:].join(" ")
+	args = " ".join(args[1:])
 	
 	while "  " in args:
 		args = args.replace("  ", " ")
@@ -58,7 +61,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	
 						total_rolls += rollct
 						if total_rolls > 10000:
-							await message.reply("Sorry, but you can only roll up to 10,000 dice at once.")
+							await message.reply("Sorry, but you can only roll up to 10,000 dice at once.",allowed_mentions=noMentions)
 							return
 	
 						rolls = [randint(1,rollsize) for x in range(rollct)]
@@ -81,7 +84,7 @@ async def MAIN(message, args, level, perms, SERVER):
 	
 					except Exception as ignored:
 						print(ignored)
-						await message.reply(f"Sorry, but {s} is not a valid die roll.")
+						await message.reply(f"Sorry, but {s} is not a valid die roll.",allowed_mentions=noMentions)
 						return
 	
 				
@@ -93,7 +96,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			total += output
 	
 		except Exception as e:
-			await message.reply("There was an error in parsing your rolls. Are you sure your syntax is correct?")
+			await message.reply("There was an error in parsing your rolls. Are you sure your syntax is correct?",allowed_mentions=noMentions)
 			return
 			
 		for x in finalRolls: 
@@ -107,5 +110,5 @@ async def MAIN(message, args, level, perms, SERVER):
 	color = discord.Colour.from_hsv(hue,.80,.80)
 	print(color.r, color.g, color.b, color.value)
 	e = discord.Embed(title=f"🎲 Rolling {args.strip()} 🎲",description=outStr, color=color.value)
-	await message.reply(embed=e)
+	await message.reply(embed=e,allowed_mentions=noMentions)
 			
