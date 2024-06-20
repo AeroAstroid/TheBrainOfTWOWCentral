@@ -1,4 +1,4 @@
-def div(dividend, *divisors):
+def div(dividend: float, *divisors: tuple[float]):
     result = dividend
 
     for divisor in divisors:

@@ -1,11 +1,11 @@
 import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.expression import Expression
-from Config.b_star_interpreter.parse import parseCode
+# from Config.b_star_interpreter.parse import parseCode
 from Config._bpp_functions import safe_cut
 from Config._db import Database
 
 
-def global_func(use, name, value):
+def global_func(use: str, name: str, value: any):
     db = Database()
 
     if globals.codebase.global_limit < 50:

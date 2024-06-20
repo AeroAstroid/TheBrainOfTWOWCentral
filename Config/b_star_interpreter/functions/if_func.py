@@ -2,7 +2,8 @@ import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.expression import Expression
 
 
-def if_func(compare, true, false):
+# TODO: Inspect types further
+def if_func(compare: any, true: any, false: any):
     # TODO: Get a better name
     false_arg = false is not False
 
