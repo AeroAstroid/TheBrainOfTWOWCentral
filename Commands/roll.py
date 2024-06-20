@@ -1,9 +1,10 @@
 from random import randint
 import os, discord
-from math import floor, ceil
+import re, cexprtk, math
+
 
 def HELP(PREFIX):
-  	return {
+	return {
 		"COOLDOWN": 3,
 		"MAIN": "Rolls up to 10,000 dice that can also be used in arbitrary mathematical statements.",
 		"FORMAT": "(rolls)",
@@ -26,7 +27,9 @@ async def MAIN(message, args, level, perms, SERVER):
 		return
   
 	args = args[1:].join(" ")
-	while "  " in args: args = args.replace("  ", " ")
+	
+	while "  " in args:
+		args = args.replace("  ", " ")
 	
 	maxval = 0
 	minval = 0
