@@ -273,10 +273,10 @@ def run_bpp_program(code, p_args, author, runner, channel):
 			raise PermissionError(
 			f"Only the author of the {v_name} variable can edit its value ({v_owner})")
 			
-			db.edit_entry(
-				"b++2variables",
-				entry={"value": str(v_value), "type": var_type(v_value)},
-				conditions={"name": v_name})
+		db.edit_entry(
+			"b++2variables",
+			entry={"value": str(v_value), "type": var_type(v_value)},
+			conditions={"name": v_name})
 
 	output = output.replace("{}", "\t").replace("{", "{{").replace("}", "}}").replace("\t", "{}")
 
