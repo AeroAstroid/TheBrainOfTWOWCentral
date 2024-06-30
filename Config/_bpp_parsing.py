@@ -7,12 +7,17 @@ except ModuleNotFoundError:
 	from _bpp_functions import express_array, safe_cut, FUNCTIONS
 	from _db import Database
 
+import re
+from time import time as timenow
+
 def run_bpp_program(code, p_args, author, runner, channel):
 	# Pointers for tag and function organization
 	tag_level = 0
 	tag_code = []
 	tag_globals = {}
 	tag_str = lambda: ' '.join([str(s) for s in tag_code])
+
+	debug_values = ""
 
 	backslashed = False	# Flag for whether to unconditionally escape the next character
 	
@@ -23,7 +28,7 @@ def run_bpp_program(code, p_args, author, runner, channel):
 	output = "" # Stores the final output of the program
 
 	goto = 0 # Skip characters in evaluating the code
-
+		
 	for ind, char in enumerate(list(code)):
 		normal_case = True
 
@@ -141,9 +146,22 @@ def run_bpp_program(code, p_args, author, runner, channel):
 
 	base_keys = [k for k in functions if is_whole(k)]
 
-	db = Database()
-
 	type_list = [int, float, str, list]
+
+	db = Database()		
+	match = re.finditer("(?i)\[global var \w*?\]", code)
+	found_vars = []
+	for var in match:
+		var = var[0].replace("]", "").replace("\n", " ").strip().split(" ")[-1]
+		found_vars.append(var)
+	
+	v_list = db.get_entries("b++2variables", columns=["name", "value", "type", "owner"])
+	v_list = [v for v in v_list if v[0] in found_vars]
+
+	for v in v_list:
+		v_value = type_list[v[2]](v[1])
+		tag_globals[v[0]] = [v_value, str(v[3]), False]	
+	
 	def var_type(v):
 		try:
 			return type_list.index(type(v))
@@ -277,10 +295,10 @@ def run_bpp_program(code, p_args, author, runner, channel):
 				"b++2variables",
 				entry={"value": str(v_value), "type": var_type(v_value)},
 				conditions={"name": v_name})
-
+	
 	output = output.replace("{}", "\t").replace("{", "{{").replace("}", "}}").replace("\t", "{}")
 
-	return output.format(*results).replace("\v", "{}")
+	return output.format(*results).replace("\v", "{}")+debug_values
 
 if __name__ == "__main__":
 	program = input("Program:\n\t")
