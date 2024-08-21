@@ -51,6 +51,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			tag_list = tag_list[:10]
 			page = 1
 			tag_leaderboard = True
+			
 		elif is_whole(args[2]):
 			if (int(args[2]) - 1) * 10 >= len(tag_list): # Detect if the page number is too big
 				await message.channel.send(f"There is no page {args[2]} on your tags list!")
@@ -101,6 +102,10 @@ async def MAIN(message, args, level, perms, SERVER):
 				tag_list = tag_list[lower:upper]
 				page = int(args[2])
 				tag_leaderboard = True
+
+		elif args[2].lower() == "all":
+			page = 1
+			tag_leaderboard = True
 	
 		if tag_leaderboard:
 			beginning = f"```diff\nB++ Programs Page {page}\n\n"
@@ -123,7 +128,12 @@ async def MAIN(message, args, level, perms, SERVER):
 			
 			beginning += "```" # Close off code block
 
-			await message.channel.send(beginning)
+			if len(tag_list) > 10:
+				open(f'bpp_tags.txt', 'w', encoding="utf-8").write(beginning)
+				await message.channel.send("Here's a list of all B++ tags:", file=discord.File(f'bpp_tags.txt'))
+				os.remove(f'bpp_tags.txt')
+			else:
+				await message.channel.send(beginning)
 			return
 
 		tag_name = args[2]
