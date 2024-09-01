@@ -38,6 +38,8 @@ class EVENT:
 				# Add reactions to message
 				for emoji in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "❔"]:
 					await message.add_reaction(emoji)
+				await message.reply(message.embeds[0].description)
+	
 
 	# Change a parameter of the event
 	async def edit_event(self, message, new_params):
