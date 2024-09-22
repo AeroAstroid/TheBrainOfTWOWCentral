@@ -424,6 +424,12 @@ def CHARFUNC(a):
 def CHANNEL():
 	return ("c_id",)
 
+
+def EVALUATE(a=""):
+	if not type(a) == str:
+		raise ValueError(f"EVAL function parameter is not a string: {safe_cut(b)}")
+	return ("eval", a)
+
 FUNCTIONS = {
 	"MATH": MATHFUNC,
 	"RANDINT": RANDINT,
@@ -470,5 +476,6 @@ FUNCTIONS = {
 	"SETINDEX": SETINDEX,
 	"CHAR" : CHARFUNC,
 	"UNICODE" : UNICODE,
-	"CHANNEL" : CHANNEL
+	"CHANNEL" : CHANNEL,
+#	"EVAL" : EVALUATE,
 }
