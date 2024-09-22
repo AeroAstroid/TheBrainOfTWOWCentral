@@ -20,7 +20,14 @@ async def MAIN(message, args, level, perms, SERVER):
 		member_count = len(SERVER["MAIN"].members)
 		await message.channel.send(f"We have **{member_count}** members.")
 	elif args[1].lower() == "list":
-		member_list = sorted([f"{x.name}#{x.discriminator}" for x in SERVER["MAIN"].members])
+		member_list = sorted([f"{x.name}#{x.discriminator}" if x.discriminator else x.name for x in SERVER["MAIN"].members])
+		open("member_list.txt", "w", encoding="utf-8").write("\n".join(member_list))
+		await message.channel.send(f"Here's a list of all **{len(member_list)}** server members:",
+		file=discord.File("member_list.txt"))
+		os.remove("member_list.txt")
+	elif args[1].lower() == "idlist":
+		member_list = sorted([
+		f"{x.name}#{x.discriminator}\t{x.id}" if x.discriminator else f"{x.name}\t{x.id}" for x in SERVER["MAIN"].members])
 		open("member_list.txt", "w", encoding="utf-8").write("\n".join(member_list))
 		await message.channel.send(f"Here's a list of all **{len(member_list)}** server members:",
 		file=discord.File("member_list.txt"))

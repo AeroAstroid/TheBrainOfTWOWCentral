@@ -1,4 +1,4 @@
-import discord, datetime
+import discord, datetime, time
 from Config._functions import is_whole
 from Config._db import Database
 
@@ -116,8 +116,11 @@ async def MAIN(message, args, level, perms, SERVER):
 		if "deadline:[" in msg:
 			starting_bound = msg[msg.find("deadline:[") + 10:]
 			dl_string = starting_bound[:starting_bound.find("]")]
-			deadline = datetime.datetime.strptime(dl_string, "%d/%m/%Y %H:%M")
-			deadline = deadline.replace(tzinfo=datetime.timezone.utc).timestamp()
+			if is_whole(dl_string):
+				deadline = int(dl_string)
+			else:
+				deadline = datetime.datetime.strptime(dl_string, "%d/%m/%Y %H:%M")
+				deadline = deadline.replace(tzinfo=datetime.timezone.utc).timestamp()
 			entry["time"] = deadline
 		
 		if "verified:[" in msg:
@@ -237,30 +240,51 @@ async def MAIN(message, args, level, perms, SERVER):
 			starting_bound = msg[msg.find("host:[") + 6:]
 			hosts = starting_bound[:starting_bound.find("]")]
 			entry[1] = hosts
+		else:
+			await message.channel.send("Include the host of the TWOW you want to add!")
+			return
 		
 		if "link:[" in msg:
 			starting_bound = msg[msg.find("link:[") + 6:]
 			link = starting_bound[:starting_bound.find("]")].replace("<", "").replace(">", "")
 			entry[2] = link
+		else:
+			await message.channel.send("Include the invite link of the TWOW you want to add!")
+			return
 		
-		if "desc:[":
+		if "desc:[" in msg:
 			starting_bound = msg[msg.find("desc:[") + 6:]
 			desc = starting_bound[:starting_bound.find("]")]
 			entry[3] = desc
+		else:
+			await message.channel.send("Include the description of the TWOW you want to add!")
+			return
+
 		
 		if "deadline:[" in msg:
 			starting_bound = msg[msg.find("deadline:[") + 10:]
 			deadline = starting_bound[:starting_bound.find("]")]
 			entry[6] = deadline
-			deadline = datetime.datetime.strptime(deadline, "%d/%m/%Y %H:%M")
-			deadline = deadline.replace(tzinfo=datetime.timezone.utc).timestamp()
+			if is_whole(deadline):
+				deadline = int(deadline)
+			else:
+				deadline = datetime.datetime.strptime(deadline, "%d/%m/%Y %H:%M")
+				deadline = deadline.replace(tzinfo=datetime.timezone.utc).timestamp()
+				
 			entry[4] = deadline
+			if deadline < time.time():
+				await message.channel.send(f"Please enter a time in the future. The time you have input is <t:{deadline}:F>")
+				return
+		else:
+			await message.channel.send("Include the deadline of the TWOW you want to add!")
+			return
+		
 		
 		vf = 0
 		if "verified:[" in msg:
 			starting_bound = msg[msg.find("verified:[") + 10:]
 			verified = starting_bound[:starting_bound.find("]")]
-			if verified not in ["0", ""]:
+			if verified.lower() not in ["0", "", "false"]:
 				vf = 1
 		entry[5] = vf
 

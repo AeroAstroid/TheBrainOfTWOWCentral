@@ -1,44 +1,32 @@
-import discord
-from Config._servers import MAIN_SERVER
+import time, discord, traceback
+from Config._functions import grammar_list
 
 class EVENT:
 	# Executes when loaded
 	def __init__(self):
 		self.RUNNING = False
-		self.param = {
-			"CYCLE": "éêèëĕẽēė"
+		self.param = { # Define all the parameters necessary
+			"CHANNEL": 481536866672443392
 		}
+
 
 	# Executes when activated
 	def start(self, SERVER): # Set the parameters
-		self.SERVER = SERVER
 		self.RUNNING = True
 
-		self.param["MODMAIL_CATEGORY"] = discord.utils.get(SERVER["MAIN"].categories, name = "ModMail Logs")
-
+	
 	# Executes when deactivated
 	def end(self): # Reset the parameters
+		self.param = {
+			"CHANNEL": 481536866672443392
+		}
 		self.RUNNING = False
 	
+
 	# Function that runs on each message
 	async def on_message(self, message):
-
-		if self.param["MODMAIL_CATEGORY"] == None: return # Do not run if modmail category does not exist
-		if message.channel == None: return # Do not run if message was not sent in channel
-
-		if message.channel.category_id == self.param["MODMAIL_CATEGORY"].id:
-
-			# Count amount of messages in channel
-			count = 0
-			async for _ in message.channel.history(limit=3):
-				count += 1
-
-			if count == 2:
-
-				# Add reactions to message
-				for emoji in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "❔"]:
-					await message.add_reaction(emoji)
-				await message.reply(message.embeds[0].description)
+		if message.channel.id == self.param["CHANNEL"]:
+			await message.add_reaction("🥶")
 	
 
 	# Change a parameter of the event

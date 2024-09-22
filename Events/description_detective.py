@@ -123,8 +123,8 @@ class EVENT:
 		self.EVENT_ADMIN_ROLE = 959155078844010546 # Event participant role
 		self.param["ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ROLE)
 		self.param["ADMIN_ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ADMIN_ROLE)
-		self.param["GAME_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="tco-center-stage") # Post messages in here
-		self.param["ADMIN_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="staff•commands")
+		self.param["GAME_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="event-stage") # Post messages in here
+		self.param["ADMIN_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="event-hosts")
 
 	# Begin the game
 	async def start_game(self):
@@ -347,6 +347,8 @@ The game will start in ten seconds."""
 				player_id = player.user.id
 				player_guess = player.guesses[self.info["CLUE_NUM"] - 1]
 
+				player_name.replace("_", "\_")
+
 				if player_guess:
 					player_string = ""
 					if player.correct == True:
@@ -454,8 +456,6 @@ The game will start in ten seconds."""
 				# Check if attachment is actually a csv file
 				attachment_url = attachment.url
 					
-				if not attachment_url.endswith(".csv"): return
-
 				# This is a CSV file, now attempt to read it and if any errors come up just return
 				try:
 
@@ -481,6 +481,8 @@ The game will start in ten seconds."""
 					self.param["CSV_MESSAGE"] = 1
 
 				except Exception as e: 
+					
+					print("ERROR")
 					return
 					
 				# If the command has not yet returned, a valid CSV file has been sent!

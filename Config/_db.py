@@ -35,7 +35,7 @@ class Database:
 
 			# information_schema.columns holds all of the columns of the entire database.
 			cursor.execute(sql.SQL(""" SELECT column_name, data_type FROM information_schema.columns 
-			WHERE table_name = {table_name} """).format( # Include the datatypes by default, too
+			WHERE table_name = {table_name} ORDER BY ordinal_position""").format( # Include the datatypes by default, too
 				table_name = sql.Literal(full_name) # Filter these columns to only the table we want
 			))
 			columns = cursor.fetchall()

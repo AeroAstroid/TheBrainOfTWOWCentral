@@ -54,12 +54,9 @@ class EVENT:
 		for ind, twow in enumerate(twow_list):
 			if twow[4] <= time.time():
 				twow_list[ind] = ""
+				self.db.remove_entry("signuptwows", {"time": twow[4]})
 		
 		twow_list = [x for x in twow_list if x != ""]
-
-		self.db.remove_entry("signuptwows")
-		for twow in twow_list:
-			self.db.add_entry("signuptwows", list(twow))
 		
 		if announce:
 			try:

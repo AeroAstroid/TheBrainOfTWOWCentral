@@ -421,6 +421,9 @@ def CHARFUNC(a):
 		raise ValueError(f"CHAR function parameter is not a valid character: {safe_cut(a)}")
 	return out
 
+def CHANNEL():
+	return ("c_id",)
+
 FUNCTIONS = {
 	"MATH": MATHFUNC,
 	"RANDINT": RANDINT,
@@ -466,5 +469,6 @@ FUNCTIONS = {
 	"JOIN": JOIN,
 	"SETINDEX": SETINDEX,
 	"CHAR" : CHARFUNC,
-	"UNICODE" : UNICODE
+	"UNICODE" : UNICODE,
+	"CHANNEL" : CHANNEL
 }

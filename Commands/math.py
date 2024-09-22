@@ -1,4 +1,5 @@
 # this is probably the only command, i, pepsi#1213 will have added to tbotc unless i become a full on dev (unlikely)
+# [may 2024 update] ^^ lmfao
 # it's nice to have contributed even if i'm just re-using someone else's module and dark fixed my syntax because i'm bad 
 
 import discord, cexprtk, math, random
@@ -15,7 +16,7 @@ def HELP(PREFIX):
 	}
 
 PERMS = 0 # Non-members
-ALIASES = ["eval","calc","maths"]
+ALIASES = ["EVAL","CALC","MATHS"]
 REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):

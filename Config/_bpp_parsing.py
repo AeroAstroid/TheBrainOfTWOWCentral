@@ -7,11 +7,17 @@ except ModuleNotFoundError:
 	from _bpp_functions import express_array, safe_cut, FUNCTIONS
 	from _db import Database
 
-def run_bpp_program(code, p_args, author, runner):
+import re
+from time import time as timenow
+
+def run_bpp_program(code, p_args, author, runner, channel):
 	# Pointers for tag and function organization
 	tag_level = 0
 	tag_code = []
+	tag_globals = {}
 	tag_str = lambda: ' '.join([str(s) for s in tag_code])
+
+	debug_values = ""
 
 	backslashed = False	# Flag for whether to unconditionally escape the next character
 	
@@ -22,7 +28,7 @@ def run_bpp_program(code, p_args, author, runner):
 	output = "" # Stores the final output of the program
 
 	goto = 0 # Skip characters in evaluating the code
-
+		
 	for ind, char in enumerate(list(code)):
 		normal_case = True
 
@@ -140,9 +146,22 @@ def run_bpp_program(code, p_args, author, runner):
 
 	base_keys = [k for k in functions if is_whole(k)]
 
-	db = Database()
-
 	type_list = [int, float, str, list]
+
+	db = Database()		
+	match = re.finditer("(?i)\[global var \w*?\]", code)
+	found_vars = []
+	for var in match:
+		var = var[0].replace("]", "").replace("\n", " ").strip().split(" ")[-1]
+		found_vars.append(var)
+	
+	v_list = db.get_entries("b++2variables", columns=["name", "value", "type", "owner"])
+	v_list = [v for v in v_list if v[0] in found_vars]
+
+	for v in v_list:
+		v_value = type_list[v[2]](v[1])
+		tag_globals[v[0]] = [v_value, str(v[3]), False]	
+	
 	def var_type(v):
 		try:
 			return type_list.index(type(v))
@@ -196,39 +215,37 @@ def run_bpp_program(code, p_args, author, runner):
 				v_name = args[0]
 				if len(str(result[1])) > 100000:
 					raise MemoryError(
-					f"The global variable {safe_cut(v_name)} is too large: {safe_cut(result[1])} (limit 100kb)")
+					    f"The global variable {safe_cut(v_name)} is too large: {safe_cut(result[1])} (limit 100kb)")
 				
-				if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
-					v_value = express_array(result[1]) if type(result[1]) == list else result[1]
-
-					db.add_entry("b++2variables", [v_name, str(v_value), var_type(v_value), str(author)])
-					result = ""
-
-				else:
-					v_list = db.get_entries("b++2variables", columns=["name", "owner"])
-					v_owner = [v for v in v_list if v_name == v[0]][0][1]
-
-					if v_owner != str(author):
+				if v_name in tag_globals.keys():
+					if tag_globals[v_name][1] == str(author):
+						tag_globals[v_name][2] = True
+						tag_globals[v_name][0] = copy.deepcopy(result[1]) if type(result[1]) == list else result[1]
+					else:
 						raise PermissionError(
-						f"Only the author of the {v_name} variable can edit its value ({v_owner})")
-					
-					db.edit_entry(
-						"b++2variables",
-						entry={"value": str(result[1]), "type": var_type(result[1])},
-						conditions={"name": v_name})
+					 	    f"Only the author of the {v_name} variable can edit its value ({tag_globals[v_name][1]})")
+			
+					result = ""
+			
+				else:
+					tag_globals[v_name] = [result[1], str(author), True]
 					result = ""
 				
 			elif result[0] == "gv":
 				v_name = args[0]
+				if v_name in tag_globals.keys():
+					result = tag_globals[v_name][0]
+				else:
+					if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
+						raise NameError(f"No global variable by the name {safe_cut(v_name)} defined")
+	
+					v_list = db.get_entries("b++2variables", columns=["name", "value", "type", "owner"])
+					v_value, v_type, v_owner = [v[1:4] for v in v_list if v[0] == v_name][0]
+					v_value = type_list[v_type](v_value)
 
-				if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
-					raise NameError(f"No global variable by the name {safe_cut(v_name)} defined")
-
-				v_list = db.get_entries("b++2variables", columns=["name", "value", "type"])
-				v_value, v_type = [v[1:3] for v in v_list if v[0] == v_name][0]
-				v_value = type_list[v_type](v_value)
-
-				result = v_value
+					tag_globals[v_name] = [v_value, str(v_owner), False]
+	
+					result = v_value
 
 			elif result[0] == "n":
 				result = runner.name
@@ -238,6 +255,9 @@ def run_bpp_program(code, p_args, author, runner):
 			
 			elif result[0] == "aa":
 				result = p_args
+
+			elif result[0] == "c_id":
+				result = channel.id
 		
 		functions[k] = result
 		return result
@@ -255,9 +275,30 @@ def run_bpp_program(code, p_args, author, runner):
 			if type(v) == list: v = express_array(v)
 			results.append(v)
 
+	for v_name, value in tag_globals.items():
+		if not value[2]: continue
+		v_value = value[0]
+	
+		if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
+			v_value = express_array(v_value) if type(v_value) == list else v_value
+			db.add_entry("b++2variables", [v_name, str(v_value), var_type(v_value), str(author)])
+	
+		else:
+			v_list = db.get_entries("b++2variables", columns=["name", "owner"])
+			v_owner = [v for v in v_list if v_name == v[0]][0][1]
+	
+			if v_owner != str(author):
+				raise PermissionError(
+				f"Only the author of the {v_name} variable can edit its value ({v_owner})")
+				
+			db.edit_entry(
+				"b++2variables",
+				entry={"value": str(v_value), "type": var_type(v_value)},
+				conditions={"name": v_name})
+	
 	output = output.replace("{}", "\t").replace("{", "{{").replace("}", "}}").replace("\t", "{}")
 
-	return output.format(*results).replace("\v", "{}")
+	return output.format(*results).replace("\v", "{}")+debug_values
 
 if __name__ == "__main__":
 	program = input("Program:\n\t")
