@@ -1,6 +1,6 @@
-from random import choice
+from random import choice, randint
 
-github_devs = ["Infernity", "Digin", "LegitSi", "Zelo101", "Zettex", "woooowoooo", "pepsi", "Nv7", "Dark"] 
+github_devs = ["whirlingstars", "Digi", "LegitSi", "Zelo101", "Zettex", "woooowoooo", "cloverpepsi", "Nv7", "AeroAstroid"] 
 unfunny_errmsg = [
     "GOD FUCKING DAMMIT! **crashing noises**",
     "Whoops. You broke it.",
@@ -49,7 +49,7 @@ unfunny_errmsg = [
     "This bot's about as unstable as the Stonk Market.",
     "[DEFINE broken \"It's broken..\"] [VAR broken]",
     "You can do it, I believe in you!",
-    "I haven't seen an outage last since long since the Great ROBLOX Outage of 2021.",
+    "I haven't seen an outage last this long since the Great ROBLOX Outage of 2021.",
     "You just started working, why are you not working again?!",
     f"{choice(github_devs)} needs to be fired for this! Or was it {choice(github_devs)} that did this? No, it was obviously {choice(github_devs)}! Wait.. no..",
     f"{choice(github_devs)} sabotaged the code!",
@@ -89,5 +89,34 @@ unfunny_errmsg = [
     "The amount of work you're putting into this is great, you just need a little fixation.",
     "Make sure to approach the code calmly.",
     "?!",
-    "'number'"
+    "'number'",
+    "i love my arrays",
+    "oY uﾋﾆeve ﾋﾟ?tnredea nreor･｣",
+    "uoyevahcne tnuodere na orre!",
+    "式ﾌ??ﾟｵ爾ﾐ芬｢?爾ｵﾙ爾ｾｱ爾ﾋ?ｮｪ｡爾ﾊﾙ式ｻ?式ｪ｡爾ﾑﾔｦｷ",
+    "We're making things more awesome. Be back soon.",
+    "MISSION FAILED",
+    f"{choice(github_devs)}'s gonna kill {choice(github_devs)} for this..",
+    f"I think {choice(github_devs)} is having a mental breakdown right now over this..",
+    "This may be caused by temporary technical problems, bugs, or widespread political revolution.",
+    "It's gotta be widespread political revolution that's causing this.",
+    "*distant sounds of a catastrophic car crash*",
+    "Just stick a random reference in there. They'll never figure out the source.",
+    "ProgramDefinedException except broken code now counts as a [THROW].",
+    "You know what? No. I'm not even gonna try and say anything funny, this is just atrocious.",
+    "It's not like I can read this anyway.",
+    "helicopter variables much?",
+    "Either you've been at this for far too long, or you just got this error for the first time. In either case, welcome to this purgatory.",
+    "bruh moment",
+    "We need to talk. It's not about you, it's the code. It's absolutely awful and I can't stand it anymore!",
+    "Read over your code again. Maybe you missed something.",
+    "I don't know what you tried to give me, but it ain't working. Try again.",
+    "u good?",
+    "Just know that it's perfectly acceptable to take a break for as long you need.",
+    "Holy s**t you did it!",
+    "How the hell did you get over here mate?",
+    "Apologies for the inconvenience, but we have absolutely no idea how you came here.",
+    "name 'BStarProgramDefinedException' is not defined",
+    "Tag element damage detected! ~ Anti-Code by BStar Programs",
+    f"Error detected, shutting down in T-({randint(0,31)}) ~ Anti-Code by BStar Programs - Kung fu fighting errors since 2021"
     ]

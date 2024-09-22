@@ -1,24 +1,18 @@
-from Config.b_star_interpreter.functions.math.add import add
-from Config.b_star_interpreter.functions.math.div import div
-from Config.b_star_interpreter.functions.math.mod import mod
-from Config.b_star_interpreter.functions.math.mul import mul
-from Config.b_star_interpreter.functions.math.pow import pow_func
-from Config.b_star_interpreter.functions.math.sub import sub
+import random
+
+import cexprtk
+import math
 
 
-def math_func(number, operator: str, by):
-    operator = operator.strip()
-    if operator == "+":
-        return add(number, by)
-    elif operator == "-":
-        return sub(number, by)
-    elif operator == "/":
-        return div(number, by)
-    elif operator == "*":
-        return mul(number, by)
-    elif operator == "^":
-        return pow_func(number, by)
-    elif operator == "%":
-        return mod(number, by)
+def math_func(*equation_strings: str):
+    equation = " ".join(map(str, equation_strings))
+    st = cexprtk.Symbol_Table(variables={"e": math.e, "phi": (1 + math.sqrt(5)) / 2, "pi": math.pi}, add_constants=True,
+                              functions={"rand": random.uniform})
+    e = cexprtk.Expression(equation, st)
+    output = e.value()
+    if output % 1 == 0:
+        output = int(output)
     else:
-        raise Exception("unknown operator: " + operator)
+        output = round(output, 15)
+
+    return output

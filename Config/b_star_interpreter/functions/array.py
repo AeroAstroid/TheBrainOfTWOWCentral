@@ -1,2 +1,2 @@
-def array(*arr):
+def array(*arr: tuple[any]):
     return list(arr)
