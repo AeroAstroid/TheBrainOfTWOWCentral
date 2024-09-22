@@ -260,6 +260,9 @@ def run_bpp_program(code, p_args, author, runner, channel):
 				result = channel.id
 
 			elif result[0] == "eval":
+				if len(str(result[1])) > 60000:
+					raise MemoryError(
+					    f"The string to evaluate is too large: {safe_cut(result[1])} (limit 60kb)")
 				result = run_bpp_program(result[1], p_args, author, runner, channel)
 				
 		functions[k] = result
