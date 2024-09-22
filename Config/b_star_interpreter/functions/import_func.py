@@ -1,6 +1,6 @@
 import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.expression import Expression
-from Config.b_star_interpreter.newpasta import parse
+# from Config.b_star_interpreter.parse import parseCode
 from Config._db import Database
 
 
@@ -15,7 +15,7 @@ def import_func(name: str):
         raise Exception(f"Tag **{name}** not found!")
     else:
         # Add it to the codebase functions
-        code = parse(tag[1])
+        code = parseCode(tag[1])
 
         # Run each line (effectively importing it)
         for line in code.children:
