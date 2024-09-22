@@ -10,6 +10,8 @@ import discord, os, re, time
 
 from datetime import datetime as dt
 
+from func_timeout import func_timeout, FunctionTimedOut
+
 def HELP(PREFIX):
 	return {
 		"COOLDOWN": 3,
@@ -381,7 +383,10 @@ async def MAIN(message, args, level, perms, SERVER):
 		runner = message.author
 		
 	try:
-		program_output = run_bpp_program(program, program_args, author, runner, message.channel)
+		program_output = func_timeout(5, run_bpp_program, args=(program, program_args, author, runner, message.channel))
+	except FunctionTimedOut as e:
+		await message.channel.send(embed=discord.Embed(title=f'Tag timed out', description='```The tag took too long to execute (5s).```'))
+		return
 	except ProgramDefinedException as e:
 		await message.channel.send(embed=discord.Embed(title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
 		return
