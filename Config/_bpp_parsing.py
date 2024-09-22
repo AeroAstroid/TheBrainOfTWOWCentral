@@ -258,7 +258,10 @@ def run_bpp_program(code, p_args, author, runner, channel):
 
 			elif result[0] == "c_id":
 				result = channel.id
-		
+
+			elif result[0] == "eval":
+				result = run_bpp_program(result[1], p_args, author, runner, channel)
+				
 		functions[k] = result
 		return result
 
