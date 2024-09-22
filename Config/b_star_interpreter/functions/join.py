@@ -1,2 +1,2 @@
-def join(array: list[str], joiner: str):
+def join(array, joiner):
     return joiner.join(array)

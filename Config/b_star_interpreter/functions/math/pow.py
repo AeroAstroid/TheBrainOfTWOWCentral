@@ -1,4 +1,4 @@
-def pow_func(number: float, *bys: tuple[float]):
+def pow_func(number, *bys):
     result = number
 
     for num in bys:

@@ -1,2 +1,2 @@
-def sort_func(array: list[any]):
+def sort_func(array):
     return sorted(array)

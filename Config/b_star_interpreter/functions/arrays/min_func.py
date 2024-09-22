@@ -1,2 +1,2 @@
-def min_func(array: list[float]):
+def min_func(array):
     return min(array)

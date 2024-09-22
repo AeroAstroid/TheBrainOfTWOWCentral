@@ -1,3 +1,2 @@
-# TODO: Inspect types further
-def replace_func(string: str, match: any, replace: any):
+def replace_func(string, match, replace):
     return string.replace(str(match), str(replace))

@@ -3,8 +3,8 @@ import Config.b_star_interpreter.globals as globals
 from datetime import datetime
 
 
-def user_func(user_item_to_get: str):
-    useritem = user_item_to_get.lower()
+def user_func(userItemToGet):
+    useritem = userItemToGet.lower()
     match useritem:
         case "name":
             return globals.codebase.user.name

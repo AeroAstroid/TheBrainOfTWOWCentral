@@ -1,5 +1,5 @@
 import math
 
 
-def floor(number: float):
+def floor(number):
     return math.floor(number)

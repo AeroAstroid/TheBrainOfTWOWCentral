@@ -1,7 +1,7 @@
 import Config.b_star_interpreter.globals as globals
 
 
-def args(index: int):
+def args(index):
     if index == "":
         return globals.codebase.arguments
     else:

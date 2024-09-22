@@ -1,2 +1,2 @@
-def max_func(array: list[float]):
+def max_func(array):
     return max(array)

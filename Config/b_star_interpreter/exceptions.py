@@ -2,15 +2,12 @@
 def safe_cut(s):
 	return str(s)[:15] + ("..." if len(str(s)) > 15 else "")
 
-class BStarException(Exception):
+class BStarProgramRaisedException(Exception):
   pass
 
-class BStarProgramRaisedException(BStarException):
+class BStarTypeCoercionFailureException(Exception):
   pass
 
-class BStarTypeCoercionFailureException(BStarException):
-  pass
-
-class BStarUndefinedVariableException(BStarException):
+class BStarUndefinedVariableException(Exception):
   pass
 

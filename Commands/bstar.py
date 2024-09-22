@@ -233,12 +233,7 @@ async def MAIN(message, args, level, perms, SERVER, LOGIN):
 			await message.channel.send(msg, file=discord.File(f'program_{program[0]}.txt'))
 			os.remove(f'program_{program[0]}.txt')
 		else:
-			code = program[1]
-
-			# TODO: Figure out whats causing the \\n's in the database (Compare it to normal TBOTC).
-			e = "\n".join(code.split("\\n"))
-
-			msg += f"```{e}```"
+			msg += f"```{program[1]}```"
 			await message.channel.send(msg)
 
 		return
