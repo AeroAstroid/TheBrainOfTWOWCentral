@@ -2,8 +2,7 @@ import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.expression import Expression
 
 
-# TODO: Inspect types further
-def try_func(attempt: any, on_error: any):
+def try_func(attempt, on_error):
     try:
         return Expression(attempt, globals.codebase)
     except Exception as err:

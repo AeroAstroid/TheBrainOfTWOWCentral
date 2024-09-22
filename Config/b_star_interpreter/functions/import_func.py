@@ -1,10 +1,10 @@
 import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.expression import Expression
-# from Config.b_star_interpreter.parse import parseCode
+from Config.b_star_interpreter.parse import parseCode
 from Config._db import Database
 
 
-def import_func(name: str):
+def import_func(name):
     # TODO: tag.func import syntax
     # tag_name, func = name.split(".")
 

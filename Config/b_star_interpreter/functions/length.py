@@ -1,4 +1,4 @@
-def length(arr: list):
+def length(arr):
     try:
         return len(arr)
     except TypeError:  # for numbers (int and float)

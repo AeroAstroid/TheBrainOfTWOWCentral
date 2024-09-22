@@ -1,3 +1,2 @@
-# TODO: We'd rather have the parser completely remove comments beforehand
-def comment(*comments: any):
+def comment(*comments):
     return None

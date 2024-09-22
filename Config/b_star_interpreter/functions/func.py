@@ -4,7 +4,7 @@ import Config.b_star_interpreter.globals as globals
 from Config.b_star_interpreter.userfunction import UserFunction
 
 
-def func(name: Tree, args: Tree, body: list[str]):
+def func(name, args: Tree, body):
     parsed_name = Expression(name, globals.codebase)
     parsed_args = list(map(lambda x: Expression(x, globals.codebase), args.children[1:]))
 

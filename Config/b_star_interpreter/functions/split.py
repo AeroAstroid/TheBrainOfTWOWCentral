@@ -1,2 +1,2 @@
-def split(string: str, seperator: str):
+def split(string, seperator):
     return [*string.split(seperator)]

@@ -1,2 +1,2 @@
-def repeat(item: any, amount: int):
+def repeat(item, amount):
     return item * amount

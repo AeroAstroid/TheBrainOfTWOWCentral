@@ -1,5 +1,4 @@
 import math
 
-
-def sin(number: float):
+def sin(number):
     return math.sin(number)

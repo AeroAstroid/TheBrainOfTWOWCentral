@@ -1,4 +1,4 @@
 import math
 
-def cos(number: float):
+def cos(number):
     return math.cos(number)

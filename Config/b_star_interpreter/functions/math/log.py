@@ -1,7 +1,6 @@
 import math
 
-
-def log(number: float, *bys: tuple[float]):
+def log(number, *bys):
     result = number
 
     for num in bys:

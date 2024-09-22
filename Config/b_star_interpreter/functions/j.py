@@ -1,2 +1,2 @@
-def j(amount: int):
+def j(amount):
     return "j" * max(min(amount, 250), 1)

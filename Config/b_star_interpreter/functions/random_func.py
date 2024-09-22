@@ -1,5 +1,5 @@
 import random
 
 
-def random_func(minimum: float, maximum: float):
+def random_func(minimum, maximum):
     return random.uniform(minimum, maximum)

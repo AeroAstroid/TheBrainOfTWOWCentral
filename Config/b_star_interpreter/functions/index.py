@@ -1,2 +1,2 @@
-def index(arr: list[any], number: int):
+def index(arr, number):
     return arr[number]
