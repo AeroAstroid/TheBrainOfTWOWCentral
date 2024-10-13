@@ -10,6 +10,53 @@ except ModuleNotFoundError:
 import re
 from time import time as timenow
 
+def str_array(s):
+	out = "["
+	for x in s:
+		if type(x) == list:
+			out += str_array(x)+', '
+		else:
+			out += "'"+str(x).replace('\\', '\\\\').replace("'", "\\'")+"', "
+	return out[:-2]+"]"
+	
+def undo_str_array(s):
+	
+	if s[:1] == "[": s = s[1:]
+	if s[-1:] == "]": s = s[:-1]
+
+	is_quote = False
+	bracket_count = 0
+	is_escaped = False
+	outlist = []
+	current_append = ""
+	for char in s:
+		
+		if char == "'" and not is_escaped and bracket_count == 0:
+			is_quote = not is_quote
+			if not is_quote:
+				outlist.append(current_append)
+				current_append = ""
+			continue
+		
+		if char == "\\" and is_quote and not is_escaped and bracket_count == 0:
+			is_escaped = True
+			continue
+		
+		if char == "[" and not is_quote:
+			bracket_count += 1
+			continue
+		if char == "]" and not is_quote:
+			bracket_count -= 1
+			if bracket_count == 0:
+				outlist.append(undo_str_array(current_append))
+				current_append = ""
+			continue
+		
+		if is_quote or char not in " ,":
+			current_append += char
+			is_escaped = False
+	return outlist
+
 def run_bpp_program(code, p_args, author, runner, channel):
 	# Pointers for tag and function organization
 	tag_level = 0
@@ -159,7 +206,10 @@ def run_bpp_program(code, p_args, author, runner, channel):
 	v_list = [v for v in v_list if v[0] in found_vars]
 
 	for v in v_list:
-		v_value = type_list[v[2]](v[1])
+		if type_list[v[2]] == list:
+			v_value = undo_str_array(v[1])
+		else:
+			v_value = type_list[v[2]](v[1])
 		tag_globals[v[0]] = [v_value, str(v[3]), False]	
 	
 	def var_type(v):
@@ -215,7 +265,7 @@ def run_bpp_program(code, p_args, author, runner, channel):
 				v_name = args[0]
 				if len(str(result[1])) > 100000:
 					raise MemoryError(
-					    f"The global variable {safe_cut(v_name)} is too large: {safe_cut(result[1])} (limit 100kb)")
+						f"The global variable {safe_cut(v_name)} is too large: {safe_cut(result[1])} (limit 100kb)")
 				
 				if v_name in tag_globals.keys():
 					if tag_globals[v_name][1] == str(author):
@@ -223,7 +273,7 @@ def run_bpp_program(code, p_args, author, runner, channel):
 						tag_globals[v_name][0] = copy.deepcopy(result[1]) if type(result[1]) == list else result[1]
 					else:
 						raise PermissionError(
-					 	    f"Only the author of the {v_name} variable can edit its value ({tag_globals[v_name][1]})")
+					 		f"Only the author of the {v_name} variable can edit its value ({tag_globals[v_name][1]})")
 			
 					result = ""
 			
@@ -241,7 +291,11 @@ def run_bpp_program(code, p_args, author, runner, channel):
 	
 					v_list = db.get_entries("b++2variables", columns=["name", "value", "type", "owner"])
 					v_value, v_type, v_owner = [v[1:4] for v in v_list if v[0] == v_name][0]
-					v_value = type_list[v_type](v_value)
+
+					if type_list[v_type] == list:
+						v_value = undo_str_array(v_value)
+					else:
+						v_value = type_list[v_type](v_value)
 
 					tag_globals[v_name] = [v_value, str(v_owner), False]
 	
@@ -280,8 +334,9 @@ def run_bpp_program(code, p_args, author, runner, channel):
 		v_value = value[0]
 	
 		if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
-			v_value = express_array(v_value) if type(v_value) == list else v_value
-			db.add_entry("b++2variables", [v_name, str(v_value), var_type(v_value), str(author)])
+			curr_v_type = var_type(v_value)
+			v_value = str_array(v_value) if type(v_value) == list else v_value
+			db.add_entry("b++2variables", [v_name, str(v_value), curr_v_type, str(author)])
 	
 		else:
 			v_list = db.get_entries("b++2variables", columns=["name", "owner"])
