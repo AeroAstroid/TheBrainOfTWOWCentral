@@ -12,7 +12,7 @@ class EVENT:
 		self.RUNNING = False
 		self.param = {
 			"HOUR_SPEED": 1,
-			"ALTERNATING_BANNER": True,
+			"ALTERNATING_BANNER": False,
 			"ALTERNATE_BANNER": "https://fixcdn.hyonsu.com/attachments/912182688646058045/1241555669384171610/image.png",
 			"CURRENT_BANNER_ALTERNATE": False,
 		}
