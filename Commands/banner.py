@@ -63,6 +63,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		async with aiohttp.ClientSession() as session:
 			try:
 				async with session.get(new_banner) as resp:
+					print(resp.status)
 					if resp.status != 200:
 						await message.channel.send(f'<{new_banner}> is an invalid link!')
 						return
