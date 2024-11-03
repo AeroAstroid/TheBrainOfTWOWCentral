@@ -96,7 +96,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			if l_args[0].lower().startswith("count"):
 				for i in l_args[1:]:
 					if is_whole(i):
-						data["count"] = int(I)
+						data["count"] = int(i)
 					elif "morbillion" in i:
 						data["count"] = 6
 				
