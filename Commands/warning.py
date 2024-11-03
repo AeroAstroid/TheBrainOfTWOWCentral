@@ -96,7 +96,9 @@ async def MAIN(message, args, level, perms, SERVER):
 			if l_args[0].lower().startswith("count"):
 				for i in l_args[1:]:
 					if is_whole(i):
-						data["count"] = int(i)
+						data["count"] = int(I)
+					elif "morbillion" in i:
+						data["count"] = 6
 				
 				if data["count"] == None:
 					await message.channel.send(f"Invalid warning count `{' '.join(l_args[1:])}`!")
