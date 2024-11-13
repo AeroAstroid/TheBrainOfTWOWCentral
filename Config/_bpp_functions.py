@@ -210,8 +210,8 @@ def COMPARE(a, b, c):
 	if b == "<=": return int(a <= c)
 	if b == "!=": return int(a != c)
 	if b == "=" or b == "==": return int(a == c)
-	if b == "and": return int(a and c)
-	if b == "or": return int(a or c)
+	if b == "and": return int(a and c) if type(a and c) is bool else a and c
+	if b == "or": return int(a or c) if type(a or c) is bool else a or c
 
 def MOD(a, b):
 	if not is_number(a):
