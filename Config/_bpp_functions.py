@@ -194,7 +194,7 @@ def IF(a, b, c=""):
 		return c
 
 def COMPARE(a, b, c):
-	operations = [">", "<", ">=", "<=", "!=", "=", "=="]
+	operations = [">", "<", ">=", "<=", "!=", "=", "==", "and", "or"]
 	if b not in operations:
 		raise ValueError(f"Operation parameter of COMPARE function is not a comparison operator: {safe_cut(b)}")
 
@@ -210,6 +210,8 @@ def COMPARE(a, b, c):
 	if b == "<=": return int(a <= c)
 	if b == "!=": return int(a != c)
 	if b == "=" or b == "==": return int(a == c)
+	if b == "and": return int(a and c)
+	if b == "or": return int(a or c)
 
 def MOD(a, b):
 	if not is_number(a):
