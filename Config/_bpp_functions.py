@@ -18,6 +18,14 @@ def express_array(l):
 def safe_cut(s):
 	return str(s)[:15] + ("..." if len(str(s)) > 15 else "")
 
+def weak_index(a,b,c=None,d=None):
+	i = 0
+	for x in a[c:d]:
+		if x == b or str(x) == b:
+			return i
+		i += 1
+	return a.index(b,c,d)
+
 def COMMENT(*a): return ""
 
 def INDEXOF(a,b,c=None,d=None):
@@ -40,9 +48,9 @@ def INDEXOF(a,b,c=None,d=None):
 		raise TypeError(f"First parameter of INDEXOF function must be an array or string: {safe_cut(a)}")
 	if c is not None:
 		if d is not None:
-			return a.index(b,c,d)
-		return a.index(b,c)
-	return a.index(b)
+			return weak_index(a,b,c,d)
+		return weak_index(a,b,c)
+	return weak_index(a,b)
 
 def TIMEFUNC(): return time.time()
 
