@@ -21,7 +21,7 @@ def safe_cut(s):
 def weak_index(a,b,c=None,d=None):
 	i = 0
 	for x in a[c:d]:
-		if x == b or str(x) == b:
+		if x == b or str(x) == str(b):
 			return i
 		i += 1
 	return a.index(b,c,d)
