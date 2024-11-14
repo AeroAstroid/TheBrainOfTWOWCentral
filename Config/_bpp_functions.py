@@ -24,7 +24,7 @@ def weak_index(a,b,c=None,d=None):
 		if x == b or str(x) == str(b):
 			return i
 		i += 1
-	return a.index(b,c,d)
+	return ""
 
 def COMMENT(*a): return ""
 
