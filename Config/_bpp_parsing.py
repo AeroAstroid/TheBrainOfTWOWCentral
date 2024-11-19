@@ -1,11 +1,15 @@
+STANDALONE = False # If this is true, then we can't access Discord functions, and we should return sane defaults
+
 try:
 	from Config._functions import is_whole
-	from Config._bpp_functions import express_array, safe_cut, FUNCTIONS
-	from Config._db import Database
+	from Config._bpp_functions import express_array, safe_cut, FUNCTIONS, ParsingOperation
+	if not STANDALONE:
+		from Config._db import Database
 except ModuleNotFoundError:
 	from _functions import is_whole
-	from _bpp_functions import express_array, safe_cut, FUNCTIONS
-	from _db import Database
+	from _bpp_functions import express_array, safe_cut, FUNCTIONS, ParsingOperation
+	if not STANDALONE:
+		from _db import Database
 
 import re
 from time import time as timenow
@@ -190,19 +194,20 @@ def run_bpp_program(code, p_args, author, runner, channel):
 		tag_code += [1] * (tag_level - len(tag_code))
 
 	VARIABLES = {}
+	PSEUDO_GLOBALVARS_STANDALONE = {}
 
 	base_keys = [k for k in functions if is_whole(k)]
 
 	type_list = [int, float, str, list]
 
-	db = Database()		
+	if not STANDALONE: db = Database()		
 	match = re.finditer("(?i)\[global var \w*?\]", code)
 	found_vars = []
 	for var in match:
 		var = var[0].replace("]", "").replace("\n", " ").strip().split(" ")[-1]
 		found_vars.append(var)
 	
-	v_list = db.get_entries("b++2variables", columns=["name", "value", "type", "owner"])
+	v_list = (db.get_entries("b++2variables", columns=["name", "value", "type", "owner"]) if not STANDALONE else [])
 	v_list = [v for v in v_list if v[0] in found_vars]
 
 	for v in v_list:
@@ -239,79 +244,96 @@ def run_bpp_program(code, p_args, author, runner, channel):
 
 		result = FUNCTIONS[v[0]](*args)
 
-		# Tuples indicate special behavior necessary
-		if type(result) == tuple:
-			if result[0] == "d":
-				if len(str(result[1])) > 100000:
+		# ParsingOperations indicate that the parser needs to handle the value
+		if type(result) == ParsingOperation:
+			if result.id == "d":
+				if len(str(result.args)) > 100000:
 					raise MemoryError(
-					f"The variable {safe_cut(args[0])} is too large: {safe_cut(result[1])} (limit 100kb)")
+					f"The variable {safe_cut(result.args[0])} is too large: {safe_cut(result.args[1])} (limit 100kb)")
 					
-				VARIABLES[args[0]] = result[1]
+				VARIABLES[args[0]] = result.args[1]
 				result = ""
 
-			elif result[0] == "v":
+			elif result.id == "v":
 				try:
-					result = VARIABLES[args[0]]
+					result = VARIABLES[result.args]
 				except KeyError:
-					raise NameError(f"No variable by the name {safe_cut(args[0])} defined")
+					raise NameError(f"No variable by the name {safe_cut(result.args)} defined")
 
-			elif result[0] == "a":
-				if result[1] >= len(p_args) or -result[1] >= len(p_args) + 1:
+			elif result.id == "a":
+				if STANDALONE:
 					result = ""
 				else:
-					result = p_args[result[1]]
-
-			elif result[0] == "gd":
-				v_name = args[0]
-				if len(str(result[1])) > 100000:
-					raise MemoryError(
-						f"The global variable {safe_cut(v_name)} is too large: {safe_cut(result[1])} (limit 100kb)")
-				
-				if v_name in tag_globals.keys():
-					if tag_globals[v_name][1] == str(author):
-						tag_globals[v_name][2] = True
-						tag_globals[v_name][0] = copy.deepcopy(result[1]) if type(result[1]) == list else result[1]
+					if result.args >= len(p_args) or -result.args >= len(p_args) + 1:
+						result = ""
 					else:
-						raise PermissionError(
-					 		f"Only the author of the {v_name} variable can edit its value ({tag_globals[v_name][1]})")
-			
-					result = ""
-			
-				else:
-					tag_globals[v_name] = [result[1], str(author), True]
-					result = ""
-				
-			elif result[0] == "gv":
-				v_name = args[0]
-				if v_name in tag_globals.keys():
-					result = tag_globals[v_name][0]
-				else:
-					if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
-						raise NameError(f"No global variable by the name {safe_cut(v_name)} defined")
-	
-					v_list = db.get_entries("b++2variables", columns=["name", "value", "type", "owner"])
-					v_value, v_type, v_owner = [v[1:4] for v in v_list if v[0] == v_name][0]
+						result = p_args[result.args]
 
-					if type_list[v_type] == list:
-						v_value = undo_str_array(v_value)
+			elif result.id == "gd":
+				if STANDALONE:
+					if len(str(result.args)) > 100000:
+						raise MemoryError(
+						f"The 'global' variable {safe_cut(result.args[0])} is too large: {safe_cut(result.args[1])} (limit 100kb)")
+					
+					PSEUDO_GLOBALVARS_STANDALONE[args[0]] = result.args[1]
+					result = ''
+				else:
+					v_name = result.args[0]
+					if len(str(result.args[1])) > 100000:
+						raise MemoryError(
+							f"The global variable {safe_cut(v_name)} is too large: {safe_cut(result.args[1])} (limit 100kb)")
+
+					if v_name in tag_globals.keys():
+						if tag_globals[v_name][1] == str(author):
+							tag_globals[v_name][2] = True
+							tag_globals[v_name][0] = copy.deepcopy(result.args[1]) if type(result.args[1]) == list else result.args[1]
+						else:
+							raise PermissionError(
+						 		f"Only the author of the {v_name} variable can edit its value ({tag_globals[v_name][1]})")
+
+						result = ""
+
 					else:
-						v_value = type_list[v_type](v_value)
+						tag_globals[v_name] = [result.args[1], str(author), True]
+						result = ""
+				
+			elif result.id == "gv":
+				if STANDALONE:
+					try:
+						result = PSEUDO_GLOBALVARS_STANDALONE[result.args]
+					except KeyError:
+						raise NameError(f"No 'global' variable by the name {safe_cut(result.args)} defined")
+				else:
+					v_name = result.args
+					if v_name in tag_globals.keys():
+						result = tag_globals[v_name][0]
+					else:
+						if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
+							raise NameError(f"No global variable by the name {safe_cut(v_name)} defined")
 
-					tag_globals[v_name] = [v_value, str(v_owner), False]
-	
-					result = v_value
+						v_list = db.get_entries("b++2variables", columns=["name", "value", "type", "owner"])
+						v_value, v_type, v_owner = [v[1:4] for v in v_list if v[0] == v_name][0]
 
-			elif result[0] == "n":
-				result = runner.name
+						if type_list[v_type] == list:
+							v_value = undo_str_array(v_value)
+						else:
+							v_value = type_list[v_type](v_value)
 
-			elif result[0] == "id":
-				result = runner.id
+						tag_globals[v_name] = [v_value, str(v_owner), False]
+
+						result = v_value
+
+			elif result.id == "n":
+				result = "DefaultUsername" if STANDALONE else runner.name
+
+			elif result.id == "id":
+				result = 0 if STANDALONE else runner.id
 			
-			elif result[0] == "aa":
-				result = p_args
+			elif result.id == "aa":
+				result = [] if STANDALONE else p_args
 
-			elif result[0] == "c_id":
-				result = channel.id
+			elif result.id == "c_id":
+				result = -1 if STANDALONE else channel.id
 		
 		functions[k] = result
 		return result
@@ -330,6 +352,7 @@ def run_bpp_program(code, p_args, author, runner, channel):
 			results.append(v)
 
 	for v_name, value in tag_globals.items():
+		if STANDALONE: continue
 		if not value[2]: continue
 		v_value = value[0]
 	
@@ -356,7 +379,7 @@ def run_bpp_program(code, p_args, author, runner, channel):
 	return output.format(*results).replace("\v", "{}")+debug_values
 
 if __name__ == "__main__":
-	program = input("Program:\n\t")
-	print("\n")
+	STANDALONE = True
+	program = input("Program: ")
 	program = program.replace("{}", "\v")
-	print(run_bpp_program(program, [], 184768535107469314))
+	print(run_bpp_program(program, [], 0, None, None).strip())
