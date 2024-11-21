@@ -19,12 +19,10 @@ def safe_cut(s):
 	return str(s)[:15] + ("..." if len(str(s)) > 15 else "")
 
 def weak_index(a,b,c=None,d=None):
-	i = 0
-	for x in a[c:d]:
-		if x == b or str(x) == str(b):
-			return i
-		i += 1
-	return ""
+	try:
+		return a.index(b,c,d)
+	except:
+		return ""
 
 def COMMENT(*a): return ""
 
