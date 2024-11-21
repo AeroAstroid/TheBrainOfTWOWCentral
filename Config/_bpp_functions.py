@@ -83,7 +83,12 @@ def INDEX(a, b):
 		raise TypeError(f"Second parameter of INDEX function must be an integer: {safe_cut(b)}")
 	return a[int(b)]
 
-def SLICE(a, b, c, d=None):
+def SLICE(a, b, c=None, d=None):
+	
+	if b == "": b = None
+	if c == "": c = None
+	if d == "": d = None
+	
 	if not is_whole(b):
 		raise TypeError(f"Second parameter of SLICE function must be an integer: {safe_cut(b)}")
 	if not is_whole(c):
