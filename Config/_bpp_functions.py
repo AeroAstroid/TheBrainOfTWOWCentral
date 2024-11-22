@@ -22,13 +22,12 @@ def express_array(array: list) -> str:
 def safe_cut(obj: object, cut: int = 15) -> str:
 	return str(obj)[:cut] + ("..." if len(str(obj)) > cut else "")
 
+
 def weak_index(iter: str | list, to_find: object, from_idx: int | None = None, to_idx: int | None = None) -> str | int:
-	index: int = 0
-	for element in iter[from_idx:to_idx]:
-		if element == to_find or str(element) == str(to_find):
-			return index
-		index += 1
-	return ""
+	try:
+		return a.index(b,c,d)
+	except:
+		return ""
 
 def COMMENT(*_: Any) -> str: return ""
 
@@ -47,7 +46,8 @@ def INDEXOF(iter: str | list, to_find: object, from_idx: int | None = None, to_i
 		try:
 			to_idx = int(to_idx)
 		except:
-			raise TypeError(f"Optional fourth parameter of INDEXOF function (to index) must be a number: {safe_cut(to_idx)}")
+
+      raise TypeError(f"Optional fourth parameter of INDEXOF function (to index) must be a number: {safe_cut(to_idx)}")
 	if type(iter) != str and not isinstance(iter,list):
 		raise TypeError(f"First parameter of INDEXOF function (object to index) must be an array or string: {safe_cut(iter)}")
 	if from_idx is not None:
@@ -98,6 +98,7 @@ def SLICE(to_cut: object, start: int, end: int, step: int | None = None) -> str 
 		raise TypeError(f"Optional fourth parameter of SLICE function (slice step) cannot be 0: {safe_cut(step)}")
 	if type(to_cut) == list:
 		to_cut = to_cut
+
 	else:
 		to_cut = str(to_cut)
 		
