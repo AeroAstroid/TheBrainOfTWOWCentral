@@ -1,5 +1,5 @@
 import random, statistics, re, itertools, time, math
-from typing import Any, NamedTuple, NoReturn
+import numpy as np
 
 try:
 	from Config._const import ALPHABET
@@ -11,429 +11,435 @@ except ModuleNotFoundError:
 class ProgramDefinedException(Exception): # used in THROW
 	pass
 
-class ParsingOperation(NamedTuple):
-    id: str
-    args: Any | None = None
-
-def express_array(array: list) -> str:
-	str_form = " ".join(["\"" + str(element) + "\"" for element in array])
+def express_array(l):
+	str_form = " ".join(["\"" + str(a) + "\"" for a in l])
 	return f'[ARRAY {str_form}]'
 
-def safe_cut(obj: object, cut: int = 15) -> str:
-	return str(obj)[:cut] + ("..." if len(str(obj)) > cut else "")
+def safe_cut(s):
+	return str(s)[:15] + ("..." if len(str(s)) > 15 else "")
 
-
-def weak_index(iter: str | list, to_find: object, from_idx: int | None = None, to_idx: int | None = None) -> str | int:
+def weak_index(a,b,c=None,d=None):
 	try:
 		return a.index(b,c,d)
 	except:
 		return ""
 
-def COMMENT(*_: Any) -> str: return ""
+def COMMENT(*a): return ""
 
-def INDEXOF(iter: str | list, to_find: object, from_idx: int | None = None, to_idx: int | None = None):
-	if not is_number(from_idx) and from_idx is not None and not isinstance(from_idx, str):
-		raise TypeError(f"Optional third parameter of INDEXOF function (from index) must be a number: {safe_cut(from_idx)}")
-	if not is_number(to_idx) and to_idx is not None and not isinstance(to_idx, str):
-		raise TypeError(f"Optional fourth parameter of INDEXOF function (to index) must be a number: {safe_cut(to_idx)}")
-	if isinstance(from_idx, str):
+def INDEXOF(a,b,c=None,d=None):
+	if not is_number(c) and c is not None and not isinstance(c,str):
+		raise TypeError(f"Optional third parameter of INDEXOF function must be a number: {safe_cut(c)}")
+	if not is_number(d) and d is not None and not isinstance(d,str):
+		raise TypeError(f"Optional fourth parameter of INDEXOF function must be a number: {safe_cut(d)}")
+	if isinstance(c,str):
 		try:
-			from_idx = int(from_idx)
+			c = int(c)
 		except:
-			raise TypeError(f"Optional third parameter of INDEXOF function (from index) must be a number: {safe_cut(from_idx)}")
+			raise TypeError(f"Optional third parameter of INDEXOF function must be a number: {safe_cut(c)}")
 
-	if isinstance(to_idx, str):
+	if isinstance(d,str):
 		try:
-			to_idx = int(to_idx)
+			d = int(d)
 		except:
+			raise TypeError(f"Optional third parameter of INDEXOF function must be a number: {safe_cut(d)}")
+	if type(a) != str and not isinstance(a,list):
+		raise TypeError(f"First parameter of INDEXOF function must be an array or string: {safe_cut(a)}")
+	if c is not None:
+		if d is not None:
+			return weak_index(a,b,c,d)
+		return weak_index(a,b,c)
+	return weak_index(a,b)
 
-      raise TypeError(f"Optional fourth parameter of INDEXOF function (to index) must be a number: {safe_cut(to_idx)}")
-	if type(iter) != str and not isinstance(iter,list):
-		raise TypeError(f"First parameter of INDEXOF function (object to index) must be an array or string: {safe_cut(iter)}")
-	if from_idx is not None:
-		if to_idx is not None:
-			return weak_index(iter, to_find, from_idx, to_idx)
-		return weak_index(iter, to_find, from_idx)
-	return weak_index(iter, to_find)
+def TIMEFUNC(): return time.time()
 
-def TIMEFUNC() -> float: return time.time()
+def USERNAME(): return ("n", )
 
-def USERNAME() -> ParsingOperation: return ParsingOperation("n")
+def USERID(): return ("id", )
 
-def USERID() -> ParsingOperation: return ParsingOperation("id")
+def ABS(a):
+	if not is_number(a):
+		raise TypeError(f"Parameter of ABS function must be a number: {safe_cut(a)}")
 
-def ABS(value: float | int) -> float | int:
-	if not is_number(value):
-		raise TypeError(f"Parameter of ABS function must be a number: {safe_cut(value)}")
+	return abs(int(a) if is_whole(a) else float(a))
 
-	return abs(int(value) if is_whole(value) else float(value))
+def SPLIT(a,b):
+	if type(a) == list:
+		raise TypeError(f"Parameter of SPLIT function cannot be an array: {safe_cut(a)}")
+	if type(b) == list:
+		raise TypeError(f"Parameter of SPLIT function cannot be an array: {safe_cut(b)}")
+	return str(a).split(str(b))
 
-def SPLIT(to_split: object, seperator: object) -> list:
-	if type(to_split) == list:
-		raise TypeError(f"First parameter of SPLIT function (string to split) cannot be an array: {safe_cut(to_split)}")
-	if type(seperator) == list:
-		raise TypeError(f"Second parameter of SPLIT function (seperator string) cannot be an array: {safe_cut(seperator)}")
-	return str(to_split).split(str(seperator))
+def REPLACE(a,b,c):
+	if type(a) == list:
+		raise TypeError(f"Parameter of REPLACE function cannot be an array: {safe_cut(a)}")
+	return str(a).replace(str(b),str(c))
 
-def REPLACE(to_replace: object, old: object, new: object) -> str:
-	if type(to_replace) == list:
-		raise TypeError(f"First parameter of REPLACE function (string to replace) cannot be an array: {safe_cut(to_replace)}")
-	return str(to_replace).replace(str(old),str(new))
+def INDEX(a, b):
+	if type(a) not in [list, str]:
+		raise TypeError(f"First parameter of INDEX function must be a string or an array: {safe_cut(a)}")
+	if not is_whole(b):
+		raise TypeError(f"Second parameter of INDEX function must be an integer: {safe_cut(b)}")
+	return a[int(b)]
 
-def INDEX(iter: list | str, idx: int) -> object:
-	if type(iter) not in [list, str]:
-		raise TypeError(f"First parameter of INDEX function (values to index) must be a string or an array: {safe_cut(iter)}")
-	if not is_whole(idx):
-		raise TypeError(f"Second parameter of INDEX function (the index) must be an integer: {safe_cut(idx)}")
-	return iter[int(idx)]
-
-def SLICE(to_cut: object, start: int, end: int, step: int | None = None) -> str | list:
-	if not is_whole(start):
-		raise TypeError(f"Second parameter of SLICE function (start of slice) must be an integer: {safe_cut(start)}")
-	if not is_whole(end):
-		raise TypeError(f"Third parameter of SLICE function (end of slice) must be an integer: {safe_cut(end)}")
-	if not is_whole(step) and step is not None:
-		raise TypeError(f"Optional fourth parameter of SLICE function (slice step) must be an integer: {safe_cut(step)}")
-	if step == 0 and step is not None:
-		raise TypeError(f"Optional fourth parameter of SLICE function (slice step) cannot be 0: {safe_cut(step)}")
-	if type(to_cut) == list:
-		to_cut = to_cut
-
+def SLICE(a, b, c=None, d=None):
+	
+	if b == "": b = None
+	if c == "": c = None
+	if d == "": d = None
+	
+	if not is_whole(b):
+		raise TypeError(f"Second parameter of SLICE function must be an integer: {safe_cut(b)}")
+	if not is_whole(c):
+		raise TypeError(f"Third parameter of SLICE function must be an integer: {safe_cut(c)}")
+	if not is_whole(d) and d is not None:
+		raise TypeError(f"Optional fourth parameter of SLICE function must be an integer: {safe_cut(d)}")
+	if d == 0 and d is not None:
+		raise TypeError(f"Optional fourth parameter of SLICE function cannot be 0: {safe_cut(d)}")
+	if type(a) == list:
+		to_cut = a
 	else:
-		to_cut = str(to_cut)
+		to_cut = str(a)
 		
-	return to_cut[int(start):int(end):(int(step) if step else 1)]
+	return to_cut[int(b):int(c):(int(d) if d else 1)]
 
-def ARRAY(*elements: object) -> list:
-	return list(elements)
+def ARRAY(*a):
+	return list(a)
 
-def CONCAT(*to_concatenate: object) -> str | list:
+def CONCAT(*a):
 	all_type = None
 	
-	for element in to_concatenate:
-		if type(element) in [int, float]: element = str(element)
-		if all_type is None: all_type = type(element)
-		elif type(element) != all_type:
-			raise TypeError("CONCAT function parameters must either be all arrays or all strings")
+	for a1 in a:
+		if type(a1) in [int, float]: a1 = str(a1)
+		if all_type is None: all_type = type(a1)
+		elif type(a1) != all_type:
+			raise TypeError("CONCAT parameters must either be all arrays or all strings")
 	
 	if all_type == str:
-		to_concatenate = [str(element) for element in to_concatenate]
-		return ''.join(to_concatenate)
+		a = [str(a1) for a1 in a]
+		return ''.join(a)
 	if all_type == list:
-		to_concatenate = list(itertools.chain(*to_concatenate))
-		return to_concatenate
+		a = list(itertools.chain(*a))
+		return a
 	else:
 		raise IndexError("Cannot call CONCAT function with no arguments")
 
-def LENGTH(obj: object) -> int:
-	if type(obj) in [int, float]: obj = str(obj)
-	return len(obj)
+def LENGTH(a):
+	if type(a) in [int, float]: a = str(a)
+	return len(a)
 
-def ARGS(idx: int | None = None) -> ParsingOperation:
-	if not is_whole(idx) and idx is not None:
-		raise ValueError(f"Optional parameter of ARGS function (the argument to get) must be an integer: {safe_cut(idx)}")
+def ARGS(a=None):
+	if not is_whole(a) and a is not None:
+		raise ValueError(f"ARGS function index must be an integer: {safe_cut(a)}")
 	
-	if idx is None:
-		return ParsingOperation("aa")
+	if a is None:
+		return ("aa", )
 	
-	return ParsingOperation("a", int(idx))
+	return ("a", int(a))
 
-def GLOBALDEFINE(gvar: str, value: object) -> ParsingOperation:
-	if type(gvar) != str:
-		raise NameError(f"Global variable name must be a string: {safe_cut(gvar)}")
+def GLOBALDEFINE(a, b):
+	if type(a) != str:
+		raise NameError(f"Global variable name must be a string: {safe_cut(a)}")
 
-	if re.search(r"[^A-Za-z_0-9]", gvar) or re.search(r"[0-9]", gvar[0]):
+	if re.search(r"[^A-Za-z_0-9]", a) or re.search(r"[0-9]", a[0]):
 		raise NameError(
-		f"Global variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(gvar)}")
+		f"Global variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
 	
-	return ParsingOperation("gd", (gvar, value))
+	return ("gd", b)
 
-def GLOBALVAR(gvar: str) -> ParsingOperation:
-	if type(gvar) != str:
-		raise NameError(f"Global variable name must be a string: {safe_cut(gvar)}")
+def GLOBALVAR(a):
+	if type(a) != str:
+		raise NameError(f"Global variable name must be a string: {safe_cut(a)}")
 
-	if re.search(r"[^A-Za-z_0-9]", gvar) or re.search(r"[0-9]", gvar[0]):
+	if re.search(r"[^A-Za-z_0-9]", a) or re.search(r"[0-9]", a[0]):
 		raise NameError(
-		f"Global variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(gvar)}")
+		f"Global variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
 	
-	return ParsingOperation("gv", gvar)
+	return ("gv", a)
 
-def DEFINE(var_name: str, value: object) -> ParsingOperation:
-	if type(var_name) != str:
-		raise NameError(f"Variable name must be a string: {safe_cut(var_name)}")
+def DEFINE(a, b):
+	if type(a) != str:
+		raise NameError(f"Variable name must be a string: {safe_cut(a)}")
+
+	if re.search(r"[^A-Za-z_0-9]", a) or re.search(r"[0-9]", a[0]):
+		raise NameError(
+		f"Variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
 	
-	return ParsingOperation("d", (var_name, value))
+	return ("d", b)
 
-def VAR(var_name: str) -> ParsingOperation:
-	if type(var_name) != str:
-		raise NameError(f"Variable name must be a string: {safe_cut(var_name)}")
+def VAR(a):
+	if type(a) != str:
+		raise NameError(f"Variable name must be a string: {safe_cut(a)}")
+
+	if re.search(r"[^A-Za-z_0-9]", a) or re.search(r"[0-9]", a[0]):
+		raise NameError(
+		f"Variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
 	
-	return ParsingOperation("v", var_name)
+	return ("v", a)
 
-def REPEAT(to_repeat: object, times: int) -> str:
-	if not is_whole(times):
-		raise ValueError(f"Second parameter of REPEAT function (times to repeat) is not an integer: {safe_cut(times)}")
+def REPEAT(a, b):
+	if not is_whole(b):
+		raise ValueError(f"Second parameter of REPEAT function is not an integer: {safe_cut(b)}")
 
-	if type(to_repeat) != list:
-		to_repeat = str(to_repeat)
-	times = int(times)
+	if type(a) != list:
+		a = str(a)
+	b = int(b)
 
-	if times > 1024:
-		raise ValueError(f"Second parameter of REPEAT function (times to repeat) is above 1,024: {safe_cut(times)}")
+	if b > 1024:
+		raise ValueError(f"Second parameter of REPEAT function is too large: {safe_cut(b)} (limit 1024)")
 
-	return to_repeat * times
+	return a * b
 
-def CHOOSE(*options: list) -> object:
-	if len(options) == 1:
-		options = options[0]
-	return random.choice(options)
+def CHOOSE(*a):
+	if len(a) == 1:
+		a = a[0]
+	return random.choice(a)
 
-def CHOOSECHAR(string: str) -> str:
-	if type(string) != str:
-		raise ValueError(f"CHOOSECHAR function parameter is not a string: {safe_cut(string)}")
+def CHOOSECHAR(a):
+	if type(a) != str:
+		raise ValueError(f"CHOOSECHAR function parameter is not a string: {safe_cut(a)}")
 
-	return random.choice(list(string))
+	return random.choice(list(a))
 
-def IF(condition: object, if_true: object, if_false: object = "") -> object:
-	condition = condition not in [0, "0"]
+def IF(a, b, c=""):
+	a = a not in [0, "0"]
 
-	if condition:
-		return if_true
+	if a:
+		return b
 	else:
-		return if_false
+		return c
 
-def COMPARE(first: object, op: str, second: object) -> object:
+def COMPARE(a, b, c):
 	operations = [">", "<", ">=", "<=", "!=", "=", "==", "and", "or"]
-	if op not in operations:
-		raise ValueError(f"Second parameter of COMPARE function (the operation) is not a comparison operator: {safe_cut(op)}")
+	if b not in operations:
+		raise ValueError(f"Operation parameter of COMPARE function is not a comparison operator: {safe_cut(b)}")
 
-	if is_number(first): first = float(first)
-	if is_number(second): second = float(second)
+	if is_number(a): a = float(a)
+	if is_number(c): c = float(c)
 
-	if operations.index(op) <= 3 and type(first) != type(second):
+	if operations.index(b) <= 3 and type(a) != type(c):
 		raise TypeError(f"Entries to compare in COMPARE function are not the same type")
 
-	if op == ">": return int(first > second)
-	if op == "<": return int(first < second)
-	if op == ">=": return int(first >= second)
-	if op == "<=": return int(first <= second)
-	if op == "!=": return int(first != second)
-	if op == "=" or op == "==": return int(first == second)
-	if op == "and": return int(first and second) if type(first and second) is bool else first and second
-	if op == "or": return int(first or second) if type(first or second) is bool else first or second
+	if b == ">": return int(a > c)
+	if b == "<": return int(a < c)
+	if b == ">=": return int(a >= c)
+	if b == "<=": return int(a <= c)
+	if b == "!=": return int(a != c)
+	if b == "=" or b == "==": return int(a == c)
+	if b == "and": return int(a and c) if type(a and c) is bool else a and c
+	if b == "or": return int(a or c) if type(a or c) is bool else a or c
 
-def MOD(value: int | float, divisor: int | float) -> int | float:
-	if not is_number(value):
-		raise ValueError(f"First parameter of MOD function (the value) is not a number: {safe_cut(value)}")
-	if not is_number(divisor):
-		raise ValueError(f"Second parameter of MOD function (the divisor) is not a number: {safe_cut(divisor)}")
+def MOD(a, b):
+	if not is_number(a):
+		raise ValueError(f"First parameter of MOD function is not a number: {safe_cut(a)}")
+	if not is_number(b):
+		raise ValueError(f"Second parameter of MOD function is not a number: {safe_cut(b)}")
 
-	value = int(value) if is_whole(value) else float(value)
-	divisor = int(divisor) if is_whole(divisor) else float(divisor)
+	a = int(a) if is_whole(a) else float(a)
+	b = int(b) if is_whole(b) else float(b)
 
-	if divisor == 0: raise ZeroDivisionError(f"Second parameter of MOD function (the divisor) cannot be zero")
+	if b == 0: raise ZeroDivisionError(f"Second parameter of MOD function cannot be zero")
 
-	return value % divisor
+	return a % b
 
-def MATHFUNC(first: int | float, op: str, second: int | float) -> int | float:
+def MATHFUNC(a, b, c):
 	operations = "+-*/^%"
-	if not is_number(first):
-		raise ValueError(f"First parameter of MATH function is not a number: {safe_cut(first)}")
-	if op not in operations:
-		raise ValueError(f"Operation parameter of MATH function not an operation: {safe_cut(op)}")
-	if not is_number(second):
-		raise ValueError(f"Second parameter of MATH function is not a number: {safe_cut(second)}")
+	if not is_number(a):
+		raise ValueError(f"First parameter of MATH function is not a number: {safe_cut(a)}")
+	if b not in operations:
+		raise ValueError(f"Operation parameter of MATH function not an operation: {safe_cut(b)}")
+	if not is_number(c):
+		raise ValueError(f"Second parameter of MATH function is not a number: {safe_cut(c)}")
 
-	first = int(first) if is_whole(first) else float(first)
-	second = int(second) if is_whole(second) else float(second)
+	a = int(a) if is_whole(a) else float(a)
+	c = int(c) if is_whole(c) else float(c)
 
-	if op == "+": return first+second
-	if op == "-": return first-second
+	if b == "+": return a+c
+	if b == "-": return a-c
 
-	if op == "*":
-		if abs(first) > 1e150:
-			raise ValueError(f"First parameter of MATH function too large to safely multiply: {safe_cut(first)} (limit 10^150)")
-		if abs(second) > 1e150:
-			raise ValueError(f"Second parameter of MATH function too large to safely multiply: {safe_cut(first)} (limit 10^150)")
-		return first*second
+	if b == "*":
+		if abs(a) > 1e50:
+			raise ValueError(f"First parameter of MATH function too large to safely multiply: {safe_cut(a)} (limit 10^50)")
+		if abs(c) > 1e50:
+			raise ValueError(f"Second parameter of MATH function too large to safely multiply: {safe_cut(a)} (limit 10^50)")
+		return a*c
 
-	if op == "/":
-		if second == 0: raise ZeroDivisionError(f"Second parameter of MATH function in division cannot be zero")
-		return first/second
+	if b == "/":
+		if c == 0: raise ZeroDivisionError(f"Second parameter of MATH function in division cannot be zero")
+		return a/c
 	
-	if op == "%":
-		if second == 0: raise ZeroDivisionError(f"Second parameter of MATH function in modulo cannot be zero")
-		return first%second
+	if b == "%":
+		if c == 0: raise ZeroDivisionError(f"Second parameter of MATH function in modulo cannot be zero")
+		return a%c
 	
 	
-	if op == "^":
+	if b == "^":
 		try:
-			return math.pow(first, second)
+			return math.pow(a, c)
 		except OverflowError:
-			raise ValueError(f"Parameters of MATH function too large to safely exponentiate: {safe_cut(first)}, {safe_cut(second)}")
+			raise ValueError(f"Parameters of MATH function too large to safely exponentiate: {safe_cut(a)}, {safe_cut(c)}")
 
-def RANDINT(minval: int, maxval: int) -> int: # Yes, technically they can be flipped. I'm still using min/max though.
-	if not is_whole(minval):
-		raise ValueError(f"First parameter of RANDINT function is not an integer: {safe_cut(minval)}")
-	if not is_whole(maxval):
-		raise ValueError(f"Second parameter of RANDINT function is not an integer: {safe_cut(maxval)}")
+def RANDINT(a, b):
+	if not is_whole(a):
+		raise ValueError(f"First parameter of RANDINT function is not an integer: {safe_cut(a)}")
+	if not is_whole(b):
+		raise ValueError(f"Second parameter of RANDINT function is not an integer: {safe_cut(b)}")
 
-	ints = [int(minval), int(maxval)]
-	minval, maxval = [min(ints), max(ints)]
+	ints = [int(a), int(b)]
+	a, b = [min(ints), max(ints)]
 
-	if minval == maxval: maxval += 1
+	if a == b: b += 1
 
-	return random.randrange(minval, maxval)
+	return random.randrange(a, b)
 
-def RANDOM(minval: int | float, maxval: int | float) -> float:
-	if not is_number(minval):
-		raise ValueError(f"First parameter of RANDOM function is not a number: {safe_cut(minval)}")
-	if not is_number(maxval):
-		raise ValueError(f"Second parameter of RANDOM function is not a number: {safe_cut(maxval)}")
+def RANDOM(a, b):
+	if not is_number(a):
+		raise ValueError(f"First parameter of RANDOM function is not a number: {safe_cut(a)}")
+	if not is_number(b):
+		raise ValueError(f"Second parameter of RANDOM function is not a number: {safe_cut(b)}")
 
-	minval = float(minval)
-	maxval = float(maxval)
+	a = float(a)
+	b = float(b)
 
-	return random.uniform(minval, maxval)
+	return random.uniform(a, b)
 
-def THROW(details: any) -> NoReturn:
-	raise ProgramDefinedException(str(details))
+def THROW(a): # don't need to check, because either way it'll error
+	raise ProgramDefinedException(a)
 	
-def TYPEFUNC(obj: object) -> str:
-	if is_whole(obj): return "int"
-	if is_number(obj): return "float"
-	return type(obj).__name__
+def TYPEFUNC(a):
+	if is_whole(a): return "int"
+	if is_number(a): return "float"
+	return type(a).__name__
 	
-def ROUND(to_round: int | float, places: int = 0) -> int | float:
-	if not is_number(to_round):
-		raise ValueError(f"First parameter of ROUND function (value to round) is not a number: {safe_cut(to_round)}")
-	if not is_whole(places):
-		raise ValueError(f"Optional second parameter of ROUND function (decimal places) is not an integer: {safe_cut(places)}")
+def ROUND(a, b=0):
+	if not is_number(a):
+		raise ValueError(f"ROUND function parameter is not a number: {safe_cut(a)}")
+	if not is_whole(b):
+		raise ValueError(f"ROUND function parameter is not an integer: {safe_cut(b)}")
 	
-	rounded = round(float(to_round), int(places))
+	rounded = round(float(a), int(b))
 	if rounded.is_integer(): return int(rounded)
 	return rounded
 
-def FLOOR(val: float) -> int:
-	if not is_number(val):
-		raise ValueError(f"FLOOR function parameter is not a number: {safe_cut(val)}")
+def FLOOR(a):
+	if not is_number(a):
+		raise ValueError(f"FLOOR function parameter is not a number: {safe_cut(a)}")
 	
-	return math.floor(float(val))
+	return math.floor(float(a))
 
-def CEIL(val: float) -> int:
-	if not is_number(val):
-		raise ValueError(f"CEIL function parameter is not a number: {safe_cut(val)}")
+def CEIL(a):
+	if not is_number(a):
+		raise ValueError(f"CEIL function parameter is not a number: {safe_cut(a)}")
 	
-	return math.ceil(float(val))
+	return math.ceil(float(a))
 
-def LOG(val: int | float, base: int | float) -> float:
-	if not is_number(val):
-		raise ValueError(f"First parameter of LOG function (the value) is not a number: {safe_cut(val)}")
-	if not is_number(base):
-		raise ValueError(f"Second parameter of LOG function (the base) is not a number: {safe_cut(base)}")
+def LOG(a, b):
+	if not is_number(a):
+		raise ValueError(f"LOG function parameter is not a number: {safe_cut(a)}")
+	if not is_number(b):
+		raise ValueError(f"LOG function parameter is not a number: {safe_cut(b)}")
 		
-	if base == 0: raise ValueError("Second parameter of LOG function (the base) must not be zero")
+	if b == 0: raise ValueError("Second parameter of LOG function must not be zero")
 		
-	return math.log(float(val),float(base))
+	return math.log(float(a),float(b))
 
-def FACTORIAL(val: int | float) -> float:
-	if not is_number(val):
-		raise ValueError(f"FACTORIAL function parameter is not a number: {safe_cut(val)}")
+def FACTORIAL(a):
+	if not is_number(a):
+		raise ValueError(f"FACTORIAL function parameter is not a number: {safe_cut(a)}")
 	
 	try:
-		return math.gamma(float(val)+1) # extension of the factorial function, allows floats too
+		return math.gamma(float(a)+1) # extension of the factorial function, allows floats too
 	except OverflowError:
-		raise ValueError(f"First parameter of FACTORIAL function too large to safely factorial: {safe_cut(val)}")
+		raise ValueError(f"First parameter of FACTORIAL function too large to safely factorial: {safe_cut(a)}")
 
-def SIN(val: int | float) -> float:
-	if not is_number(val):
-		raise ValueError(f"SIN function parameter is not a number: {safe_cut(val)}")
+def SIN(a):
+	if not is_number(a):
+		raise ValueError(f"SIN function parameter is not a number: {safe_cut(a)}")
 	
-	return math.sin(float(val))
+	return math.sin(float(a))
 
-def TAN(val: int | float) -> float:
-	if not is_number(val):
-		raise ValueError(f"TAN function parameter is not a number: {safe_cut(val)}")
+def TAN(a):
+	if not is_number(a):
+		raise ValueError(f"TAN function parameter is not a number: {safe_cut(a)}")
 	
-	return math.tan(float(val))
+	return math.tan(float(a))
 
-def COS(val: int | float) -> float:
-	if not is_number(val):
-		raise ValueError(f"COS function parameter is not a number: {safe_cut(val)}")
+def COS(a):
+	if not is_number(a):
+		raise ValueError(f"COS function parameter is not a number: {safe_cut(a)}")
 	
-	return math.cos(float(val))
+	return math.cos(float(a))
 
-def MINFUNC(lst: list) -> object:
-	if not type(lst) == list:
-		raise ValueError(f"MIN function parameter is not a list: {safe_cut(lst)}")
+def MINFUNC(a):
+	if not type(a) == list:
+		raise ValueError(f"MIN function parameter is not a list: {safe_cut(a)}")
 	
-	if 0 not in [is_number(elem) for elem in lst]:
-		lst = [float(elem) for elem in lst]
+	if 0 not in [is_number(elem) for elem in a]:
+		a = [float(elem) for elem in a]
 	
-	return min(lst)
+	return min(a)
 
-def MAXFUNC(lst: list) -> object:
-	if not type(lst) == list:
-		raise ValueError(f"MAX function parameter is not a list: {safe_cut(lst)}")
+def MAXFUNC(a):
+	if not type(a) == list:
+		raise ValueError(f"MAX function parameter is not a list: {safe_cut(a)}")
 	
-	if 0 not in [is_number(elem) for elem in lst]:
-		lst = [float(elem) for elem in lst]
+	if 0 not in [is_number(elem) for elem in a]:
+		a = [float(elem) for elem in a]
 	
-	return max(lst)
+	return max(a)
 
-def SHUFFLE(lst: list) -> list:
-	if not type(lst) == list:
-		raise ValueError(f"SHUFFLE function parameter is not a list: {safe_cut(lst)}")
+def SHUFFLE(a):
+	if not type(a) == list:
+		raise ValueError(f"SHUFFLE function parameter is not a list: {safe_cut(a)}")
 		
-	return random.sample(lst, k=len(lst))
+	return random.sample(a, k=len(a))
 
-def SORTFUNC(lst: list) -> list:
-	if not type(lst) == list:
-		raise ValueError(f"SORT function parameter is not a list: {safe_cut(lst)}")
+def SORTFUNC(a):
+	if not type(a) == list:
+		raise ValueError(f"SORT function parameter is not a list: {safe_cut(a)}")
 	
-	if 0 not in [is_number(elem) for elem in lst]:
-		lst = [float(elem) for elem in lst]
+	if 0 not in [is_number(elem) for elem in a]:
+		a = [float(elem) for elem in a]
 	
-	return sorted(lst)
+	return sorted(a)
 
-def JOIN(to_join: list, seperator: str = "") -> str:
-	if not type(to_join) == list:
-		raise ValueError(f"First JOIN function parameter (list of values) is not a list: {safe_cut(to_join)}")
-	if not type(seperator) == str:
-		raise ValueError(f"Optional second JOIN function parameter (seperator) is not a string: {safe_cut(seperator)}")
+def JOIN(a, b=""):
+	if not type(a) == list:
+		raise ValueError(f"First JOIN function parameter is not a list: {safe_cut(a)}")
+	if not type(b) == str:
+		raise ValueError(f"Second JOIN function parameter is not a string: {safe_cut(b)}")
 	
-	to_join = [str(elem) for elem in to_join]
+	a = [str(elem) for elem in a]
 	
-	return seperator.join(to_join)
+	return b.join(a)
 	
-def SETINDEX(lst: list | str, idx: int, value: object) -> list | str:
-	if not is_whole(idx):
-		raise ValueError(f"SETINDEX function parameter is not an integer: {safe_cut(idx)}")
-	if type(lst) == list:
-		mylist = lst.copy()
-		mylist[int(idx)] = value
+def SETINDEX(a, b, c):
+	if not is_whole(b):
+		raise ValueError(f"SETINDEX function parameter is not an integer: {safe_cut(b)}")
+	if type(a) == list:
+		mylist = a.copy()
+		mylist[int(b)] = c
 		return mylist
-	lst = str(lst)
-	if len(str(value)) > 1:
-		raise ValueError(f"SETINDEX function paramater is not a character: {safe_cut(value)}")
-	return lst[0:int(idx)] + value + lst[int(idx)+1:]
+	a = str(a)
+	if len(str(c)) > 1:
+		raise ValueError(f"SETINDEX function paramater is not a character: {safe_cut(c)}")
+	return a[0:int(b)] + c + a[int(b)+1:]
 
-def UNICODE(char: str) -> int:
-	if len(str(char)) != 1:
-		ValueError(f"UNICODE function paramater is not a character: {safe_cut(char)}")
-	return ord(str(char))
+def UNICODE(a):
+	if len(str(a)) != 1:
+		ValueError(f"CHAR function paramater is not a character: {safe_cut(a)}")
+	return ord(str(a))
 
-def CHARFUNC(val: int) -> str:
-	if not is_whole(val):
-		raise ValueError(f"CHAR function parameter is not an integer: {safe_cut(val)}")
+def CHARFUNC(a):
+	if not is_whole(a):
+		raise ValueError(f"CHAR function parameter is not an integer: {safe_cut(a)}")
 	try:
-		out = chr(val)
+		out = chr(a)
 	except:
-		raise ValueError(f"CHAR function parameter is not a valid character: {safe_cut(val)}")
+		raise ValueError(f"CHAR function parameter is not a valid character: {safe_cut(a)}")
 	return out
 
-def CHANNEL() -> ParsingOperation:
-	return ParsingOperation("c_id")
+def CHANNEL():
+	return ("c_id",)
 
 FUNCTIONS = {
 	"MATH": MATHFUNC,
