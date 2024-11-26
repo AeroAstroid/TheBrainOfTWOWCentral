@@ -20,7 +20,8 @@ def safe_cut(s):
 
 def weak_index(a,b,c=None,d=None):
 	try:
-		return a.index(b,c,d)
+		a = a[c:d]
+		return a.index(b)
 	except:
 		return ""
 
