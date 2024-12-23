@@ -235,8 +235,6 @@ def run_bpp_program(code, p_args, author, runner, channel):
 				k1 = a[0]
 				functions[k][i+1] = evaluate_result(k1)
 		
-		args = v[1:]
-
 		result = FUNCTIONS[v[0]](*args)
 
 		# Tuples indicate special behavior necessary
