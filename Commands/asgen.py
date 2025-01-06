@@ -3,6 +3,7 @@ from Config._asgen_functions import generate_all_slides, generate_slide_compilat
 import discord
 import csv
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from PIL import Image
 
 def HELP(PREFIX):
@@ -69,7 +70,19 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send(f"Generating {len(round_leaderboard)} art displays...")
 
 			# Generate images
-			task_gen = asyncio.create_task(generate_slides(round_leaderboard, {}, Image.open("Images/asgen/rankgradient.png").convert("RGBA"), message))
+			loop = asyncio.get_event_loop()
+			slides, time = await loop.run_in_executor(ThreadPoolExecutor(), generate_all_slides(round_leaderboard, {}, Image.open("Images/asgen/rankgradient.png").convert("RGBA")))
+
+			global current_slides
+			current_slides = slides
+
+			await message.channel.send(f"Generated {len(slides)} in {time:.2f} seconds!")
+
+			# Post first four
+			slide_img = generate_slide_compilation(slides[:4])
+			slide_img.save("Images/asgen/as_compilation.png")
+
+			await message.channel.send("", file=discord.File("Images/asgen/as_compilation.png"))
 
 		except Exception as e: 
 			
@@ -83,29 +96,3 @@ async def MAIN(message, args, level, perms, SERVER):
 
 	elif args[1].lower() == "genscoreboard":
 		pass
-
-
-
-async def generate_slides(round_leaderboard: list, pfp_urls: dict, gradient: Image.Image, message):
-
-	global current_slides
-
-	try:
-
-		slides, time = generate_all_slides(round_leaderboard, {}, Image.open("Images/asgen/rankgradient.png").convert("RGBA"))
-
-		current_slides = slides
-
-		await message.channel.send(f"Generated {len(slides)} in {time:.2f} seconds!")
-
-		# Post first four
-		slide_img = generate_slide_compilation(slides[:4])
-		slide_img.save("Images/asgen/as_compilation.png")
-
-		await message.channel.send("", file=discord.File("Images/asgen/as_compilation.png"))
-		
-	except Exception as e: 
-			
-			print(e)
-			await message.channel.send(f"Error occured while generating slides!")
-			return
