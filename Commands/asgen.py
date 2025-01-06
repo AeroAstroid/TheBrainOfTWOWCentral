@@ -44,7 +44,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 			# Read TSV and get round leaderboard
 			round_leaderboard = []
-			with open("art_showdown_round", 'r', encoding='UTF-8') as lb_file:
+			with open("art_showdown_round.tsv", 'r', encoding='UTF-8') as lb_file:
 
 				reader = csv.reader(lb_file, delimiter="\t")
 
