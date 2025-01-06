@@ -2,6 +2,7 @@ from Config._const import BRAIN
 from Config._asgen_functions import generate_all_slides, generate_slide_compilation
 import discord
 import csv
+import asyncio
 from PIL import Image
 
 def HELP(PREFIX):
@@ -67,7 +68,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send(f"Generating {len(round_leaderboard)} art displays...")
 
 			# Generate images
-			slides, time = generate_all_slides(round_leaderboard, {}, Image.open("Images/asgen/rankgradient.png").convert("RGBA"))
+			slides, time = await generate_all_slides(round_leaderboard, {}, Image.open("Images/asgen/rankgradient.png").convert("RGBA"))
 			current_slides = slides
 
 			await message.channel.send(f"Generated {len(slides)} in {time:.2f} seconds!")
