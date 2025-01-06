@@ -27,7 +27,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		await message.channel.send("Include a subcommand!")
 		return
 	
-	if args[0].lower() == "genround":
+	if args[1].lower() == "genround":
 		# Generate images displaying the art for the round
 
 		# Check if TSV is attached
