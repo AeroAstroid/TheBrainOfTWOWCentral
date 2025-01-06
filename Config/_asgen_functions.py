@@ -5,15 +5,15 @@ import time
 import random
 
 ########### FONTS ###########
-NOT_LOAD_FONT = ImageFont.truetype("fonts/Poppins-ExtraBold.ttf", 64)
-RANK_FONT = ImageFont.truetype("fonts/Tharon.ttf", 128)
-SCORE_FONT = ImageFont.truetype("fonts/Tharon.ttf", 128)
+NOT_LOAD_FONT = ImageFont.truetype("Fonts/Poppins-ExtraBold.ttf", 64)
+RANK_FONT = ImageFont.truetype("Fonts/Tharon.ttf", 128)
+SCORE_FONT = ImageFont.truetype("Fonts/Tharon.ttf", 128)
 
 # NAME FONTS - List of fonts to use for player's -- downsize depending on length of person's name
 NAME_FONTS = []
 NAME_FONT_SIZES = [96, 88, 80, 72, 64, 56, 48]
 for name_font_size in NAME_FONT_SIZES:
-    font = ImageFont.truetype("fonts/Poppins-Bold.ttf", name_font_size)
+    font = ImageFont.truetype("Fonts/Poppins-Bold.ttf", name_font_size)
     NAME_FONTS.append(font)
 
 ########### SIZES ###########
