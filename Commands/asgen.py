@@ -21,6 +21,7 @@ ALIASES = ["artshowdown"]
 REQ = []
 
 current_slides = []
+task_gen = None
 
 async def MAIN(message, args, level, perms, SERVER):
 	
@@ -68,7 +69,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send(f"Generating {len(round_leaderboard)} art displays...")
 
 			# Generate images
-			asyncio.run(generate_slides(round_leaderboard, {}, Image.open("Images/asgen/rankgradient.png").convert("RGBA"), message))
+			task_gen = asyncio.create_task(generate_slides(round_leaderboard, {}, Image.open("Images/asgen/rankgradient.png").convert("RGBA"), message))
 
 		except Exception as e: 
 			
