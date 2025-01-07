@@ -70,8 +70,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send(f"Generating {len(round_leaderboard)} art displays...")
 
 			# Generate images
-			loop = asyncio.get_event_loop()
-			slides, time = await loop.run_in_executor(ThreadPoolExecutor(), generate_all_slides(round_leaderboard, {}, Image.open("Images/asgen/rankgradient.png").convert("RGBA")))
+			slides, time = await generate_all_slides(round_leaderboard, {}, Image.open("Images/asgen/rankgradient.png").convert("RGBA"))
 
 			global current_slides
 			current_slides = slides

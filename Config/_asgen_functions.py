@@ -260,7 +260,7 @@ def generate_art_slide(rank: int, name: str, score: float, art_link: str, avatar
     return slide_img
 
 
-def generate_all_slides(round_leaderboard: list, pfp_urls: dict, gradient: Image.Image) -> list:
+async def generate_all_slides(round_leaderboard: list, pfp_urls: dict, gradient: Image.Image) -> list:
     """Generate slides displaying the scores and art of an Artistic Showdown round."""
 
     start_time = time.time()
