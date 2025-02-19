@@ -315,7 +315,8 @@ def run_bpp_program(code, p_args, author, runner, channel):
 				result = channel.id
 
 			elif result[0] == "b":
-				buttons_to_add.append(args) 
+				buttons_to_add.append(args)
+				result = ""
 		
 		functions[k] = result
 		return result

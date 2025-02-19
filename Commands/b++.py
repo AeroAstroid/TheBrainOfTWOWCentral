@@ -6,11 +6,13 @@ from Config._bpp_functions import ProgramDefinedException
 
 from Config._db import Database
 
-import discord, os, re, time
+import discord, os, re, time, traceback
 
 from discord.ui import Button, View
 
 from datetime import datetime as dt
+
+from functools import partial
 
 def HELP(PREFIX):
 	return {
@@ -389,31 +391,57 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send(embed=discord.Embed(title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
 			return
 		except Exception as e:
-			await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{e.__traceback__}```'.replace("<@", "<\\@")))
+			await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
+			#await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{traceback.format_tb(e.__traceback__)}```'.replace("<@", "<\\@")))
 			return
 		
 		program_output = program_output.replace("<@", "<\\@")
 
-		async def button_callback(interaction):
-			await MAIN(interaction, ["",args[1]]+interaction.split(" "),len(interaction.split(" ")+2),perms,SERVER)
+		async def button_callback(program, interaction):
+			try:
+				custom_id = interaction.data['custom_id']
+				tag_name = custom_id.split(" ")[0]
+		
+				tag_list = db.get_entries("b++2programs", columns=["name", "program", "author", "uses"])
+		
+				if tag_name in [x[0] for x in tag_list]:
+					#await interaction.response.send_message(f"There's no program under the name `{tag_name}`!",allowed_mentions=discord.AllowedMentions.none())
+					#return
+				
+					tag_info = [x for x in tag_list if x[0] == tag_name][0]
+					program = tag_info[1]
+			
+					uses = tag_info[3] + 1
+					db.edit_entry("b++2programs", entry={"uses": uses, "lastused": time.time()}, conditions={"name": tag_name})
+				
+					author = tag_info[2]
+				else:
+					author = interaction.user.id
+				
+				await evaluate_and_send(program, custom_id.split(" ")[1:], author, interaction.user, interaction.message)
+				await interaction.response.defer()
+			except:
+				await interaction.response.send_message(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{traceback.format_tb(e.__traceback__)}```'.replace("<@", "<\\@")))
+				
 	
 		out_view = View()
 		for button_value in buttons:
-			button = Button(label = button_value[1], style = discord.ButtonStyle.secondary, custom_id = button_value[0])
-			button.callback = button_callback
-			out_view.add(button)
+			if len(button_value) == 1: button_value += [""]
+			button = Button(label = button_value[1], style = discord.ButtonStyle.secondary, custom_id = args[1]+" "+button_value[0])
+			button.callback = partial(button_callback, program)
+			out_view.add_item(button)
 	
 		if len(program_output.strip()) == 0: program_output = "\u200b"
 			
 		if len(program_output) <= 2000:
-			await message.channel.send(program_output,view=out_view)
+			await message.reply(program_output,view=out_view,allowed_mentions=discord.AllowedMentions.none())
 		elif len(program_output) <= 4096:
-			await message.channel.send(embed = discord.Embed(description = program_output, type = "rich"),view=out_view)
+			await message.reply(embed = discord.Embed(description = program_output, type = "rich"),view=out_view,allowed_mentions=discord.AllowedMentions.none())
 		else:
 			open(f"Config/{message.id}out.txt", "w", encoding="utf-8").write(program_output[:150000])
 			outfile = discord.File(f"Config/{message.id}out.txt")
 			os.remove(f"Config/{message.id}out.txt")
-			await message.channel.send("⚠️ `Output too long! Sending first 150k characters in text file.`", file=outfile,view=out_view)
+			await message.reply("⚠️ `Output too long! Sending first 150k characters in text file.`", file=outfile,view=out_view,allowed_mentions=discord.AllowedMentions.none())
 
 	await evaluate_and_send(program, program_args, author, runner, message)
 		
