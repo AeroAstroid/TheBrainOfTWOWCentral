@@ -382,7 +382,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		runner = message.author
 
-	def evaluate_and_send(program, program_args, author, runner, message):
+	async def evaluate_and_send(program, program_args, author, runner, message):
 		try:
 			program_output, buttons = run_bpp_program(program, program_args, author, runner, message.channel)
 		except ProgramDefinedException as e:
@@ -415,6 +415,6 @@ async def MAIN(message, args, level, perms, SERVER):
 			os.remove(f"Config/{message.id}out.txt")
 			await message.channel.send("⚠️ `Output too long! Sending first 150k characters in text file.`", file=outfile,view=out_view)
 
-	evaluate_and_send(program, program_args, author, runner, message)
+	await evaluate_and_send(program, program_args, author, runner, message)
 		
 	
