@@ -418,7 +418,6 @@ async def MAIN(message, args, level, perms, SERVER):
 				else:
 					author = interaction.user.id
 
-				await asyncio.sleep(HELP("")["COOLDOWN"]-1)
 				await evaluate_and_send(program, custom_id.split(" ")[2:], author, interaction.user, interaction.message)
 				await interaction.response.edit_message(view=None)
 			except:
