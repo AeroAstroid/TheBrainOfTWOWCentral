@@ -443,7 +443,7 @@ def CHANNEL():
 	return ("c_id",)
 
 def BUTTON(a,b=""):
-	return ("b",a,b)
+	return ("b",)
 
 FUNCTIONS = {
 	"MATH": MATHFUNC,
