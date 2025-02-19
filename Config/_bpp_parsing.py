@@ -63,6 +63,7 @@ def run_bpp_program(code, p_args, author, runner, channel):
 	tag_code = []
 	tag_globals = {}
 	tag_str = lambda: ' '.join([str(s) for s in tag_code])
+	buttons_to_add = []
 
 	debug_values = ""
 
@@ -312,6 +313,9 @@ def run_bpp_program(code, p_args, author, runner, channel):
 
 			elif result[0] == "c_id":
 				result = channel.id
+
+			elif result[0] == "b":
+				buttons_to_add += [(result[1],result[2])] 
 		
 		functions[k] = result
 		return result
@@ -353,7 +357,7 @@ def run_bpp_program(code, p_args, author, runner, channel):
 	
 	output = output.replace("{}", "\t").replace("{", "{{").replace("}", "}}").replace("\t", "{}")
 
-	return output.format(*results).replace("\v", "{}")+debug_values
+	return [output.format(*results).replace("\v", "{}")+debug_values,buttons_to_add]
 
 if __name__ == "__main__":
 	program = input("Program:\n\t")
