@@ -442,6 +442,9 @@ def CHARFUNC(a):
 def CHANNEL():
 	return ("c_id",)
 
+def BUTTON(a,b=""):
+	return ("b",a,b)
+
 FUNCTIONS = {
 	"MATH": MATHFUNC,
 	"RANDINT": RANDINT,
@@ -488,5 +491,6 @@ FUNCTIONS = {
 	"SETINDEX": SETINDEX,
 	"CHAR" : CHARFUNC,
 	"UNICODE" : UNICODE,
-	"CHANNEL" : CHANNEL
+	"CHANNEL" : CHANNEL,
+	"BUTTON" : BUTTON
 }

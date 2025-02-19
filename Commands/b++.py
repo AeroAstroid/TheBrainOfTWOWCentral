@@ -8,6 +8,8 @@ from Config._db import Database
 
 import discord, os, re, time
 
+from discord.ui import Button, View
+
 from datetime import datetime as dt
 
 def HELP(PREFIX):
@@ -379,28 +381,40 @@ async def MAIN(message, args, level, perms, SERVER):
 		author = tag_info[2]
 
 		runner = message.author
+
+	def evaluate_and_send(program, program_args, author, runner, message):
+		try:
+			program_output, buttons = run_bpp_program(program, program_args, author, runner, message.channel)
+		except ProgramDefinedException as e:
+			await message.channel.send(embed=discord.Embed(title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
+			return
+		except Exception as e:
+			await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
+			return
 		
-	try:
-		program_output = run_bpp_program(program, program_args, author, runner, message.channel)
-	except ProgramDefinedException as e:
-		await message.channel.send(embed=discord.Embed(title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
-		return
-	except Exception as e:
-		await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
-		return
+		program_output = program_output.replace("<@", "<\\@")
+
+		async def button_callback(interaction):
+			await MAIN(interaction, ["",args[1]]+interaction.split(" "),len(interaction.split(" ")+2),perms,SERVER)
 	
-	program_output = program_output.replace("<@", "<\\@")
+		out_view = View()
+		for button_value in buttons:
+			button = Button(label = button_value[1], style = discord.ButtonStyle.secondary, custom_id = button_value[0])
+			button.callback = button_callback
+			out_view.add(button)
 	
-	if len(program_output.strip()) == 0: program_output = "\u200b"
-		
-	if len(program_output) <= 2000:
-		await message.channel.send(program_output)
-	elif len(program_output) <= 4096:
-		await message.channel.send(embed = discord.Embed(description = program_output, type = "rich"))
-	else:
-		open(f"Config/{message.id}out.txt", "w", encoding="utf-8").write(program_output[:150000])
-		outfile = discord.File(f"Config/{message.id}out.txt")
-		os.remove(f"Config/{message.id}out.txt")
-		await message.channel.send("⚠️ `Output too long! Sending first 150k characters in text file.`", file=outfile)
+		if len(program_output.strip()) == 0: program_output = "\u200b"
+			
+		if len(program_output) <= 2000:
+			await message.channel.send(program_output,view=out_view)
+		elif len(program_output) <= 4096:
+			await message.channel.send(embed = discord.Embed(description = program_output, type = "rich"),view=out_view)
+		else:
+			open(f"Config/{message.id}out.txt", "w", encoding="utf-8").write(program_output[:150000])
+			outfile = discord.File(f"Config/{message.id}out.txt")
+			os.remove(f"Config/{message.id}out.txt")
+			await message.channel.send("⚠️ `Output too long! Sending first 150k characters in text file.`", file=outfile,view=out_view)
+
+	evaluate_and_send(program, program_args, author, runner, message)
 		
 	
