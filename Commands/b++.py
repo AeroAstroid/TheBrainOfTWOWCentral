@@ -418,12 +418,8 @@ async def MAIN(message, args, level, perms, SERVER):
 				else:
 					author = interaction.user.id
 
-				view = interaction.message.view
-				for item in view.children:
-    					item.disabled = True
-				
 				await evaluate_and_send(program, custom_id.split(" ")[2:], author, interaction.user, interaction.message)
-				interaction.response.edit_message(view=view)
+				interaction.response.edit_message(view=None)
 			except:
 				await interaction.response.send_message(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{traceback.format_tb(e.__traceback__)}```'.replace("<@", "<\\@")))
 				
