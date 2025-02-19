@@ -242,6 +242,10 @@ async def on_ready():
 				await message.channel.send("Act your age, Dynosaur.")
 				return
 
+			if message.author.bot:
+				await message.channel.send("You must solve this CAPTCHA to prove you're not a robot:")
+				return
+
 			print(f"""[COMMAND] {message.author.name} - {message.author.id} - 
 			{'DMs' if message.guild is None else msg_guild["MAIN"].name} - 
 			{'DMs' if message.guild is None else message.channel.name}
