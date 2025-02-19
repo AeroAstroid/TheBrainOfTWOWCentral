@@ -389,7 +389,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send(embed=discord.Embed(title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
 			return
 		except Exception as e:
-			await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
+			await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{e.__traceback__}```'.replace("<@", "<\\@")))
 			return
 		
 		program_output = program_output.replace("<@", "<\\@")
