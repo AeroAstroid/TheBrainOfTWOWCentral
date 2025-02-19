@@ -400,7 +400,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		async def button_callback(program, interaction):
 			try:
 				custom_id = interaction.data['custom_id']
-				tag_name = custom_id.split(" ")[0]
+				tag_name = custom_id.split(" ")[1]
 		
 				tag_list = db.get_entries("b++2programs", columns=["name", "program", "author", "uses"])
 		
@@ -417,17 +417,21 @@ async def MAIN(message, args, level, perms, SERVER):
 					author = tag_info[2]
 				else:
 					author = interaction.user.id
+
+				view = interaction.message.view
+				for item in view.children:
+    					item.disabled = True
 				
-				await evaluate_and_send(program, custom_id.split(" ")[1:], author, interaction.user, interaction.message)
-				await interaction.response.defer()
+				await evaluate_and_send(program, custom_id.split(" ")[2:], author, interaction.user, interaction.message)
+				interaction.response.edit_message(view=view)
 			except:
 				await interaction.response.send_message(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{traceback.format_tb(e.__traceback__)}```'.replace("<@", "<\\@")))
 				
 	
 		out_view = View()
 		for button_value in buttons:
-			if len(button_value) == 1: button_value += [""]
-			button = Button(label = button_value[1], style = discord.ButtonStyle.secondary, custom_id = args[1]+" "+button_value[0])
+			if len(button_value) == 1: button_value += ["​"]
+			button = Button(label = button_value[1] if button_value[1] != "" else "​", style = discord.ButtonStyle.secondary, custom_id = f"{time.time()} {args[1]} {button_value[0]}", disabled=button_value[0]=="null")
 			button.callback = partial(button_callback, program)
 			out_view.add_item(button)
 	
