@@ -7,7 +7,7 @@ except ModuleNotFoundError:
 	from _bpp_functions import express_array, safe_cut, FUNCTIONS
 	from _db import Database
 
-import re
+import re, copy
 from time import time as timenow
 
 def str_array(s):
