@@ -1,11 +1,11 @@
 import numpy as np
-import os, discord, random, asyncio
-from PIL import Image, ImageDraw
+import os, discord, random, asyncio, math
+from PIL import Image, ImageDraw, ImageFilter
 from Config._functions import grammar_list
 
 def HELP(PREFIX):
 	return {
-		"COOLDOWN": 15,
+		"COOLDOWN": 5,
 		"MAIN": "Generate a tr_ of random length and compare it to other objects",
 		"FORMAT": "",
 		"CHANNEL": 0,
@@ -18,6 +18,9 @@ PERMS = 0 # Non-members
 ALIASES = ["TR_"]
 REQ = []
 
+def to_nat(a):
+	return max(1,int(a))
+
 async def MAIN(message, args, level, perms, SERVER):
 	if level != 1:
 		if args[1].lower() == "queue" and perms == 2:
@@ -29,38 +32,47 @@ async def MAIN(message, args, level, perms, SERVER):
 	open("Config/_image_gen.txt", "w").write(tr_gen.strip())
 
 	while not open("Config/_image_gen.txt", "r").read().startswith(str(message.id)):
-		await asyncio.sleep(1)
+		await asyncio.sleep(.1)
 
 	pixel_count = 250 * np.power(10, np.power(np.e, random.uniform(0, 2.5)) - 1)
-
 	image_pixels = 490 + 115 + pixel_count
 	height = (0.2 / 860) * image_pixels
+
+	await asyncio.sleep(min(8, 0.6*np.log(height)/2.5))
 
 	if height > 10:
 		image_pixels = 10 / (0.2 / 860)
 		pixel_count = image_pixels - 115 - 490
 
+	image_size = 2000
+	ratio = image_size / image_pixels
+	
 	top = Image.open("Images/tr_ top.png").convert("RGBA")
 	face = Image.open("Images/tr_ face.png").convert("RGBA")
 	grad = Image.open("Images/tr_ gradient.png").convert("RGBA")
 	bottom = Image.open("Images/tr_ bottom.png").convert("RGBA")
 
-	tr_base = Image.new("RGBA", (1440, int(image_pixels)), (0, 0, 0, 0))
+	top = top.resize((to_nat(top.size[0] * ratio), to_nat(top.size[1] * ratio)), Image.LANCZOS)
+	bottom = bottom.resize((to_nat(bottom.size[0] * ratio), to_nat(bottom.size[1] * ratio)), Image.LANCZOS)	
+	face = face.resize((to_nat(face.size[0] * ratio), to_nat(face.size[1] * ratio)), Image.LANCZOS)
+
+	tr_base = Image.new("RGBA", (to_nat(1440 * ratio), image_size), (0, 0, 0, 0))
 	tr_base.paste(top, (0, 0))
-	grad = grad.resize((1440, int(pixel_count)))
-	tr_base.paste(grad, (0, 115))
-	tr_base.paste(bottom, (0, int(image_pixels)-609), mask=bottom)
+	grad = grad.resize((to_nat(1440 * ratio), to_nat(pixel_count * ratio)), Image.LANCZOS)
+	tr_base.alpha_composite(grad, (0, int(115 * ratio)))
+	tr_base.alpha_composite(bottom, (0, int(ratio * (image_pixels-611))-2))
 
 	face_position = min(309, 
 		int(image_pixels/2) - 312)
 	
-	tr_base.paste(face, (0, face_position), mask=face)
+	tr_base.alpha_composite(face, (0, int(face_position*ratio)))
 
-	ratio = 250 / image_pixels
-	
-	tr_base = tr_base.resize((int(1440 * ratio), int(image_pixels * ratio)), Image.ANTIALIAS)
-	w = 1440 * ratio
-	h = int(image_pixels * ratio)
+	image_size = 250
+	ratio = image_size / image_pixels
+	tr_base = tr_base.resize((to_nat(1440 * ratio), image_size), Image.LANCZOS)
+		
+	w = tr_base.size[0]
+	h = tr_base.size[1]
 
 	center_w = max(min(150, 150 / np.sqrt(height)), 35)
 
