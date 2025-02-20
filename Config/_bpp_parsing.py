@@ -337,10 +337,10 @@ def run_bpp_program(code, p_args, author, runner, channel):
 	for v_name, value in tag_globals.items():
 		if not value[2]: continue
 		v_value = value[0]
-	
+		v_value = str_array(v_value) if type(v_value) == list else str(v_value)
+		
 		if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
 			curr_v_type = var_type(v_value)
-			v_value = str_array(v_value) if type(v_value) == list else v_value
 			db.add_entry("b++2variables", [v_name, str(v_value), curr_v_type, str(author)])
 	
 		else:
