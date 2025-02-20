@@ -337,11 +337,11 @@ def run_bpp_program(code, p_args, author, runner, channel):
 	for v_name, value in tag_globals.items():
 		if not value[2]: continue
 		v_value = value[0]
-		v_value = str_array(v_value) if type(v_value) == list else str(v_value)
+		v_string = str_array(v_value) if type(v_value) == list else str(v_value)
 		
 		if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
 			curr_v_type = var_type(v_value)
-			db.add_entry("b++2variables", [v_name, str(v_value), curr_v_type, str(author)])
+			db.add_entry("b++2variables", [v_name, v_string, curr_v_type, str(author)])
 	
 		else:
 			v_list = db.get_entries("b++2variables", columns=["name", "owner"])
@@ -353,7 +353,7 @@ def run_bpp_program(code, p_args, author, runner, channel):
 				
 			db.edit_entry(
 				"b++2variables",
-				entry={"value": str(v_value), "type": var_type(v_value)},
+				entry={"value": v_string, "type": var_type(v_value)},
 				conditions={"name": v_name})
 	
 	output = output.replace("{}", "\t").replace("{", "{{").replace("}", "}}").replace("\t", "{}")
