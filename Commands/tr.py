@@ -115,7 +115,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		"The Sun": 1391000000,
 		"Sirius": 2383470000,
 		"Pollux": 12610000000,
-		"Swartzchild Radius of Sagittarius A*": 25380000000
+		"Swartzchild Radius of Sagittarius A*": 25380000000,
 		"Polaris": 64380100000,
 		"Cygnus OB2-12": 342300000000,
 		"Betelgeuse": 1060000000000,
