@@ -120,7 +120,11 @@ async def MAIN(message, args, level, perms, SERVER):
 		"Cygnus OB2-12": 342300000000,
 		"Betelgeuse": 1060000000000,
 		"RSGC1-F01": 2129000000000,
-		"The Solar System": 8996837420000
+		"The Solar System": 8996837420000,
+		"Taj Mahal": 73,
+		"Olympus Mons": 22000
+		"Pluto": 2376600,
+		"Can of Pepsi": 0.123
 	}
 
 	current_w = center_w * 1.65
