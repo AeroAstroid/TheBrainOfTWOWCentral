@@ -111,7 +111,16 @@ async def MAIN(message, args, level, perms, SERVER):
 		"Shimizu Mega-City Pyramid": 2000,
 		"Kármán Line": 100000,
 		"Birthday Cake": 0.11,
-		"Regular Book": 0.3043
+		"Regular Book": 0.3043,
+		"The Sun": 1391000000,
+		"Sirius": 2383470000,
+		"Pollux": 12610000000,
+		"Swartzchild Radius of Sagittarius A*": 25380000000
+		"Polaris": 64380100000,
+		"Cygnus OB2-12": 342300000000,
+		"Betelgeuse": 1060000000000,
+		"RSGC1-F01": 2129000000000,
+		"The Solar System": 8996837420000
 	}
 
 	current_w = center_w * 1.65
@@ -120,8 +129,9 @@ async def MAIN(message, args, level, perms, SERVER):
 
 	references = []
 	for scale in scale_objects.keys():
+		scale_name = scale.replace("*","")
 		if 0.2 * height < scale_objects[scale] < 1.15 * height:
-			img = Image.open(f"Images/{scale}.png").convert("RGBA")
+			img = Image.open(f"Images/{scale_name}.png").convert("RGBA")
 			ratio = (pixels_per_height * scale_objects[scale]) / img.height
 			img = img.resize((int(img.width * ratio), int(img.height * ratio)))
 
