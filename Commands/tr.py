@@ -122,7 +122,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		"RSGC1-F01": 2129000000000,
 		"The Solar System": 8996837420000,
 		"Taj Mahal": 73,
-		"Olympus Mons": 22000
+		"Olympus Mons": 22000,
 		"Pluto": 2376600,
 		"Can of Pepsi": 0.123
 	}
