@@ -36,6 +36,8 @@ PERMS = 1 # Member
 ALIASES = ["TAG", "B++NEW", "TAGNEW", "NEWB++", "NEWTAG", "BPP"]
 REQ = []
 
+LATEST_BUTTONS = {}
+
 async def MAIN(message, args, level, perms, SERVER):
 	if level == 1:
 		await message.channel.send("Include a subcommand!")
@@ -417,8 +419,10 @@ async def MAIN(message, args, level, perms, SERVER):
 					author = tag_info[2]
 				else:
 					author = interaction.user.id
-
-				await evaluate_and_send(program, custom_id.split(" ")[2:], author, interaction.user, interaction.message)
+					
+				if hash(program) in LATEST_BUTTONS.keys() and LATEST_BUTTONS[hash(program)] < interaction.message.id:
+					await evaluate_and_send(program, custom_id.split(" ")[2:], author, interaction.user, interaction.message)
+				
 				await interaction.response.edit_message(view=None)
 			except:
 				await interaction.response.send_message(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{traceback.format_tb(e.__traceback__)}```'.replace("<@", "<\\@")))
@@ -434,15 +438,18 @@ async def MAIN(message, args, level, perms, SERVER):
 		if len(program_output.strip()) == 0: program_output = "\u200b"
 			
 		if len(program_output) <= 2000:
-			await message.reply(program_output,view=out_view,allowed_mentions=discord.AllowedMentions.none())
+			cmd_output = await message.reply(program_output,view=out_view,allowed_mentions=discord.AllowedMentions.none())
 		elif len(program_output) <= 4096:
-			await message.reply(embed = discord.Embed(description = program_output, type = "rich"),view=out_view,allowed_mentions=discord.AllowedMentions.none())
+			cmd_output = await message.reply(embed = discord.Embed(description = program_output, type = "rich"),view=out_view,allowed_mentions=discord.AllowedMentions.none())
 		else:
 			open(f"Config/{message.id}out.txt", "w", encoding="utf-8").write(program_output[:150000])
 			outfile = discord.File(f"Config/{message.id}out.txt")
 			os.remove(f"Config/{message.id}out.txt")
-			await message.reply("⚠️ `Output too long! Sending first 150k characters in text file.`", file=outfile,view=out_view,allowed_mentions=discord.AllowedMentions.none())
+			cmd_output = await message.reply("⚠️ `Output too long! Sending first 150k characters in text file.`", file=outfile,view=out_view,allowed_mentions=discord.AllowedMentions.none())
 
+		if len(buttons) != 0:
+			LATEST_BUTTONS[hash(program)] = cmd_output.id
+	
 	await evaluate_and_send(program, program_args, author, runner, message)
 		
 	
