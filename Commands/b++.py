@@ -420,7 +420,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				else:
 					author = interaction.user.id
 					
-				if hash(program) in LATEST_BUTTONS.keys() and LATEST_BUTTONS[hash(program)] < interaction.message.id:
+				if hash(program) in LATEST_BUTTONS.keys() and LATEST_BUTTONS[hash(program)] <= interaction.message.id:
 					await evaluate_and_send(program, custom_id.split(" ")[2:], author, interaction.user, interaction.message)
 				
 				await interaction.response.edit_message(view=None)
