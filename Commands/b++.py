@@ -390,14 +390,14 @@ async def MAIN(message, args, level, perms, SERVER):
 		try:
 			program_output, buttons = run_bpp_program(program, program_args, author, runner, message.channel)
 		except ProgramDefinedException as e:
-			await message.channel.send(embed=discord.Embed(title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
+			await message.channel.send(embed=discord.Embed(title=f'{type(e).__name__}', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
 			return
 		except Exception as e:
-			await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}```'.replace("<@", "<\\@")))
+			await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
 			#await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{traceback.format_tb(e.__traceback__)}```'.replace("<@", "<\\@")))
 			return
 		
-		program_output = program_output.replace("<@", "<\\@")
+		program_output = program_output
 
 		async def button_callback(program, interaction):
 			try:
@@ -425,7 +425,7 @@ async def MAIN(message, args, level, perms, SERVER):
 				
 				await interaction.response.edit_message(view=None)
 			except:
-				await interaction.response.send_message(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{traceback.format_tb(e.__traceback__)}```'.replace("<@", "<\\@")))
+				await interaction.response.send_message(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{traceback.format_tb(e.__traceback__)}```'))
 				
 	
 		out_view = View()
