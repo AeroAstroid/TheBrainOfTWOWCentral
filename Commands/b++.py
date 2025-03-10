@@ -386,7 +386,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		runner = message.author
 
-	async def evaluate_and_send(program, program_args, author, runner, message):
+	async def evaluate_and_send(program, program_args, author, runner, message, is_button=False):
 		try:
 			program_output, buttons = run_bpp_program(program, program_args, author, runner, message.channel)
 		except ProgramDefinedException as e:
@@ -398,6 +398,8 @@ async def MAIN(message, args, level, perms, SERVER):
 			return
 		
 		program_output = program_output
+		if is_button:
+			program_output = program_output.rstrip()+f"\n-# Button pressed by {runner.mention}"
 
 		async def button_callback(program, interaction):
 			try:
@@ -421,7 +423,7 @@ async def MAIN(message, args, level, perms, SERVER):
 					author = interaction.user.id
 					
 				if hash(program) not in LATEST_BUTTONS.keys() or LATEST_BUTTONS[hash(program)] <= interaction.message.id:
-					await evaluate_and_send(program, custom_id.split(" ")[2:], author, interaction.user, interaction.message)
+					await evaluate_and_send(program, custom_id.split(" ")[2:], author, interaction.user, interaction.message, True)
 				
 				await interaction.response.edit_message(view=None)
 			except:
