@@ -76,8 +76,8 @@ def REPLACE(a,b,c):
 	return str(a).replace(str(b),str(c))
 
 def INDEX(a, b):
-	if type(a) not in [list, str]:
-		raise TypeError(f"First parameter of INDEX function must be a string or an array: {safe_cut(a)}")
+	if type(a) != list:
+		a = str(a)
 	if not is_whole(b):
 		raise TypeError(f"Second parameter of INDEX function must be an integer: {safe_cut(b)}")
 	return a[int(b)]
