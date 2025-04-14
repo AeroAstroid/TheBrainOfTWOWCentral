@@ -3,7 +3,7 @@ numpy==1.22.0
 Pillow==10.0.1
 psycopg2==2.8.6
 requests==2.31.0
-aiohttp==3.9.0
+aiohttp==3.9.4
 cexprtk==0.4.0
 func_timeout==4.3.5
 lark==1.1.2
