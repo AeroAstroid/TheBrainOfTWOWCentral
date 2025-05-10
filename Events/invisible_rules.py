@@ -139,11 +139,11 @@ class EVENT:
                 if self.GAME["PERIOD_STEP"] % edit_delay < 1:
 
                     await self.GAME["TRACKED_MSGS"][0].edit(content=m_line(
-					f"""🔍 **Round {self.GAME["ROUND"]}** of Invisible Rules has started!/n
-					Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
-					messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
+                    f"""🔍 **Round {self.GAME["ROUND"]}** of Invisible Rules has started!/n
+                    Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
+                    messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
 
-					{self.make_timer(self.GAME["NEXT_PERIOD"] - time())}"""))
+                    {self.make_timer(self.GAME["NEXT_PERIOD"] - time())}"""))
                 
                 self.GAME["PERIOD_STEP"] += 1
             
@@ -166,18 +166,18 @@ class EVENT:
                 await self.GAME_CHANNEL.set_permissions(self.PLAYER_ROLE, send_messages=False)
                 
                 await self.GAME["TRACKED_MSGS"][0].edit(content=m_line(
-				f"""🔍 **Round {self.GAME["ROUND"]}** of Invisible Rules has started!/n
-				Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
-				messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
+                f"""🔍 **Round {self.GAME["ROUND"]}** of Invisible Rules has started!/n
+                Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
+                messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
 
-				{self.make_timer(0)}"""))
+                {self.make_timer(0)}"""))
 
                 for t_msg in self.GAME["TRACKED_MSGS"][1:]:
                     try:
                         await t_msg.edit(content=m_line(
-						f"""🔍 **Invisible Rules: Round {self.GAME['ROUND']} (Phase {self.GAME['PHASE']})**
+                        f"""🔍 **Invisible Rules: Round {self.GAME['ROUND']} (Phase {self.GAME['PHASE']})**
 
-						{self.make_timer(0, just_timestamp=True)}"""))
+                        {self.make_timer(0, just_timestamp=True)}"""))
 
                         # Ensures the player can see the channel
                         await self.GAME_CHANNEL.set_permissions(t_msg.channel.recipient, overwrite=None)
@@ -334,11 +334,11 @@ class EVENT:
             self.GAME["ROUND_RUNNING"] = True
             
             ann_timer = await self.ANNOUNCE_CHANNEL.send(m_line(
-			f"""🔍 **Round {self.GAME["ROUND"]}** of Invisible Rules has started!/n
-			Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
-			messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
+            f"""🔍 **Round {self.GAME["ROUND"]}** of Invisible Rules has started!/n
+            Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
+            messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
 
-			{self.make_timer(round_t)}"""))
+            {self.make_timer(round_t)}"""))
 
             phase_msg = f" (Phase {self.GAME['PHASE']})" if self.PARAM['PHASE_1_LEN'] > 0 and self.PARAM['PHASE_2_LEN'] > 0 else ''
             await self.GAME_CHANNEL.send(f"🔍 **Invisible Rules: Round {self.GAME['ROUND']}{phase_msg}**")
@@ -350,11 +350,11 @@ class EVENT:
             for p in self.GAME["PLAYERS"]:
                 try:
                     msg = await p.send(m_line(
-					f"""🔍 **Invisible Rules: Round {self.GAME['ROUND']}{phase_msg}**
+                    f"""🔍 **Invisible Rules: Round {self.GAME['ROUND']}{phase_msg}**
 
-					{self.make_timer(round_t, just_timestamp=True)}
+                    {self.make_timer(round_t, just_timestamp=True)}
 
-					Send **`ir/test`** to stop inspecting the rule and access the test!"""))
+                    Send **`ir/test`** to stop inspecting the rule and access the test!"""))
 
                     self.GAME["TRACKED_MSGS"].append(msg)
                 except Exception:
@@ -380,30 +380,30 @@ class EVENT:
                     f"> For this phase, each round lasts **{m_str}**.",
 
                     m_line(f"""> Once the round starts, everyone playing will be able to **INSPECT** the current 
-					rule by sending messages in <#{self.GAME_CHANNEL.id}>. The bot will react to every message 
-					that doesn't use invalid characters with a ✅ **if it passes the rule**, or a ❌ **if it 
-					breaks the rule.** If a message **has invalid characters**, the bot will react with ❔ regardless 
-					of whether it passes the rule or not. You may send as many messages as you want. There is no 
-					penalty or reward for specifically sending messages that break or pass the rule. Valid characters 
-					are letters and spaces. Rules are case-insensitive. All other characters are invalid"""),
+                    rule by sending messages in <#{self.GAME_CHANNEL.id}>. The bot will react to every message 
+                    that doesn't use invalid characters with a ✅ **if it passes the rule**, or a ❌ **if it 
+                    breaks the rule.** If a message **has invalid characters**, the bot will react with ❔ regardless 
+                    of whether it passes the rule or not. You may send as many messages as you want. There is no 
+                    penalty or reward for specifically sending messages that break or pass the rule. Valid characters 
+                    are letters and spaces. Rules are case-insensitive. All other characters are invalid"""),
 
-					m_line(f"""> A player who is confident they figured out the rule can **DM me with the command 
-					`ir/test`** to stop INSPECTING and start **TESTING**. This command is **final** - you will be 
-					locked out of <#{self.GAME_CHANNEL.id}> and cannot go back to INSPECTING for the remainder of 
-					the round."""),
+                    m_line(f"""> A player who is confident they figured out the rule can **DM me with the command 
+                    `ir/test`** to stop INSPECTING and start **TESTING**. This command is **final** - you will be 
+                    locked out of <#{self.GAME_CHANNEL.id}> and cannot go back to INSPECTING for the remainder of 
+                    the round."""),
 
-					m_line(f"""> Once they switch to **TESTING**, players will receive a **test** comprised of 
-					{self.PARAM['PHASE_1_TEST_LEN']} messages. You must indicate, for each message, whether it 
-					PASSES or BREAKS the current rule. You will be given no immediate feedback on whether or not 
-					your answers are correct. After doing so for all {self.PARAM['PHASE_1_TEST_LEN']} messages, 
-					you will be **FINISHED** with the round."""),
+                    m_line(f"""> Once they switch to **TESTING**, players will receive a **test** comprised of 
+                    {self.PARAM['PHASE_1_TEST_LEN']} messages. You must indicate, for each message, whether it 
+                    PASSES or BREAKS the current rule. You will be given no immediate feedback on whether or not 
+                    your answers are correct. After doing so for all {self.PARAM['PHASE_1_TEST_LEN']} messages, 
+                    you will be **FINISHED** with the round."""),
 
-					m_line(f"""> Players that finish their test in time and score at least 
-					**{self.PARAM['PHASE_1_TEST_LEN']-1}/{self.PARAM['PHASE_1_TEST_LEN']}** on the test will 
-					receive a fixed amount of points that does not depend on speed or score."""),
+                    m_line(f"""> Players that finish their test in time and score at least 
+                    **{self.PARAM['PHASE_1_TEST_LEN']-1}/{self.PARAM['PHASE_1_TEST_LEN']}** on the test will 
+                    receive a fixed amount of points that does not depend on speed or score."""),
 
-					m_line(f"""> **PHASE ONE: Legal Forensics** will last for the first **{self.PARAM['PHASE_1_LEN']} 
-					rounds** of the game."""),
+                    m_line(f"""> **PHASE ONE: Legal Forensics** will last for the first **{self.PARAM['PHASE_1_LEN']} 
+                    rounds** of the game."""),
                 ]
                 
                 if self.PARAM["PHASE_2_LEN"] == 0:
@@ -419,52 +419,52 @@ class EVENT:
                 lines = [
                     "🔍 **It's time for Phase Two!**",
 
-					"```diff\n- PHASE TWO: Investigative Journalism```",
+                    "```diff\n- PHASE TWO: Investigative Journalism```",
 
-					m_line(f"""> For this phase, each round lasts **{m_str}**. Points now depend on speed and 
-					accuracy."""),
+                    m_line(f"""> For this phase, each round lasts **{m_str}**. Points now depend on speed and 
+                    accuracy."""),
 
-					m_line("""> The **INSPECTION** period will work the same as in PHASE ONE - you may send 
-					as many messages as you want, and you'll be told whether or not they break the rule, 
-					without any penalty."""),
+                    m_line("""> The **INSPECTION** period will work the same as in PHASE ONE - you may send 
+                    as many messages as you want, and you'll be told whether or not they break the rule, 
+                    without any penalty."""),
 
-					m_line(f"""> To start **TESTING**, DM me with **`ir/test`**. In the PHASE TWO TEST, you will be 
-					sequentially shown a series of {self.PARAM['PHASE_2_TEST_LEN']} messages, one by one, and must 
-					answer whether or not they PASS or BREAK the current rule as they come."""),
+                    m_line(f"""> To start **TESTING**, DM me with **`ir/test`**. In the PHASE TWO TEST, you will be 
+                    sequentially shown a series of {self.PARAM['PHASE_2_TEST_LEN']} messages, one by one, and must 
+                    answer whether or not they PASS or BREAK the current rule as they come."""),
 
-					m_line(f"""> The test is considered to be passed if the player gives correct answers for all 
-					messages. If you fail the test, **you will be sent back to INSPECTING**. You will be given no 
-					immediate feedback on whether or not your answers are correct (that is, until you're notified 
-					that you passed the test). You may take the test at most 10 times."""),
+                    m_line(f"""> The test is considered to be passed if the player gives correct answers for all 
+                    messages. If you fail the test, **you will be sent back to INSPECTING**. You will be given no 
+                    immediate feedback on whether or not your answers are correct (that is, until you're notified 
+                    that you passed the test). You may take the test at most 10 times."""),
 
-					m_line(f"""> However, for this PHASE, **you may go back to INSPECTING even after starting a 
-					TEST** by DMing me with **`ir/inspect`**. You will be given access to <#{self.GAME_CHANNEL.id}> 
-					again and will be allowed to read/send more messages. Once you go back to TESTING using 
-					**`ir/test`** as usual, you will be given a completely new test."""),
+                    m_line(f"""> However, for this PHASE, **you may go back to INSPECTING even after starting a 
+                    TEST** by DMing me with **`ir/inspect`**. You will be given access to <#{self.GAME_CHANNEL.id}> 
+                    again and will be allowed to read/send more messages. Once you go back to TESTING using 
+                    **`ir/test`** as usual, you will be given a completely new test."""),
 
-					m_line(f"""> Players that pass the test will receive an amount of points that decays by **{decay_str} 
-					every minute** and by **{wa_str} for every incorrect answer** they give at any point in the test. 
-					Players that don't pass the test, as well as players that passed the test but scored negative, will 
-					receive no points for the round."""),
+                    m_line(f"""> Players that pass the test will receive an amount of points that decays by **{decay_str} 
+                    every minute** and by **{wa_str} for every incorrect answer** they give at any point in the test. 
+                    Players that don't pass the test, as well as players that passed the test but scored negative, will 
+                    receive no points for the round."""),
                 ]
                 
                 if self.PARAM["PHASE_1_LEN"] == 0:
                     lines = lines[2:]
                     lines[0] = f"> Each round lasts **{m_str}**."
                     lines[1] = m_line(f"""> Once the round starts, everyone playing will be able to **INSPECT** the current 
-					rule by sending messages in <#{self.GAME_CHANNEL.id}>. The bot will react to every message 
-					that doesn't use invalid characters with a ✅ **if it passes the rule**, or a ❌ **if it 
-					breaks the rule.** If a message **has invalid characters**, the bot will react with ❔ regardless 
-					of whether it passes the rule or not. You may send as many messages as you want. There is no 
-					penalty or reward for specifically sending messages that break or pass the rule. Valid characters 
-					are letters and spaces. Rules are case-insensitive. All other characters are invalid""")
+                    rule by sending messages in <#{self.GAME_CHANNEL.id}>. The bot will react to every message 
+                    that doesn't use invalid characters with a ✅ **if it passes the rule**, or a ❌ **if it 
+                    breaks the rule.** If a message **has invalid characters**, the bot will react with ❔ regardless 
+                    of whether it passes the rule or not. You may send as many messages as you want. There is no 
+                    penalty or reward for specifically sending messages that break or pass the rule. Valid characters 
+                    are letters and spaces. Rules are case-insensitive. All other characters are invalid""")
                     lines[2] = m_line(f"""> To start **TESTING**, DM me with **`ir/test`**. You will be 
-					sequentially shown a series of {self.PARAM['PHASE_2_TEST_LEN']} messages, one by one, and must 
-					answer whether or not they PASS or BREAK the current rule as they come.""")
+                    sequentially shown a series of {self.PARAM['PHASE_2_TEST_LEN']} messages, one by one, and must 
+                    answer whether or not they PASS or BREAK the current rule as they come.""")
                     lines[4] = m_line(f"""> **You may go back to INSPECTING even after starting a 
-					TEST** by DMing me with **`ir/inspect`**. You will be given access to <#{self.GAME_CHANNEL.id}> 
-					again and will be allowed to read/send more messages. Once you go back to TESTING using 
-					**`ir/test`** as usual, you will be given a completely new test.""")
+                    TEST** by DMing me with **`ir/inspect`**. You will be given access to <#{self.GAME_CHANNEL.id}> 
+                    again and will be allowed to read/send more messages. Once you go back to TESTING using 
+                    **`ir/test`** as usual, you will be given a completely new test.""")
 
             # Post the messages every [message_delay] iterations
             if self.GAME["PERIOD_STEP"] % message_delay == 0:
@@ -662,7 +662,13 @@ class EVENT:
                 
                 rule = self.GAME["RULES"][rnd - 1]
                 
-                verdict, passed = rule(msg)
+                verdict = rule(msg)
+                if verdict == 1:
+                    passed = "✅"
+                elif verdict == 0:
+                    passed = "❌"
+                else:
+                    passed = "❔"
 
                 await message.add_reaction(passed)
 
@@ -681,7 +687,7 @@ class EVENT:
                         for _ in range(10):
                             test_msgs.append(self.generate_test_msg(message.author.id, self.GAME["ROUND"]))
                         
-                        answer_sheet = [self.GAME["RULES"][rnd - 1](msg)[0] for msg in test_msgs]
+                        answer_sheet = [self.GAME["RULES"][rnd - 1](msg) for msg in test_msgs]
 
                         test_view = View()
 
@@ -707,7 +713,7 @@ class EVENT:
                     else:
                         self.reset_test(message.author.id)
                         new_msg = self.generate_test_msg(message.author.id, self.GAME["ROUND"])
-                        new_answer = self.GAME["RULES"][rnd - 1](new_msg)[0]
+                        new_answer = self.GAME["RULES"][rnd - 1](new_msg)
 
                         test_view = View()
 
@@ -790,12 +796,12 @@ class EVENT:
 
                     await message.channel.send(
                     m_line(f"""You have gone back to **inspecting** this round's rule! The test has been hidden 
-					from you.
+                    from you.
 
-					Use **`ir/test`** to stop inspecting and go back to testing. Once you return to the test, **you 
-					will be presented with a new test.**
+                    Use **`ir/test`** to stop inspecting and go back to testing. Once you return to the test, **you 
+                    will be presented with a new test.**
 
-					You are now able to see and talk in <#{self.GAME_CHANNEL.id}> again."""))
+                    You are now able to see and talk in <#{self.GAME_CHANNEL.id}> again."""))
 
             return
     
@@ -877,9 +883,9 @@ class EVENT:
                 m_str = f"{m} minute{'s' if m != 1 else ''} {s} second{'s' if s != 1 else ''}"
 
                 t_msg = (m_line(
-				f"""📝 You have finished **Round {rnd}** in **{m_str}**!
+                f"""📝 You have finished **Round {rnd}** in **{m_str}**!
 
-				Your test results will be revealed once the round ends."""))
+                Your test results will be revealed once the round ends."""))
 
                 await ctx.response.edit_message(content=t_msg, view=None)
                 return
@@ -892,7 +898,7 @@ class EVENT:
                 if n >= 10*required:
                     t_msg = m_line(f"""📝 **Round {rnd} Rules Test!**
 
-					**You have ran out of tests (10) without being able to pass one.**""")
+                    **You have ran out of tests (10) without being able to pass one.**""")
 
                     await ctx.response.edit_message(content=t_msg, view=None)
                 elif n%self.PARAM["PHASE_2_TEST_LEN"] == 0:
@@ -913,19 +919,19 @@ class EVENT:
 
                     await player.send(
                     m_line(f"""You have failed the test, so you have been sent back to **inspecting** 
-					this round's rule.
+                    this round's rule.
 
-					Use **`ir/test`** to stop inspecting and go back to testing. Once you return to the test, **you 
-					will be presented with a new test.**
+                    Use **`ir/test`** to stop inspecting and go back to testing. Once you return to the test, **you 
+                    will be presented with a new test.**
 
-					You are now able to see and talk in <#{self.GAME_CHANNEL.id}> again."""))
+                    You are now able to see and talk in <#{self.GAME_CHANNEL.id}> again."""))
                 else:
                     new_msg = self.generate_test_msg(int(user), rnd)
 
                     self.GAME["PLAYER_TESTS"][user_test_ind][1].append(new_msg)
 
                     self.GAME["PLAYER_TESTS"][user_test_ind][2].append(
-                        self.GAME["RULES"][rnd - 1](new_msg)[0])
+                        self.GAME["RULES"][rnd - 1](new_msg))
 
                     t_msg = (f"📝 **Round {rnd} Rules Test!**\n"
                     +f"Answer all the questions to finish the test!"
@@ -949,8 +955,8 @@ class EVENT:
                 t_msg = (m_line(
                 f"""📝 You have finished **Round {rnd}** in **{m_str}**!
 
-				Your last {required} answers were all correct. 
-				It took you {len(self.GAME["PLAYER_TESTS"][user_test_ind][1])//self.PARAM["PHASE_2_TEST_LEN"]} attempts."""))
+                Your last {required} answers were all correct. 
+                It took you {len(self.GAME["PLAYER_TESTS"][user_test_ind][1])//self.PARAM["PHASE_2_TEST_LEN"]} attempts."""))
 
                 await ctx.response.edit_message(content=t_msg, view=None)
                 return
