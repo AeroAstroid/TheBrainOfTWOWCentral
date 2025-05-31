@@ -70,10 +70,10 @@ class EVENT:
 	def start(self, SERVER):
 		self.RUNNING = True
 
-		self.PARAM["PLAYER_ROLE_ID"] = 1204357348009975818
-		self.PARAM["ANNOUNCE_CHANNEL_ID"] = 1204357465203019797
-		self.PARAM["GAME_CHANNEL_ID"] = 1204488926753194074
-		self.PARAM["EVENT_ADMIN_ID"] = 1067512238497349753
+		self.PARAM["PLAYER_ROLE_ID"] = 498254150044352514
+		self.PARAM["ANNOUNCE_CHANNEL_ID"] = 598613590190325760
+		self.PARAM["GAME_CHANNEL_ID"] = 830232343331209216
+		self.PARAM["EVENT_ADMIN_ID"] = 959155078844010546
 
 		self.EVENT_ADMIN = dc.utils.get(SERVER["MAIN"].roles, id=self.PARAM["EVENT_ADMIN_ID"])
 
@@ -330,7 +330,7 @@ class EVENT:
 					if self.GAME["POINT_CUTOFFS"][new_round] > 0:
 						await self.ANNOUNCE_CHANNEL.send(f"After this round, contestants below **{self.GAME['POINT_CUTOFFS'][new_round]}** points will be eliminated.")
 					self.GAME["PERIOD_STEP"] = -1
-					self.GAME["NEXT_PERIOD"] = int(time() + 5) # change later
+					self.GAME["NEXT_PERIOD"] = int(time() + 20)
 					self.GAME["ROUND"] = -new_round
 
 				else:
@@ -495,7 +495,7 @@ class EVENT:
 
 				if ind >= len(lines):
 					self.GAME["ROUND"] = -1 if self.GAME['PHASE'] == 1 else -(self.PARAM['PHASE_1_LEN']+1)
-					self.GAME["NEXT_PERIOD"] = int(time() + 5) # change later
+					self.GAME["NEXT_PERIOD"] = int(time() + 30)
 					self.GAME["PERIOD_STEP"] = 0
 
 					phase_msg = f"Phase {self.GAME['PHASE']} and " if self.PARAM['PHASE_1_LEN'] > 0 and self.PARAM['PHASE_2_LEN'] > 0 else ''
