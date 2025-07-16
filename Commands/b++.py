@@ -39,6 +39,10 @@ REQ = []
 LATEST_BUTTONS = {}
 
 async def MAIN(message, args, level, perms, SERVER):
+
+	if message.channel.id == 598616636823437352 and perms < 2:
+		return
+	
 	if level == 1:
 		await message.channel.send("Include a subcommand!")
 		return
