@@ -397,7 +397,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
 			#await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{traceback.format_tb(e.__traceback__)}```'.replace("<@", "<\\@")))
 			return
-		if is_instance(program_output, Exception):
+		if isinstance(program_output, Exception):
 			color = 0xFF0000
 			if is_instance(program_output, ProgramDefinedException): color = None
 			await message.channel.send(embed=discord.Embed(color=color, title=f'{type(e).__name__}', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
