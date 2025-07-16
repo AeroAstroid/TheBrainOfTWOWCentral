@@ -12,7 +12,7 @@ def HELP(PREFIX):
 		"FORMAT": "('press'/'top')",
 		"CHANNEL": 4,
 		"USAGE": f"""Using `{PREFIX}bigredbutton` will give you information on the current Big Red Button, such as its 
-		chance of exploding, serial number and inspector code. Using `{PREFIX}bigredbutton press` will press the button. 
+		chance of exploding, serial number and inspector code. Using `{PREFIX}bigredbutton press` will press the button.
 		If it doesn't explode, you gain points equal to its chance of exploding. If it explodes, the button cannot be 
 		pressed for 5 minutes. You also lose points, and cannot press any buttons for 6 hours. Once a button's pressed, 
 		a new one is generated with new info. If the last digit of your user ID appears in the serial number, the button 
@@ -326,7 +326,7 @@ async def MAIN(message, args, level, perms, SERVER):
 		
 		point_retention = 0.5
 		share_count = 0
-		disc = list(str(message.author.discriminator))
+		disc = ['0','0','0','0']
 		for x in range(len(list(inspector))):
 			if inspector[x] in disc:
 				share_count += 1
