@@ -399,7 +399,7 @@ async def MAIN(message, args, level, perms, SERVER):
 			return
 		if isinstance(program_output, Exception):
 			color = 0xFF0000
-			if is_instance(program_output, ProgramDefinedException): color = None
+			if isinstance(program_output, ProgramDefinedException): color = None
 			await message.channel.send(embed=discord.Embed(color=color, title=f'{type(e).__name__}', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
 			return
 		
