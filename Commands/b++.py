@@ -393,12 +393,14 @@ async def MAIN(message, args, level, perms, SERVER):
 	async def evaluate_and_send(program, program_args, author, runner, message, is_button=False):
 		try:
 			program_output, buttons = run_bpp_program(program, program_args, author, runner, message.channel)
-		except ProgramDefinedException as e:
-			await message.channel.send(embed=discord.Embed(title=f'{type(e).__name__}', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
-			return
 		except Exception as e:
 			await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
 			#await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{traceback.format_tb(e.__traceback__)}```'.replace("<@", "<\\@")))
+			return
+		if is_instance(program_output, Exception):
+			color = 0xFF0000
+			if is_instance(program_output, ProgramDefinedException): color = None
+			await message.channel.send(embed=discord.Embed(color=color, title=f'{type(e).__name__}', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
 			return
 		
 		program_output = program_output
