@@ -336,9 +336,9 @@ def run_bpp_program(code, p_args, author, runner, channel):
 			if is_whole(k):
 				if type(v) == list: v = express_array(v)
 				results.append(v)
-				
-	except Exception as stored_error:
-		pass
+	
+	except Exception as e:
+		stored_error = e
 
 	for v_name, value in tag_globals.items():
 		if not value[2]: continue
