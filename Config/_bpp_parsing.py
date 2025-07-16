@@ -76,263 +76,269 @@ def run_bpp_program(code, p_args, author, runner, channel):
 	output = "" # Stores the final output of the program
 
 	goto = 0 # Skip characters in evaluating the code
-		
-	for ind, char in enumerate(list(code)):
-		normal_case = True
 
-		if ind < goto:
-			continue
-
-		if backslashed:
-			if tag_code == []:
-				output += char
-			else:
-				current[0] += char
-			
-			backslashed = False
-			continue
-
-		if char == "\\":
-			backslashed = True
-			continue
-
-		if char == "[" and not current[1]:
-			tag_level += 1
-
-			if tag_level == 1:
-				try:
-					tag_code = [max([int(k) for k in functions if is_whole(k)]) + 1]
-				except ValueError:
-					tag_code = [0]
+	stored_error = None
+	
+	try:
+		for ind, char in enumerate(list(code)):
+			normal_case = True
+	
+			if ind < goto:
+				continue
+	
+			if backslashed:
+				if tag_code == []:
+					output += char
+				else:
+					current[0] += char
 				
-				output += "{}"
-
-				found_f = ""
-
-				for f_name in FUNCTIONS.keys():
+				backslashed = False
+				continue
+	
+			if char == "\\":
+				backslashed = True
+				continue
+	
+			if char == "[" and not current[1]:
+				tag_level += 1
+	
+				if tag_level == 1:
 					try:
-						attempted_f = ''.join(code[ind+1:ind+len(f_name)+2]).upper()
-						if attempted_f == f_name + " ":
-							found_f = f_name
-							goto = ind + len(f_name) + 2
-						elif attempted_f == f_name + "]":
-							found_f = f_name
-							goto = ind + len(f_name) + 1
-					except IndexError: pass
+						tag_code = [max([int(k) for k in functions if is_whole(k)]) + 1]
+					except ValueError:
+						tag_code = [0]
+					
+					output += "{}"
+	
+					found_f = ""
+	
+					for f_name in FUNCTIONS.keys():
+						try:
+							attempted_f = ''.join(code[ind+1:ind+len(f_name)+2]).upper()
+							if attempted_f == f_name + " ":
+								found_f = f_name
+								goto = ind + len(f_name) + 2
+							elif attempted_f == f_name + "]":
+								found_f = f_name
+								goto = ind + len(f_name) + 1
+						except IndexError: pass
+					
+					if found_f == "":
+						end_of_f = min(code.find(" ", ind+1), code.find("]", ind+1))
+						called_f = ''.join(code[ind+1:end_of_f])
+						raise NameError(f"Function {called_f} does not exist")
+					
+					functions[tag_str()] = [found_f]
 				
-				if found_f == "":
-					end_of_f = min(code.find(" ", ind+1), code.find("]", ind+1))
-					called_f = ''.join(code[ind+1:end_of_f])
-					raise NameError(f"Function {called_f} does not exist")
+				else:
+					old_tag_code = tag_str()
+					
+					k = 1
+					while old_tag_code + f" {k}" in functions.keys():
+						k += 1
+	
+					new_tag_code = old_tag_code + f" {k}"
+	
+					found_f = ""
+	
+					for f_name in FUNCTIONS.keys():
+						try:
+							attempted_f = ''.join(code[ind+1:ind+len(f_name)+2]).upper()
+							if attempted_f == f_name + " ":
+								found_f = f_name
+								goto = ind + len(f_name) + 2
+							elif attempted_f == f_name + "]":
+								found_f = f_name
+								goto = ind + len(f_name) + 1
+						except IndexError: pass
+					
+					if found_f == "":
+						end_of_f = min(code.find(" ", ind+1), code.find("]", ind+1))
+						called_f = ''.join(code[ind+1:end_of_f])
+						raise NameError(f"Function {called_f} does not exist")
+	
+					functions[new_tag_code] = [found_f]
+					functions[tag_str()].append((new_tag_code,))
+	
+					tag_code.append(k)
 				
-				functions[tag_str()] = [found_f]
+				normal_case = False
 			
-			else:
-				old_tag_code = tag_str()
-				
-				k = 1
-				while old_tag_code + f" {k}" in functions.keys():
-					k += 1
-
-				new_tag_code = old_tag_code + f" {k}"
-
-				found_f = ""
-
-				for f_name in FUNCTIONS.keys():
-					try:
-						attempted_f = ''.join(code[ind+1:ind+len(f_name)+2]).upper()
-						if attempted_f == f_name + " ":
-							found_f = f_name
-							goto = ind + len(f_name) + 2
-						elif attempted_f == f_name + "]":
-							found_f = f_name
-							goto = ind + len(f_name) + 1
-					except IndexError: pass
-				
-				if found_f == "":
-					end_of_f = min(code.find(" ", ind+1), code.find("]", ind+1))
-					called_f = ''.join(code[ind+1:end_of_f])
-					raise NameError(f"Function {called_f} does not exist")
-
-				functions[new_tag_code] = [found_f]
-				functions[tag_str()].append((new_tag_code,))
-
-				tag_code.append(k)
-			
-			normal_case = False
-		
-		if char == "]" and not current[1]:
-			if current[0] != "":
-				functions[tag_str()].append(current[0])
-				current = ["", False]
-			tag_level -= 1
-			normal_case = False
-		
-		if char in " \n":
-			if not current[1] and tag_level != 0:
+			if char == "]" and not current[1]:
 				if current[0] != "":
 					functions[tag_str()].append(current[0])
 					current = ["", False]
+				tag_level -= 1
 				normal_case = False
-		
-		if char in '"“”':
-			if current[0] == "" and not current[1]:
-				current[1] = True
-			elif current[1]:
-				functions[tag_str()].append(current[0])
-				current = ["", False]
-			normal_case = False
-		
-		if normal_case:
-			if tag_level == 0: output += char
-			else: current[0] += char
-		
-		tag_code = tag_code[:tag_level]
-		tag_code += [1] * (tag_level - len(tag_code))
-
-	VARIABLES = {}
-
-	base_keys = [k for k in functions if is_whole(k)]
-
-	type_list = [int, float, str, list]
-
-	db = Database()		
-	match = re.finditer("(?i)\[global var \w*?\]", code)
-	found_vars = []
-	for var in match:
-		var = var[0].replace("]", "").replace("\n", " ").strip().split(" ")[-1]
-		found_vars.append(var)
+			
+			if char in " \n":
+				if not current[1] and tag_level != 0:
+					if current[0] != "":
+						functions[tag_str()].append(current[0])
+						current = ["", False]
+					normal_case = False
+			
+			if char in '"“”':
+				if current[0] == "" and not current[1]:
+					current[1] = True
+				elif current[1]:
+					functions[tag_str()].append(current[0])
+					current = ["", False]
+				normal_case = False
+			
+			if normal_case:
+				if tag_level == 0: output += char
+				else: current[0] += char
+			
+			tag_code = tag_code[:tag_level]
+			tag_code += [1] * (tag_level - len(tag_code))
 	
-	v_list = db.get_entries("b++2variables", columns=["name", "value", "type", "owner"])
-	v_list = [v for v in v_list if v[0] in found_vars]
-
-	for v in v_list:
-		if type_list[v[2]] == list:
-			v_value = undo_str_array(v[1])
-		else:
-			v_value = type_list[v[2]](v[1])
-		tag_globals[v[0]] = [v_value, str(v[3]), False]	
+		VARIABLES = {}
 	
-	def var_type(v):
-		try:
-			return type_list.index(type(v))
-		except IndexError:
-			raise TypeError(f"Value {safe_cut(v)} could not be attributed to any valid data type")
+		base_keys = [k for k in functions if is_whole(k)]
 	
-	def evaluate_result(k):
-		v = functions[k]
-
-		if type(v) == tuple:
-			k1 = v[0]
-			functions[k] = evaluate_result(k1)
-			return functions[k]
+		type_list = [int, float, str, list]
+	
+		db = Database()		
+		match = re.finditer("(?i)\[global var \w*?\]", code)
+		found_vars = []
+		for var in match:
+			var = var[0].replace("]", "").replace("\n", " ").strip().split(" ")[-1]
+			found_vars.append(var)
 		
-		args = v[1:]
-
-		for i, a in enumerate(args):
-			if v[0] == "IF" and is_whole(v[1]) and int(v[1]) != 2-i:
-				continue
-			if type(a) == tuple:
-				k1 = a[0]
-				functions[k][i+1] = evaluate_result(k1)
+		v_list = db.get_entries("b++2variables", columns=["name", "value", "type", "owner"])
+		v_list = [v for v in v_list if v[0] in found_vars]
+	
+		for v in v_list:
+			if type_list[v[2]] == list:
+				v_value = undo_str_array(v[1])
+			else:
+				v_value = type_list[v[2]](v[1])
+			tag_globals[v[0]] = [v_value, str(v[3]), False]	
 		
-		args = v[1:]
-
-		result = FUNCTIONS[v[0]](*args)
-
-		# Tuples indicate special behavior necessary
-		if type(result) == tuple:
-			if result[0] == "d":
-				if len(str(result[1])) > 100000:
-					raise MemoryError(
-					f"The variable {safe_cut(args[0])} is too large: {safe_cut(result[1])} (limit 100kb)")
+		def var_type(v):
+			try:
+				return type_list.index(type(v))
+			except IndexError:
+				raise TypeError(f"Value {safe_cut(v)} could not be attributed to any valid data type")
+		
+		def evaluate_result(k):
+			v = functions[k]
+	
+			if type(v) == tuple:
+				k1 = v[0]
+				functions[k] = evaluate_result(k1)
+				return functions[k]
+			
+			args = v[1:]
+	
+			for i, a in enumerate(args):
+				if v[0] == "IF" and is_whole(v[1]) and int(v[1]) != 2-i:
+					continue
+				if type(a) == tuple:
+					k1 = a[0]
+					functions[k][i+1] = evaluate_result(k1)
+			
+			args = v[1:]
+	
+			result = FUNCTIONS[v[0]](*args)
+	
+			# Tuples indicate special behavior necessary
+			if type(result) == tuple:
+				if result[0] == "d":
+					if len(str(result[1])) > 100000:
+						raise MemoryError(
+						f"The variable {safe_cut(args[0])} is too large: {safe_cut(result[1])} (limit 100kb)")
+						
+					VARIABLES[args[0]] = result[1]
+					result = ""
+	
+				elif result[0] == "v":
+					try:
+						result = VARIABLES[args[0]]
+					except KeyError:
+						raise NameError(f"No variable by the name {safe_cut(args[0])} defined")
+	
+				elif result[0] == "a":
+					if result[1] >= len(p_args) or -result[1] >= len(p_args) + 1:
+						result = ""
+					else:
+						result = p_args[result[1]]
+	
+				elif result[0] == "gd":
+					v_name = args[0]
+					if len(str(result[1])) > 100000:
+						raise MemoryError(
+							f"The global variable {safe_cut(v_name)} is too large: {safe_cut(result[1])} (limit 100kb)")
 					
-				VARIABLES[args[0]] = result[1]
-				result = ""
-
-			elif result[0] == "v":
-				try:
-					result = VARIABLES[args[0]]
-				except KeyError:
-					raise NameError(f"No variable by the name {safe_cut(args[0])} defined")
-
-			elif result[0] == "a":
-				if result[1] >= len(p_args) or -result[1] >= len(p_args) + 1:
-					result = ""
-				else:
-					result = p_args[result[1]]
-
-			elif result[0] == "gd":
-				v_name = args[0]
-				if len(str(result[1])) > 100000:
-					raise MemoryError(
-						f"The global variable {safe_cut(v_name)} is too large: {safe_cut(result[1])} (limit 100kb)")
+					if v_name in tag_globals.keys():
+						if tag_globals[v_name][1] == str(author):
+							tag_globals[v_name][2] = True
+							tag_globals[v_name][0] = copy.deepcopy(result[1]) if type(result[1]) == list else result[1]
+						else:
+							raise PermissionError(
+						 		f"Only the author of the {v_name} variable can edit its value ({tag_globals[v_name][1]})")
 				
-				if v_name in tag_globals.keys():
-					if tag_globals[v_name][1] == str(author):
-						tag_globals[v_name][2] = True
-						tag_globals[v_name][0] = copy.deepcopy(result[1]) if type(result[1]) == list else result[1]
-					else:
-						raise PermissionError(
-					 		f"Only the author of the {v_name} variable can edit its value ({tag_globals[v_name][1]})")
-			
-					result = ""
-			
-				else:
-					tag_globals[v_name] = [result[1], str(author), True]
-					result = ""
+						result = ""
 				
-			elif result[0] == "gv":
-				v_name = args[0]
-				if v_name in tag_globals.keys():
-					result = tag_globals[v_name][0]
-				else:
-					if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
-						raise NameError(f"No global variable by the name {safe_cut(v_name)} defined")
-	
-					v_list = db.get_entries("b++2variables", columns=["name", "value", "type", "owner"])
-					v_value, v_type, v_owner = [v[1:4] for v in v_list if v[0] == v_name][0]
-
-					if type_list[v_type] == list:
-						v_value = undo_str_array(v_value)
 					else:
-						v_value = type_list[v_type](v_value)
-
-					tag_globals[v_name] = [v_value, str(v_owner), False]
-	
-					result = v_value
-
-			elif result[0] == "n":
-				result = runner.name
-
-			elif result[0] == "id":
-				result = runner.id
-			
-			elif result[0] == "aa":
-				result = p_args
-
-			elif result[0] == "c_id":
-				result = channel.id
-
-			elif result[0] == "b":
-				buttons_to_add.append(args)
-				result = ""
+						tag_globals[v_name] = [result[1], str(author), True]
+						result = ""
+					
+				elif result[0] == "gv":
+					v_name = args[0]
+					if v_name in tag_globals.keys():
+						result = tag_globals[v_name][0]
+					else:
+						if (v_name,) not in db.get_entries("b++2variables", columns=["name"]):
+							raise NameError(f"No global variable by the name {safe_cut(v_name)} defined")
 		
-		functions[k] = result
-		return result
-
-	for k in base_keys:
-		evaluate_result(k)
+						v_list = db.get_entries("b++2variables", columns=["name", "value", "type", "owner"])
+						v_value, v_type, v_owner = [v[1:4] for v in v_list if v[0] == v_name][0]
 	
-	for k in base_keys:
-		if type(functions[k]) == tuple:
+						if type_list[v_type] == list:
+							v_value = undo_str_array(v_value)
+						else:
+							v_value = type_list[v_type](v_value)
+	
+						tag_globals[v_name] = [v_value, str(v_owner), False]
+		
+						result = v_value
+	
+				elif result[0] == "n":
+					result = runner.name
+	
+				elif result[0] == "id":
+					result = runner.id
+				
+				elif result[0] == "aa":
+					result = p_args
+	
+				elif result[0] == "c_id":
+					result = channel.id
+	
+				elif result[0] == "b":
+					buttons_to_add.append(args)
+					result = ""
+			
+			functions[k] = result
+			return result
+	
+		for k in base_keys:
 			evaluate_result(k)
-
-	results = []
-	for k, v in functions.items():
-		if is_whole(k):
-			if type(v) == list: v = express_array(v)
-			results.append(v)
+		
+		for k in base_keys:
+			if type(functions[k]) == tuple:
+				evaluate_result(k)
+	
+		results = []
+		for k, v in functions.items():
+			if is_whole(k):
+				if type(v) == list: v = express_array(v)
+				results.append(v)
+				
+	except Exception as stored_error:
+		pass
 
 	for v_name, value in tag_globals.items():
 		if not value[2]: continue
@@ -358,7 +364,7 @@ def run_bpp_program(code, p_args, author, runner, channel):
 	
 	output = output.replace("{}", "\t").replace("{", "{{").replace("}", "}}").replace("\t", "{}")
 
-	return [output.format(*results).replace("\v", "{}")+debug_values,buttons_to_add]
+	return [stored_error if stored_error is not None else output.format(*results).replace("\v", "{}")+debug_values, buttons_to_add]
 
 if __name__ == "__main__":
 	program = input("Program:\n\t")
