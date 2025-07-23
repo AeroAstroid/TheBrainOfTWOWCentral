@@ -34,6 +34,9 @@ REQ = []
 
 async def MAIN(message, args, level, perms, SERVER):
 
+	if message.channel.id == 598616636823437352 and perms < 2:
+		return
+	
 	if isinstance(message.channel, discord.DMChannel): # Everyone should be able to see button presses
 		await message.channel.send("This command cannot be used in DMs!")
 		return
