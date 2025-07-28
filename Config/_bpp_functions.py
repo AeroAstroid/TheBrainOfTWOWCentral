@@ -21,13 +21,6 @@ def safe_cut(s):
 def weak_index(a,b,c=None,d=None):
 	try:
 		a = a[c:d]
-		if is_whole(b): b = int(b)
-		if type(b) != list: b = str(b)		
-			
-		for i in range(len(a)):
-			if is_whole(a[i]): a[i] = int(a[i])
-			if type(a[i]) != list: a[i] = str(a[i])
-		
 		return a.index(b)
 	except:
 		return ""
