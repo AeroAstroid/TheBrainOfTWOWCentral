@@ -59,6 +59,9 @@ async def accept_file_or_message(message):
 async def MAIN(message, args, level, perms, SERVER, LOGIN):
 	bs_version = 1  # 0 = b++, 1 = b* (1.0)
 
+	if message.channel.id == 598616636823437352 and perms < 2:
+		return
+
 	if level == 1:
 		await message.channel.send("Include a subcommand!")
 		return
