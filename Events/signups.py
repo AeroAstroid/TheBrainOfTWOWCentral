@@ -118,7 +118,7 @@ class EVENT:
 					msg = await self.CHANNEL.send("<@&723946317839073370>")
 					print("Pinging for TWOW!")
 				
-				# await msg.delete() // Athina, testing 2025-10-18
+				await msg.delete() # Athina flipped this for testing on 2025-10-18
 
 		formatted_list = []
 		for twow in twow_list:
