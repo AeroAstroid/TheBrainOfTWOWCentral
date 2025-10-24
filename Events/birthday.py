@@ -116,8 +116,10 @@ class EVENT:
 			found = self.db.get_entries("birthday", columns=["id"], conditions={"birthday": l_d, "timezone": tz[0]})
 			print("No more birthday:", found)
 			for member in found: # Remove their birthday role, as their birthday just ended
-				await self.SERVER["MAIN"].get_member(int(member[0])).remove_roles(self.BIRTHDAY_ROLE)
-
+				try: 
+					await self.SERVER["MAIN"].get_member(int(member[0])).remove_roles(self.BIRTHDAY_ROLE)
+				except:
+					pass
 			# Now, search for members whose birthday just started (today, in the day-changing timezone = it's midnight)
 			found = self.db.get_entries("birthday", columns=["id"], conditions={"birthday": tz[1], "timezone": tz[0]})
 			print("More birthday:", found)
@@ -126,12 +128,15 @@ class EVENT:
 			
 			# If there are members, cycle through each of them.
 			for member in found:
-				if self.BIRTHDAY_ROLE in self.SERVER["MAIN"].get_member(int(member[0])).roles:
-					found[found.index(member)] = 0 # If they already have the birthday role, they're being counted
-					continue # again, and this is a mistake. Change their id in found to 0 and continue
-
-				# If they don't have the birthday role, give it to them
-				await self.SERVER["MAIN"].get_member(int(member[0])).add_roles(self.BIRTHDAY_ROLE)
+				try:
+					if self.BIRTHDAY_ROLE in self.SERVER["MAIN"].get_member(int(member[0])).roles:
+						found[found.index(member)] = 0 # If they already have the birthday role, they're being counted
+						continue # again, and this is a mistake. Change their id in found to 0 and continue
+	
+					# If they don't have the birthday role, give it to them
+					await self.SERVER["MAIN"].get_member(int(member[0])).add_roles(self.BIRTHDAY_ROLE)
+				except:
+					found[found.index(member)] = 0
 
 			found = [x for x in found if x != 0] # Remove those who already had their birthday counted to avoid
 			# birthday ping repeats.
