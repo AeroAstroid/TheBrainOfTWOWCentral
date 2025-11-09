@@ -143,25 +143,26 @@ def ARGS(a=None):
 	
 	return ("a", int(a))
 
-def GLOBALDEFINE(a, b):
+def GLOBAL(a, b, c=None):
 	if type(a) != str:
-		raise NameError(f"Global variable name must be a string: {safe_cut(a)}")
+		raise NameError(f"Global function type must be a string")
+	if type(b) != str:
+		raise NameError(f"Global variable name must be a string: {safe_cut(b)}")
 
-	if re.search(r"[^A-Za-z_0-9]", a) or re.search(r"[0-9]", a[0]):
+	if re.search(r"[^A-Za-z_0-9]", b) or re.search(r"[0-9]", b[0]):
 		raise NameError(
-		f"Global variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
-	
-	return ("gd", b)
+		f"Global variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(b)}")
 
-def GLOBALVAR(a):
-	if type(a) != str:
-		raise NameError(f"Global variable name must be a string: {safe_cut(a)}")
-
-	if re.search(r"[^A-Za-z_0-9]", a) or re.search(r"[0-9]", a[0]):
+	if a.upper() == "DEFINE":
+		if c is None:
+			raise NameError(f"Global define's second parameter must be set")
+		return ("gd", c)
+	elif a.upper() == "VAR":
+		return ("gv", b)
+	else:
 		raise NameError(
-		f"Global variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
-	
-	return ("gv", a)
+		f"GLOBAL {a.upper()} is not a function")
+
 
 def DEFINE(a, b):
 	if type(a) != str:
@@ -498,8 +499,7 @@ FUNCTIONS = {
 	"ARGS": ARGS,
 	"ABS": ABS,
 	"#": COMMENT,
-	"GLOBAL DEFINE": GLOBALDEFINE,
-	"GLOBAL VAR": GLOBALVAR,
+	"GLOBAL": GLOBAL,
 	"MOD": MOD,
 	"LENGTH": LENGTH,
 	"USERNAME": USERNAME,
