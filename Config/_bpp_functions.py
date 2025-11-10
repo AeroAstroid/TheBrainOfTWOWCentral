@@ -156,7 +156,7 @@ def GLOBAL(a, b, c=None):
 	if a.upper() == "DEFINE":
 		if c is None:
 			raise NameError(f"Global define's second parameter must be set")
-		return ("gd", b, c)
+		return ("gd", c)
 	elif a.upper() == "VAR":
 		return ("gv", b)
 	else:

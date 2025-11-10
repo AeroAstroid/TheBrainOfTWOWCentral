@@ -338,10 +338,10 @@ def run_bpp_program(code, p_args, author, runner, channel):
 						result = p_args[result[1]]
 	
 				elif result[0] == "gd":
-					v_name = result[1]
-					if len(str(result[2])) > 100000:
+					v_name = evaluated_args[0]
+					if len(str(result[1])) > 100000:
 						raise MemoryError(
-							f"The global variable {safe_cut(v_name)} is too large: {safe_cut(result[2])} (limit 100kb)")
+							f"The global variable {safe_cut(v_name)} is too large: {safe_cut(result[1])} (limit 100kb)")
 					
 					if v_name in tag_globals.keys():
 						if tag_globals[v_name][1] == str(author):
@@ -354,11 +354,11 @@ def run_bpp_program(code, p_args, author, runner, channel):
 						result = ""
 
 					else:
-						tag_globals[v_name] = [result[2], str(author), True]
+						tag_globals[v_name] = [result[1], str(author), True]
 						result = ""
 
 				elif result[0] == "gv":
-					v_name = result[1]
+					v_name = evaluated_args[0]
 					if v_name in tag_globals.keys():
 						result = tag_globals[v_name][0]
 					else:
