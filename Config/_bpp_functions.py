@@ -470,7 +470,7 @@ def PARAM(a=None, b=None):
 
 	throw_on_unsupplied_parameter = False
 
-	if b.upper() == "THROWS":
+	if (b is not None) and (b,upper() == "THROWS"):
 		throw_on_unsupplied_parameter = True
 
 	if a is None or a.upper() == "ALL":
