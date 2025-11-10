@@ -276,11 +276,13 @@ def run_bpp_program(code, p_args, author, runner, channel):
 					result = evaluate_result(try_stmt[0], func_params, custom_func_name, no_memoize) if type(try_stmt) == tuple else try_stmt
 				except Exception as e:
 					if isinstance(e, ProgramDefinedException):
-						VARIABLES["__bpp_exc_class"] = e.pseudo_class_name if e.pseudo_class_name else "ProgramDefinedException"
-						VARIABLES["__bpp_exc_desc"] = str(e)
+						VARIABLES["bpp.exc.class"] = e.pseudo_class_name if e.pseudo_class_name else "ProgramDefinedException"
+						VARIABLES["bpp.exc.desc"] = str(e)
+						VARIABLES["bpp.exc.program_defined"] = 1
 					else:
-						VARIABLES["__bpp_exc_class"] = type(e).__name__
-						VARIABLES["__bpp_exc_desc"] = str(e)
+						VARIABLES["bpp.exc.class"] = type(e).__name__
+						VARIABLES["bpp.exc.desc"] = str(e)
+						VARIABLES["bpp.exc.program_defined"] = 0
 					result = evaluate_result(exc_stmt[0], func_params, custom_func_name, no_memoize) if type(exc_stmt) == tuple else exc_stmt
 
 				if not no_memoize:
@@ -466,4 +468,4 @@ if __name__ == "__main__":
 			traceback.print_exception(_res[0])
 		else:
 			print(_res)
-# [TRY [THROW "aeugh" "CustomExceptionName"] [CONCAT "Woa, error! (" [VAR __bpp_exc_class] "). Details: " [VAR __bpp_exc_type]]]
+# [TRY [THROW "aeugh" "CustomExceptionName"] [CONCAT "Woa, error! (" [VAR bpp.exc.class] "). Details: " [VAR bpp.exc.desc]]]

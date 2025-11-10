@@ -168,19 +168,23 @@ def DEFINE(a, b):
 	if type(a) != str:
 		raise NameError(f"Variable name must be a string: {safe_cut(a)}")
 
-	if re.search(r"[^A-Za-z_0-9]", a) or re.search(r"[0-9]", a[0]):
+	if re.search(r"[^A-Za-z_0-9\\.]", a) or re.search(r"[0-9]", a[0]):
 		raise NameError(
-		f"Variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
-	
+		f"Variable name must be only letters, underscores, periods, and numbers, and cannot start with a number: {safe_cut(a)}")
+
+	if a[:4] == "bpp.":
+		raise NameError(
+		f"Variable name may not start with 'bpp.': {safe_cut(a)}")
+
 	return ("d", b)
 
 def VAR(a):
 	if type(a) != str:
 		raise NameError(f"Variable name must be a string: {safe_cut(a)}")
 
-	if re.search(r"[^A-Za-z_0-9]", a) or re.search(r"[0-9]", a[0]):
+	if re.search(r"[^A-Za-z_0-9\\.]", a) or re.search(r"[0-9]", a[0]):
 		raise NameError(
-		f"Variable name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(a)}")
+		f"Variable name must be only letters, underscores, periods, and numbers, and cannot start with a number: {safe_cut(a)}")
 	
 	return ("v", a)
 
@@ -461,7 +465,7 @@ def FUNC(a, b):
 	
 	if re.search(r"[^A-Za-z_0-9]", name) or (name and re.search(r"[0-9]", name[0])):
 		raise NameError(
-		f"Function name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(name)}")
+		f"Function name must be only letters, underscores, and numbers, and cannot start with a number: {safe_cut(name)}")
 	return ("func_def", name.upper(), code)
 
 def PARAM(a=None, b=None):
