@@ -390,6 +390,7 @@ def run_bpp_program(code, p_args, author, runner, channel):
 						result = ""
 					else:
 						result = func_params[result[1]]
+					print(result)
 				elif result[0] == 'pa':
 					if func_params is None: raise NameError(
 						"PARAM function cannot be used outside of a custom function.")
