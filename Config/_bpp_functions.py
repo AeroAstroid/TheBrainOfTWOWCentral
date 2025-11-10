@@ -8,14 +8,8 @@ except ModuleNotFoundError:
 	from _const import ALPHABET
 	from _functions import is_float, is_whole, is_number, strip_alpha, match_count
 
-class ProgramDefinedException(Exception):
-	def __init__(self, details, pseudo_class_name):
-		super().__init__(self, details)
-		self._details = details
-		self.pseudo_class_name = pseudo_class_name
-
-	def __str__(self):
-		return self._details
+class ProgramDefinedException(Exception): # used in THROW
+	pass
 
 def express_array(l):
 	str_form = " ".join(["\"" + str(a) + "\"" for a in l])
@@ -309,8 +303,8 @@ def RANDOM(a, b):
 
 	return random.uniform(a, b)
 
-def THROW(a, b=None):
-	raise ProgramDefinedException(a, b)
+def THROW(a): # don't need to check, because either way it'll error
+	raise ProgramDefinedException(a)
 	
 def TYPEFUNC(a):
 	if is_whole(a): return "int"
@@ -451,32 +445,6 @@ def CHANNEL():
 def BUTTON(a,b=""):
 	return ("b",)
 
-def FUNC(a, b):
-	name = a
-	code = b
-
-	if type(name) != str:
-		raise NameError(f"Function name must be a string: {safe_cut(name)}")
-	
-	if re.search(r"[^A-Za-z_0-9]", name) or (name and re.search(r"[0-9]", name[0])):
-		raise NameError(
-		f"Function name must be only letters, underscores and numbers, and cannot start with a number: {safe_cut(name)}")
-	return ("func_def", name.upper(), code)
-
-def PARAM(a=None, b=None):
-	if (not is_whole(a) or a.upper() == "ALL") and a is not None:
-		raise ValueError(f"PARAM function index must be an integer: {safe_cut(a)}")
-
-	throw_on_unsupplied_parameter = False
-
-	if b.upper() == "THROWS":
-		throw_on_unsupplied_parameter = True
-
-	if a is None or a.upper() == "ALL":
-		return ("pa", throw_on_unsupplied_parameter)
-	
-	return ("p", int(a), throw_on_unsupplied_parameter)
-
 FUNCTIONS = {
 	"MATH": MATHFUNC,
 	"RANDINT": RANDINT,
@@ -524,7 +492,5 @@ FUNCTIONS = {
 	"CHAR" : CHARFUNC,
 	"UNICODE" : UNICODE,
 	"CHANNEL" : CHANNEL,
-	"BUTTON" : BUTTON,
-	"FUNC": FUNC,
-	"PARAM": PARAM
+	"BUTTON" : BUTTON
 }

@@ -394,17 +394,13 @@ async def MAIN(message, args, level, perms, SERVER):
 		try:
 			program_output, buttons = run_bpp_program(program, program_args, author, runner, message.channel)
 		except Exception as e:
-			if isinstance(e, ProgramDefinedException) and e.pseudo_class_name is not None:
-				await message.channel.send(embed=discord.Embed(color=None, title=f'{e.pseudo_class_name} (program-defined)', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
-			else:
-				await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
+			await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
 			#await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{traceback.format_tb(e.__traceback__)}```'.replace("<@", "<\\@")))
 			return
 		if isinstance(program_output, Exception):
-			if isinstance(program_output, ProgramDefinedException) and program_output.pseudo_class_name is not None:
-				await message.channel.send(embed=discord.Embed(color=None, title=f'{program_output.pseudo_class_name} (program-defined)', description=f'```{program_output}```'),allowed_mentions=discord.AllowedMentions.none())
-			else:
-				await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(program_output).__name__}', description=f'```{program_output}```'),allowed_mentions=discord.AllowedMentions.none())
+			color = 0xFF0000
+			if isinstance(program_output, ProgramDefinedException): color = None
+			await message.channel.send(embed=discord.Embed(color=color, title=f'{type(program_output).__name__}', description=f'```{program_output}```'),allowed_mentions=discord.AllowedMentions.none())
 			return
 		
 		program_output = program_output
@@ -436,11 +432,9 @@ async def MAIN(message, args, level, perms, SERVER):
 					await evaluate_and_send(program, custom_id.split(" ")[2:], author, interaction.user, interaction.message, True)
 				
 				await interaction.response.edit_message(view=None)
-			except Exception as e:
-				if isinstance(e, ProgramDefinedException) and e.pseudo_class_name is not None:
-					await message.channel.send(embed=discord.Embed(color=None, title=f'{e.pseudo_class_name} (program-defined)', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
-				else:
-					await message.channel.send(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}```'),allowed_mentions=discord.AllowedMentions.none())
+			except:
+				await interaction.response.send_message(embed=discord.Embed(color=0xFF0000, title=f'{type(e).__name__}', description=f'```{e}\n\n{traceback.format_tb(e.__traceback__)}```'))
+				
 	
 		out_view = View()
 		for button_value in buttons:
