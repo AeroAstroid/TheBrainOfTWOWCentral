@@ -463,9 +463,9 @@ def FUNC(a, b):
 	if type(name) != str:
 		raise NameError(f"Function name must be a string: {safe_cut(name)}")
 	
-	if re.search(r"[^A-Za-z_0-9\\.]", name) or (name and re.search(r"[0-9]", name[0])):
+	if re.search(r"[^A-Za-z_0-9]", name) or (name and re.search(r"[0-9]", name[0])):
 		raise NameError(
-		f"Function name must be only letters, underscores, periods, and numbers, and cannot start with a number: {safe_cut(name)}")
+		f"Function name must be only letters, underscores, and numbers, and cannot start with a number: {safe_cut(name)}")
 	return ("func_def", name.upper(), code)
 
 def PARAM(a=None, b=None):
