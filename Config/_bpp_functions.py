@@ -15,8 +15,8 @@ def express_array(l):
 	str_form = " ".join(["\"" + str(a) + "\"" for a in l])
 	return f'[ARRAY {str_form}]'
 
-def safe_cut(s):
-	return str(s)[:15] + ("..." if len(str(s)) > 15 else "")
+def safe_cut(s,num=15):
+	return str(s)[:num] + ("..." if len(str(s)) > num else "")
 
 def weak_index(a,b,c=None,d=None):
 	try:
@@ -242,14 +242,50 @@ def MOD(a, b):
 
 	return a % b
 
+def MATHFUNC2(*a):
+
+	expression = "".join([str(x) if type(x) != list else x for x in a]).replace(" ","")
+	operators = set('+-*/^%')
+	values = []   
+	buffer = ''
+	for c in expression:
+		if c in operators and ((c != '-' or len(buffer) > 0) and buffer[-1:] != "e"):
+			values.append(buffer)
+			buffer = ""
+			values.append(c)
+		else:
+			buffer += c
+	if len(buffer) > 0: values.append(buffer)
+
+	values_list = []
+	
+	order = ("^","*/%","+-")
+	for operations in order:
+		i = 0
+		while i+2 < len(values):
+			if str(values[i+1]) in operations:
+				values_list.append(str(values))
+				values[i] = MATHFUNC(values[i],values[i+1],values[i+2])
+				values.pop(i+1)
+				values.pop(i+1)
+			else: i += 1
+
+	if len(values) > 1:
+		raise ValueError(f"Parameters of MATH function do not result in a single value: {' '.join(a)}")
+
+	out = values[0]
+	return int(out) if is_whole(out) else float(out)
+				
+
+
 def MATHFUNC(a, b, c):
 	operations = "+-*/^%"
 	if not is_number(a):
-		raise ValueError(f"First parameter of MATH function is not a number: {safe_cut(a)}")
+		raise ValueError(f"First parameter of MATH function is not a number: {safe_cut(a),1000}")
 	if b not in operations:
-		raise ValueError(f"Operation parameter of MATH function not an operation: {safe_cut(b)}")
+		raise ValueError(f"Operation parameter of MATH function not an operation: {safe_cut(b),1000}")
 	if not is_number(c):
-		raise ValueError(f"Second parameter of MATH function is not a number: {safe_cut(c)}")
+		raise ValueError(f"Second parameter of MATH function is not a number: {safe_cut(c),1000}")
 
 	a = int(a) if is_whole(a) else float(a)
 	c = int(c) if is_whole(c) else float(c)
@@ -271,7 +307,6 @@ def MATHFUNC(a, b, c):
 	if b == "%":
 		if c == 0: raise ZeroDivisionError(f"Second parameter of MATH function in modulo cannot be zero")
 		return a%c
-	
 	
 	if b == "^":
 		try:
@@ -446,7 +481,7 @@ def BUTTON(a,b=""):
 	return ("b",)
 
 FUNCTIONS = {
-	"MATH": MATHFUNC,
+	"MATH": MATHFUNC2,
 	"RANDINT": RANDINT,
 	"RANDOM": RANDOM,
 	"FLOOR": FLOOR,
