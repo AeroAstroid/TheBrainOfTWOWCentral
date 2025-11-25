@@ -1,4 +1,4 @@
-import time, discord, datetime
+import time, discord, datetime, asyncio
 import numpy as np
 from Config._functions import grammar_list
 from Config._db import Database
@@ -37,6 +37,8 @@ class EVENT:
 		self.CHANNEL = discord.utils.get(self.SERVER["MAIN"].channels, id=msgs[0])
 		self.MESSAGES = [""] * (len(msgs) - 2)
 		self.ANNOUNCE = ""
+		
+		messages_to_delete = []
 
 		async for msg in self.CHANNEL.history(limit=100):
 			if msg.id in msgs:
@@ -108,7 +110,7 @@ class EVENT:
 			else:
 				announce_msg = f"__**Recent list changes:**__\n\n" + "\n".join(new_announcement_list)
 				await self.ANNOUNCE.edit(content=announce_msg)
-			
+
 			for x in just_added:
 				verif = twow_list[new_twow_names.index(x)][-1]
 				if verif == 1:
@@ -117,8 +119,10 @@ class EVENT:
 				else:
 					msg = await self.CHANNEL.send("<@&723946317839073370>")
 					print("Pinging for TWOW!")
-				
-				await msg.delete() # Athina flipped this for testing on 2025-10-18
+					
+				# attempt to fix the no ping bug. hopefully just adding about a 60 second delay before the ping message is deleted should work
+				# the actual deletion has been deferred to the end of the function
+				messages_to_delete.append(messages_to_delete)
 
 		formatted_list = []
 		for twow in twow_list:
@@ -165,6 +169,9 @@ class EVENT:
 				await self.MESSAGES[-t-1].edit(content=formatted_list[t])
 			elif self.MESSAGES[-t-1].content != "\u200b":
 				await self.MESSAGES[-t-1].edit(content="\u200b")
+	
+		if len(messages_to_delete) > 60: await asyncio.sleep(60)
+		for msg in messages_to_delete: await msg.delete() # Athina flipped this for testing on 2025-10-18
 
 
 	# Function that runs every hour
