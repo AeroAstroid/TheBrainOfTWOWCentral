@@ -122,7 +122,7 @@ class EVENT:
 					
 				# attempt to fix the no ping bug. hopefully just adding about a 60 second delay before the ping message is deleted should work
 				# the actual deletion has been deferred to the end of the function
-				messages_to_delete.append(messages_to_delete)
+				messages_to_delete.append(msg)
 
 		formatted_list = []
 		for twow in twow_list:
