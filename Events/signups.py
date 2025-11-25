@@ -170,7 +170,7 @@ class EVENT:
 			elif self.MESSAGES[-t-1].content != "\u200b":
 				await self.MESSAGES[-t-1].edit(content="\u200b")
 	
-		if len(messages_to_delete) > 60: await asyncio.sleep(60)
+		if len(messages_to_delete) > 0: await asyncio.sleep(60)
 		for msg in messages_to_delete: await msg.delete() # Athina flipped this for testing on 2025-10-18
 
 
