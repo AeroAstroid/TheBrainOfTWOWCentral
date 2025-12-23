@@ -62,6 +62,10 @@ async def event_task(): # This is an event handler for the time-based functions 
 							print(f"Error in {server} {event} one-hour function: {e}")
 							traceback.print_exc()
 							print("-----------------------------------------------------------\n")
+
+						# If I'm correct, this is fine and won't double-run events because changing HOUR should propagate instantly?
+						# Ultimately I'm adding this so that the ratelimit doesn't fuck us with 429's when we're running a ton of hourlies - Athina
+						await asyncio.sleep(5)
 			
 			if len(SERVERS.keys()) != 0 and not PARAMS["EVENT_TASK"]:
 				PARAMS["EVENT_TASK"] = True
@@ -72,6 +76,10 @@ async def event_task(): # This is an event handler for the time-based functions 
 			pass
 
 		# This results in more accurate intervals than using asyncio.sleep(2)
+		# Added negative offset because I'm not sure how asyncio.sleep behaves with negatives - Athina
+		if time.time() > loop_start + 2:
+			return
+		
 		await asyncio.sleep(loop_start + 2 - time.time())
 
 
@@ -222,7 +230,7 @@ async def on_ready():
 			msg_PREFIX = msg_guild["PREFIX"]
 
 			# Define the user's permissions: 3 = Developer; 2 = Staff; 1 = Member; 0 = Non-member
-			if message.author.id in [450096592582737920, 184768535107469314, 183331874670641152, 179686717534502913, 549350426642743297]: perms = 3
+			if message.author.id in [450096592582737920, 184768535107469314, 183331874670641152, 179686717534502913, 549350426642743297, 210285266814894081]: perms = 3
 			elif message.author in msg_guild["STAFF_ROLE"].members: perms = 2
 			elif message.author in msg_guild["MEMBER_ROLE"].members: perms = 1
 			else: perms = 0
