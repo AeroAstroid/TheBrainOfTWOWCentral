@@ -124,7 +124,7 @@ class EVENT:
 			found = self.db.get_entries("birthday", columns=["id"], conditions={"birthday": tz[1], "timezone": tz[0]})
 			print("More birthday:", found)
 			if len(found) == 0: # If there are none, return
-				return
+				continue # NO! DON'T RETURN! THAT FUCKS ADDITIONAL TIMEZONES! - Athina
 			
 			# If there are members, cycle through each of them.
 			for member in found:
