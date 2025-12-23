@@ -77,10 +77,9 @@ async def event_task(): # This is an event handler for the time-based functions 
 
 		# This results in more accurate intervals than using asyncio.sleep(2)
 		# Added negative offset because I'm not sure how asyncio.sleep behaves with negatives - Athina
-		if time.time() > loop_start + 2:
-			return
+		if time.time() <= loop_start + 2:
+			await asyncio.sleep(loop_start + 2 - time.time())
 		
-		await asyncio.sleep(loop_start + 2 - time.time())
 
 
 @BRAIN.event
