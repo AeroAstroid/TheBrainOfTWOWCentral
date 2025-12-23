@@ -129,13 +129,16 @@ class EVENT:
 			# If there are members, cycle through each of them.
 			for member in found:
 				try:
+					print(f"Processing member {member[0]}")
 					if self.BIRTHDAY_ROLE in self.SERVER["MAIN"].get_member(int(member[0])).roles:
 						found[found.index(member)] = 0 # If they already have the birthday role, they're being counted
 						continue # again, and this is a mistake. Change their id in found to 0 and continue
 	
 					# If they don't have the birthday role, give it to them
+					print(f"Adding role to member {member[0]}")
 					await self.SERVER["MAIN"].get_member(int(member[0])).add_roles(self.BIRTHDAY_ROLE)
-				except:
+				except Exception as e:
+					print(f"Error handling new birthday! {e}")
 					found[found.index(member)] = 0
 
 			found = [x for x in found if x != 0] # Remove those who already had their birthday counted to avoid
