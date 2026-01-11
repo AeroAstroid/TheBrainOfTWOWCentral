@@ -31,6 +31,7 @@ class EVENT:
 	def __init__(self):
 		self.RUNNING = False
 
+		self.TEST_MODE = False
 		self.GAME_STARTED = False
 
 		self.info = { # Define all the game parameters
@@ -446,6 +447,19 @@ The game will start in ten seconds."""
 
 				# Check for four conditions for message
 				if message.channel != self.param["ADMIN_CHANNEL"]: return
+
+				# Toggling game into test mode
+				if message.content == "TOGGLE TEST":
+					if self.TEST_MODE:
+						self.param["GAME_CHANNEL"] = discord.utils.get(self.SERVER["MAIN"].channels, name="event-stage") # Post messages in here
+						self.param["ADMIN_CHANNEL"] = discord.utils.get(self.SERVER["MAIN"].channels, name="event-hosts")
+						await message.channel.send("Description Detective toggled into event mode.")
+					else:
+						self.param["GAME_CHANNEL"] = discord.utils.get(self.SERVER["MAIN"].channels, name="event•testing") # Post messages in here
+						self.param["ADMIN_CHANNEL"] = discord.utils.get(self.SERVER["MAIN"].channels, name="mod•test")
+						await message.channel.send("Description Detective toggled into test mode.")
+					self.TEST_MODE = not self.TEST_MODE
+					return
 
 				if len(message.attachments) == 0: return
 
