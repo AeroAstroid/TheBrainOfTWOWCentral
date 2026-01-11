@@ -121,7 +121,7 @@ class EVENT:
 
 		self.SERVER = SERVER
 		self.EVENT_ROLE = 498254150044352514 # Event participant role
-		self.EVENT_ADMIN_ROLE = 959155078844010546 # Event participant role
+		self.EVENT_ADMIN_ROLE = 481991172106092554 # Event administrator role
 		self.param["ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ROLE)
 		self.param["ADMIN_ROLE"] = discord.utils.get(SERVER["MAIN"].roles, id=self.EVENT_ADMIN_ROLE)
 		self.param["GAME_CHANNEL"] = discord.utils.get(SERVER["MAIN"].channels, name="event-stage") # Post messages in here
