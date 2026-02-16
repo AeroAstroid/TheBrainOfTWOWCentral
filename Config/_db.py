@@ -224,7 +224,7 @@ class Database:
 				))
 			
 			else: # If there are conditions, express them through the WHERE function
-				sql_query += "WHERE " + ' AND '.join([f"{col} = %s" for col in conditions.keys()])
+				sql_query += " WHERE " + ' AND '.join([f"{col} = %s" for col in conditions.keys()])
 
 				cursor.execute(sql.SQL(sql_query).format(
 					sql.Identifier(full_name)
