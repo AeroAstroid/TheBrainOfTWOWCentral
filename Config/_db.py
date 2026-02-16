@@ -107,7 +107,7 @@ class Database:
 				))
 			
 			else: # If there are conditions, use WHERE and formatting to specify them.
-				sql_query += "WHERE " + ' AND '.join([f"{col} = %s" for col in conditions.keys()])
+				sql_query += " WHERE " + ' AND '.join([f"{col} = %s" for col in conditions.keys()])
 				
 				if limit is not None:
 					sql_query += f" LIMIT {limit} "
