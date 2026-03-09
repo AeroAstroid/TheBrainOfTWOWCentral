@@ -27,6 +27,7 @@ class EVENT:
 			},
 
 			"GAME": {
+				"SIGNUPS_EXTENDED": False,
 				"ROUND": 0,
 				"PERIOD": 0,
 				"PROMPT": "",
@@ -68,6 +69,7 @@ class EVENT:
 				"VOTE": []
 			},
 			"GAME": {
+				"SIGNUPS_EXTENDED": False,
 				"ROUND": 0,
 				"PERIOD": 0,
 				"PROMPT": "",
@@ -89,6 +91,7 @@ class EVENT:
 			"VOTE": []
 		}
 		self.info["GAME"] = {
+			"SIGNUPS_EXTENDED": False,
 			"ROUND": 0,
 			"PERIOD": 0,
 			"PROMPT": "",

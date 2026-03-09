@@ -13,7 +13,7 @@ def HELP(PREFIX):
 		"FORMAT": "[subcommand]",
 		"CHANNEL": 3,
 		"USAGE": f"""Available subcommands: `queue`, `create`, `start`, `spectate`, `join`, `prompt`, `respond`, 
-		`vote`, `transfer`, `end`. Use `{PREFIX}help mmt [subcommand]` for more info on each of these subcommands.
+		`vote`, `transfer`, `end`, `extend`. Use `{PREFIX}help mmt [subcommand]` for more info on each of these subcommands.
 		""".replace("\n", "").replace("\t", ""),
 		"CATEGORY" : "Games",
 
@@ -96,6 +96,13 @@ def HELP(PREFIX):
 			formula, it's impossible to end a MiniMiniTWOW by spectator vote with less than 4 spectators.
 			""".replace("\n", "").replace("\t", "")
 		},
+		"EXTEND": {
+			"MAIN": "Command to extend signups for a MiniMiniTWOW",
+			"FORMAT": "",
+			"CHANNEL": 4,
+			"USAGE": f"""Using `{PREFIX}mmt extend` extends the duration of a MiniMiniTWOW's signup period by 5 minutes.
+			""".replace("\n", "").replace("\t", "")
+		},
 		"STATS": {
 			"MAIN": "Command to display the overall MiniMiniTWOW stats",
 			"FORMAT": "[stat]",
@@ -124,7 +131,31 @@ async def MAIN(message, args, level, perms, SERVER):
 		if not isinstance(message.channel, discord.DMChannel) and message.channel != provisory_mmt_c:
 			await message.channel.send(f"MiniMiniTWOW commands can only be used in {provisory_mmt_c.mention}!")
 			return
+			
+	if args[1].lower() == "extend":
 
+		if not mmt.RUNNING:
+			await message.channel.send("You can't extend a MiniMiniTWOW if one isn't started!")
+			return
+			
+		if mmt.info["GAME"]["PERIOD"] != 1: # signups
+			await message.channel.send("The MiniMiniTWOW isn't in signups, you can't extend it!")
+			return			
+			
+		if mmt.info["GAME"]["SIGNUPS_EXTENDED"] == True: # already extended
+			await message.channel.send("The MiniMiniTWOW has already been extended!")
+			return
+			
+		if message.author.id != mmt.info["GAME"]["HOST"]: # host?
+			await message.channel.send("You can't extend this MiniMiniTWOW, you aren't the host!")
+			return
+
+		# we should be good from here
+		mmt.info["GAME"]["SIGNUPS_EXTENDED"] = True
+		mmt.info["GAME"]["PERIOD_START"] += 300
+		await message.channel.send("You've extended this MiniMiniTWOW! The signup period is now 5 minutes longer.")
+		return
+			
 	if args[1].lower() == "stats":
 
 		if level == 2:
