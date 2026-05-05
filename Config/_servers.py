@@ -35,7 +35,9 @@ for server in columns:
 	SERVERS[server[0]]["MAIN"] = server_inst
 	SERVERS[server[0]]["STAFF_ROLE"] = discord.utils.get(server_inst.roles, id=int(server[1]))
 	SERVERS[server[0]]["MEMBER_ROLE"] = discord.utils.get(server_inst.roles, id=int(server[2]))
-	
+	# ideally, this ID should not be hardcoded, but I really can't be bothered to modify this
+	SERVERS[server[0]]["PARTIAL_STAFF_ROLE"] = discord.utils.get(server_inst.roles, id=959155078844010546)
+
 	try:
 		SERVERS[server[0]]["PUBLIC_CHANNELS"] = [discord.utils.get(server_inst.channels, id=int(x)) for x in server[3].split(" ")]
 	except ValueError:
