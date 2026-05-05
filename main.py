@@ -231,6 +231,7 @@ async def on_ready():
 			# Define the user's permissions: 3 = Developer; 2 = Staff; 1 = Member; 0 = Non-member
 			if message.author.id in [450096592582737920, 184768535107469314, 183331874670641152, 179686717534502913, 549350426642743297, 210285266814894081]: perms = 3
 			elif message.author in msg_guild["STAFF_ROLE"].members: perms = 2
+			elif message.author in msg_guild["PARTIAL_STAFF_ROLE"].members: perms = 1.5
 			elif message.author in msg_guild["MEMBER_ROLE"].members: perms = 1
 			else: perms = 0
 
@@ -238,7 +239,7 @@ async def on_ready():
 				PARAMS["HOUR"] += 1
 				return
 
-			if perms < 2 and (message.guild is not None and message.channel not in msg_guild["BOT_CHANNELS"]):
+			if perms <= 1 and (message.guild is not None and message.channel not in msg_guild["BOT_CHANNELS"]):
 				return # Ignore commands from non-staff that are not in bot channels'
 			
 			if message.author.id == 382925349144494080:
