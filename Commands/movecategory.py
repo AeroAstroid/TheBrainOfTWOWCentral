@@ -12,7 +12,7 @@ def HELP(PREFIX):
 		"CATEGORY" : "Staff"
 	}
 
-PERMS = 2 # Staff
+PERMS = 1.5 # Partial Staff
 ALIASES = ["MOVEC"]
 REQ = []
 
