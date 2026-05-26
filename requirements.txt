@@ -1,5 +1,5 @@
 git+https://github.com/Rapptz/discord.py
-bxengine==1.0.0.5
+bxengine==1.0.0.7
 numpy==1.22.0
 Pillow==10.3.0
 requests==2.31.0
