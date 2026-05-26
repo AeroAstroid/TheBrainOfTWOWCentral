@@ -17,15 +17,26 @@ def HELP(PREFIX):
 		"MAIN": "Allows you to write short tags and/or programs",
 		"FORMAT": "[subcommand]",
 		"CHANNEL": 0,
-		"USAGE": f"""Using `tc/b++ run [code]` allows you to run `[code]` as B++ source code. Using `tc/b++ info 
-		(page)` displays a paged list of all B++ programs by use count, while using `tc/b++ info (program)` 
-		displays information and the source code of a specific program. `tc/b++ create [program] [code]` can be used 
-		to save code into a specific program name, which can be edited by its creator with `tc/b++ edit [program] 
-		[newcode]` or deleted with `tc/b++ delete [program]`. You can check your existing programs with `tc/b++ tags`.
-		`tc/b++ docs` will show a list of all functions in B++, while `tc/b++ docs [function]` can be used for a more
-		detailed description of any function. 
-		Finally, `tc/b++ [program] (args)` allows you to run any saved program. Use debug mode with
-		`tc/b++ debug run [code]` or `tc/b++ debug [program] (args)` to print syntax warnings.
+		"USAGE": f"""
+		
+		- `tc/b++ run [code]`^n
+		  - [code] is run as B++ source code.^n
+		  - If `debug` is added before `run`, the code is ran in debug mode.^n
+		- `tc/b++ info (page or program)`^n
+		  - Using a page number (or nothing) displays a paged list of all B++ programs by uses.^n
+		  - Using a program name displays information about that program as well as source code.^n
+		- `tc/b++ create [program] [code]`^n
+		  - Creates a tag under the name [program], with the source code being [code].^n
+		- `tc/b++ edit [program] [code]`^n
+		  - Edits the source code of [program] if it belongs to you.^n
+		- `tc/b++ delete [program]`^n
+		  - Deletes the specified program if it belongs to you.^n
+		- `tc/b++ tags (page)`^n
+		  - Displays a paged list of all B++ programs that belong to you by uses.^n
+		- `tc/b++ docs (function)`^n
+		  - Shows the description of a specified function. If no function is provided, shows the list of all B++ functions.^n
+		- `tc/b++ [program] (args)^n
+		  - Runs the program with any specified args. Putting `debug` before the program name runs it in debug mode.^n
 		""".replace("\n", "").replace("\t", "").replace("^n", "\n"),
 		"CATEGORY" : "Fun"
 	}
