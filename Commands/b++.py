@@ -35,7 +35,7 @@ def HELP(PREFIX):
 		  - Displays a paged list of all B++ programs that belong to you by uses.^n
 		- `tc/b++ docs (function)`^n
 		  - Shows the description of a specified function. If no function is provided, shows the list of all B++ functions.^n
-		- `tc/b++ [program] (args)^n
+		- `tc/b++ [program] (args)`^n
 		  - Runs the program with any specified args. Putting `debug` before the program name runs it in debug mode.^n
 		""".replace("\n", "").replace("\t", "").replace("^n", "\n"),
 		"CATEGORY" : "Fun"
