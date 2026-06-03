@@ -258,15 +258,30 @@ async def MAIN(message, args, level, perms, SERVER):
 	if args[1].lower() == "docs":
 		docs = get_ext_docs()
 		if level == 2:
-			funcs = ", ".join([i.upper() for i in docs.keys()])
-			embed = {"title": "All B++ functions", "description": funcs, "color": 0x93a5a6}
+			categories = {}
+			for doc in docs.values():
+				if doc.is_alias:
+					continue
+				categories.setdefault(doc.category, []).append(doc)
+			fields = []
+			for category in sorted(categories):
+				entries = []
+				for doc in sorted(categories[category], key=lambda d: d.name):
+					entry = f"`{doc.name}`"
+					if doc.aliases:
+						entry += " (" + ", ".join(f"`{alias}`" for alias in doc.aliases) + ")"
+					entries.append(entry)
+				fields.append({"name": category, "value": ", ".join(entries)})
+			embed = {"title": "All B++ functions", "description": "", "fields": fields, "color": 0x93a5a6}
 			await message.channel.send(embed=discord.Embed.from_dict(embed))
 			return
 		term = args[2].upper()
-		func = ""
-		for f in docs:
-			if f.upper().startswith(term):
-				func = f.upper()
+		func = term if term in docs else ""
+		if not func:
+			for f in sorted(docs, key=lambda name: (docs[name].is_alias, name)):
+				if f.startswith(term):
+					func = f
+					break
 		if not func:
 			await message.channel.send("Could not find a function with that name!")
 			return
