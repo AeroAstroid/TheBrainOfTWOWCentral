@@ -4,7 +4,6 @@ import sqlite3
 import tempfile
 import threading
 import time
-import inspect
 from contextlib import contextmanager
 from typing import Any
 
@@ -31,7 +30,7 @@ from bxengine.runtime.extensions.BxeExtension import (
 	BxeRuntimeSyntaxException,
 )
 from bxengine.exceptions import ProgramDefinedException
-from bxengine.docs import get_docs
+from bxengine.docs import FunctionDoc, get_docs, parse_docstring
 
 _GLOBAL_VARIABLE_TABLE = "b++2variables"
 _GLOBAL_VARIABLE_COLUMNS = ["name", "value", "type", "owner"]
@@ -426,6 +425,8 @@ def _schedule_user_cache_flush():
 
 
 class BrainDiscordExtension(BxeStatefulExtension):
+	_bpp_function_category = "Discord"
+
 	def __init__(self, runner, channel):
 		self._runner = runner
 		self._channel = channel
@@ -462,6 +463,8 @@ class BrainDiscordExtension(BxeStatefulExtension):
 
 
 class BrainGlobalExtension(BxeStatefulExtension):
+	_bpp_function_category = "Global Variables"
+
 	def __init__(self, author):
 		self._author = str(author)
 		self._db = Database()
@@ -635,6 +638,8 @@ def _global_extension_factory(author):
 
 
 class BrainUserExtension(BxeStatefulExtension):
+	_bpp_function_category = "User Variables"
+
 	def __init__(self, author, runner):
 		self._author = str(author)
 		self._runner_id = str(runner.id)
@@ -883,167 +888,51 @@ def get_ext_docs():
 			funcs[f] = docs[f]
 	return funcs
 
-_DOC_TAG_PATTERN = re.compile(r"^@(?P<tag>[a-zA-Z][a-zA-Z0-9_-]*)\b(?:\s+(?P<body>.*))?$")
-
-def build_signature_from_docstring(function_name: str, docstring: str | None) -> str:
-	if not docstring:
-		return f"[{function_name}]"
-
-	required: list[str] = []
-	optional: list[str] = []
-
-	for line in inspect.cleandoc(docstring).splitlines():
-		stripped = line.strip()
-		if not stripped:
-			continue
-
-		match = _DOC_TAG_PATTERN.match(stripped)
-		if not match:
-			continue
-
-		tag = match.group("tag").lower()
-		if tag not in {"parameter", "optional"}:
-			continue
-
-		body = (match.group("body") or "").strip()
-		if not body:
-			continue
-
-		param_name = body.split(None, 1)[0]
-		if tag == "parameter":
-			required.append(param_name)
-			continue
-
-		if param_name.endswith("?") or param_name == "...":
-			optional.append(param_name)
-		else:
-			optional.append(f"{param_name}?")
-
-	arg_names = [*required, *optional]
-	if not arg_names:
-		return f"[{function_name}]"
-	return f"[{function_name} {' '.join(arg_names)}]"
-
-def _append_text(target: list[str], text: str) -> None:
-	clean = text.strip()
-	if clean:
-		target.append(clean)
-
-def _extend_last(target: list[str], text: str) -> None:
-	clean = text.strip()
-	if not clean:
-		return
-	if target:
-		target[-1] = f"{target[-1]} {clean}"
-	else:
-		target.append(clean)
-
-def format_doc(name, doc):
+def format_doc(name, doc: FunctionDoc):
 	if not doc:
 		return None
 
-	lines = inspect.cleandoc(doc).splitlines()
-	summary: list[str] = []
-	params: list[tuple[str, str]] = []
-	optionals: list[tuple[str, str]] = []
-	returns: list[str] = []
-	raises: list[str] = []
-	notes: list[str] = []
-	examples: list[str] = []
-	active: tuple[str, int] | None = None
-
-	for line in lines:
-		stripped = line.strip()
-		if not stripped:
-			active = None
-			continue
-
-		match = _DOC_TAG_PATTERN.match(stripped)
-		if match:
-			tag = match.group("tag").lower()
-			body = (match.group("body") or "").strip()
-
-			if tag == "parameter":
-				if body:
-					parts = body.split(None, 1)
-					param_name = parts[0]
-					param_desc = parts[1] if len(parts) > 1 else ""
-				else:
-					param_name = "param"
-					param_desc = ""
-				params.append((param_name, param_desc))
-				active = ("parameter", len(params) - 1)
-			elif tag == "optional":
-				if body:
-					parts = body.split(None, 1)
-					param_name = parts[0]
-					param_desc = parts[1] if len(parts) > 1 else ""
-				else:
-					param_name = "param"
-					param_desc = ""
-				optionals.append((param_name, param_desc))
-				active = ("optional", len(params) - 1)
-			elif tag in {"return", "returns"}:
-				returns.append(body)
-				active = ("returns", len(returns) - 1)
-			elif tag in {"raise", "raises", "throws"}:
-				raises.append(body)
-				active = ("raises", len(raises) - 1)
-			elif tag == "example":
-				examples.append(body)
-				active = ("examples", len(examples) - 1)
-			else:
-				notes.append(f"@{tag} {body}".strip())
-				active = ("notes", len(notes) - 1)
-			continue
-
-		if active is None:
-			_append_text(summary, stripped)
-			continue
-
-		section, index = active
-		if section == "param":
-			name, desc = params[index]
-			params[index] = (name, f"{desc} {stripped}".strip())
-		if section == "optional":
-			name, desc = optionals[index]
-			optionals[index] = (name, f"{desc} {stripped}".strip())
-		elif section == "returns":
-			_extend_last(returns, stripped)
-		elif section == "raises":
-			_extend_last(raises, stripped)
-		elif section == "examples":
-			_extend_last(examples, stripped)
-		else:
-			_extend_last(notes, stripped)
+	parsed = parse_docstring(doc.raw_doc)
 
 	title = name
-	description = f"`{build_signature_from_docstring(name, doc)}`\n" + "\n".join(summary) if summary else ""
+	if doc.is_alias:
+		title = f"{name} (alias of {doc.primary_name})"
+
+	description_parts = [f"`{doc.signature}`"]
+	if doc.is_alias:
+		description_parts.append(f"`{name}` is an alias for `{doc.primary_name}`.")
+	if parsed.summary:
+		description_parts.append(" ".join(parsed.summary))
+
 	fields: list[dict] = []
-	if params or optionals:
-		separator = "\n" if (params and optionals) else ""
+	fields.append({"name": "**Category**", "value": doc.category})
+	visible_aliases = [alias for alias in doc.aliases if alias != name]
+	if visible_aliases:
+		fields.append({"name": "**Aliases**", "value": ", ".join(f"`{alias}`" for alias in visible_aliases)})
+	if parsed.parameters or parsed.optional_parameters:
+		separator = "\n" if (parsed.parameters and parsed.optional_parameters) else ""
 		fields.append({
 			"name": "**Parameters**",
 			"value": "\n".join(
 				f"- `{name}`: {desc}" if desc else f"- `{name}`"
-				for name, desc in params
+				for name, desc in parsed.parameters
 			)
 			+ separator
 			+ "\n".join(
 				f"- `{name}`?: {desc}" if desc else f"- `{name}`"
-				for name, desc in optionals
+				for name, desc in parsed.optional_parameters
 			)
 		})
-	if returns:
-		fields.append({"name": "**Returns**", "value": "\n".join(f"- {item}" for item in returns)})
-	if raises:
-		fields.append({"name": "**Raises**", "value": "\n".join(f"- {item}" for item in raises)})
-	if examples:
-		fields.append({"name": "**Examples**", "value": "\n".join(f"- `{item}`" for item in examples)})
-	if notes:
-		fields.append({"name": "**Notes**", "value": "\n".join(f"- {item}" for item in notes)})
+	if parsed.returns:
+		fields.append({"name": "**Returns**", "value": "\n".join(f"- {item}" for item in parsed.returns)})
+	if parsed.raises:
+		fields.append({"name": "**Raises**", "value": "\n".join(f"- {item}" for item in parsed.raises)})
+	if parsed.examples:
+		fields.append({"name": "**Examples**", "value": "\n".join(f"- `{item}`" for item in parsed.examples)})
+	if parsed.notes:
+		fields.append({"name": "**Notes**", "value": "\n".join(f"- {item}" for item in parsed.notes)})
 
-	return {"title": title, "description": description, "fields": fields}
+	return {"title": title, "description": "\n".join(description_parts), "fields": fields}
 
 def _run_bxe_program_unlocked(code, p_args, author, runner, channel):
 	buttons = []
