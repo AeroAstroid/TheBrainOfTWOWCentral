@@ -902,7 +902,7 @@ def format_doc(name, doc: FunctionDoc):
 	if doc.is_alias:
 		description_parts.append(f"`{name}` is an alias for `{doc.primary_name}`.")
 	if parsed.summary:
-		description_parts.append(" ".join(parsed.summary))
+		description_parts.append("\n".join(parsed.summary))
 
 	fields: list[dict] = []
 	fields.append({"name": "**Category**", "value": doc.category})
