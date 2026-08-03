@@ -454,8 +454,11 @@ class BrainDiscordExtension(BxeStatefulExtension):
 	def GUILD(self):
 		"""Get the ID of the server the tag was run in.
 		@returns the server ID"""
-		return self._channel.guild.id
-		
+		if self._channel.guild:
+			return self._channel.guild.id
+		else:
+			return 0
+			
 	@bpp_function()
 	def BUTTON(self, *args):
 		"""Create a button that can be pressed to rerun the tag with special arguments.
