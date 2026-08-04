@@ -14,10 +14,8 @@ except ImportError:
 
 try:
 	from Config._db import Database
-	from Config._bpp_parsing import undo_str_array, str_array
 except ModuleNotFoundError:
 	from _db import Database
-	from _bpp_parsing import undo_str_array, str_array
 
 from bxengine.tokenizer.tokenize import Tokenizer, TokenizationResult
 from bxengine.parsing.parser import Parser, ParsingResult
@@ -41,6 +39,55 @@ _USER_VARIABLE_TABLE = "b++2uservars"
 _USER_VARIABLE_COLUMNS = ["name", "value", "type", "owner"]
 _USER_CACHE_ENV = "BRAIN_BXE_USER_CACHE_PATH"
 _DEFAULT_USER_CACHE_PATH = os.path.join(tempfile.gettempdir(), "thebrain_bxe_user_cache.sqlite3")
+
+
+def str_array(s):
+	out = "["
+	for x in s:
+		if type(x) == list:
+			out += str_array(x) + ', '
+		else:
+			out += "'" + str(x).replace('\\', '\\\\').replace("'", "\\'") + "', "
+	return out[:-2] + "]"
+
+
+def undo_str_array(s):
+	if s[:1] == "[": s = s[1:]
+	if s[-1:] == "]": s = s[:-1]
+
+	is_quote = False
+	bracket_count = 0
+	is_escaped = False
+	outlist = []
+	current_append = ""
+	for char in s:
+
+		if char == "'" and not is_escaped and bracket_count == 0:
+			is_quote = not is_quote
+			if not is_quote:
+				outlist.append(current_append)
+				current_append = ""
+			continue
+
+		if char == "\\" and is_quote and not is_escaped and bracket_count == 0:
+			is_escaped = True
+			continue
+
+		if char == "[" and not is_quote:
+			bracket_count += 1
+			continue
+		if char == "]" and not is_quote:
+			bracket_count -= 1
+			if bracket_count == 0:
+				outlist.append(undo_str_array(current_append))
+				current_append = ""
+			continue
+
+		if is_quote or char not in " ,":
+			current_append += char
+			is_escaped = False
+	return outlist
+
 
 def _var_type(value):
 	type_list = [int, float, str, list]
