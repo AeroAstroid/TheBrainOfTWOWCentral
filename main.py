@@ -368,5 +368,47 @@ async def on_ready():
 			except:
 				pass
 	
+	@BRAIN.event
+	async def on_raw_message_edit(payload):
+		if payload.guild_id is not None:
+			msg_guild = SERVERS[str(payload.guild_id)]
+			try:
+				for event in msg_guild["EVENTS"].keys():
+					if not msg_guild["EVENTS"][event].RUNNING:
+						continue
+					try:
+						event_func = msg_guild["EVENTS"][event].on_raw_message_edit
+					except AttributeError:
+						continue
+					await event_func(payload)
+			except Exception:
+				traceback.print_exc()
+				try:
+					await MAIN_SERVER["LOGS"].send(
+						f"**Error occured in {msg_guild['MAIN'].name}!**```python\n{traceback.format_exc()}```")
+				except:
+					pass
+	
+	@BRAIN.event
+	async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
+		if payload.guild_id is not None:
+			msg_guild = SERVERS[str(payload.guild_id)]
+			try:
+				for event in msg_guild["EVENTS"].keys():
+					if not msg_guild["EVENTS"][event].RUNNING:
+						continue
+					try:
+						event_func = msg_guild["EVENTS"][event].on_raw_reaction_add
+					except AttributeError:
+						continue
+					await event_func(payload)
+			except Exception:
+				traceback.print_exc()
+				try:
+					await MAIN_SERVER["LOGS"].send(
+						f"**Error occured in {msg_guild['MAIN'].name}!**```python\n{traceback.format_exc()}```")
+				except:
+					pass
+	
 	
 BRAIN.run(TOKEN)
