@@ -69,11 +69,11 @@ class EVENT:
 			self.ad_counts.pop(message.author.id, None)
 	
 	async def ad_too_fast_alert(self, prev_ad: discord.Message, new_ad: discord.Message):
-		ALERT_COOLDOWN = timedelta(days=7)
-		last_alert = self.ad_too_fast_alert_times.get(new_ad.author.id)
-		if last_alert and datetime.now(tz=timezone.utc) - last_alert < ALERT_COOLDOWN:
-			return
-		self.ad_too_fast_alert_times[new_ad.author.id] = datetime.now(tz=timezone.utc)
+		# ALERT_COOLDOWN = timedelta(days=7)
+		# last_alert = self.ad_too_fast_alert_times.get(new_ad.author.id)
+		# if last_alert and datetime.now(tz=timezone.utc) - last_alert < ALERT_COOLDOWN:
+		# 	return
+		# self.ad_too_fast_alert_times[new_ad.author.id] = datetime.now(tz=timezone.utc)
 		embed = discord.Embed()
 		embed.set_author(name="⏳ Ads too fast", icon_url=new_ad.author.avatar and new_ad.author.avatar.url)
 		delta = round((new_ad.created_at - prev_ad.created_at).total_seconds() / (60 * 60), 1)
