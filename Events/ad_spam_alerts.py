@@ -7,7 +7,7 @@ import re
 
 
 def msg_url(msg: discord.Message):
-	return f"https://discord.com/channels/{msg.guild.id if msg.guild else "@me"}/{msg.channel.id}/{msg.id}"
+	return f"https://discord.com/channels/{msg.guild.id if msg.guild else '@me'}/{msg.channel.id}/{msg.id}"
 
 
 class EVENT:
