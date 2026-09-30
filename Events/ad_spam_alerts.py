@@ -1,9 +1,19 @@
 from __future__ import annotations
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
+from typing import NamedTuple
+import re
 import discord
+from Config._db import Database
 from Config._functions import grammar_list
 from Config._servers import MAIN_SERVER
-import re
+
+
+class AdEntry(NamedTuple):
+    id: str
+    adcount: int
+    lasttime: int
+    lastid: str
+    lastalert: int
 
 
 def msg_url(msg: discord.Message):
@@ -11,6 +21,9 @@ def msg_url(msg: discord.Message):
 
 
 class EVENT:
+	# Cmd to initialize db table:
+	# tc/db add tcadvertisements id-text adcount-integer lasttime-integer lastid-text lastalert-integer
+	db = Database()
 
 	def __init__(self):
 		self.RUNNING = False
@@ -28,57 +41,83 @@ class EVENT:
 			"AD_GRACE_MIN": 60 * 2,
 			"AD_COOLDOWN_MIN": 60 * 12,
 		}
+		self.advertisers_cache: set[int] = { int(row[0]) for row in self.db.get_entries("tcadvertisements") if row[1] > 0 }
 		self.RUNNING = True
 
 	def end(self):
 		self.RUNNING = False
+	
+	advertisers_cache: set[int]
 
-	ad_counts: dict[int, int] = {}
-	last_ad_times: dict[int, datetime] = {}
-	last_ad_msgs: dict[int, discord.Message] = {}
-	ad_too_fast_alert_times: dict[int, datetime] = {}
+	def get_entry(self, user_id: int) -> AdEntry | None:
+		rows = self.db.get_entries("tcadvertisements", conditions={"id": str(user_id)})
+		return AdEntry(*rows[0]) if rows else None
+
+	def set_entry(self, user_id: int, **columns: str | int):
+		self.db.edit_entry("tcadvertisements", entry=columns, conditions={"id": str(user_id)})
 
 	async def on_message(self, message: discord.Message):
 		URL_REGEX = r"(?:https?:\/\/[^\s<>\"'`]+)|(?:discord.gg\/\w+)"
 		has_url = re.search(URL_REGEX, message.content)
 
 		if message.channel.id == self.AD_CHANNEL.id and has_url:
-			last_time = self.last_ad_times.get(message.author.id)
+			stored = self.get_entry(message.author.id)
+			entry = stored or AdEntry(str(message.author.id), 0, 0, "", 0)
+			last_time = datetime.fromtimestamp(entry.lasttime) if entry.lasttime else None
 			if last_time:
 				if datetime.now() - last_time < timedelta(minutes=self.param["AD_GRACE_MIN"]):
 					return
 				if datetime.now() - last_time < timedelta(minutes=self.param["AD_COOLDOWN_MIN"] - 15):
-					await self.ad_too_fast_alert(self.last_ad_msgs[message.author.id], message)
+					await self.ad_too_fast_alert(entry, message)
 
 			if isinstance(message.author, discord.Member):
 				for role in self.ROLE_WHITELIST:
 					if role in message.author.roles:
-						self.ad_counts.pop(message.author.id, None)
 						return
-			self.last_ad_times[message.author.id] = datetime.now()
-			self.ad_counts.setdefault(message.author.id, 0)
-			if self.ad_counts[message.author.id] >= 0:
-				self.ad_counts[message.author.id] += 1
-				self.last_ad_msgs[message.author.id] = message
 
-			if self.ad_counts[message.author.id] >= self.param["CONSECUTIVE_AD_THRESHOLD"]:
+			ad_count, last_id = entry.adcount, entry.lastid
+			ad_count += 1
+			last_id = str(message.id)
+
+			if ad_count >= self.param["CONSECUTIVE_AD_THRESHOLD"]:
 				await self.ad_spam_alert(message)
-				self.ad_counts[message.author.id] = -1
+				ad_count = -15
 
-		elif message.channel.id != self.AD_CHANNEL.id:
-			self.ad_counts.pop(message.author.id, None)
+			new_time = int(datetime.now().timestamp())
+			if stored:
+				self.set_entry(message.author.id, adcount=ad_count, lasttime=new_time, lastid=last_id)
+			else:
+				self.db.add_entry("tcadvertisements", [str(message.author.id), ad_count, new_time, last_id, 0])
+			if ad_count > 0:
+				self.advertisers_cache.add(message.author.id)
+
+		elif message.channel.id != self.AD_CHANNEL.id and message.author.id in self.advertisers_cache:
+			self.set_entry(message.author.id, adcount=0)
+			self.advertisers_cache.discard(message.author.id)
 	
-	async def ad_too_fast_alert(self, prev_ad: discord.Message, new_ad: discord.Message):
+	async def ad_too_fast_alert(self, entry: AdEntry, new_ad: discord.Message):
 		# ALERT_COOLDOWN = timedelta(days=7)
-		# last_alert = self.ad_too_fast_alert_times.get(new_ad.author.id)
-		# if last_alert and datetime.now(tz=timezone.utc) - last_alert < ALERT_COOLDOWN:
+		# last_alert = datetime.fromtimestamp(entry.lastalert) if entry.lastalert else None
+		# if last_alert and datetime.now() - last_alert < ALERT_COOLDOWN:
 		# 	return
-		# self.ad_too_fast_alert_times[new_ad.author.id] = datetime.now(tz=timezone.utc)
+		# self.set_entry(message.author.id, lastalert=int(datetime.now().timestamp()))
+
+		prev_ad = None
+		if entry.lastid:
+			try:
+				prev_ad = await self.AD_CHANNEL.fetch_message(int(entry.lastid))
+			except (discord.DiscordException, ValueError):
+				pass
+
 		embed = discord.Embed()
 		embed.set_author(name="⏳ Ads too fast", icon_url=new_ad.author.avatar and new_ad.author.avatar.url)
-		delta = round((new_ad.created_at - prev_ad.created_at).total_seconds() / (60 * 60), 1)
+		if prev_ad:
+			delta = round((new_ad.created_at - prev_ad.created_at).total_seconds() / (60 * 60), 1)
+		else:
+			delta = f"less than {self.param['AD_COOLDOWN_MIN'] // 60}"
 		desc = f"<@{new_ad.author.id}> sent two ads {delta} hours apart:"
-		desc += f"\n- {msg_url(prev_ad)}"
+		if prev_ad:
+			desc += f"\n- {msg_url(prev_ad)}"
 		desc += f"\n- {msg_url(new_ad)}"
 		embed.description = desc
 		await self.ALERTS_CHANNEL.send(embed=embed, allowed_mentions=discord.AllowedMentions.none())
@@ -96,7 +135,7 @@ class EVENT:
 		async def callback(interaction: discord.Interaction):
 			assert isinstance(message.author, discord.Member)
 			await message.author.kick()
-			await interaction.response.send_message(f"Kicked <@{message.author.id}>.", ephemeral=True)
+			await interaction.response.send_message(f"Kicked <@{message.author.id}>!", ephemeral=True)
 		button.callback = callback
 		view.add_item(button)
 
