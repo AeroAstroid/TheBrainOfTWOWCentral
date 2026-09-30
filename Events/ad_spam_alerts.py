@@ -33,7 +33,7 @@ class EVENT:
 		self.SERVER = SERVER
 		self.AD_CHANNEL: discord.TextChannel = MAIN_SERVER["ADVERTISEMENTS"]
 		self.ALERTS_CHANNEL: discord.TextChannel = MAIN_SERVER["MOD_ALERTS"]
-		self.ROLE_WHITELIST = [
+		self.SPAM_ROLE_WHITELIST = [
 			MAIN_SERVER["NOTABLE_HOST"]
 		]
 		self.param = {
@@ -70,20 +70,23 @@ class EVENT:
 				if datetime.now() - last_time < timedelta(minutes=self.param["AD_COOLDOWN_MIN"] - 15):
 					await self.ad_too_fast_alert(entry, message)
 
-			if isinstance(message.author, discord.Member):
-				for role in self.ROLE_WHITELIST:
-					if role in message.author.roles:
-						return
-
 			ad_count, last_id = entry.adcount, entry.lastid
-			ad_count += 1
 			last_id = str(message.id)
-
-			if ad_count >= self.param["CONSECUTIVE_AD_THRESHOLD"]:
-				await self.ad_spam_alert(message)
-				ad_count = -15
-
 			new_time = int(datetime.now().timestamp())
+
+			ad_spam_whitelist = False
+			if isinstance(message.author, discord.Member):
+				for role in self.SPAM_ROLE_WHITELIST:
+					if role in message.author.roles:
+						ad_spam_whitelist = True
+						break
+
+			if not ad_spam_whitelist:
+				ad_count += 1
+				if ad_count >= self.param["CONSECUTIVE_AD_THRESHOLD"]:
+					await self.ad_spam_alert(message)
+					ad_count = -15
+
 			if stored:
 				self.set_entry(message.author.id, adcount=ad_count, lasttime=new_time, lastid=last_id)
 			else:
