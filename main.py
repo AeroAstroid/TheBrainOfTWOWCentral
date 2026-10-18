@@ -239,7 +239,7 @@ async def on_ready():
 				PARAMS["HOUR"] += 1
 				return
 
-			if perms <= 1 and (message.guild is not None and message.channel not in msg_guild["BOT_CHANNELS"]):
+			if perms <= 1 and (message.guild is not None and message.channel not in msg_guild["BOT_CHANNELS"] and message.channel.name != "miniminitwows"):
 				return # Ignore commands from non-staff that are not in bot channels'
 			
 			if message.author.id == 382925349144494080:
@@ -285,6 +285,10 @@ async def on_ready():
 
 			if perms < PARAMS["COMMANDS"][command]["PERMS"]: # Check if the permissions line up
 				await message.channel.send("❌ You don't have permission to run this command!")
+				return
+
+			if message.channel.name != "miniminitwows" and command != "mmt": # special check for mmt channel
+				await message.channel.send("❌ You cannot run this command here!")
 				return
 
 			try:
