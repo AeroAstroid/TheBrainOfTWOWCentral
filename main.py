@@ -287,7 +287,7 @@ async def on_ready():
 				await message.channel.send("❌ You don't have permission to run this command!")
 				return
 
-			if message.channel.name == "miniminitwows" and command != "mmt": # special check for mmt channel
+			if message.channel.name == "miniminitwows" and command != "MMT": # special check for mmt channel
 				await message.channel.send("❌ You cannot run this command here!")
 				return
 
