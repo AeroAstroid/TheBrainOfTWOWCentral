@@ -85,7 +85,8 @@ class EVENT:
 				ad_count += 1
 				if ad_count >= self.param["CONSECUTIVE_AD_THRESHOLD"]:
 					await self.ad_spam_alert(message)
-					ad_count = -15
+					ad_count = 0
+					self.advertisers_cache.discard(message.author.id)
 
 			if stored:
 				self.set_entry(message.author.id, adcount=ad_count, lasttime=new_time, lastid=last_id)
@@ -134,15 +135,25 @@ class EVENT:
 		embed.description = desc
 
 		view = discord.ui.View(timeout=None)
-		button = discord.ui.Button(label=f"Kick {message.author.global_name or message.author.name}!", style=discord.ButtonStyle.danger, emoji="🔨")
-		async def callback(interaction: discord.Interaction):
+		kick_button = discord.ui.Button(label=f"Kick {message.author.global_name or message.author.name}", style=discord.ButtonStyle.danger, emoji="👢")
+		async def kick_callback(interaction: discord.Interaction):
 			assert isinstance(message.author, discord.Member)
 			await message.author.kick()
-			await interaction.response.send_message(f"Kicked <@{message.author.id}>!", ephemeral=True)
-		button.callback = callback
-		view.add_item(button)
+			await interaction.response.send_message(f"💥 Kicked <@{message.author.id}>!", ephemeral=True)
+			embed.set_footer(text="(user has been kicked)")
+			await kick_msg.edit(view=None, embed=embed)
+		kick_button.callback = kick_callback
+		view.add_item(kick_button)
+		dismiss_button = discord.ui.Button(label=f"Dismiss", style=discord.ButtonStyle.primary, emoji="👌")
+		async def dismiss_callback(interaction: discord.Interaction):
+			assert isinstance(message.author, discord.Member)
+			embed.set_footer(text="(dismissed)")
+			await kick_msg.edit(view=None, embed=embed)
+			await interaction.response.send_message(f"Dismissed.", ephemeral=True)
+		dismiss_button.callback = dismiss_callback
+		view.add_item(dismiss_button)
 
-		await self.ALERTS_CHANNEL.send(embed=embed, view=view, allowed_mentions=discord.AllowedMentions.none())
+		kick_msg = await self.ALERTS_CHANNEL.send(embed=embed, view=view, allowed_mentions=discord.AllowedMentions.none())
 
 	# Change a parameter of the event
 	async def edit_event(self, message, new_params):
