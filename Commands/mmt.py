@@ -542,11 +542,18 @@ async def MAIN(message, args, level, perms, SERVER):
 
 		ping_button.callback = ping_callback
 		view = discord.ui.View(timeout=None)
+		content = f"🎩 <@{message.author.id}> has created a MiniMiniTWOW! Use `{SERVER['PREFIX']}mmt join` to join it!"
 		if datetime.now() - ping_time_global > timedelta(hours=PING_COOLDOWN_GLOBAL_HR) and datetime.now() - ping_time_user > timedelta(hours=PING_COOLDOWN_USER_HR):
 			view.add_item(ping_button)
+		else:
+			ready_at = int((ping_time_global + timedelta(hours=PING_COOLDOWN_GLOBAL_HR)).timestamp())
+			if ping_time_global > ping_time_user:
+				content += f"\n-# (The ping button is on cooldown, can ping again <t:{ready_at}:R>.)"
+			else:
+				content += f"\n-# (The ping button is on cooldown, a different host can ping again <t:{ready_at}:R>)"
 
 		await message.channel.send(
-			f"🎩 <@{message.author.id}> has created a MiniMiniTWOW! Use `{SERVER['PREFIX']}mmt join` to join it!",
+			content,
 			view=view
 		)
 		return
