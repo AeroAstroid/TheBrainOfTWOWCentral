@@ -537,7 +537,7 @@ async def MAIN(message, args, level, perms, SERVER):
 
 			next_global_timestamp = int((datetime.now() + timedelta(hours=PING_COOLDOWN_GLOBAL_HR)).timestamp())
 			next_user_timestamp = int((datetime.now() + timedelta(hours=PING_COOLDOWN_USER_HR)).timestamp())
-			await message.channel.send(f"<@&{MAIN_SERVER['INTERESTED_IN_MMTS'].id}>\n-# Another host can ping again <t:{next_global_timestamp}:R> (<@{message.author.id}> can ping again <t:{next_user_timestamp}:R>)")
+			await message.channel.send(f"<@&{MAIN_SERVER['INTERESTED_IN_MMTS'].id}>\n-# Another host can ping again <t:{next_global_timestamp}:R> (<@{message.author.id}> can ping again <t:{next_user_timestamp}:R>)", allowed_mentions=discord.AllowedMentions(roles=True))
 			await interaction.response.edit_message(view=None)
 
 		ping_button.callback = ping_callback

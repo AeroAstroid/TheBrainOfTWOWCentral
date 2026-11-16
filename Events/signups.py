@@ -115,9 +115,9 @@ class EVENT:
 				verif = twow_list[new_twow_names.index(x)][-1]
 				if verif == 1:
 					print("Pinging for featured TWOW!")
-					msg = await self.CHANNEL.send("<@&488451010319220766> <@&723946317839073370>")
+					msg = await self.CHANNEL.send("<@&488451010319220766> <@&723946317839073370>", allowed_mentions=discord.AllowedMentions(roles=True))
 				else:
-					msg = await self.CHANNEL.send("<@&723946317839073370>")
+					msg = await self.CHANNEL.send("<@&723946317839073370>", allowed_mentions=discord.AllowedMentions(roles=True))
 					print("Pinging for TWOW!")
 					
 				# attempt to fix the no ping bug. hopefully just adding about a 60 second delay before the ping message is deleted should work
@@ -166,9 +166,9 @@ class EVENT:
 		
 		for t in range(len(self.MESSAGES)):
 			if t < len(formatted_list):
-				await self.MESSAGES[-t-1].edit(content=formatted_list[t])
+				await self.MESSAGES[-t-1].edit(content=formatted_list[t], allowed_mentions=discord.AllowedMentions(roles=[discord.Object(488451010319220766)]))
 			elif self.MESSAGES[-t-1].content != "\u200b":
-				await self.MESSAGES[-t-1].edit(content="\u200b")
+				await self.MESSAGES[-t-1].edit(content="\u200b", allowed_mentions=discord.AllowedMentions(roles=[discord.Object(488451010319220766)]))
 	
 		if len(messages_to_delete) > 0: await asyncio.sleep(60)
 		for msg in messages_to_delete: await msg.delete() # Athina flipped this for testing on 2025-10-18

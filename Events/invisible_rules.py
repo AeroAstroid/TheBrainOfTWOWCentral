@@ -144,7 +144,7 @@ class EVENT:
 					Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
 					messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
 
-					{self.make_timer(self.GAME["NEXT_PERIOD"] - time())}"""))
+					{self.make_timer(self.GAME["NEXT_PERIOD"] - time())}"""), allowed_mentions=dc.AllowedMentions(roles=True))
 				
 				self.GAME["PERIOD_STEP"] += 1
 			
@@ -171,7 +171,7 @@ class EVENT:
 				Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
 				messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
 
-				{self.make_timer(0)}"""))
+				{self.make_timer(0)}"""), allowed_mentions=dc.AllowedMentions(roles=True))
 
 				for t_msg in self.GAME["TRACKED_MSGS"][1:]:
 					try:
@@ -363,7 +363,7 @@ class EVENT:
 			Those with the <@&{self.PARAM['PLAYER_ROLE_ID']}> role can now inspect the current rule by sending 
 			messages in <#{self.PARAM['GAME_CHANNEL_ID']}>.
 
-			{self.make_timer(round_t)}"""))
+			{self.make_timer(round_t)}"""), allowed_mentions=dc.AllowedMentions(roles=True))
 
 			example_lines = ["Example messages for this round:"]
 			for _ in range(3):
