@@ -547,8 +547,11 @@ async def MAIN(message, args, level, perms, SERVER):
 			view.add_item(ping_button)
 		else:
 			ready_at = int((ping_time_global + timedelta(hours=PING_COOLDOWN_GLOBAL_HR)).timestamp())
-			if ping_time_global > ping_time_user:
-				content += f"\n-# (The ping button is on cooldown, can ping again <t:{ready_at}:R>.)"
+			if (ping_time_global + timedelta(hours=PING_COOLDOWN_GLOBAL_HR)) < datetime.now():
+				ready_at = int((ping_time_user + timedelta(hours=PING_COOLDOWN_USER_HR)).timestamp())
+				content += f"\n-# (The ping button is on cooldown for <@{message.author.id}>, they can ping again <t:{ready_at}:R>)"
+			elif ping_time_global > ping_time_user:
+				content += f"\n-# (The ping button is on cooldown, can ping again <t:{ready_at}:R>)"
 			else:
 				content += f"\n-# (The ping button is on cooldown, a different host can ping again <t:{ready_at}:R>)"
 
