@@ -2,7 +2,12 @@ from Config._functions import grammar_list, elim_prize, word_count, formatting_f
 from Config._const import ALPHABET, BRAIN, DB_LINK
 import discord, time
 import numpy as np
+from datetime import datetime, timedelta
 from Config._db import Database
+
+# Cmd to initialize db tables:
+# tc/db add mmtstats id-text ranks-text wins-integer
+# tc/db add mmtpingcooldown id-text lastpingtime-integer
 
 # I'm kind of iffy on keeping this extremely long HELP dict here, but I feel like moving it down below the function
 # won't look good either, so for now I'm keeping it here
@@ -109,6 +114,16 @@ def HELP(PREFIX):
 PERMS = 0 # Non-member
 ALIASES = []
 REQ = []
+
+PING_COOLDOWN_GLOBAL_HR = 12
+PING_COOLDOWN_USER_HR = 24
+last_ping_time = datetime.fromtimestamp(0)
+def get_last_ping_time(user_id: int, db: Database):
+	rows_global = db.get_entries("mmtpingcooldown", conditions={"id": "0"})
+	time_global = datetime.fromtimestamp(rows_global[0][1] if rows_global else 0)
+	rows_user = db.get_entries("mmtpingcooldown", conditions={"id": str(user_id)})
+	time_user = datetime.fromtimestamp(rows_user[0][1] if rows_user else 0)
+	return time_global, time_user, bool(rows_global), bool(rows_user)
 
 async def MAIN(message, args, level, perms, SERVER):
 	if level == 1:
@@ -491,8 +506,49 @@ async def MAIN(message, args, level, perms, SERVER):
 		mmt.info["GAME"]["PERIOD"] = 1
 		mmt.info["GAME"]["PERIOD_START"] = 0
 
+		db = Database()
+		ping_time_global, ping_time_user, exists_global, exists_user = get_last_ping_time(message.author.id, db)
+		ping_button = discord.ui.Button(label="Click to ping (resets ping cooldown)", style=discord.ButtonStyle.secondary, emoji="🛎️")
+		async def ping_callback(interaction: discord.Interaction):
+			from Config._servers import MAIN_SERVER
+			global last_ping_time
+			if interaction.user.id != message.author.id or message.author.id != mmt.info["GAME"]["HOST"]:
+				await interaction.response.send_message(f"Only the host can click to ping!", ephemeral=True)
+				return
+			if mmt.info["GAME"]["PERIOD"] != 1:
+				await interaction.response.send_message(f"Can only ping before a MiniMiniTWOW starts!", ephemeral=True)
+				return
+
+			ping_time_global, ping_time_user, exists_global, exists_user = get_last_ping_time(message.author.id, db)
+			if datetime.now() - ping_time_user < timedelta(hours=PING_COOLDOWN_USER_HR):
+				await interaction.response.send_message(f"Your ping is on cooldown! (You have already pinged in the last {PING_COOLDOWN_USER_HR} hours)", ephemeral=True)
+				return
+			if datetime.now() - ping_time_global < timedelta(hours=PING_COOLDOWN_GLOBAL_HR) or datetime.now() - last_ping_time < timedelta(hours=PING_COOLDOWN_GLOBAL_HR):
+				await interaction.response.send_message(f"Ping on cooldown! (Someone else has already pinged in the last {PING_COOLDOWN_GLOBAL_HR} hours)", ephemeral=True)
+				return
+
+			now = int(datetime.now().timestamp())
+			for (id, exists) in ((0, exists_global), (message.author.id, exists_user)):
+				if exists:
+					db.edit_entry("mmtpingcooldown", entry={"lastpingtime": now}, conditions={"id": str(id)})
+				else:
+					db.add_entry("mmtpingcooldown", [str(id), now])
+			last_ping_time = datetime.now()
+
+			next_global_timestamp = int((datetime.now() + timedelta(hours=PING_COOLDOWN_GLOBAL_HR)).timestamp())
+			next_user_timestamp = int((datetime.now() + timedelta(hours=PING_COOLDOWN_USER_HR)).timestamp())
+			await message.channel.send(f"<@&{MAIN_SERVER['INTERESTED_IN_MMTS'].id}>\n-# Another host can ping again <t:{next_global_timestamp}:R> (<@{message.author.id}> can ping again <t:{next_user_timestamp}:R>)")
+			await interaction.response.edit_message(view=None)
+
+		ping_button.callback = ping_callback
+		view = discord.ui.View(timeout=None)
+		if datetime.now() - ping_time_global > timedelta(hours=PING_COOLDOWN_GLOBAL_HR) and datetime.now() - ping_time_user > timedelta(hours=PING_COOLDOWN_USER_HR):
+			view.add_item(ping_button)
+
 		await message.channel.send(
-		f"🎩 <@{message.author.id}> has created a MiniMiniTWOW! Use `{SERVER['PREFIX']}mmt join` to join it!")
+			f"🎩 <@{message.author.id}> has created a MiniMiniTWOW! Use `{SERVER['PREFIX']}mmt join` to join it!",
+			view=view
+		)
 		return
 	
 
