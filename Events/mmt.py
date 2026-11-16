@@ -410,7 +410,7 @@ class EVENT:
 						elim_players.append(int(leaderboard[r][0][2:-1]))
 				
 				for z in post_leaderboard: # Send leaderboard messages
-					await self.MMT_C.send(z)
+					await self.MMT_C.send(z, allowed_mentions=discord.AllowedMentions.none())
 				
 				await self.MMT_C.send(f"""❌ {grammar_list(elim_pings)} ha{'s' if len(elim_pings) == 1 else 've'} 
 				been eliminated.""".replace("\n", "").replace("\t", ""))

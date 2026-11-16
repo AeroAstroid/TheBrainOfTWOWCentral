@@ -9,7 +9,7 @@ intents.members = True
 intents.message_content = True
 
 
-BRAIN = discord.Client(intents=intents) # The bot object
+BRAIN = discord.Client(intents=intents, allowed_mentions=discord.AllowedMentions(everyone=False, roles=False)) # The bot object
 
 CURRENT_HOUR = datetime.now(timezone.utc).hour # For event handler purposes
 
